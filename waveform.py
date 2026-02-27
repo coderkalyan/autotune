@@ -1,7 +1,6 @@
 import subprocess
-import warnings
-
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 def _stem(ax, n, y, title: str, xlabel: str, ylabel: str) -> None:
@@ -20,99 +19,29 @@ def _stem(ax, n, y, title: str, xlabel: str, ylabel: str) -> None:
         pass
 
 
-def discrete_time_sinusoid(
+def waveform(
     N: int,
-    amplitude: float = 1.0,
-    f0_hz: float = 5.0,
-    fs_hz: float = 100.0,
-    phase_rad: float = 0.0,
-    kind: str = "sin",
-) -> np.ndarray:
-    """Generate a discrete-time sinusoid x[n] of length N.
-
-    x[n] = A * sin(2*pi*f0*n/fs + phi)   (or cos if kind='cos')
-    """
-    n = np.arange(N, dtype=float)
-
-    omega_n = 2.0 * np.pi * (f0_hz / fs_hz) * n + phase_rad
-    # print(omega_n[:10])
-
-    kind = kind.lower().strip()
-    if kind == "sin":
-        return amplitude * np.sin(omega_n)
-    if kind == "cos":
-        return amplitude * np.cos(omega_n)
-    raise ValueError("kind must be 'sin' or 'cos'")
-
-
-def add_noise(
-    x: np.ndarray,
-    *,
-    mean: float = 0.0,
-    std: float = 0.1,
-    rng: np.random.Generator | None = None,
-) -> np.ndarray:
-    """Return x with additive white Gaussian noise.
-
-    Parameters
-    ----------
-    x:
-        Input signal.
-    mean, std:
-        Noise mean and standard deviation.
-    rng:
-        Optional NumPy RNG for reproducibility.
-    """
-    x = np.asarray(x)
-    if rng is None:
-        rng = np.random.default_rng()
-    noise = rng.normal(mean, std, size=x.shape)
-    return x + noise
-
-
-def add_harmonics(
-    x: np.ndarray,
-    *,
+    amplitude: float,
     f0_hz: float,
     fs_hz: float,
-    num_harmonics: int = 3,
-    relative_amplitude: float = 0.2,
-    amplitude_decay: float = 1.0,
-    rng: np.random.Generator | None = None,
-    kind: str = "sin",
-) -> np.ndarray:
-    """Add smaller-amplitude harmonics (2*f0, 3*f0, ...) with random phase.
-
-    The k-th harmonic (k=2..num_harmonics+1) is added as:
-        A_k * sin(2*pi*(k*f0)*n/fs + phi_k)
-
-    where A_k = A_base * relative_amplitude / (k ** amplitude_decay)
-    and phi_k is uniform on [0, 2*pi).
-    """
-    x = np.asarray(x, dtype=float)
-    N = x.shape[0]
+    num_harmonics: int,
+    relative_amplitude: float,
+    amplitude_decay: float,
+    rng: np.random.Generator,
+):
     n = np.arange(N, dtype=float)
+    K = 1 + num_harmonics
+    k = np.arange(1, 1 + K).reshape((1, K))
+    A = amplitude / (k ** amplitude_decay)
+    A[1:] *= relative_amplitude
+    f_hz = f0_hz * k
+    phase_rad = rng.uniform(0.0, 2.0 * np.pi, k.shape)
 
-    if rng is None:
-        rng = np.random.default_rng()
+    n = n.reshape((N, 1)).repeat(K, axis=1)
+    k = k.reshape((1, 1 + num_harmonics)).repeat(N, axis=0)
+    omega_n = 2.0 * np.pi * (f_hz / fs_hz) * n + phase_rad
 
-    # Use the current signal's peak amplitude as a reasonable scale.
-    base_peak = float(np.max(np.abs(x))) if N else 0.0
-
-    kind = kind.lower().strip()
-    if kind not in {"sin", "cos"}:
-        raise ValueError("kind must be 'sin' or 'cos'")
-
-    y = x.copy()
-    for k in range(2, 2 + int(num_harmonics)):
-        phase = float(rng.uniform(0.0, 2.0 * np.pi))
-        Ak = base_peak * float(relative_amplitude) / (k ** float(amplitude_decay))
-        omega_n = 2.0 * np.pi * ((k * f0_hz) / fs_hz) * n + phase
-        if kind == "sin":
-            y += Ak * np.sin(omega_n)
-        else:
-            y += Ak * np.cos(omega_n)
-    return y
+    return np.einsum('ij->i', A * np.cos(omega_n))
 
 
 def mp4_audio_to_signal(
@@ -201,8 +130,12 @@ def main_mp4_audio_autocorr() -> None:
     mp4_path = r"10 Minutes of A Piano A4 440 Hz - Music in Space.mp3"  # TODO: hard-code your file path here
 
     # Keep this modest: r_of_n is O(N * max_lag) in your current implementation.
-    x, fs_hz = mp4_audio_to_signal(mp4_path=mp4_path, target_fs_hz=16_000, max_samples=65_536)
-    r = r_of_n(x)
+    # x, fs_hz = mp4_audio_to_signal(mp4_path=mp4_path, target_fs_hz=16_000, max_samples=65_536)
+    fs_hz = int(48e3)
+    start_s = 2.0
+    end_s = start_s + 0.25
+    x = a4_waveform(fs_hz, start_s, end_s)
+    r = autocorrelation(x)
 
     max_lag = min(128, x.shape[0])
     print_period_first_peak(r, fs_hz=fs_hz, max_lag=max_lag)
@@ -279,7 +212,8 @@ def main_mp4_audio_chunked_period_tracking(
             freq_hz.append(0.0)
             continue
 
-        r = r_of_n(window)
+        window = window * np.hanning(window_len)
+        r = autocorrelation(window)
         _, peak_sec = estimate_period_first_peak(r, fs_hz=fs_hz, max_lag=min(128, window_len))
         if peak_sec is None:
             freq_hz.append(float("nan"))
@@ -318,7 +252,7 @@ def main_mp4_audio_chunked_period_tracking(
     plt.show()
 
 
-def r_of_n(x: np.ndarray) -> np.ndarray:
+def autocorrelation(x: np.ndarray) -> np.ndarray:
     """Compute r(n) = sum_{k=0}^{N-n-1} x[k] * x[k+n] for n=0..N-1."""
     x = np.asarray(x)
     N = x.shape[0]
@@ -375,66 +309,62 @@ def print_period_first_peak(r: np.ndarray, *, fs_hz: float, max_lag: int = 128) 
         return
     print(f"Estimated period (first peak, ignoring T=0): {peak_lag} samples ({peak_sec:.6f} s = {1.0/peak_sec:.2f} Hz)")
 
-def simple_auto_correlation_demo() -> None:
-    # --- Example usage ---
-    fs_hz = 48e3
-    N = fs_hz * 0.01
+
+def mock_waveform(fs_hz: int):
+    duration_s = 0.01
     amplitude = 1
+    snr = 10
+
+    N = int(fs_hz * duration_s)
+    notes = [(493.88, N // 2), (440.0, N), (493.88, N // 2)]
     rng = np.random.default_rng(0)
 
-    x = discrete_time_sinusoid(
-        N, amplitude=amplitude, f0_hz=440, fs_hz=fs_hz, phase_rad=np.pi, kind="sin"
-    )
-
-    # Add harmonics to the clean signal, then add noise.
-    x = add_harmonics(
-        x,
-        f0_hz=440,
+    waveforms = map(lambda note: waveform(
+        note[1],
+        amplitude=amplitude,
+        f0_hz=note[0],
         fs_hz=fs_hz,
-        num_harmonics=3,
+        num_harmonics=10,
         relative_amplitude=0.5,
         amplitude_decay=1,
         rng=rng,
-        kind="sin",
-    )
-    x = add_noise(x, mean=0.0, std=10 / 100, rng=rng)
+    ), notes)
 
-    y = discrete_time_sinusoid(
-        N, amplitude=amplitude, f0_hz=493.88, fs_hz=fs_hz, phase_rad=np.pi, kind="sin"
-    )
+    x = np.hstack(list(waveforms))
+    x += rng.normal(0.0, amplitude / snr, x.shape)
+    return x
 
-    # Add harmonics to the clean signal, then add noise.
-    y = add_harmonics(
-        y,
-        f0_hz=493.88,
-        # f0_hz=880,
-        fs_hz=fs_hz,
-        num_harmonics=3,
-        relative_amplitude=0.5,
-        amplitude_decay=1,
-        rng=rng,
-        kind="sin",
-    )
-    y = add_noise(y, mean=0.0, std=10 / 100, rng=rng)
 
-    z = np.hstack((x, y[:len(y) // 2]))
-    # z = x
+def a4_waveform(fs_hz: int, start_s: float, end_s: float):
+    with open("a4.pcm", "rb") as f:
+        buffer = f.read()
+        x = np.frombuffer(buffer, dtype=np.float32)
 
-    r = r_of_n(z)
+    start = int(fs_hz * start_s)
+    end = int(fs_hz * end_s)
+    return x[start:end]
+
+
+def single_autocorrelation():
+    fs_hz = 48000
+
+    x = mock_waveform(fs_hz)
+
+    start_s = 2.0
+    end_s = start_s + 0.25
+    x = a4_waveform(fs_hz, start_s, end_s)
+
+def simple_auto_correlation_demo():
+    fs_hz = int(48e3)
+    z = z * np.hanning(len(z))
+
+    r = autocorrelation(z)
 
     max_lag = min(128, r.shape[0])
     print_period_first_peak(r, fs_hz=fs_hz, max_lag=max_lag)
 
-    # x is the waveform, r[n] is the summation result for each lag n
-    print("x (first 10 samples):", np.round(x[:10], 6))
-    print("r (first 10 lags):   ", np.round(r[:10], 6))
-
-    # --- Plot x[n] and r[n] ---
-    # If you don't have matplotlib installed: pip install matplotlib
-    import matplotlib.pyplot as plt
-
     n = np.arange(len(z))
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6), constrained_layout=True)
+    _, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6), constrained_layout=True)
     _stem(
         ax1,
         n,
@@ -449,7 +379,5 @@ def simple_auto_correlation_demo() -> None:
 
 if __name__ == "__main__":
     # simple_auto_correlation_demo()
-    # main_mp4_audio_autocorr()
-    main_mp4_audio_chunked_period_tracking()
-
-    
+    main_mp4_audio_autocorr()
+    # main_mp4_audio_chunked_period_tracking()
