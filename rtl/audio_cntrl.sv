@@ -53,8 +53,7 @@ audio_clk_gen #(
     .i_clk_50M(i_clk_50M),
     .i_rst(i_rst),
     .o_clk_12_28M(),                // Master Clock to Codec
-    .o_clk_bit(),
-    .o_clk_100K()
+    .o_clk_bit()
 );
 
 ///////////////////////
