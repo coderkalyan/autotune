@@ -6,8 +6,7 @@ module audio_clk_gen #(
     input logic i_clk_50M,
     input logic i_rst,
     output logic o_clk_12_28M,
-    output logic o_clk_bit,
-    output logic o_clk_100K
+    output logic o_clk_bit
 );
 
 // PLL IP Instantiation 
@@ -41,27 +40,6 @@ end
 initial begin
     o_clk_bit = 0;
     forever #325.52 o_clk_bit = ~o_clk_bit;
-end
-
-// 100kHz Divider Logic 
-localparam int I2C_TOGGLE = 250;
-
-logic [7:0] i2c_cnt;
-
-always_ff @(posedge i_clk_50M) begin
-    if (i_rst) 
-        i2c_cnt <= 0;
-    else if (i2c_cnt == I2C_TOGGLE-1) 
-        i2c_cnt <= 0;
-    else 
-        i2c_cnt <= i2c_cnt + 1;
-end
-
-always @(posedge i_clk_50M) begin 
-    if (i_rst)
-        o_clk_100K <= 1'b0;
-    else if (i2c_cnt == I2C_TOGGLE-1)
-        o_clk_100K <= ~o_clk_100K;
 end
 
 
