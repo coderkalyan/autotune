@@ -20,8 +20,7 @@ module audio_clk_gen_tb;
     .i_clk_50M    (i_clk_50M),
     .i_rst        (i_rst),
     .o_clk_12_28M (o_clk_12_28M),
-    .o_clk_bit    (o_clk_bit),
-    .o_clk_100K   (o_clk_100K)
+    .o_clk_bit    (o_clk_bit)
   );
 
   // 50 MHz clock (20 ns period)
@@ -62,10 +61,6 @@ module audio_clk_gen_tb;
   localparam int      LRCLK_TOGGLE_COUNT = 128;
   localparam realtime EXP_T48K_NS     = 2.0 * LRCLK_TOGGLE_COUNT * EXP_T12_NS;
 
-  // 400K output in your code toggles every I2C_TOGGLE cycles of 50 MHz
-  // => full period = 2 * I2C_TOGGLE * 20 ns
-  localparam int      I2C_TOGGLE      = 250;
-  localparam realtime EXP_t100K_NS    = 2.0 * I2C_TOGGLE * 20.0; // ns
 
   // Tolerances (simulation scheduling/jitter)
   localparam realtime TOL_FAST_NS     = 1.0;   // for fast clocks
@@ -77,7 +72,6 @@ module audio_clk_gen_tb;
   initial begin
     realtime t12;
     realtime tbit;
-    realtime t100;
 
     // Wait for reset deassertion
     @(negedge i_rst); 
@@ -91,14 +85,10 @@ module audio_clk_gen_tb;
     // Measure and check o_clk_bit
     measure_period_posedge(o_clk_bit, tbit);
 
-    // Measure and check o_clk_100K
-    measure_period_posedge(o_clk_100K, t100);
-
     // Optional: print derived frequencies
     $display("Derived frequencies (approx):");
     $display("  o_clk_12_28M ~ %0.3f MHz", 1000.0 / t12);   // 1/ns -> GHz; 1000/t(ns) = MHz
     $display("  o_clk_bit    ~ %0.3f MHz", 1000.0 / tbit);
-    $display("  o_clk_100K   ~ %0.3f kHz", 1_000_000.0 / t100); // 1e6/t(ns)=kHz
 
     $stop();
 

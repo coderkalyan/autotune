@@ -4,13 +4,13 @@ module codec_fsm #(
     input logic i_clk_50M,              // 50Mhz clk from FPGA 
     input logic i_rst,                  // Synchronous Active High Reset
     input logic i_busy,                 // Busy signal from I2C Master
-    input logic i_done,                 // Done signal from I2C Master
+    input logic i_nack,                // Flag from I2C indicating NACK
     
     output logic o_start_transaction,   // Flag to start transaction on I2C
     output logic [6:0] o_addr,          // Address of register to configure
     output logic [7:0] o_data,          //  
     output logic o_config_done,         // Flag indicating configuration is done
-    output logic o_config_err         // Flag indicating error during configuration             
+    output logic o_config_err           // Flag indicating error during configuration             
 );
 
 
@@ -121,7 +121,7 @@ localparam logic [7:0] ACTIVE_CNTRL_DATA= {
     ACTIVE
 };
 
-localparam logic [7:0] REGISTER_DATA [0:5] = '{
+logic [7:0] REGISTER_DATA [0:5] = '{
     ANALOG_PATH_CNTRL_DATA,
     DIGITAL_PATH_CNTRL_DATA,
     POWER_DOWN_CNTRL_DATA,
@@ -130,11 +130,12 @@ localparam logic [7:0] REGISTER_DATA [0:5] = '{
     ACTIVE_CNTRL_DATA
 };
 
-localparam logic [6:0] REGISTER_ADDR [0:5] = '{
+logic [6:0] REGISTER_ADDR [0:5] = '{
     ANALOG_PATH_CNTRL_ADDR,
     DIGITAL_PATH_CNTRL_ADDR,
     POWER_DOWN_CNTRL_ADDR,
     DIGITAL_INTERFACE_FORMAT_ADDR,
+
     SAMPLE_CNTRL_ADDR,
     ACTIVE_CNTRL_ADDR
 };
@@ -150,9 +151,17 @@ logic [2:0] idx;
 logic inc;
 always @(posedge i_clk_50M) begin 
     if (i_rst) 
-        idx <= 1'b0;
+        idx <= '0;
     else if (inc)
         idx <= idx + 1'b1;
+end
+
+logic start;
+always @(posedge i_clk_50M) begin 
+     if (i_rst) 
+        o_start_transaction <= 1'b0;
+    else 
+        o_start_transaction <= start;
 end
 
 typedef enum logic [1:0] {
@@ -166,14 +175,16 @@ state_t state, next_state;
 
 always @(posedge i_clk_50M) begin 
     if (i_rst)
-        state = LOAD;
+        state <= LOAD;
+    else if (i_nack)
+        state <= ERROR;
     else 
         state <= next_state;
 end 
 
 always_comb begin 
     next_state = state;
-    o_start_transaction = 1'b0;
+    start = 1'b0;
     o_config_done = 1'b0;
     o_config_err = 1'b0;
     inc = 1'b0;
@@ -187,7 +198,7 @@ always_comb begin
             o_data = REGISTER_DATA[idx];
             // Wait until not busy, then start transaction
             if (!i_busy) begin
-                o_start_transaction = 1'b1;
+                start = 1'b1;
                 next_state = WAIT;
             end
         end
@@ -196,7 +207,7 @@ always_comb begin
             o_addr = REGISTER_ADDR[idx];
             o_data = REGISTER_DATA[idx];
             // Wait until transaction is done,
-            if (i_done) begin 
+            if (!i_busy) begin 
                 if (idx == 3'd5) begin 
                     next_state = DONE;
                 end else begin 
@@ -210,9 +221,6 @@ always_comb begin
             next_state = DONE;
         end
         ERROR: begin 
-            //TODO: an error flag should be inputted to the FSM from the 
-            //      I2C master (2 options: check for flag at every state,
-            //      else add flag to sensitivity list of state flop)
             o_config_err = 1'b1;
             next_state = ERROR;
         end 
