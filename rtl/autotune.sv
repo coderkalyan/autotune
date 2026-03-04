@@ -88,12 +88,55 @@ module autotune (
 );
     wire rst = ~KEY[0];
 
-    logic       i2c_en, i2c_read;
-    logic [6:0] i2c_addr;
-    logic [7:0] i2c_data_in;
-    logic [7:0] i2c_data_out;
-    logic       i2c_busy, i2c_done;
-    i2c_master i2c (
+    // Safe defaults for unused interfaces (codec bypass test only)
+    assign ADC_CONVST  = 1'b0;
+    assign ADC_DIN     = 1'b0;
+    assign ADC_SCLK    = 1'b0;
+    assign AUD_DACDAT  = 1'b0;
+    assign AUD_XCK     = 1'b0;
+    assign TD_RESET_N  = 1'b1;
+
+    // Leave shared audio clocks/LRCK as Hi-Z (not used for analogue bypass)
+    assign AUD_ADCLRCK = 1'bz;
+    assign AUD_BCLK    = 1'bz;
+    assign AUD_DACLRCK = 1'bz;
+
+    //============================================================
+    // WM8731 codec init (analogue bypass: Line In -> output)
+    // Control word format: {reg[6:0], data[8:0]} -> 2 I2C bytes
+    //   byte1 = {reg[6:0], data[8]}
+    //   byte2 = data[7:0]
+    //============================================================
+
+    localparam logic [6:0] WM8731_I2C_ADDR = 7'h1A; // common for WM8731 on DE1-SoC
+
+    localparam int unsigned WM_INIT_LEN = 8;
+    localparam logic [15:0] WM_INIT [0:WM_INIT_LEN-1] = '{
+        {7'h0F, 9'h000}, // RESET
+        {7'h06, 9'h00E}, // Power Down Control: keep MIC/ADC/DAC powered down, enable LineIn+Out, exit POWEROFF
+        {7'h00, 9'h017}, // Left Line In: 0dB, unmute
+        {7'h01, 9'h017}, // Right Line In: 0dB, unmute
+        {7'h02, 9'h079}, // Left HP Out: 0dB
+        {7'h03, 9'h079}, // Right HP Out: 0dB
+        {7'h04, 9'h002}, // Analogue Path: BYPASS=1, DACSEL=0, INSEL=0
+        {7'h09, 9'h001}  // ACTIVE=1
+    };
+
+    // I2C master signals
+    logic        i2c_en, i2c_read;
+    logic [6:0]  i2c_addr;
+    logic [15:0] i2c_data_in;
+    logic [7:0]  i2c_data_out;
+    logic        i2c_busy, i2c_done, i2c_ack_error;
+    logic [1:0]  i2c_nack_byte;
+    logic [3:0]  i2c_dbg_state;
+    logic [1:0]  i2c_dbg_phase;
+    logic [1:0]  i2c_dbg_byte;
+
+    i2c_master #(
+        .CLK_HZ(50_000_000),
+        .I2C_HZ(100_000)
+    ) i2c (
         .i_clk(CLOCK_50),
         .i_rst(rst),
         .i_en(i2c_en),
@@ -104,16 +147,190 @@ module autotune (
         .o_data_out(i2c_data_out),
         .o_busy(i2c_busy),
         .o_done(i2c_done),
+        .o_ack_error(i2c_ack_error),
+        .o_nack_byte(i2c_nack_byte),
+        .o_dbg_state(i2c_dbg_state),
+        .o_dbg_phase(i2c_dbg_phase),
+        .o_dbg_byte(i2c_dbg_byte),
 
         .o_scl(FPGA_I2C_SCLK),
         .io_sda(FPGA_I2C_SDAT)
     );
 
-    typedef enum logic [3:0] = {
-
-    };
-
     typedef enum logic [2:0] {
-        foo,
-    };
+        INIT_DELAY,
+        INIT_SEND,
+        INIT_WAIT,
+        INIT_DONE,
+        INIT_ERR
+    } init_state_t;
+
+    init_state_t init_state;
+    logic [$clog2(WM_INIT_LEN)-1:0] init_idx;
+
+    localparam int unsigned PWRUP_DELAY_CYC = 50_000_000 / 100; // ~10ms
+    logic [$clog2(PWRUP_DELAY_CYC+1)-1:0] pwr_cnt;
+
+    logic init_done, init_err;
+
+    always_ff @(posedge CLOCK_50) begin
+        if (rst) begin
+            init_state <= INIT_DELAY;
+            pwr_cnt    <= '0;
+            init_idx   <= '0;
+            i2c_en     <= 1'b0;
+            i2c_read   <= 1'b0;
+            i2c_addr   <= WM8731_I2C_ADDR;
+            i2c_data_in<= 16'h0000;
+            init_done  <= 1'b0;
+            init_err   <= 1'b0;
+        end else begin
+            i2c_en <= 1'b0;
+
+            unique case (init_state)
+                INIT_DELAY: begin
+                    init_done <= 1'b0;
+                    init_err  <= 1'b0;
+                    if (pwr_cnt == PWRUP_DELAY_CYC-1) begin
+                        init_state <= INIT_SEND;
+                    end else begin
+                        pwr_cnt <= pwr_cnt + 1'b1;
+                    end
+                end
+
+                INIT_SEND: begin
+                    if (!i2c_busy) begin
+                        i2c_addr    <= WM8731_I2C_ADDR;
+                        i2c_data_in <= WM_INIT[init_idx];
+                        i2c_read    <= 1'b0;
+                        i2c_en      <= 1'b1;
+                        init_state  <= INIT_WAIT;
+                    end
+                end
+
+                INIT_WAIT: begin
+                    if (i2c_done) begin
+                        if (i2c_ack_error) begin
+                            init_err   <= 1'b1;
+                            init_state <= INIT_ERR;
+                        end else if (init_idx == WM_INIT_LEN-1) begin
+                            init_done  <= 1'b1;
+                            init_state <= INIT_DONE;
+                        end else begin
+                            init_idx   <= init_idx + 1'b1;
+                            init_state <= INIT_SEND;
+                        end
+                    end
+                end
+
+                INIT_DONE: begin
+                    init_done <= 1'b1;
+                end
+
+                INIT_ERR: begin
+                    init_err <= 1'b1;
+                end
+
+                default: init_state <= INIT_DELAY;
+            endcase
+        end
+    end
+
+    // Latch last transaction info for debug
+    logic [15:0] last_word;
+    logic [$clog2(WM_INIT_LEN)-1:0] last_idx;
+    logic        last_ack_error;
+    logic [1:0]  last_nack_byte;
+
+    wire scl_lvl = FPGA_I2C_SCLK;
+    wire sda_lvl = FPGA_I2C_SDAT;
+
+    always_ff @(posedge CLOCK_50) begin
+        if (rst) begin
+            last_word      <= 16'h0000;
+            last_idx       <= '0;
+            last_ack_error <= 1'b0;
+            last_nack_byte <= 2'd0;
+        end else if (i2c_done) begin
+            last_word      <= i2c_data_in;
+            last_idx       <= init_idx;
+            last_ack_error <= i2c_ack_error;
+            last_nack_byte <= i2c_nack_byte;
+        end
+    end
+
+    // Status on LEDs
+    // [0]=init_done [1]=init_err [2]=i2c_busy [3]=last_ack_error
+    // [5:4]=last_nack_byte [8:6]=init_state [9]=SDA level
+    assign LEDR[0] = init_done;
+    assign LEDR[1] = init_err;
+    assign LEDR[2] = i2c_busy;
+    assign LEDR[3] = last_ack_error;
+    assign LEDR[5:4] = last_nack_byte;
+    assign LEDR[8:6] = init_state;
+    assign LEDR[9] = sda_lvl;
+
+    // 7-seg hex decoder (active-low segments on DE1-SoC)
+    function automatic logic [6:0] hex7(input logic [3:0] v);
+        unique case (v)
+            4'h0: hex7 = 7'b1000000;
+            4'h1: hex7 = 7'b1111001;
+            4'h2: hex7 = 7'b0100100;
+            4'h3: hex7 = 7'b0110000;
+            4'h4: hex7 = 7'b0011001;
+            4'h5: hex7 = 7'b0010010;
+            4'h6: hex7 = 7'b0000010;
+            4'h7: hex7 = 7'b1111000;
+            4'h8: hex7 = 7'b0000000;
+            4'h9: hex7 = 7'b0010000;
+            4'hA: hex7 = 7'b0001000;
+            4'hB: hex7 = 7'b0000011;
+            4'hC: hex7 = 7'b1000110;
+            4'hD: hex7 = 7'b0100001;
+            4'hE: hex7 = 7'b0000110;
+            4'hF: hex7 = 7'b0001110;
+            default: hex7 = 7'b1111111;
+        endcase
+    endfunction
+
+    // Display pages: SW[0]=0 -> status, SW[0]=1 -> last_word
+    always_comb begin
+        if (!SW[0]) begin
+            HEX0 = hex7({2'b0, init_idx});
+            HEX1 = hex7({1'b0, init_state});
+            HEX2 = hex7(i2c_dbg_state);
+            HEX3 = hex7({2'b0, i2c_dbg_phase});
+            HEX4 = hex7({2'b0, last_nack_byte});
+            HEX5 = hex7({2'b0, scl_lvl, sda_lvl});
+        end else begin
+            HEX0 = hex7(last_word[3:0]);
+            HEX1 = hex7(last_word[7:4]);
+            HEX2 = hex7(last_word[11:8]);
+            HEX3 = hex7(last_word[15:12]);
+            HEX4 = hex7({2'b0, last_nack_byte});
+            HEX5 = hex7({1'b0, last_ack_error, last_idx});
+        end
+    end
+
+    assign IRDA_TXD   = 1'b1;
+
+    assign DRAM_ADDR  = '0;
+    assign DRAM_BA    = '0;
+    assign DRAM_CAS_N = 1'b1;
+    assign DRAM_CKE   = 1'b0;
+    assign DRAM_CLK   = 1'b0;
+    assign DRAM_CS_N  = 1'b1;
+    assign DRAM_LDQM  = 1'b0;
+    assign DRAM_RAS_N = 1'b1;
+    assign DRAM_UDQM  = 1'b0;
+    assign DRAM_WE_N  = 1'b1;
+
+    assign VGA_BLANK_N= 1'b1;
+    assign VGA_B      = '0;
+    assign VGA_CLK    = 1'b0;
+    assign VGA_G      = '0;
+    assign VGA_HS     = 1'b0;
+    assign VGA_R      = '0;
+    assign VGA_SYNC_N = 1'b1;
+    assign VGA_VS     = 1'b0;
 endmodule

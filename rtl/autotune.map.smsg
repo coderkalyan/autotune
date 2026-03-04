@@ -1,1 +1,2 @@
-Info (10281): Verilog HDL Declaration information at uart_rx.sv(10): object "receiving" differs only in case from object "RECEIVING" in the same scope File: /home/kalyan/Documents/school/ece554/ece554_midi/uart_rx.sv Line: 10
+Info (10281): Verilog HDL Declaration information at autotune.sv(156): object "INIT_DONE" differs only in case from object "init_done" in the same scope File: /home/kalyan/Documents/school/ece554/autotune/rtl/autotune.sv Line: 156
+Info (10281): Verilog HDL Declaration information at autotune.sv(158): object "INIT_ERR" differs only in case from object "init_err" in the same scope File: /home/kalyan/Documents/school/ece554/autotune/rtl/autotune.sv Line: 158
