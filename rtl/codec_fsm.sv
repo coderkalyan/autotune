@@ -1,3 +1,4 @@
+
 module codec_fsm #(
     parameter P24_BIT = 1
 )(
@@ -117,23 +118,36 @@ localparam logic [7:0] ACTIVE_CNTRL_DATA= {
     ACTIVE
 };
 
-logic [7:0] REGISTER_DATA [0:5] = '{
-    ANALOG_PATH_CNTRL_DATA,
+localparam logic [7:0] POWER_DOWN_STARTUP_DATA = {
+    1'b0,
+    1'b0,
+    1'b0,
+    1'b1,      // default output to 1
+    1'b0,
+    1'b0,
+    1'b0,
+    1'b0
+}
+
+// STARTUP SEQUENCE //
+logic [7:0] REGISTER_DATA [0:6] = '{
+    POWER_DOWN_STARTUP_DATA,            // Enable all (other than output) 
+    ANALOG_PATH_CNTRL_DATA,             // Set rest of registers
     DIGITAL_PATH_CNTRL_DATA,
-    POWER_DOWN_CNTRL_DATA,
     DIGITAL_INTERFACE_FORMAT_DATA,
     SAMPLE_CNTRL_DATA,
-    ACTIVE_CNTRL_DATA
+    ACTIVE_CNTRL_DATA,                  
+    POWER_DOWN_CNTRL_DATA               // Enable outptu
 };
 
-logic [7:0] REGISTER_ADDR [0:5] = '{
+logic [7:0] REGISTER_ADDR [0:6] = '{
+    POWER_DOWN_CNTRL_ADDR,
     ANALOG_PATH_CNTRL_ADDR,
     DIGITAL_PATH_CNTRL_ADDR,
-    POWER_DOWN_CNTRL_ADDR,
     DIGITAL_INTERFACE_FORMAT_ADDR,
-
     SAMPLE_CNTRL_ADDR,
-    ACTIVE_CNTRL_ADDR
+    ACTIVE_CNTRL_ADDR,
+    POWER_DOWN_CNTRL_ADDR
 };
 
 
@@ -220,7 +234,7 @@ always_comb begin
             o_data = REGISTER_DATA[idx];
             // Wait until transaction is done,
             if (!i_busy) begin 
-                if (idx == 3'd5) begin 
+                if (idx == 3'd6) begin 
                     next_state = DONE;
                 end else begin 
                     inc = 1'b1;
