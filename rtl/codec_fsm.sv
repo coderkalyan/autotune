@@ -146,9 +146,19 @@ logic [6:0] REGISTER_ADDR [0:5] = '{
 // STATE MACHINE     //
 ///////////////////////
 
-
+localparam int unsigned PWRUP_DELAY_CYC = 50_000_000 / 100; // ~10ms
+logic [$clog2(PWRUP_DELAY_CYC+1)-1:0] pwr_cnt;
 logic [2:0] idx;
 logic inc;
+logic start;
+
+always @(posedge i_clk_50M) begin 
+    if (i_rst) 
+        pwr_cnt <= '0;
+    else if (inc)
+        pwr_cnt <= pwr_cnt + 1'b1;
+end
+
 always @(posedge i_clk_50M) begin 
     if (i_rst) 
         idx <= '0;
@@ -156,7 +166,6 @@ always @(posedge i_clk_50M) begin
         idx <= idx + 1'b1;
 end
 
-logic start;
 always @(posedge i_clk_50M) begin 
      if (i_rst) 
         o_start_transaction <= 1'b0;
@@ -164,7 +173,8 @@ always @(posedge i_clk_50M) begin
         o_start_transaction <= start;
 end
 
-typedef enum logic [1:0] {
+typedef enum logic [2:0] {
+    IDLE,
     LOAD,
     WAIT, 
     DONE, 
@@ -192,6 +202,11 @@ always_comb begin
     o_data = 8'h00;
 
     case(state)
+        INIT: begin 
+            // Delay for Power Up 
+            if (pwr_cnt == PWRUP_DELAY_CYC-1) 
+                next_state = LOAD;
+        end
         LOAD: begin 
             // Set data and addr
             o_addr = REGISTER_ADDR[idx];
