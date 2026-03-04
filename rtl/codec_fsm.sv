@@ -127,7 +127,7 @@ localparam logic [7:0] POWER_DOWN_STARTUP_DATA = {
     1'b0,
     1'b0,
     1'b0
-}
+};
 
 // STARTUP SEQUENCE //
 logic [7:0] REGISTER_DATA [0:6] = '{

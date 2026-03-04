@@ -4,7 +4,7 @@ module i2s_transmitter #(
 )(
     input logic i_sck,
     input logic i_rst,
-    input logic [DATA_WIDTH-1:0] i_data,
+    input logic [2*DATA_WIDTH-1:0] i_data,
     output logic o_sd,
     output logic o_ws,
     output logic o_send_over
@@ -16,6 +16,8 @@ module i2s_transmitter #(
 
 logic [$clog2(DATA_WIDTH):0] cnt;
 logic [DATA_WIDTH:0] send_buffer;
+logic [DATA_WIDTH-1:0] eff_data;
+logic ws_prev;
 
 typedef enum logic [1:0] {
     IDLE,
@@ -28,7 +30,6 @@ state_t state, next_state;
 ///////////////////////
 // LOGIC             //
 ///////////////////////
-
 assign o_send_over = (cnt == (DATA_WIDTH))? 1'b1 : 1'b0; 
 assign o_ws = (state == LEFT)? 1'b0 : 1'b1;
 assign o_sd = send_buffer[DATA_WIDTH];
@@ -51,7 +52,7 @@ always @(posedge i_sck) begin
     if (i_rst) 
         send_buffer <= '0;
     else if ((state == IDLE) || (cnt == (DATA_WIDTH)))
-        send_buffer <= {i_data, 1'b0};
+        send_buffer <= {eff_data, 1'b0};
     else if (cnt != '0)
         send_buffer <= {send_buffer[DATA_WIDTH:0], 1'b0};
 end
@@ -71,16 +72,19 @@ end
 always_comb begin 
     //defaults 
     next_state = state;
+    eff_data = '0;
 
     case (state) 
         IDLE: begin 
             next_state = LEFT;
         end
         LEFT: begin 
+            eff_data = i_data[2*DATA_WIDTH-1:DATA_WIDTH];
             if (cnt == (DATA_WIDTH-1))
                 next_state = RIGHT;
         end
         RIGHT: begin 
+            eff_data = i_data[DATA_WIDTH-1:0];
             if (cnt == (DATA_WIDTH-1))
                 next_state = LEFT;
         end

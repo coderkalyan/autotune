@@ -9,7 +9,7 @@ module i2s_tb;
 
 	// Inputs
 	logic bit_clk;
-	logic [DATA_WIDTH-1:0] data_in;
+	logic [DATA_WIDTH*2-1:0] data_in;
 	logic rst;
 	logic enable;
 
@@ -38,7 +38,7 @@ module i2s_tb;
     .P24_BIT(P24_BIT) 
     ) iREC(
 		.i_rst(rst),         
-	  .i_sck(bit_clk),         
+	    .i_sck(bit_clk),         
 		.i_ws(WS),           
 		.i_sd(DATA),          
 		.o_left_data(L_DATA), 
@@ -73,13 +73,13 @@ module i2s_tb;
 
 
 		// SEND SEQUENCE 1 //
-		data_in = 16'b1010_0101_1010_0101;
+		data_in = 32'hA5A5_5A5A;
 			
 		@(posedge send_over);
-		data_in = 16'b0101_1010_0101_1010;
+
 
 		// Setup data for second sequence
-		@(posedge send_over) data_in = 16'h0000;
+		@(posedge send_over) data_in = 16'h0000_1111;
 
 		// Waiting for final receive ack
 		@(posedge recv_over); 
@@ -94,7 +94,6 @@ module i2s_tb;
 
 		// SEND SEQUENCE 2 //
 		@(posedge send_over);
-			data_in = 16'h1111;
 
 		 @(posedge recv_over); 
 		if (L_DATA !== 16'h000) begin 

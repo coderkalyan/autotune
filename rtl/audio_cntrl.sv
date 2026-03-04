@@ -6,13 +6,11 @@ module audio_cntrl #(
 
     input logic i_clk_50M,                      // 50Mhz clk from FPGA
     input logic i_rst,                          // Synchronous Active High Reset
-    input logic [DATA_WIDTH-1:0] i_data,        // Data to DAC (note; this input
-                                                //  must toggle if want diff data on 
-                                                //  left and right channels)
+    input logic [2*DATA_WIDTH-1:0] i_data,      // Data to DAC {left, right}
     input logic i_fifo_wr_en,                   // Flag indicating okay to write to DAC FIFO 
     input logic i_fifo_rd_en,                   // Flag indicating okay to read from ADC FIFO
     output logic o_read_empty,                  // Empty Flag from the ADC data FIFO
-    output logic [DATA_WIDTH-1:0] o_data,       // Data from the ADC Left Channel
+    output logic [2*DATA_WIDTH-1:0] o_data,     // Data from the ADC Left Channel {left, right}
     output logic o_config_err,                  // Flag indicating there was an error 
                                                 //  when configuring the Codec
     output logic o_config_done,                 // Flag indicating done configuring Codec
@@ -37,16 +35,17 @@ module audio_cntrl #(
 // ADC FIFO SIGNALS
 logic recv_over;
 logic [DATA_WIDTH-1:0] left_data;
+logic [DATA_WIDTH-1:0] right_data;
 
 // DAC FIFO SIGNALS
 logic send_over;
-logic [DATA_WIDTH-1:0] dac_data;
+logic [2*DATA_WIDTH-1:0] dac_data;
 
 // CONFIG SIGNALS
 logic busy;
 logic err;
 logic start;
-logic [6:0] addr;
+logic [7:0] addr;
 logic [7:0] reg_data;
 
 ///////////////////////
@@ -54,40 +53,40 @@ logic [7:0] reg_data;
 ///////////////////////
 
 // FIFO for ADC Data to FPGA
-generate :
-    if (P24_BIT) begin : FIFO_24
+generate 
+    if (P24_BIT) begin : ADC_FIFO_24
         // Note: this FIFO has a depth of 8 Words
         fifo_2_24(
-            .aclr(i_rst),           // Reset for FIFO
-            .data(left_data),       // Data to FIFO (From ADC)
-            .rdclk(i_clk_50M),      // Read clk
-            .rdreq(i_fifo_rd_en),  // Read Request
-            .wrclk(o_bck),          // Write clk
-            .wrreq(recv_over),      // Write Request
-            .q(o_data),             // Data from FIFO (To DAC)
-            .rdempty(o_read_empty), // Empty Flag (read side)
-            .wrfull()               // Full Flag (write side)
+            .aclr(i_rst),                       // Reset for FIFO
+            .data({left_data,right_data}),      // Data to FIFO (From ADC)
+            .rdclk(i_clk_50M),                  // Read clk
+            .rdreq(i_fifo_rd_en),               // Read Request
+            .wrclk(o_bck),                      // Write clk
+            .wrreq(recv_over),                  // Write Request
+            .q(o_data),                         // Data from FIFO (To DAC)
+            .rdempty(o_read_empty),             // Empty Flag (read side)
+            .wrfull()                           // Full Flag (write side)
         );
     end 
-    else begin : FIFO_16
+    else begin : ADC_FIFO_16
         // Note: this FIFO has a depth of 8 Words;   
         fifo_2_16 (
-            .aclr(i_rst),           // Reset for FIFO
-            .data(left_data),       // Data to FIFO (From ADC)
-            .rdclk(i_clk_50M),      // Read clk
-            .rdreq(i_fifo_rd_en),  // Read Request
-            .wrclk(o_bck),          // Write clk
-            .wrreq(recv_over),      // Write Request
-            .q(o_data),             // Data from FIFO (To DAC)
-            .rdempty(o_read_empty), // Empty Flag (read side)
-            .wrfull()               // Full Flag (write side)
+            .aclr(i_rst),                       // Reset for FIFO
+            .data({left_data,right_data}),      // Data to FIFO (From ADC)
+            .rdclk(i_clk_50M),                  // Read clk
+            .rdreq(i_fifo_rd_en),               // Read Request
+            .wrclk(o_bck),                      // Write clk
+            .wrreq(recv_over),                  // Write Request
+            .q(o_data),                         // Data from FIFO (To DAC)
+            .rdempty(o_read_empty),             // Empty Flag (read side)
+            .wrfull()                           // Full Flag (write side)
         );
     end
 endgenerate
 
 // FIFO for Data from FPGA to DAC
-generate :
-    if (P24_BIT) begin : FIFO_24
+generate 
+    if (P24_BIT) begin : DAC_FIFO_24
         // Note: this FIFO has a depth of 8 Words
         fifo_2_24(
             .aclr(i_rst),           // Reset for FIFO
@@ -101,7 +100,7 @@ generate :
             .wrfull()               // Full Flag (write side)
         );
     end 
-    else begin : FIFO_16
+    else begin : DAC_FIFO_16
         // Note: this FIFO has a depth of 8 Words;   
         fifo_2_16 (
             .aclr(i_rst),           // Reset for FIFO
@@ -142,7 +141,7 @@ i2s_receiver #(
     .i_ws(o_aud_lrck),              // Work Line (from transmitter)
     .i_sd(i_aud_adcdat),            // Data line
     .o_left_data(left_data),        // Left Channel Data
-    .o_right_data(),                // Right Channel Data 
+    .o_right_data(right_data),      // Right Channel Data 
     .o_recv_over(recv_over)         // Flag to indicate data word is ready 
                                     // (pulses 1 time once both channels are received)
 );
