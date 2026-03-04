@@ -7,7 +7,7 @@ module codec_fsm #(
     input logic i_nack,                // Flag from I2C indicating NACK
     
     output logic o_start_transaction,   // Flag to start transaction on I2C
-    output logic [6:0] o_addr,          // Address of register to configure
+    output logic [7:0] o_addr,          // Address of register to configure
     output logic [7:0] o_data,          //  
     output logic o_config_done,         // Flag indicating configuration is done
     output logic o_config_err           // Flag indicating error during configuration             
@@ -63,15 +63,12 @@ localparam logic CLKOUTPD = 0;          // default
 localparam logic POWEROFF = 0;
 
 // REGISTERS AND DATA
-
-localparam logic [6:0] CODEC_ADDR = 7'h1A;  //CSB pin determines addr, tied to gnd
-
-localparam logic [6:0] ANALOG_PATH_CNTRL_ADDR = 7'h04;
-localparam logic [6:0] DIGITAL_PATH_CNTRL_ADDR = 7'h05;
-localparam logic [6:0] POWER_DOWN_CNTRL_ADDR = 7'h06;
-localparam logic [6:0] DIGITAL_INTERFACE_FORMAT_ADDR = 7'h07; 
-localparam logic [6:0] SAMPLE_CNTRL_ADDR = 7'h08;
-localparam logic [6:0] ACTIVE_CNTRL_ADDR = 7'h09;
+localparam logic [7:0] ANALOG_PATH_CNTRL_ADDR = {7'h04,1'b0};
+localparam logic [7:0] DIGITAL_PATH_CNTRL_ADDR = {7'h05,1'b0};
+localparam logic [:0] POWER_DOWN_CNTRL_ADDR = {7'h06,1'b0};
+localparam logic [7:0] DIGITAL_INTERFACE_FORMAT_ADDR = {7'h07,1'b0}; 
+localparam logic [7:0] SAMPLE_CNTRL_ADDR = {7'h08,1'b0};
+localparam logic [7:0] ACTIVE_CNTRL_ADDR = {7'h09,1'b0};
 
 
 localparam logic [7:0] ANALOG_PATH_CNTRL_DATA = {
@@ -130,7 +127,7 @@ logic [7:0] REGISTER_DATA [0:5] = '{
     ACTIVE_CNTRL_DATA
 };
 
-logic [6:0] REGISTER_ADDR [0:5] = '{
+logic [7:0] REGISTER_ADDR [0:5] = '{
     ANALOG_PATH_CNTRL_ADDR,
     DIGITAL_PATH_CNTRL_ADDR,
     POWER_DOWN_CNTRL_ADDR,
