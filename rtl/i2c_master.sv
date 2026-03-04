@@ -9,10 +9,11 @@ module i2c_master #(
     input logic [7:0] i_addr,     // Address of Register we are writing to
     input logic [7:0] i_data_in,  // Data to write to the register
 
+    output logic [1:0] o_count,
     output logic o_busy,   // Flag indicating active transaction
     output logic o_error,  // Flag indicating error during transaction
     output logic o_scl,    // I2C Clock
-    inout  logic io_sda    // I2C Data Line
+    inout  wire  io_sda    // I2C Data Line
 );
     localparam logic READ = 1'b1;
     localparam logic WRITE = 1'b0;
@@ -56,7 +57,6 @@ module i2c_master #(
             state      <= IDLE;
             addr       <= 8'hx;
             data       <= 8'hx;
-            // wdata      <= 8'hx;
             byte_count <= 2'dx;
             byte_start <= 1'b0;
             sda        <= 1'bx;
@@ -154,6 +154,7 @@ module i2c_master #(
     assign o_error = error;
     assign o_scl   = en ? scl : byte_scl;
     assign io_sda  = en ? sda : 1'bz;
+    assign o_count = byte_count;
 endmodule
 
 module byte_writer #(
@@ -233,6 +234,7 @@ module byte_writer #(
 
                         if (bit_count == 3'd7) begin
                             state  <= SACK;
+                            sda_en <= 1'b0;
                         end else begin
                             bit_count <= bit_count + 1;
                         end
@@ -242,11 +244,9 @@ module byte_writer #(
                     if (phase_hi) begin
                         scl    <= 1'b1;
                         sda    <= 1'b0;
-                        sda_en <= 1'b0;
                     end else if (phase_lo) begin
                         scl    <= 1'b0;
                         sda    <= 1'b0;
-                        sda_en <= 1'b1;
                     end else if (phase_sa) begin
                         if (!io_sda)
                             error <= 1'b0;
