@@ -199,9 +199,10 @@ always_comb begin
 
     case(state)
         INIT: begin 
+            inc = 1'b1;
             // Delay for Power Up 
-            // if (pwr_cnt == PWRUP_DELAY_CYC-1) 
-            next_state = LOAD;
+            if (pwr_cnt == PWRUP_DELAY_CYC-1) 
+                next_state = LOAD;
         end
         LOAD: begin 
             // Set data and addr
@@ -219,7 +220,7 @@ always_comb begin
             o_data = REGISTER_DATA[idx];
             // Wait until transaction is done,
             if (!i_busy) begin 
-                if (idx == 3'd0) begin 
+                if (idx == 3'd5) begin 
                     next_state = DONE;
                 end else begin 
                     inc = 1'b1;
