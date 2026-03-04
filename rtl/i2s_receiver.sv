@@ -41,7 +41,7 @@ always @(posedge i_sck) begin
 end
 
 assign left_en = ws_prev != i_ws;  // Transaction initiated on left channel when have a falling edge 
-assign o_recv_over = shift && (cnt == '0);
+assign o_recv_over = shift && (cnt == '0) & ~i_ws; // only assert after received both packets
 
 // Bit Counter 
 always @(posedge i_sck) begin 

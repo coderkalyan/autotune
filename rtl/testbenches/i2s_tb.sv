@@ -78,9 +78,6 @@ module i2s_tb;
 		@(posedge send_over);
 		data_in = 16'b0101_1010_0101_1010;
 
-		// Waiting for first receive ack
-		@(posedge recv_over); 
-
 		// Setup data for second sequence
 		@(posedge send_over) data_in = 16'h0000;
 
@@ -99,7 +96,7 @@ module i2s_tb;
 		@(posedge send_over);
 			data_in = 16'h1111;
 
-		repeat (2) @(posedge recv_over); 
+		 @(posedge recv_over); 
 		if (L_DATA !== 16'h000) begin 
 		$display("ERROR: Did not receive the expected value for LEFT. Actual: %h Expected: %h", L_DATA, 16'h0000);
 		$stop();
