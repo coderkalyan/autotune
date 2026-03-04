@@ -101,60 +101,89 @@ module autotune (
     assign AUD_BCLK    = 1'bz;
     assign AUD_DACLRCK = 1'bz;
 
-    logic en;
-    logic [7:0] addr, data_in;
-    wire busy, error;
-    wire [1:0] count;
+    logic i2c_en;
+    logic [7:0] i2c_addr, i2c_data_in;
+    logic i2c_busy, i2c_error;
+    logic [1:0] i2c_count;
     i2c_master master (
         .i_clk(CLOCK_50),
         .i_rst(rst),
-        .i_en(en),
-        .i_addr(addr),
-        .i_data_in(data_in),
-        .o_count(count),
-        .o_busy(busy),
-        .o_error(error),
+        .i_en(i2c_en),
+        .i_addr(i2c_addr),
+        .i_data_in(i2c_data_in),
+        .o_count(i2c_count),
+        .o_busy(i2c_busy),
+        .o_error(i2c_error),
         .o_scl(FPGA_I2C_SCLK),
         .io_sda(FPGA_I2C_SDAT)
     );
 
-    logic done;
-    logic [1:0] state;
-    always_ff @(posedge CLOCK_50) begin
-        if (rst) begin
-            done    <= 1'b0;
-            state   <= 2'd0;
-            en      <= 1'b0;
-            addr    <= 8'hx;
-            data_in <= 8'hx;
-        end else begin
-            case (state)
-                2'd0: begin
-                    // init
-                    addr    <= 8'h08;
-                    data_in <= 8'h02;
-                    en      <= 1'b1;
-                    state   <= 2'd1;
-                end
-                2'd1: begin
-                    en <= 1'b0;
+    logic [2:0] codec_state;
+    logic codec_start, codec_done, codec_error;
+    codec_fsm codec (
+        .i_clk_50M(CLOCK_50),
+        .i_rst(rst),
+        .i_busy(i2c_busy),
+        .i_nack(i2c_error),
+        .o_state(codec_state),
+        .o_start_transaction(i2c_en),
+        .o_addr(i2c_addr),
+        .o_data(i2c_data_in),
+        .o_config_done(codec_done),
+        .o_config_err(codec_error)
+    );
 
-                    if (!busy) begin
-                        state <= 2'd2;
-                        done  <= 1'b1;
-                    end
-                end
-                2'd2: begin
-                    // idle
-                end
-                default: state <= 2'd0;
-            endcase
-        end
-    end
 
-    assign LEDR[0] = done;
-    assign LEDR[1] = error;
-    assign LEDR[2] = busy;
+    // logic pulse;
+    // always_ff @(posedge CLOCK_50) begin
+    //     if (rst)
+    //         pulse <= 1'b0;
+    //     else
+    //         pulse <= 1'b1;
+    // end
+    //
+    // always_comb codec_start = pulse; // !rst && pulse;
+
+    // logic done;
+    // logic [1:0] state;
+    // always_ff @(posedge CLOCK_50) begin
+    //     if (rst) begin
+    //         done    <= 1'b0;
+    //         state   <= 2'd0;
+    //         en      <= 1'b0;
+    //         addr    <= 8'hx;
+    //         data_in <= 8'hx;
+    //     end else begin
+    //         case (state)
+    //             2'd0: begin
+    //                 // init
+    //                 addr    <= 8'h08;
+    //                 data_in <= 8'h02;
+    //                 en      <= 1'b1;
+    //                 state   <= 2'd1;
+    //             end
+    //             2'd1: begin
+    //                 en <= 1'b0;
+    //
+    //                 if (!busy) begin
+    //                     state <= 2'd2;
+    //                     done  <= 1'b1;
+    //                 end
+    //             end
+    //             2'd2: begin
+    //                 // idle
+    //             end
+    //             default: state <= 2'd0;
+    //         endcase
+    //     end
+    // end
+
+    assign LEDR[0] = i2c_busy;
+    assign LEDR[1] = i2c_error;
+    assign LEDR[2] = codec_done;
+    assign LEDR[3] = codec_error;
+    // assign LEDR[4] = codec_start;
+    assign LEDR[9] = rst;
 
     // 7-seg hex decoder (active-low segments on DE1-SoC)
     function automatic logic [6:0] hex7(input logic [3:0] v);
@@ -180,7 +209,8 @@ module autotune (
     endfunction
 
     always_comb begin
-        HEX0 = hex7({5'b0, count});
+        HEX0 = hex7({2'b0, i2c_count});
+        HEX1 = hex7({1'b0, codec_state});
     end
 
     assign IRDA_TXD   = 1'b1;
