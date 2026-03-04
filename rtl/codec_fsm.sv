@@ -6,6 +6,7 @@ module codec_fsm #(
     input logic i_busy,                 // Busy signal from I2C Master
     input logic i_nack,                // Flag from I2C indicating NACK
     
+    output logic [2:0] o_state,
     output logic o_start_transaction,   // Flag to start transaction on I2C
     output logic [7:0] o_addr,          // Address of register to configure
     output logic [7:0] o_data,          //  
@@ -65,14 +66,14 @@ localparam logic POWEROFF = 0;
 // REGISTERS AND DATA
 localparam logic [7:0] ANALOG_PATH_CNTRL_ADDR = {7'h04,1'b0};
 localparam logic [7:0] DIGITAL_PATH_CNTRL_ADDR = {7'h05,1'b0};
-localparam logic [:0] POWER_DOWN_CNTRL_ADDR = {7'h06,1'b0};
+localparam logic [7:0] POWER_DOWN_CNTRL_ADDR = {7'h06,1'b0};
 localparam logic [7:0] DIGITAL_INTERFACE_FORMAT_ADDR = {7'h07,1'b0}; 
 localparam logic [7:0] SAMPLE_CNTRL_ADDR = {7'h08,1'b0};
 localparam logic [7:0] ACTIVE_CNTRL_ADDR = {7'h09,1'b0};
 
 
 localparam logic [7:0] ANALOG_PATH_CNTRL_DATA = {
-    3'd0, 
+    2'd0,
     SIDETONE,
     DACSEL,
     BYPASS,
@@ -81,14 +82,13 @@ localparam logic [7:0] ANALOG_PATH_CNTRL_DATA = {
     MICBOOST
 };
 localparam logic [7:0] DIGITAL_PATH_CNTRL_DATA= {
-    4'd3,
+    3'd0,
     HPOR,
     DACMU,
     DEEMPH,
     ADCHPD
 };
 localparam logic [7:0] POWER_DOWN_CNTRL_DATA= {
-    1'd0,
     POWEROFF,
     CLKOUTPD,
     OSCPD,
@@ -99,7 +99,6 @@ localparam logic [7:0] POWER_DOWN_CNTRL_DATA= {
     LINEINPD
 };
 localparam logic [7:0] DIGITAL_INTERFACE_FORMAT_DATA= {
-    1'd0,
     BCLKINV,
     MS,
     LRSWAP,
@@ -108,7 +107,7 @@ localparam logic [7:0] DIGITAL_INTERFACE_FORMAT_DATA= {
     FORMAT
 };
 localparam logic [7:0] SAMPLE_CNTRL_DATA = {
-    3'd0,
+    2'd0,
     SR, 
     BOSR, 
     NORMAL
@@ -171,7 +170,7 @@ always @(posedge i_clk_50M) begin
 end
 
 typedef enum logic [2:0] {
-    IDLE,
+    INIT,
     LOAD,
     WAIT, 
     DONE, 
@@ -182,8 +181,8 @@ state_t state, next_state;
 
 always @(posedge i_clk_50M) begin 
     if (i_rst)
-        state <= LOAD;
-    else if (i_nack)
+        state <= INIT;
+    else if (i_busy && i_nack)
         state <= ERROR;
     else 
         state <= next_state;
@@ -195,14 +194,14 @@ always_comb begin
     o_config_done = 1'b0;
     o_config_err = 1'b0;
     inc = 1'b0;
-    o_addr = 7'h00;
+    o_addr = 8'h00;
     o_data = 8'h00;
 
     case(state)
         INIT: begin 
             // Delay for Power Up 
-            if (pwr_cnt == PWRUP_DELAY_CYC-1) 
-                next_state = LOAD;
+            // if (pwr_cnt == PWRUP_DELAY_CYC-1) 
+            next_state = LOAD;
         end
         LOAD: begin 
             // Set data and addr
@@ -220,7 +219,7 @@ always_comb begin
             o_data = REGISTER_DATA[idx];
             // Wait until transaction is done,
             if (!i_busy) begin 
-                if (idx == 3'd5) begin 
+                if (idx == 3'd0) begin 
                     next_state = DONE;
                 end else begin 
                     inc = 1'b1;
@@ -234,10 +233,12 @@ always_comb begin
         end
         ERROR: begin 
             o_config_err = 1'b1;
+            o_config_done = 1'b1;
             next_state = ERROR;
         end 
         default: next_state = LOAD;
     endcase
 end
 
+assign o_state = state;
 endmodule
