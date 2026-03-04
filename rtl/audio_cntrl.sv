@@ -10,6 +10,7 @@ module audio_cntrl #(
                                                 //  must toggle if want diff data on 
                                                 //  left and right channels)
     input logic i_fifo_wr_en,                   // Flag indicating okay to write to DAC FIFO 
+    input logic i_fifo_rd_en,                   // Flag indicating okay to read from ADC FIFO
     output logic o_read_empty,                  // Empty Flag from the ADC data FIFO
     output logic [DATA_WIDTH-1:0] o_data,       // Data from the ADC Left Channel
     output logic o_config_err,                  // Flag indicating there was an error 
@@ -56,11 +57,11 @@ logic [7:0] reg_data;
 generate :
     if (P24_BIT) begin : FIFO_24
         // Note: this FIFO has a depth of 8 Words
-        fifo_24(
+        fifo_2_24(
             .aclr(i_rst),           // Reset for FIFO
             .data(left_data),       // Data to FIFO (From ADC)
             .rdclk(i_clk_50M),      // Read clk
-            .rdreq(~o_read_empty),  // Read Request
+            .rdreq(i_fifo_rd_en),  // Read Request
             .wrclk(o_bck),          // Write clk
             .wrreq(recv_over),      // Write Request
             .q(o_data),             // Data from FIFO (To DAC)
@@ -70,11 +71,11 @@ generate :
     end 
     else begin : FIFO_16
         // Note: this FIFO has a depth of 8 Words;   
-        fifo_16 (
+        fifo_2_16 (
             .aclr(i_rst),           // Reset for FIFO
             .data(left_data),       // Data to FIFO (From ADC)
             .rdclk(i_clk_50M),      // Read clk
-            .rdreq(~o_read_empty),  // Read Request
+            .rdreq(i_fifo_rd_en),  // Read Request
             .wrclk(o_bck),          // Write clk
             .wrreq(recv_over),      // Write Request
             .q(o_data),             // Data from FIFO (To DAC)
@@ -88,7 +89,7 @@ endgenerate
 generate :
     if (P24_BIT) begin : FIFO_24
         // Note: this FIFO has a depth of 8 Words
-        fifo_24(
+        fifo_2_24(
             .aclr(i_rst),           // Reset for FIFO
             .data(i_data),          // Data to FIFO (From FPGA)
             .rdclk(o_bck),          // Read clk
@@ -102,7 +103,7 @@ generate :
     end 
     else begin : FIFO_16
         // Note: this FIFO has a depth of 8 Words;   
-        fifo_16 (
+        fifo_2_16 (
             .aclr(i_rst),           // Reset for FIFO
             .data(i_data),          // Data to FIFO (From FPGA)
             .rdclk(o_bck),          // I2S Bit Clock 
