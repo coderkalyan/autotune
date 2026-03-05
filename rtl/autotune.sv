@@ -88,32 +88,185 @@ module autotune (
 );
     wire rst = ~KEY[0];
 
-    logic       i2c_en, i2c_read;
-    logic [6:0] i2c_addr;
-    logic [7:0] i2c_data_in;
-    logic [7:0] i2c_data_out;
-    logic       i2c_busy, i2c_done;
-    i2c_master i2c (
-        .i_clk(CLOCK_50),
+    // Safe defaults for unused interfaces (codec bypass test only)
+    assign ADC_CONVST  = 1'b0;
+    assign ADC_DIN     = 1'b0;
+    assign ADC_SCLK    = 1'b0;
+    //assign AUD_DACDAT  = 1'b0;
+    //assign AUD_XCK     = 1'b0;
+    assign TD_RESET_N  = 1'b1;
+
+    // Leave shared audio clocks/LRCK as Hi-Z (not used for analogue bypass)
+    //assign AUD_ADCLRCK = 1'bz;
+    //assign AUD_BCLK    = 1'bz;
+    //assign AUD_DACLRCK = 1'bz;
+
+
+    assign IRDA_TXD   = 1'b1;
+
+    assign DRAM_ADDR  = '0;
+    assign DRAM_BA    = '0;
+    assign DRAM_CAS_N = 1'b1;
+    assign DRAM_CKE   = 1'b0;
+    assign DRAM_CLK   = 1'b0;
+    assign DRAM_CS_N  = 1'b1;
+    assign DRAM_LDQM  = 1'b0;
+    assign DRAM_RAS_N = 1'b1;
+    assign DRAM_UDQM  = 1'b0;
+    assign DRAM_WE_N  = 1'b1;
+
+    assign VGA_BLANK_N= 1'b1;
+    assign VGA_B      = '0;
+    assign VGA_CLK    = 1'b0;
+    assign VGA_G      = '0;
+    assign VGA_HS     = 1'b0;
+    assign VGA_R      = '0;
+    assign VGA_SYNC_N = 1'b1;
+    assign VGA_VS     = 1'b0;
+
+    // logic i2c_en;
+    // logic [7:0] i2c_addr, i2c_data_in;
+    // logic i2c_busy, i2c_error;
+    // logic [1:0] i2c_count;
+    // i2c_master master (
+    //     .i_clk(CLOCK_50),
+    //     .i_rst(rst),
+    //     .i_en(i2c_en),
+    //     .i_addr(i2c_addr),
+    //     .i_data_in(i2c_data_in),
+    //     .o_count(i2c_count),
+    //     .o_busy(i2c_busy),
+    //     .o_error(i2c_error),
+    //     .o_scl(FPGA_I2C_SCLK),
+    //     .io_sda(FPGA_I2C_SDAT)
+    // );
+    //
+    // logic [2:0] codec_state;
+    // logic codec_start, codec_done, codec_error;
+    // codec_fsm codec (
+    //     .i_clk_50M(CLOCK_50),
+    //     .i_rst(rst),
+    //     .i_busy(i2c_busy),
+    //     .i_nack(i2c_error),
+    //     .o_state(codec_state),
+    //     .o_start_transaction(i2c_en),
+    //     .o_addr(i2c_addr),
+    //     .o_data(i2c_data_in),
+    //     .o_config_done(codec_done),
+    //     .o_config_err(codec_error)
+    // );
+
+    logic [31:0] dac_data, adc_data;
+    logic        dac_en, dac_full, adc_en, adc_empty;
+    logic        config_err, config_done;
+    logic        lrck;
+    audio_cntrl #(
+        .P24_BIT(0)
+    ) audio_cntrl(
+        .i_clk_50M(CLOCK_50),
         .i_rst(rst),
-        .i_en(i2c_en),
-        .i_addr(i2c_addr),
-        .i_data_in(i2c_data_in),
-        .i_read(i2c_read),
-
-        .o_data_out(i2c_data_out),
-        .o_busy(i2c_busy),
-        .o_done(i2c_done),
-
-        .o_scl(FPGA_I2C_SCLK),
-        .io_sda(FPGA_I2C_SDAT)
+        .i_data(dac_data),
+        .i_fifo_wr_en(dac_en),
+        .i_fifo_rd_en(adc_en),
+        .o_read_empty(adc_empty),
+        .o_write_full(dac_full),
+        .o_data(adc_data),
+        .o_config_err(config_err),
+        .o_config_done(config_done),
+        .i_aud_adcdat(AUD_ADCDAT),
+        .o_aud_dacdat(AUD_DACDAT),
+        .o_bck(AUD_BCLK),
+        .o_aud_lrck(lrck),
+        .o_aud_xck(AUD_XCK),
+        .o_i2c_sclk(FPGA_I2C_SCLK),
+        .o_i2c_sdat(FPGA_I2C_SDAT)
     );
 
-    typedef enum logic [3:0] = {
+    assign AUD_ADCLRCK = lrck;
+    assign AUD_DACLRCK = lrck;
 
-    };
+    logic [10:0] sample_counter;
+    always_ff @(posedge CLOCK_50) begin
+        if (rst)
+            sample_counter <= '0;
+        else if (sample_counter == 11'd1040)
+            sample_counter <= '0;
+        else
+            sample_counter <= sample_counter + 11'd1;
+    end
 
-    typedef enum logic [2:0] {
-        foo,
-    };
+    // 48000 / 100 = 480Hz
+    logic [8:0] wave_counter;
+    always_ff @(posedge CLOCK_50) begin
+        if (rst)
+            wave_counter <= '0;
+        else if (wave_counter == 9'd239)
+            wave_counter <= '0;
+        else if (sample_counter == 11'd0)
+            wave_counter <= wave_counter + 9'd1;
+    end
+
+    // assign dac_data = {2{(wave_counter < 9'd120) ? 16'd7000 : 16'd0}};
+    // assign dac_en   = sample_counter == 11'd0;
+    assign dac_en = adc_en;
+    assign dac_data = adc_data;
+
+    assign LEDR[0] = config_done;
+    assign LEDR[1] = config_err;
+    assign LEDR[2] = adc_empty;
+    assign LEDR[3] = dac_full;
+    // assign LEDR[2] = codec_done;
+    // assign LEDR[3] = codec_error;
+    // assign LEDR[4] = codec_start;
+    assign LEDR[9] = rst;
+
+    // 7-seg hex decoder (active-low segments on DE1-SoC)
+    function automatic logic [6:0] hex7(input logic [3:0] v);
+        unique case (v)
+            4'h0: hex7 = 7'b1000000;
+            4'h1: hex7 = 7'b1111001;
+            4'h2: hex7 = 7'b0100100;
+            4'h3: hex7 = 7'b0110000;
+            4'h4: hex7 = 7'b0011001;
+            4'h5: hex7 = 7'b0010010;
+            4'h6: hex7 = 7'b0000010;
+            4'h7: hex7 = 7'b1111000;
+            4'h8: hex7 = 7'b0000000;
+            4'h9: hex7 = 7'b0010000;
+            4'hA: hex7 = 7'b0001000;
+            4'hB: hex7 = 7'b0000011;
+            4'hC: hex7 = 7'b1000110;
+            4'hD: hex7 = 7'b0100001;
+            4'hE: hex7 = 7'b0000110;
+            4'hF: hex7 = 7'b0001110;
+            default: hex7 = 7'b1111111;
+        endcase
+    endfunction
+
+    always_comb begin
+        // HEX0 = hex7({2'b0, i2c_count});
+        // HEX1 = hex7({1'b0, codec_state});
+    end
+
+    assign IRDA_TXD   = 1'b1;
+
+    assign DRAM_ADDR  = '0;
+    assign DRAM_BA    = '0;
+    assign DRAM_CAS_N = 1'b1;
+    assign DRAM_CKE   = 1'b0;
+    assign DRAM_CLK   = 1'b0;
+    assign DRAM_CS_N  = 1'b1;
+    assign DRAM_LDQM  = 1'b0;
+    assign DRAM_RAS_N = 1'b1;
+    assign DRAM_UDQM  = 1'b0;
+    assign DRAM_WE_N  = 1'b1;
+
+    assign VGA_BLANK_N= 1'b1;
+    assign VGA_B      = '0;
+    assign VGA_CLK    = 1'b0;
+    assign VGA_G      = '0;
+    assign VGA_HS     = 1'b0;
+    assign VGA_R      = '0;
+    assign VGA_SYNC_N = 1'b1;
+    assign VGA_VS     = 1'b0;
 endmodule
