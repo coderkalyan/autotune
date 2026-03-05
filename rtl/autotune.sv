@@ -101,87 +101,93 @@ module autotune (
     assign AUD_BCLK    = 1'bz;
     assign AUD_DACLRCK = 1'bz;
 
-    logic i2c_en;
-    logic [7:0] i2c_addr, i2c_data_in;
-    logic i2c_busy, i2c_error;
-    logic [1:0] i2c_count;
-    i2c_master master (
-        .i_clk(CLOCK_50),
-        .i_rst(rst),
-        .i_en(i2c_en),
-        .i_addr(i2c_addr),
-        .i_data_in(i2c_data_in),
-        .o_count(i2c_count),
-        .o_busy(i2c_busy),
-        .o_error(i2c_error),
-        .o_scl(FPGA_I2C_SCLK),
-        .io_sda(FPGA_I2C_SDAT)
-    );
+    // logic i2c_en;
+    // logic [7:0] i2c_addr, i2c_data_in;
+    // logic i2c_busy, i2c_error;
+    // logic [1:0] i2c_count;
+    // i2c_master master (
+    //     .i_clk(CLOCK_50),
+    //     .i_rst(rst),
+    //     .i_en(i2c_en),
+    //     .i_addr(i2c_addr),
+    //     .i_data_in(i2c_data_in),
+    //     .o_count(i2c_count),
+    //     .o_busy(i2c_busy),
+    //     .o_error(i2c_error),
+    //     .o_scl(FPGA_I2C_SCLK),
+    //     .io_sda(FPGA_I2C_SDAT)
+    // );
+    //
+    // logic [2:0] codec_state;
+    // logic codec_start, codec_done, codec_error;
+    // codec_fsm codec (
+    //     .i_clk_50M(CLOCK_50),
+    //     .i_rst(rst),
+    //     .i_busy(i2c_busy),
+    //     .i_nack(i2c_error),
+    //     .o_state(codec_state),
+    //     .o_start_transaction(i2c_en),
+    //     .o_addr(i2c_addr),
+    //     .o_data(i2c_data_in),
+    //     .o_config_done(codec_done),
+    //     .o_config_err(codec_error)
+    // );
 
-    logic [2:0] codec_state;
-    logic codec_start, codec_done, codec_error;
-    codec_fsm codec (
+    logic [15:0] dac_data;
+    logic        dac_en, dac_full;
+    logic        config_err, config_done;
+    logic        lrck;
+    audio_cntrl audio_cntrl (
         .i_clk_50M(CLOCK_50),
         .i_rst(rst),
-        .i_busy(i2c_busy),
-        .i_nack(i2c_error),
-        .o_state(codec_state),
-        .o_start_transaction(i2c_en),
-        .o_addr(i2c_addr),
-        .o_data(i2c_data_in),
-        .o_config_done(codec_done),
-        .o_config_err(codec_error)
+        .i_data(dac_data),
+        .i_fifo_wr_en(dac_en),
+        .i_fifo_rd_en(1'b0),
+        .o_read_empty(),
+        .o_write_full(dac_full),
+        .o_data(),
+        .o_config_err(config_err),
+        .o_config_done(config_done),
+        .i_aud_adcdat(AUD_ADCDAT),
+        .o_aud_dacdat(AUD_DACDAT),
+        .o_bck(AUD_BCLK),
+        .o_aud_lrck(lrck),
+        .o_aud_xck(AUD_XCK),
+        .o_i2c_sclk(FPGA_I2C_SCLK),
+        .o_i2c_sdat(FPGA_I2C_SDAT)
     );
 
+    assign AUD_ADCLRCK = lrck;
+    assign AUD_DACLRCK = lrck;
 
-    // logic pulse;
-    // always_ff @(posedge CLOCK_50) begin
-    //     if (rst)
-    //         pulse <= 1'b0;
-    //     else
-    //         pulse <= 1'b1;
-    // end
-    //
-    // always_comb codec_start = pulse; // !rst && pulse;
+    logic [10:0] sample_counter;
+    always_ff @(posedge CLOCK_50) begin
+        if (rst)
+            sample_counter <= '0;
+        else if (sample_counter == 11'd1040)
+            sample_counter <= '0;
+        else
+            sample_counter <= sample_counter + 11'd1;
+    end
 
-    // logic done;
-    // logic [1:0] state;
-    // always_ff @(posedge CLOCK_50) begin
-    //     if (rst) begin
-    //         done    <= 1'b0;
-    //         state   <= 2'd0;
-    //         en      <= 1'b0;
-    //         addr    <= 8'hx;
-    //         data_in <= 8'hx;
-    //     end else begin
-    //         case (state)
-    //             2'd0: begin
-    //                 // init
-    //                 addr    <= 8'h08;
-    //                 data_in <= 8'h02;
-    //                 en      <= 1'b1;
-    //                 state   <= 2'd1;
-    //             end
-    //             2'd1: begin
-    //                 en <= 1'b0;
-    //
-    //                 if (!busy) begin
-    //                     state <= 2'd2;
-    //                     done  <= 1'b1;
-    //                 end
-    //             end
-    //             2'd2: begin
-    //                 // idle
-    //             end
-    //             default: state <= 2'd0;
-    //         endcase
-    //     end
-    // end
+    // 48000 / 100 = 480Hz
+    logic [8:0] wave_counter;
+    always_ff @(posedge CLOCK_50) begin
+        if (rst)
+            wave_counter <= '0;
+        else if (wave_counter == 9'd479)
+            wave_counter <= '0;
+        else if (sample_counter == 11'd0)
+            wave_counter <= wave_counter + 9'd1;
+    end
 
-    assign LEDR[0] = i2c_busy;
-    assign LEDR[1] = i2c_error;
-    assign LEDR[2] = codec_done;
-    assign LEDR[3] = codec_error;
+    assign dac_data = {2{(wave_counter < 9'd240) ? 16'd32768 : 16'd0}};
+    assign dac_en   = sample_counter == 11'd0;
+
+    assign LEDR[0] = config_done;
+    assign LEDR[1] = config_err;
+    // assign LEDR[2] = codec_done;
+    // assign LEDR[3] = codec_error;
     // assign LEDR[4] = codec_start;
     assign LEDR[9] = rst;
 
@@ -209,8 +215,8 @@ module autotune (
     endfunction
 
     always_comb begin
-        HEX0 = hex7({2'b0, i2c_count});
-        HEX1 = hex7({1'b0, codec_state});
+        // HEX0 = hex7({2'b0, i2c_count});
+        // HEX1 = hex7({1'b0, codec_state});
     end
 
     assign IRDA_TXD   = 1'b1;
