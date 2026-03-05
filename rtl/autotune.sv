@@ -92,14 +92,37 @@ module autotune (
     assign ADC_CONVST  = 1'b0;
     assign ADC_DIN     = 1'b0;
     assign ADC_SCLK    = 1'b0;
-    assign AUD_DACDAT  = 1'b0;
-    assign AUD_XCK     = 1'b0;
+    //assign AUD_DACDAT  = 1'b0;
+    //assign AUD_XCK     = 1'b0;
     assign TD_RESET_N  = 1'b1;
 
     // Leave shared audio clocks/LRCK as Hi-Z (not used for analogue bypass)
-    assign AUD_ADCLRCK = 1'bz;
-    assign AUD_BCLK    = 1'bz;
-    assign AUD_DACLRCK = 1'bz;
+    //assign AUD_ADCLRCK = 1'bz;
+    //assign AUD_BCLK    = 1'bz;
+    //assign AUD_DACLRCK = 1'bz;
+
+
+    assign IRDA_TXD   = 1'b1;
+
+    assign DRAM_ADDR  = '0;
+    assign DRAM_BA    = '0;
+    assign DRAM_CAS_N = 1'b1;
+    assign DRAM_CKE   = 1'b0;
+    assign DRAM_CLK   = 1'b0;
+    assign DRAM_CS_N  = 1'b1;
+    assign DRAM_LDQM  = 1'b0;
+    assign DRAM_RAS_N = 1'b1;
+    assign DRAM_UDQM  = 1'b0;
+    assign DRAM_WE_N  = 1'b1;
+
+    assign VGA_BLANK_N= 1'b1;
+    assign VGA_B      = '0;
+    assign VGA_CLK    = 1'b0;
+    assign VGA_G      = '0;
+    assign VGA_HS     = 1'b0;
+    assign VGA_R      = '0;
+    assign VGA_SYNC_N = 1'b1;
+    assign VGA_VS     = 1'b0;
 
     // logic i2c_en;
     // logic [7:0] i2c_addr, i2c_data_in;
@@ -133,11 +156,13 @@ module autotune (
     //     .o_config_err(codec_error)
     // );
 
-    logic [15:0] dac_data;
+    logic [31:0] dac_data;
     logic        dac_en, dac_full;
     logic        config_err, config_done;
     logic        lrck;
-    audio_cntrl audio_cntrl (
+    audio_cntrl #(
+        .P24_BIT(0)
+    ) audio_cntrl(
         .i_clk_50M(CLOCK_50),
         .i_rst(rst),
         .i_data(dac_data),
@@ -175,13 +200,13 @@ module autotune (
     always_ff @(posedge CLOCK_50) begin
         if (rst)
             wave_counter <= '0;
-        else if (wave_counter == 9'd479)
+        else if (wave_counter == 9'd239)
             wave_counter <= '0;
         else if (sample_counter == 11'd0)
             wave_counter <= wave_counter + 9'd1;
     end
 
-    assign dac_data = {2{(wave_counter < 9'd240) ? 16'd32768 : 16'd0}};
+    assign dac_data = {2{(wave_counter < 9'd120) ? 16'd7000 : 16'd0}};
     assign dac_en   = sample_counter == 11'd0;
 
     assign LEDR[0] = config_done;
