@@ -75,8 +75,6 @@ module i2s_tb;
 		// SEND SEQUENCE 1 //
 		data_in = 32'hA5A5_5A5A;
 			
-		@(posedge send_over);
-
 
 		// Setup data for second sequence
 		@(posedge send_over) data_in = 16'h0000_1111;
@@ -93,7 +91,6 @@ module i2s_tb;
 		end
 
 		// SEND SEQUENCE 2 //
-		@(posedge send_over);
 
 		 @(posedge recv_over); 
 		if (L_DATA !== 16'h000) begin 
