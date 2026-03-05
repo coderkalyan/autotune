@@ -57,6 +57,43 @@ def autocorrelation(x: np.ndarray) -> np.ndarray:
     return r
 
 
+def remove_noise(x: np.ndarray, clip_ratio:float = 0.30) -> np.ndarray:
+    """Center-clipper noise reduction (symmetric).
+
+    Let Amax be the maximum absolute amplitude of the signal and CL be the
+    clipping level (a fixed percentage of Amax). Samples whose magnitude is
+    below CL are set to 0; samples beyond CL are reduced by CL toward 0.
+
+    Using CL = 0.30 * Amax:
+
+        y[n] = x[n] - CL   for x[n] >  CL
+        y[n] = 0           for |x[n]| <= CL
+        y[n] = x[n] + CL   for x[n] < -CL
+
+    Output has the same length as the input.
+    """
+    x = np.asarray(x)
+    if x.size == 0:
+        return x.copy()
+
+    N = x.shape[0]
+    y = np.zeros(N, dtype=np.result_type(x, np.float64))
+
+    amax = float(np.max(np.abs(x)))
+    # clip_ratio = 0.30
+    CL = clip_ratio * amax
+
+    for n in range(N):
+        xn = x[n]
+        if xn > CL:
+            y[n] = xn - CL
+        elif xn < -CL:
+            y[n] = xn + CL
+        else:
+            y[n] = 0
+
+    return y
+
 def moving_average_3(x: np.ndarray) -> np.ndarray:
     """3-sample moving average FIR filter (causal).
 
@@ -178,7 +215,7 @@ def high_pass_filter_2(data: np.ndarray, alpha: float) -> np.ndarray:
 def peak(x: np.ndarray, max_lag: int) -> int | None:
     # ignore lag=0 peak
     start = 200 
-    alpha = 0.3
+    alpha = 0.2
     threshold = alpha * x[0]
     x = x[start:max_lag]
 
@@ -287,7 +324,10 @@ def single_autocorrelation():
 
     # z = pcm_waveform("py/twinkle.pcm", fs_hz, 4.62, 4.64)
     # z = pcm_waveform("py/yoasobi.pcm", fs_hz, start_s=52, end_s=52.5)
-    z = pcm_waveform("py/DAZBEE.pcm", fs_hz, start_s=30, end_s=30.5)
+    # z = pcm_waveform("py/DAZBEE.pcm", fs_hz, start_s=30, end_s=30.5)
+    # z = pcm_waveform("py/DAZBEE_Acapella.pcm", fs_hz, start_s=22.5, end_s=22.52)
+    # plot_fft(z, fs_hz=fs_hz, title="PCM segment FFT (raw)")
+    z = remove_noise(z)
 
 
     # Low-pass filter the PCM waveform
@@ -297,8 +337,8 @@ def single_autocorrelation():
     fc_hz = 200
     beta = alpha_calculation(fc_hz=fc_hz, fs_hz=fs_hz)
     # z = z * np.hanning(len(z))
-    z_filt = low_pass_filter_2(z, alpha)
     # z_filt = high_pass_filter(z_filt, beta)
+    z_filt = low_pass_filter_2(z, alpha)
     plot_fft(z_filt, fs_hz=fs_hz, title="PCM segment FFT (raw)")
 
     # z = z * np.hanning(len(z))
@@ -339,19 +379,22 @@ def single_autocorrelation():
 def multi_autocorrelation():
     fs_hz = 48000
     window_size = 1024
-    stride = 256
+    stride = window_size//4
+    # stride = 256
     fc_hz = 1300
     alpha = 1 - np.exp(-2.0 * np.pi * fc_hz / fs_hz)
     # z = pcm_waveform("py/yoasobi.pcm", fs_hz, start_s=52, end_s=53)
-    z = pcm_waveform("py/DAZBEE.pcm", fs_hz, start_s=25, end_s=30)
+    # z = pcm_waveform("py/DAZBEE_Acapella.pcm", fs_hz, start_s=22, end_s=23)
+    # z = pcm_waveform("py/DAZBEE.pcm", fs_hz, start_s=25, end_s=30)
     
-    # z = pcm_waveform("py/twinkle.pcm", fs_hz, start_s=2.0, end_s=12.0)
+    z = pcm_waveform("py/twinkle.pcm", fs_hz, start_s=2.0, end_s=12.0)
     # z = pcm_waveform("twinkle.pcm", fs_hz, start_s=0.0, end_s=60)
     # z = pcm_waveform("tides.pcm", fs_hz, start_s=5.0, end_s=15.0)
 
-    alpha1 = alpha_calculation(fc_hz=fc_hz, fs_hz=fs_hz)
+    # alpha1 = alpha_calculation(fc_hz=fc_hz, fs_hz=fs_hz)
     # z = z * np.hanning(len(z))
-    z = low_pass_filter(z, alpha1)
+    z = low_pass_filter_2(z, alpha_calculation(fc_hz=300, fs_hz=fs_hz))
+    # z = high_pass_filter_2(z, alpha_calculation(fc_hz=100, fs_hz=fs_hz))
 
     print("z:", len(z))
     assert window_size % stride == 0
@@ -359,6 +402,7 @@ def multi_autocorrelation():
     for start in range(0, len(z) - window_size + 1, stride):
         window = z[start:start + window_size]
         window = window * np.hanning(window_size)
+        window = remove_noise(window, clip_ratio=.3)
         r = autocorrelation(window)
         peak_n = peak(r, len(r))
         if peak_n is None or peak_n < int(fs_hz / 2000):
@@ -366,9 +410,10 @@ def multi_autocorrelation():
         else:
             f0_hz = fs_hz / peak_n
 
-        f0_hz = f0s[-1] + alpha * (f0_hz - f0s[-1])*5
+        # f0_hz = f0s[-1] + alpha * (f0_hz - f0s[-1])*5
         f0s.append(f0_hz)
 
+    f0s = low_pass_filter_2(np.array(f0s, dtype=float), alpha_calculation(fc_hz=1000, fs_hz=fs_hz))
     f0s = f0s[1:]
     # print(f0s)
 
