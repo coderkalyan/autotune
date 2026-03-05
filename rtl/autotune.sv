@@ -156,8 +156,8 @@ module autotune (
     //     .o_config_err(codec_error)
     // );
 
-    logic [31:0] dac_data;
-    logic        dac_en, dac_full;
+    logic [31:0] dac_data, adc_data;
+    logic        dac_en, dac_full, adc_en, adc_empty;
     logic        config_err, config_done;
     logic        lrck;
     audio_cntrl #(
@@ -167,10 +167,10 @@ module autotune (
         .i_rst(rst),
         .i_data(dac_data),
         .i_fifo_wr_en(dac_en),
-        .i_fifo_rd_en(1'b0),
-        .o_read_empty(),
+        .i_fifo_rd_en(adc_en),
+        .o_read_empty(adc_empty),
         .o_write_full(dac_full),
-        .o_data(),
+        .o_data(adc_data),
         .o_config_err(config_err),
         .o_config_done(config_done),
         .i_aud_adcdat(AUD_ADCDAT),
@@ -206,11 +206,15 @@ module autotune (
             wave_counter <= wave_counter + 9'd1;
     end
 
-    assign dac_data = {2{(wave_counter < 9'd120) ? 16'd7000 : 16'd0}};
-    assign dac_en   = sample_counter == 11'd0;
+    // assign dac_data = {2{(wave_counter < 9'd120) ? 16'd7000 : 16'd0}};
+    // assign dac_en   = sample_counter == 11'd0;
+    assign dac_en = adc_en;
+    assign dac_data = adc_data;
 
     assign LEDR[0] = config_done;
     assign LEDR[1] = config_err;
+    assign LEDR[2] = adc_empty;
+    assign LEDR[3] = dac_full;
     // assign LEDR[2] = codec_done;
     // assign LEDR[3] = codec_error;
     // assign LEDR[4] = codec_start;
