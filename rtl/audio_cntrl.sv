@@ -10,6 +10,7 @@ module audio_cntrl #(
     input logic i_fifo_wr_en,                   // Flag indicating okay to write to DAC FIFO 
     input logic i_fifo_rd_en,                   // Flag indicating okay to read from ADC FIFO
     output logic o_read_empty,                  // Empty Flag from the ADC data FIFO
+    output logic o_write_full,                  // Full Flag from the DAC data FIFO
     output logic [2*DATA_WIDTH-1:0] o_data,     // Data from the ADC Left Channel {left, right}
     output logic o_config_err,                  // Flag indicating there was an error 
                                                 //  when configuring the Codec

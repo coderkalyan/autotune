@@ -30,7 +30,7 @@ state_t state, next_state;
 ///////////////////////
 // LOGIC             //
 ///////////////////////
-assign o_send_over = (cnt == (DATA_WIDTH))? 1'b1 : 1'b0; 
+assign o_send_over = (cnt == (DATA_WIDTH) & ~o_ws)? 1'b1 : 1'b0; 
 assign o_ws = (state == LEFT)? 1'b0 : 1'b1;
 assign o_sd = send_buffer[DATA_WIDTH];
 
@@ -72,7 +72,7 @@ end
 always_comb begin 
     //defaults 
     next_state = state;
-    eff_data = '0;
+    eff_data = i_data[2*DATA_WIDTH-1:DATA_WIDTH];
 
     case (state) 
         IDLE: begin 
