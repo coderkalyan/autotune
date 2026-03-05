@@ -24,7 +24,7 @@ module audio_cntrl #(
     output logic o_aud_lrck,                    // Word Select ADC & DAC (I2S)
     output logic o_aud_xck,                     // Codec Master Clock
     output logic o_i2c_sclk,                    // Clock line (I2C)
-    output logic o_i2c_sdat                     // Data line to Codec (I2C)
+    output wire o_i2c_sdat                     // Data line to Codec (I2C)
 );
 
 ///////////////////////
