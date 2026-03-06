@@ -20,10 +20,16 @@ module codec_fsm #(
 // PARAM DEFINITIONS //
 ///////////////////////
 
+// LINE CONFIG 
+localparam logic LINMUTE = 0;
+localparam logic RINMUTE = 0;
+localparam logic [4:0] LINVOL  = 5'b10111; // default
+localparam logic [4:0] RINVOL  = 5'b10111; // default
+
 // MIC-IN CONFIGURATION
 localparam logic MICBOOST = 0;          // default
 localparam logic MUTEMIC = 0;
-localparam logic INSEL= 1;
+localparam logic INSEL= 0;
 
 // ADC SW CONTROL
 localparam logic ADCHPD = 0;            // default
@@ -47,7 +53,7 @@ localparam logic MS = 0;                // default
 localparam logic BCLKINV = 0;           // default
 
 // SAMPLE RATE CONTROL
-localparam logic NORMAL = 1;            // set to give 48khz sampling rate on 
+localparam logic NORMAL = 0;            // set to give 48khz sampling rate on NORMAL MODE
 localparam logic BOSR = 0;              // ADC and DAC
 localparam logic [3:0] SR = 4'd0; 
 
@@ -55,8 +61,8 @@ localparam logic [3:0] SR = 4'd0;
 localparam logic ACTIVE = 1;
 
 // POWER DOWN
-localparam logic LINEINPD = 1;          // default
-localparam logic MICPD = 0;
+localparam logic LINEINPD = 0;          
+localparam logic MICPD = 0;             // default
 localparam logic ADCPD = 0;
 localparam logic DACPD = 0;
 localparam logic OUTPD = 0;
@@ -65,6 +71,8 @@ localparam logic CLKOUTPD = 0;          // default
 localparam logic POWEROFF = 0;
 
 // REGISTERS AND DATA
+localparam logic [7:0] LEFT_LINE_IN_ADDR = {7'h00,1'b0};
+localparam logic [7:0] RIGHT_LINE_IN_ADDR = {7'h01,1'b0};
 localparam logic [7:0] ANALOG_PATH_CNTRL_ADDR = {7'h04,1'b0};
 localparam logic [7:0] DIGITAL_PATH_CNTRL_ADDR = {7'h05,1'b0};
 localparam logic [7:0] POWER_DOWN_CNTRL_ADDR = {7'h06,1'b0};
@@ -72,7 +80,16 @@ localparam logic [7:0] DIGITAL_INTERFACE_FORMAT_ADDR = {7'h07,1'b0};
 localparam logic [7:0] SAMPLE_CNTRL_ADDR = {7'h08,1'b0};
 localparam logic [7:0] ACTIVE_CNTRL_ADDR = {7'h09,1'b0};
 
-
+localparam logic [7:0] LEFT_LINE_IN_DATA = {
+    LINMUTE,
+    2'd0,
+    LINVOL
+};
+localparam logic [7:0] RIGHT_LINE_IN_DATA = {
+    RINMUTE,
+    2'd0,
+    RINVOL
+};
 localparam logic [7:0] ANALOG_PATH_CNTRL_DATA = {
     2'd0,
     SIDETONE,
@@ -130,9 +147,11 @@ localparam logic [7:0] POWER_DOWN_STARTUP_DATA = {
 };
 
 // STARTUP SEQUENCE //
-logic [7:0] REGISTER_DATA [0:6] = '{
+logic [7:0] REGISTER_DATA [0:8] = '{
     POWER_DOWN_STARTUP_DATA,            // Enable all (other than output) 
-    ANALOG_PATH_CNTRL_DATA,             // Set rest of registers
+    LEFT_LINE_IN_DATA,                  // Set rest of registers
+    RIGHT_LINE_IN_DATA,
+    ANALOG_PATH_CNTRL_DATA,             
     DIGITAL_PATH_CNTRL_DATA,
     DIGITAL_INTERFACE_FORMAT_DATA,
     SAMPLE_CNTRL_DATA,
@@ -140,8 +159,10 @@ logic [7:0] REGISTER_DATA [0:6] = '{
     POWER_DOWN_CNTRL_DATA               // Enable outptu
 };
 
-logic [7:0] REGISTER_ADDR [0:6] = '{
+logic [7:0] REGISTER_ADDR [0:8] = '{
     POWER_DOWN_CNTRL_ADDR,
+    LEFT_LINE_IN_ADDR,
+    RIGHT_LINE_IN_ADDR,
     ANALOG_PATH_CNTRL_ADDR,
     DIGITAL_PATH_CNTRL_ADDR,
     DIGITAL_INTERFACE_FORMAT_ADDR,
@@ -158,21 +179,22 @@ logic [7:0] REGISTER_ADDR [0:6] = '{
 
 localparam int unsigned PWRUP_DELAY_CYC = 50_000_000 / 100; // ~10ms
 logic [$clog2(PWRUP_DELAY_CYC+1)-1:0] pwr_cnt;
-logic [2:0] idx;
-logic inc;
+logic [3:0] idx;
+logic inc_power_up;
+logic inc_idx;
 logic start;
 
 always @(posedge i_clk_50M) begin 
     if (i_rst) 
         pwr_cnt <= '0;
-    else if (inc)
+    else if (inc_power_up)
         pwr_cnt <= pwr_cnt + 1'b1;
 end
 
 always @(posedge i_clk_50M) begin 
     if (i_rst) 
         idx <= '0;
-    else if (inc)
+    else if (inc_idx)
         idx <= idx + 1'b1;
 end
 
@@ -207,13 +229,14 @@ always_comb begin
     start = 1'b0;
     o_config_done = 1'b0;
     o_config_err = 1'b0;
-    inc = 1'b0;
+    inc_power_up = 1'b0;
+    inc_idx = 1'b0;
     o_addr = 8'h00;
     o_data = 8'h00;
 
     case(state)
         INIT: begin 
-            inc = 1'b1;
+            inc_power_up = 1'b1;
             // Delay for Power Up 
             if (pwr_cnt == PWRUP_DELAY_CYC-1) 
                 next_state = LOAD;
@@ -234,10 +257,10 @@ always_comb begin
             o_data = REGISTER_DATA[idx];
             // Wait until transaction is done,
             if (!i_busy) begin 
-                if (idx == 3'd6) begin 
+                if (idx == 4'd8) begin 
                     next_state = DONE;
                 end else begin 
-                    inc = 1'b1;
+                    inc_idx = 1'b1;
                     next_state = LOAD;
                 end  
             end

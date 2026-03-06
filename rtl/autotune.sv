@@ -156,9 +156,10 @@ module autotune (
     //     .o_config_err(codec_error)
     // );
 
-    logic [31:0] dac_data, adc_data;
+    logic [31:0] dac_data, adc_data, adc_data_bypass;
     logic        dac_en, dac_full, adc_en, adc_empty;
     logic        config_err, config_done;
+    logic        i2s_over;
     logic        lrck;
     audio_cntrl #(
         .P24_BIT(0)
@@ -179,7 +180,9 @@ module autotune (
         .o_aud_lrck(lrck),
         .o_aud_xck(AUD_XCK),
         .o_i2c_sclk(FPGA_I2C_SCLK),
-        .o_i2c_sdat(FPGA_I2C_SDAT)
+        .o_i2c_sdat(FPGA_I2C_SDAT),
+        .o_data_bypass(adc_data_bypass),
+        .i2s_over(i2s_over)
     );
 
     assign AUD_ADCLRCK = lrck;
@@ -206,15 +209,16 @@ module autotune (
             wave_counter <= wave_counter + 9'd1;
     end
 
-    // assign dac_data = {2{(wave_counter < 9'd120) ? 16'd7000 : 16'd0}};
-    // assign dac_en   = sample_counter == 11'd0;
-    assign dac_en = adc_en;
-    assign dac_data = adc_data;
+    assign dac_data = {2{(wave_counter < 9'd120) ? 16'd7000 : 16'd0}}; //verifying dac configuration is correct
+    assign dac_en   = sample_counter == 11'd0;
+    assign adc_en = sample_counter == 11'd0;
+    //assign dac_data = adc_data;
 
     assign LEDR[0] = config_done;
     assign LEDR[1] = config_err;
     assign LEDR[2] = adc_empty;
     assign LEDR[3] = dac_full;
+    assign LEDR[4] = i2s_over;
     // assign LEDR[2] = codec_done;
     // assign LEDR[3] = codec_error;
     // assign LEDR[4] = codec_start;
@@ -244,29 +248,12 @@ module autotune (
     endfunction
 
     always_comb begin
-        // HEX0 = hex7({2'b0, i2c_count});
-        // HEX1 = hex7({1'b0, codec_state});
+        HEX0 = hex7(adc_data_bypass[3:0]);
+        HEX1 = hex7(adc_data_bypass[7:4]);
+        HEX2 = hex7(adc_data_bypass[11:8]);
+        HEX3 = hex7(adc_data_bypass[15:12]);
+        HEX4 = hex7(adc_data_bypass[19:16]);
+        HEX5 = hex7(adc_data_bypass[23:20]);
     end
 
-    assign IRDA_TXD   = 1'b1;
-
-    assign DRAM_ADDR  = '0;
-    assign DRAM_BA    = '0;
-    assign DRAM_CAS_N = 1'b1;
-    assign DRAM_CKE   = 1'b0;
-    assign DRAM_CLK   = 1'b0;
-    assign DRAM_CS_N  = 1'b1;
-    assign DRAM_LDQM  = 1'b0;
-    assign DRAM_RAS_N = 1'b1;
-    assign DRAM_UDQM  = 1'b0;
-    assign DRAM_WE_N  = 1'b1;
-
-    assign VGA_BLANK_N= 1'b1;
-    assign VGA_B      = '0;
-    assign VGA_CLK    = 1'b0;
-    assign VGA_G      = '0;
-    assign VGA_HS     = 1'b0;
-    assign VGA_R      = '0;
-    assign VGA_SYNC_N = 1'b1;
-    assign VGA_VS     = 1'b0;
 endmodule
