@@ -1,7 +1,7 @@
 
 module codec_fsm #(
     parameter P24_BIT = 1
-)(
+) (
     input logic i_clk_50M,              // 50Mhz clk from FPGA 
     input logic i_rst,                  // Synchronous Active High Reset
     input logic i_busy,                 // Busy signal from I2C Master
@@ -23,8 +23,8 @@ module codec_fsm #(
 // LINE CONFIG 
 localparam logic LINMUTE = 0;
 localparam logic RINMUTE = 0;
-localparam logic [4:0] LINVOL  = 5'b10111; // default
-localparam logic [4:0] RINVOL  = 5'b10111; // default
+localparam logic [4:0] LINVOL  = 5'b11111; // default
+localparam logic [4:0] RINVOL  = 5'b11111; // default
 
 // MIC-IN CONFIGURATION
 localparam logic MICBOOST = 0;          // default
@@ -45,8 +45,8 @@ localparam logic DACSEL = 1;
 localparam logic SIDETONE = 0;          // default
 
 // DIGITAL AUDIO INTERFACE CONTROL
-localparam logic FORMAT = 2'd2;         // default - I2C
-localparam logic IWL = P24_BIT ? 2'd2 : 2'd0;    
+localparam logic [1:0] FORMAT = 2'd2;         // default - I2C
+localparam logic [1:0] IWL = P24_BIT ? 2'd2 : 2'd0;    
 localparam logic LRP = 0;               // default         
 localparam logic LRSWAP = 0;            // default
 localparam logic MS = 0;                // default
@@ -147,7 +147,8 @@ localparam logic [7:0] POWER_DOWN_STARTUP_DATA = {
 };
 
 // STARTUP SEQUENCE //
-logic [7:0] REGISTER_DATA [0:8] = '{
+logic [7:0] REGISTER_DATA [0:9] = '{
+    8'h0,
     POWER_DOWN_STARTUP_DATA,            // Enable all (other than output) 
     LEFT_LINE_IN_DATA,                  // Set rest of registers
     RIGHT_LINE_IN_DATA,
@@ -155,11 +156,12 @@ logic [7:0] REGISTER_DATA [0:8] = '{
     DIGITAL_PATH_CNTRL_DATA,
     DIGITAL_INTERFACE_FORMAT_DATA,
     SAMPLE_CNTRL_DATA,
-    ACTIVE_CNTRL_DATA,                  
-    POWER_DOWN_CNTRL_DATA               // Enable outptu
+    POWER_DOWN_CNTRL_DATA,               // Enable outptu
+    ACTIVE_CNTRL_DATA                  
 };
 
-logic [7:0] REGISTER_ADDR [0:8] = '{
+logic [7:0] REGISTER_ADDR [0:9] = '{
+    {7'b0001111, 1'b0},
     POWER_DOWN_CNTRL_ADDR,
     LEFT_LINE_IN_ADDR,
     RIGHT_LINE_IN_ADDR,
@@ -167,8 +169,8 @@ logic [7:0] REGISTER_ADDR [0:8] = '{
     DIGITAL_PATH_CNTRL_ADDR,
     DIGITAL_INTERFACE_FORMAT_ADDR,
     SAMPLE_CNTRL_ADDR,
-    ACTIVE_CNTRL_ADDR,
-    POWER_DOWN_CNTRL_ADDR
+    POWER_DOWN_CNTRL_ADDR,
+    ACTIVE_CNTRL_ADDR
 };
 
 
@@ -257,7 +259,7 @@ always_comb begin
             o_data = REGISTER_DATA[idx];
             // Wait until transaction is done,
             if (!i_busy) begin 
-                if (idx == 4'd8) begin 
+                if (idx == 4'd9) begin 
                     next_state = DONE;
                 end else begin 
                     inc_idx = 1'b1;

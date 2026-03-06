@@ -54,7 +54,7 @@ always @(posedge i_sck) begin
     else if ((state == IDLE) || (cnt == (DATA_WIDTH)))
         send_buffer <= {eff_data, 1'b0};
     else if (cnt != '0)
-        send_buffer <= {send_buffer[DATA_WIDTH:0], 1'b0};
+        send_buffer <= {send_buffer[DATA_WIDTH - 1:0], 1'b0};
 end
 
 

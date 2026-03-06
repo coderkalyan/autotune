@@ -209,10 +209,10 @@ module autotune (
             wave_counter <= wave_counter + 9'd1;
     end
 
-    assign dac_data = {2{(wave_counter < 9'd120) ? 16'd7000 : 16'd0}}; //verifying dac configuration is correct
+    // assign dac_data = {2{(wave_counter < 9'd120) ? 16'd0800 : 16'd0}}; //verifying dac configuration is correct
     assign dac_en   = sample_counter == 11'd0;
     assign adc_en = sample_counter == 11'd0;
-    //assign dac_data = adc_data;
+    assign dac_data = adc_data;
 
     assign LEDR[0] = config_done;
     assign LEDR[1] = config_err;
