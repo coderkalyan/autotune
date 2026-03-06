@@ -16,6 +16,9 @@ module audio_cntrl #(
                                                 //  when configuring the Codec
     output logic o_config_done,                 // Flag indicating done configuring Codec
 
+    output logic [2*DATA_WIDTH-1:0] o_data_bypass,
+    output logic i2s_over,
+
     // Codec facing IO
 
     input logic i_aud_adcdat,                   // Data line from the ADC (I2S)
@@ -52,6 +55,9 @@ logic [7:0] reg_data;
 ///////////////////////
 // CDC HANDLING      //
 ///////////////////////
+
+assign o_data_bypass = {left_data,right_data};
+assign i2s_over = recv_over;
 
 // FIFO for ADC Data to FPGA
 generate 
