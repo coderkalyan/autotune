@@ -212,13 +212,24 @@ module autotune (
     // assign dac_data = {2{(wave_counter < 9'd120) ? 16'd0800 : 16'd0}}; //verifying dac configuration is correct
     assign dac_en   = sample_counter == 11'd0;
     assign adc_en = sample_counter == 11'd0;
-    assign dac_data = adc_data;
+    // assign dac_data = adc_data;
+
+    logic lpf_valid;
+    lpf #(.FC_HZ(1000)) lpf (
+        .clk(CLOCK_50),
+        .rst(rst),
+        .i_data(adc_data),
+        .i_valid(adc_en),
+        .o_data(dac_data),
+        .o_valid(lpf_valid)
+    );
 
     assign LEDR[0] = config_done;
     assign LEDR[1] = config_err;
     assign LEDR[2] = adc_empty;
     assign LEDR[3] = dac_full;
     assign LEDR[4] = i2s_over;
+    assign LEDR[5] = lpf_valid;
     // assign LEDR[2] = codec_done;
     // assign LEDR[3] = codec_error;
     // assign LEDR[4] = codec_start;
