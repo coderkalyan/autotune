@@ -1,29 +1,35 @@
+`timescale 1ns/1ps
+
+`include "fixed.sv"
+
 module lpf #(
     parameter int FC_HZ = 1300
 ) (
-    input  wire        clk,
-    input  wire        rst,
-    input  wire [26:0] i_data,
-    input  wire        i_valid,
-    output wire [26:0] o_data,
-    output wire        o_valid
+    input  wire         clk,
+    input  wire         rst,
+    input  fixed_t i_data,
+    input  wire         i_valid,
+    output fixed_t o_data,
+    output wire         o_valid
 );
     localparam real FS_HZ = 48000.0;
     localparam real PI = 3.1415927;
     localparam real X = 2.0 * PI * real'(FC_HZ) / FS_HZ;
     localparam real ALPHA = X / (1.0 + X);
 
-    localparam logic [26:0] alpha = ALPHA * real'(1 << 16);
-    localparam logic [26:0] one   = 1 << 16;
+    localparam fixed_t FONE   = `FIXED_RTOF(1.0);
+    localparam fixed_t FALPHA = `FIXED_RTOF(ALPHA);
 
-    logic [53:0] x;
-    logic [26:0] y;
-    always_comb x = (alpha * i_data + (one - alpha) * y);
+    // y[n] = alpha * x[n] + (1 - alpha) * y[n-1]
+    logic signed [53:0] x;
+    always_comb x = fixed_mul_raw(FALPHA, i_data) + fixed_mul_raw(fixed_t'(FONE - FALPHA), y);
+
+    fixed_t y;
     always_ff @(posedge clk) begin
         if (rst)
             y <= '0;
         else if (i_valid)
-            y <= x[16 +: 27];
+            y <= fixed_t'(x[16 +: 27]);
     end
 
     logic valid;
