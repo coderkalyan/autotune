@@ -124,42 +124,9 @@ module autotune (
     assign VGA_SYNC_N = 1'b1;
     assign VGA_VS     = 1'b0;
 
-    // logic i2c_en;
-    // logic [7:0] i2c_addr, i2c_data_in;
-    // logic i2c_busy, i2c_error;
-    // logic [1:0] i2c_count;
-    // i2c_master master (
-    //     .i_clk(CLOCK_50),
-    //     .i_rst(rst),
-    //     .i_en(i2c_en),
-    //     .i_addr(i2c_addr),
-    //     .i_data_in(i2c_data_in),
-    //     .o_count(i2c_count),
-    //     .o_busy(i2c_busy),
-    //     .o_error(i2c_error),
-    //     .o_scl(FPGA_I2C_SCLK),
-    //     .io_sda(FPGA_I2C_SDAT)
-    // );
-    //
-    // logic [2:0] codec_state;
-    // logic codec_start, codec_done, codec_error;
-    // codec_fsm codec (
-    //     .i_clk_50M(CLOCK_50),
-    //     .i_rst(rst),
-    //     .i_busy(i2c_busy),
-    //     .i_nack(i2c_error),
-    //     .o_state(codec_state),
-    //     .o_start_transaction(i2c_en),
-    //     .o_addr(i2c_addr),
-    //     .o_data(i2c_data_in),
-    //     .o_config_done(codec_done),
-    //     .o_config_err(codec_error)
-    // );
-
-    logic [31:0] dac_data, adc_data, adc_data_bypass;
+    logic [31:0] dac_data, adc_data;
     logic        dac_en, dac_full, adc_en, adc_empty;
     logic        config_err, config_done;
-    logic        i2s_over;
     logic        lrck;
     audio_cntrl #(
         .P24_BIT(0)
@@ -180,9 +147,7 @@ module autotune (
         .o_aud_lrck(lrck),
         .o_aud_xck(AUD_XCK),
         .o_i2c_sclk(FPGA_I2C_SCLK),
-        .o_i2c_sdat(FPGA_I2C_SDAT),
-        .o_data_bypass(adc_data_bypass),
-        .i2s_over(i2s_over)
+        .o_i2c_sdat(FPGA_I2C_SDAT)
     );
 
     assign AUD_ADCLRCK = lrck;
@@ -212,24 +177,41 @@ module autotune (
     // assign dac_data = {2{(wave_counter < 9'd120) ? 16'd0800 : 16'd0}}; //verifying dac configuration is correct
     assign dac_en   = sample_counter == 11'd0;
     assign adc_en = sample_counter == 11'd0;
-    // assign dac_data = adc_data;
+    assign dac_data = adc_data;
 
-    logic lpf_valid;
-    lpf #(.FC_HZ(1000)) lpf (
-        .clk(CLOCK_50),
-        .rst(rst),
-        .i_data(adc_data),
-        .i_valid(adc_en),
-        .o_data(dac_data),
-        .o_valid(lpf_valid)
+    logic active;
+    vad #(
+        .P24_BIT(0),
+        .THRESHOLD(200),
+        .K(6)
+    ) dut (
+        .i_clk(CLOCK_50),
+        .i_rst(rst),
+        .new_data(adc_en),
+        .i_data(adc_data[31:16]),
+        .active(active)
     );
+
+
+    // logic lpf_valid;
+    // logic [26:0] lpf_output;
+    // lpf #(.FC_HZ(1000)) lpf (
+    //     .clk(CLOCK_50),
+    //     .rst(rst),
+    //     .i_data({adc_data[15:0], 11'h0}),
+    //     .i_valid(adc_en),
+    //     .o_data(lpf_output),
+    //     .o_valid(lpf_valid)
+    // );
+
+    //assign dac_data = {2{lpf_output[26:11]}};
 
     assign LEDR[0] = config_done;
     assign LEDR[1] = config_err;
     assign LEDR[2] = adc_empty;
     assign LEDR[3] = dac_full;
-    assign LEDR[4] = i2s_over;
-    assign LEDR[5] = lpf_valid;
+    //assign LEDR[5] = lpf_valid;
+    assign LEDR[6] = active;
     // assign LEDR[2] = codec_done;
     // assign LEDR[3] = codec_error;
     // assign LEDR[4] = codec_start;
@@ -257,14 +239,5 @@ module autotune (
             default: hex7 = 7'b1111111;
         endcase
     endfunction
-
-    always_comb begin
-        HEX0 = hex7(adc_data_bypass[3:0]);
-        HEX1 = hex7(adc_data_bypass[7:4]);
-        HEX2 = hex7(adc_data_bypass[11:8]);
-        HEX3 = hex7(adc_data_bypass[15:12]);
-        HEX4 = hex7(adc_data_bypass[19:16]);
-        HEX5 = hex7(adc_data_bypass[23:20]);
-    end
 
 endmodule
