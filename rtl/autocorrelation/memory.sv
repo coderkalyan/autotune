@@ -1,30 +1,24 @@
 module memory #(
-  parameter DATA_WIDTH = 16,
-  parameter ADDR_WIDTH = 10
+  parameter P24_BIT = 1,
+  parameter int DATA_WIDTH = (P24_BIT ? 24 : 16),
+  parameter int ADDR_WIDTH = 10
 )(
-  input clk,
-  input wr,
-  input rd,
-  input [DATA_WIDTH-1:0] data_in,
-  input [ADDR_WIDTH-1:0] addr_1, // writes to addr_1 only, not addr_2
-  input [ADDR_WIDTH-1:0] addr_2,
-  output [DATA_WIDTH-1:0] reg data_out_1,
-  output [DATA_WIDTH-1:0] reg data_out_2,
-  output reg data_valid
+  input  logic                  i_clk,
+  input  logic                  i_wr_en,
+  input  logic [DATA_WIDTH-1:0] i_data,
+  input  logic [ADDR_WIDTH-1:0] i_wr_addr,
+  input  logic [ADDR_WIDTH-1:0] i_rd_addr,
+  output logic [DATA_WIDTH-1:0] o_data
 );
 
-logic [DATA_WIDTH-1:0] mem [0:2**ADDR_WIDTH-1];
+  // Simple synchronous read/write memory model
+  logic [DATA_WIDTH-1:0] mem [0:(1<<ADDR_WIDTH)-1];
 
-always_ff @(posedge clk) begin
-  data_valid <= 0;
-  if (wr) begin
-    mem[addr_1] <= data_in;
+  always_ff @(posedge i_clk) begin
+    if (i_wr_en) begin
+      mem[i_wr_addr] <= i_data;
+    end
+    o_data <= mem[i_rd_addr];
   end
-  if (rd) begin
-    data_out_1 <= mem[addr_1];
-    data_out_2 <= mem[addr_2];
-    data_valid <= 1;
-  end
-end
 
 endmodule

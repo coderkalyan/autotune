@@ -164,54 +164,135 @@ module autotune (
     end
 
     // 48000 / 100 = 480Hz
-    logic [8:0] wave_counter;
-    always_ff @(posedge CLOCK_50) begin
-        if (rst)
-            wave_counter <= '0;
-        else if (wave_counter == 9'd239)
-            wave_counter <= '0;
-        else if (sample_counter == 11'd0)
-            wave_counter <= wave_counter + 9'd1;
-    end
+    // logic [8:0] wave_counter;
+    // always_ff @(posedge CLOCK_50) begin
+    //     if (rst)
+    //         wave_counter <= '0;
+    //     else if (wave_counter == 9'd239)
+    //         wave_counter <= '0;
+    //     else if (sample_counter == 11'd0)
+    //         wave_counter <= wave_counter + 9'd1;
+    // end
 
     // assign dac_data = {2{(wave_counter < 9'd120) ? 16'd0800 : 16'd0}}; //verifying dac configuration is correct
-    assign dac_en   = sample_counter == 11'd0;
-    assign adc_en = sample_counter == 11'd0;
-    assign dac_data = adc_data;
+    // assign dac_en = sample_counter == 11'd0;
+    // assign adc_en = sample_counter == 11'd0;
 
-    logic active;
-    vad #(
-        .P24_BIT(0),
-        .THRESHOLD(200),
-        .K(6)
-    ) dut (
-        .i_clk(CLOCK_50),
-        .i_rst(rst),
-        .new_data(adc_en),
-        .i_data(adc_data[31:16]),
-        .active(active)
-    );
+    logic [0:0] r_adc_en;
+    // always_ff @(posedge CLOCK_50) begin
+    //     if (rst)
+    //         r_adc_en <= '0;
+    //     else
+    //         r_adc_en <= adc_en;
+    // end
 
 
-    // logic lpf_valid;
-    // logic [26:0] lpf_output;
-    // lpf #(.FC_HZ(1000)) lpf (
+    // audio_t ldata, rdata;
+    // assign ldata = audio_t'(adc_data[15: 0]);
+    // assign rdata = audio_t'(adc_data[31:16]);
+    logic signed [15:0] ldata, rdata;
+    assign ldata = adc_data[31:16];
+    assign rdata = adc_data[15: 0];
+
+    fixed_t lf, rf;
+    assign lf = `FIXED_ATOF(ldata);
+    assign rf = `FIXED_ATOF(rdata);
+
+    fixed_t lpf_lf;
+    // lpf #(.FC_HZ(1000)) lpf1 (
     //     .clk(CLOCK_50),
     //     .rst(rst),
-    //     .i_data({adc_data[15:0], 11'h0}),
+    //     .i_data(lf),
     //     .i_valid(adc_en),
-    //     .o_data(lpf_output),
-    //     .o_valid(lpf_valid)
+    //     .o_data(lpf_lf),
+    //     .o_valid(r_adc_en)
+    // );
+    //
+    fixed_t lpf_rf;
+    // lpf #(.FC_HZ(1000)) lpf2 (
+    //     .clk(CLOCK_50),
+    //     .rst(rst),
+    //     .i_data(rf),
+    //     .i_valid(adc_en),
+    //     .o_data(lpf_rf),
+    //     // .o_valid(r_adc_en)
     // );
 
-    //assign dac_data = {2{lpf_output[26:11]}};
+    // --- Internal Signals: Left Channel ---
+    fixed_t lpf_lf_s1, lpf_lf_s2; // Intermediate stage outputs
+    logic   v_l_s1, v_l_s2;       // Intermediate valid signals
+
+    // --- Internal Signals: Right Channel ---
+    fixed_t lpf_rf_s1, lpf_rf_s2; // Intermediate stage outputs
+    logic   v_r_s1, v_r_s2;       // Intermediate valid signals
+
+    // ============================================================
+    // LEFT CHANNEL (lf)
+    // ============================================================
+    lpf #(.FC_HZ(10000)) lpf_l_inst1 (
+        .clk(CLOCK_50), .rst(rst),
+        .i_data(lf),         .i_valid(adc_en),
+        .o_data(lpf_lf_s1),  .o_valid(v_l_s1)
+    );
+
+    lpf #(.FC_HZ(10000)) lpf_l_inst2 (
+        .clk(CLOCK_50), .rst(rst),
+        .i_data(lpf_lf_s1),  .i_valid(v_l_s1),
+        .o_data(lpf_lf_s2),  .o_valid(v_l_s2)
+    );
+
+    lpf #(.FC_HZ(10000)) lpf_l_inst3 (
+        .clk(CLOCK_50), .rst(rst),
+        .i_data(lpf_lf_s2),  .i_valid(v_l_s2),
+        .o_data(lpf_lf),     .o_valid(r_adc_en) // Final Left Output
+    );
+
+    // ============================================================
+    // RIGHT CHANNEL (rf)
+    // ============================================================
+    lpf #(.FC_HZ(400)) lpf_r_inst1 (
+        .clk(CLOCK_50), .rst(rst),
+        .i_data(rf),         .i_valid(adc_en),
+        .o_data(lpf_rf_s1),  .o_valid(v_r_s1)
+    );
+
+    lpf #(.FC_HZ(400)) lpf_r_inst2 (
+        .clk(CLOCK_50), .rst(rst),
+        .i_data(lpf_rf_s1),  .i_valid(v_r_s1),
+        .o_data(lpf_rf_s2),  .o_valid(v_r_s2)
+    );
+
+    lpf #(.FC_HZ(400)) lpf_r_inst3 (
+        .clk(CLOCK_50), .rst(rst),
+        .i_data(lpf_rf_s2),  .i_valid(v_r_s2),
+        .o_data(lpf_rf),     .o_valid()         // Final Right Output (valid is redundant)
+    );
+
+    assign adc_en = !adc_empty;
+    assign dac_en = r_adc_en & SW[0];
+
+    logic [31:0] r_adc_data;
+    assign r_adc_data = {`FIXED_FTOA(lpf_lf), `FIXED_FTOA(lpf_rf)};
+    // assign r_adc_data = {16'd0, `FIXED_FTOA(lpf_lf)};
+    // always_ff @(posedge CLOCK_50) begin
+    //     if (rst)
+    //         r_adc_data <= '0;
+    //     else
+    //         // r_adc_data <= {rdata, ldata};
+    //         r_adc_data <= {`FIXED_FTOA(lpf_rf), `FIXED_FTOA(lpf_lf)};
+    // end
+
+    // assign dac_data = {`FIXED_FTOA(rf), `FIXED_FTOA(lf)};
+    assign dac_data = r_adc_data;
+    // assign dac_data = adc_data;
+    // assign dac_data = r_adc_data;
 
     assign LEDR[0] = config_done;
     assign LEDR[1] = config_err;
     assign LEDR[2] = adc_empty;
     assign LEDR[3] = dac_full;
-    //assign LEDR[5] = lpf_valid;
-    assign LEDR[6] = active;
+    assign LEDR[4] = i2s_over;
+    // assign LEDR[5] = lpf_valid;
     // assign LEDR[2] = codec_done;
     // assign LEDR[3] = codec_error;
     // assign LEDR[4] = codec_start;
