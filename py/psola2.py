@@ -9,6 +9,7 @@ Minimal flow:
 
 import matplotlib.pyplot as plt
 import numpy as np
+import subprocess
 
 import autocorrelation as ac
 
@@ -21,6 +22,35 @@ def pcm_waveform(filename: str, fs_hz: int, start_s: float, end_s: float) -> np.
     start = int(fs_hz * start_s)
     end = int(fs_hz * end_s)
     return x[start:end]
+
+
+def mp3_to_pcm_waveform(
+    input_mp3: str,
+    fs_hz: int,
+    out_pcm: str,
+) -> None:
+    """Convert MP3 to float32 PCM with ffmpeg."""
+    
+    #TODO: make pcm input mono channel
+    ffmpeg_cmd = [
+        "ffmpeg",
+        "-y",
+        "-i",
+        input_mp3,
+        "-f",
+        "f32le",
+        "-acodec",
+        "pcm_f32le",
+        "-ar",
+        str(fs_hz),
+        out_pcm,
+    ]
+    try:
+        subprocess.run(ffmpeg_cmd, check=True, stdout=subprocess.DEVNULL)
+    except FileNotFoundError as exc:
+        raise RuntimeError("ffmpeg not found on PATH") from exc
+    except subprocess.CalledProcessError as exc:
+        raise RuntimeError(f"ffmpeg failed with exit code {exc.returncode}") from exc
 
 
 def create_pitch_marks(
@@ -159,6 +189,39 @@ def psola(signal: np.ndarray, pitch_marks: list[int], pitch_factor: float) -> np
     return y
 
 
+def export_psola_output(
+    y: np.ndarray,
+    fs_hz: int,
+    out_pcm: str,
+    out_mp3: str,
+) -> None:
+    """Save PSOLA output as float32 PCM, then convert to MP3 with ffmpeg."""
+    y_f32 = y.astype(np.float32, copy=False)
+    y_f32.tofile(out_pcm)
+
+    ffmpeg_cmd = [
+        "ffmpeg",
+        "-y",
+        "-f",
+        "f32le",
+        "-ar",
+        str(fs_hz),
+        "-ac",
+        "1",
+        "-i",
+        out_pcm,
+        out_mp3,
+    ]
+    try:
+        subprocess.run(ffmpeg_cmd, check=True, stdout=subprocess.DEVNULL)
+        print("wrote:", out_pcm)
+        print("wrote:", out_mp3)
+    except FileNotFoundError as exc:
+        raise RuntimeError("ffmpeg not found on PATH") from exc
+    except subprocess.CalledProcessError as exc:
+        raise RuntimeError(f"ffmpeg failed with exit code {exc.returncode}") from exc
+
+
 def single_window_test() -> None:
     """Test PSOLA on one 1024-sample window (no sliding analysis)."""
     fs_hz = 48000
@@ -224,26 +287,30 @@ def single_window_test() -> None:
     # _show_or_save("py/single_window_psola.png")
 
 if __name__ == "__main__":
-    single_window_test()
+    # single_window_test()
 
 
     fs_hz = 48000
     window_size = 1024
     hop_size = 256
-    pitch_factor = .7
+    note_step = 2
+    pitch_factor = 2**(note_step/12)
+    print("pitch_factor", pitch_factor)
 
     # Update these for your test case.
-    filename = "py/twinkle.pcm"
-    start_s = 2.5
-    end_s = 7.0
+    input_mp3 = "py/twinkle.mp3"
+    generated_pcm = "py/DAZBEE_Acapella.pcm"
+    start_s = 4
+    end_s = 12
 
-    x = pcm_waveform(filename, fs_hz, start_s, end_s).astype(np.float64, copy=False)
+    # mp3_to_pcm_waveform(input_mp3, fs_hz, generated_pcm)
+    x = pcm_waveform(generated_pcm, fs_hz, start_s, end_s).astype(np.float64, copy=False)
     if x.size == 0:
         raise SystemExit("empty input")
 
     # Preprocess (same spirit as your autocorrelation pipeline).
-    x = x - float(np.mean(x))
-    x = ac.low_pass_filter_2(x, ac.alpha_calculation(fc_hz=1000.0, fs_hz=fs_hz))
+    # x = x - float(np.mean(x))
+    x = ac.low_pass_filter_2(x, ac.alpha_calculation(fc_hz=1300.0, fs_hz=fs_hz))
     # x = ac.remove_noise(x, clip_ratio=0.30)
 
     marks = create_pitch_marks(
@@ -257,6 +324,10 @@ if __name__ == "__main__":
     print("pitch marks:", len(marks))
 
     y = psola(x, marks, pitch_factor)
+
+    out_pcm = "py/DAZBEE_Acapella_out.pcm"
+    out_mp3 = "py/DAZBEE_Acapella_out.mp3"
+    export_psola_output(y=y, fs_hz=fs_hz, out_pcm=out_pcm, out_mp3=out_mp3)
 
     def track_f0(sig: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         f0s: list[float] = []
@@ -283,10 +354,11 @@ if __name__ == "__main__":
     # Frequency track before vs after PSOLA.
     t_in, f0_in = track_f0(x)
 
-    y_dbg = y - float(np.mean(y))
+    # y_dbg = y - float(np.mean(y))
     # y_dbg = ac.low_pass_filter_2(y_dbg, ac.alpha_calculation(fc_hz=500.0, fs_hz=fs_hz))
     # y_dbg = ac.remove_noise(y_dbg, clip_ratio=0.30)
-    t_out, f0_out = track_f0(y_dbg)
+    # t_out, f0_out = track_f0(y_dbg)
+    t_out, f0_out = track_f0(y)
 
     plt.figure(figsize=(10, 4), constrained_layout=True)
     plt.plot(t_in, f0_in, label="f0 in", linewidth=0.9)
