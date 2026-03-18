@@ -1,4 +1,4 @@
-"""Streaming-friendly TD-PSOLA pass-through (no pitch shift).
+"""Streaming-friendly TD-PSOLA with constant pitch shift.
 
 This prototype mirrors the RTL-oriented architecture:
 - sliding autocorrelation to estimate period T
@@ -8,7 +8,6 @@ This prototype mirrors the RTL-oriented architecture:
 
 from __future__ import annotations
 
-from collections import deque
 from dataclasses import dataclass
 import os
 import wave
@@ -139,9 +138,9 @@ def extract_grain_samples(signal: np.ndarray, center: int, period: int) -> np.nd
 def build_grain_queue(
     signal: np.ndarray,
     epochs: list[tuple[int, int]],
-) -> tuple[list[np.ndarray], deque[Grain]]:
+) -> tuple[list[np.ndarray], list[Grain]]:
     sample_buffer: list[np.ndarray] = []
-    queue: deque[Grain] = deque()
+    grains: list[Grain] = []
 
     for center, period in tqdm(epochs):
         raw = extract_grain_samples(signal, center=center, period=period)
@@ -151,31 +150,50 @@ def build_grain_queue(
 
         window = np.hanning(raw.size)
         windowed = raw * window
-        queue.append(Grain(center=center, period=period, samples=windowed))
+        grains.append(Grain(center=center, period=period, samples=windowed))
 
-    return sample_buffer, queue
+    return sample_buffer, grains
 
 
-def synthesize_from_queue(queue: deque[Grain], n_samples: int) -> np.ndarray:
+def synthesize_pitch_shift(
+    grains: list[Grain],
+    n_samples: int,
+    *,
+    pitch_factor: float,
+) -> np.ndarray:
+    if pitch_factor <= 0:
+        raise ValueError("pitch_factor must be > 0")
     y = np.zeros(int(n_samples), dtype=np.float64)
+    if not grains:
+        return y
 
-    while queue:
-        grain = queue.popleft()
+    ai = 0.0
+    s = int(grains[0].center)
+    last_idx = len(grains) - 1
+
+    while s < n_samples:
+        i = int(ai)
+        if i < 0:
+            i = 0
+        if i > last_idx:
+            i = last_idx
+
+        grain = grains[i]
         period = int(grain.period)
         length = int(grain.samples.size)
-        if length == 0:
-            continue
+        if length > 0:
+            start = s - period
+            end = start + length
+            out_start = max(0, start)
+            out_end = min(n_samples, end)
+            if out_end > out_start:
+                g_start = out_start - start
+                g_end = g_start + (out_end - out_start)
+                y[out_start:out_end] += grain.samples[g_start:g_end]
 
-        start = grain.center - period
-        end = start + length
-        out_start = max(0, start)
-        out_end = min(n_samples, end)
-        if out_end <= out_start:
-            continue
-
-        g_start = out_start - start
-        g_end = g_start + (out_end - out_start)
-        y[out_start:out_end] += grain.samples[g_start:g_end]
+        synth_hop = max(1, int(round(period / pitch_factor)))
+        s += synth_hop
+        ai += 1.0 / pitch_factor
 
     return y
 
@@ -188,6 +206,7 @@ def run_pass_through(
     fs_hz: int = 48000,
     start_s: float = 0.0,
     end_s: float | None = None,
+    pitch_factor: float = 1.0,
 ) -> np.ndarray:
     x = read_pcm_f32(input_pcm, fs_hz=fs_hz, start_s=start_s, end_s=end_s)
     if x.size == 0:
@@ -208,10 +227,10 @@ def run_pass_through(
     if len(epochs) == 0:
         raise RuntimeError("no epochs found")
 
-    sample_buffer, queue = build_grain_queue(x, epochs)
+    sample_buffer, grains = build_grain_queue(x, epochs)
     print("epochs:", len(epochs), "grains:", len(sample_buffer))
 
-    y = synthesize_from_queue(queue, n_samples=x.size)
+    y = synthesize_pitch_shift(grains, n_samples=x.size, pitch_factor=pitch_factor)
 
     write_pcm_f32(output_pcm, y)
     write_wav_int16(output_wav, y, fs_hz=fs_hz)
@@ -224,10 +243,11 @@ def run_pass_through(
 if __name__ == "__main__":
     fs_hz = 48000
     input_pcm = "twinkle.pcm"
+    pitch_factor = 2 ** (-2 / 12)
 
     base, _ext = os.path.splitext(input_pcm)
-    output_pcm = f"{base}_psola3.pcm"
-    output_wav = f"{base}_psola3.wav"
+    output_pcm = f"{base}_psola3_up2st.pcm"
+    output_wav = f"{base}_psola3_up2st.wav"
 
     run_pass_through(
         input_pcm=input_pcm,
@@ -236,4 +256,5 @@ if __name__ == "__main__":
         fs_hz=fs_hz,
         start_s=0.0,
         end_s=None,
+        pitch_factor=pitch_factor,
     )
