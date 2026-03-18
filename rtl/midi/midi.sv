@@ -57,31 +57,20 @@ midi_receiver midi_receiver0(
 );
 
 // Frequency LUT and Display Logic
-wire [23:0] frequency_x1000;
-wire [31:0] bcd_freq;
+wire [26:0] frequency;
+wire [23:0] bcd_freq;
 
-// // LUT to get frequency * 1000 from note number
-// midi_freq_lut lut0 (
-//     .note(note_number),
-//     .frequency_x1000(frequency_x1000)
-// );
+// LUT to get Q11.16 frequency from note number
+midi_freq_lut lut0 (
+    .note(note_number),
+    .frequency(frequency)
+);
 
-// // Convert binary frequency to BCD for display
-// bin_to_bcd bcd0 (
-//     .bin(frequency_x1000),
-//     .bcd(bcd_freq)
-// );
-
-reg [23:0] display_bcd;
-always @(*) begin
-    if (SW[0]) begin
-        // Show upper digits (digits 2-7) for high frequencies
-        display_bcd = bcd_freq[31:8]; 
-    end else begin
-        // Show lower digits (digits 0-5) normally
-        display_bcd = bcd_freq[23:0];
-    end
-end
+// Convert Q11.16 frequency to 6 BCD decimal digits for display
+bin_to_bcd bcd0 (
+    .freq_q1116(frequency),
+    .bcd(bcd_freq)
+);
 
 function [6:0] seven_seg_decode;
     input [3:0] val;
@@ -109,14 +98,12 @@ function [6:0] seven_seg_decode;
 endfunction
 
 always @(*) begin
-    // HEX0 = seven_seg_decode(frequency_x1000[3:0]);
-    // HEX1 = seven_seg_decode(frequency_x1000[7:4]);
-    // HEX2 = seven_seg_decode(frequency_x1000[11:8]);
-    // HEX3 = seven_seg_decode(frequency_x1000[15:12]);
-    // HEX4 = seven_seg_decode(frequency_x1000[19:16]);
-    // HEX5 = seven_seg_decode(frequency_x1000[23:20]);
-    HEX0 = seven_seg_decode(note_number[3:0]);
-    HEX1 = seven_seg_decode(note_number[6:4]);
+    HEX0 = seven_seg_decode(bcd_freq[3:0]);    // hundredths Hz
+    HEX1 = seven_seg_decode(bcd_freq[7:4]);    // tenths Hz
+    HEX2 = seven_seg_decode(bcd_freq[11:8]);   // ones Hz
+    HEX3 = seven_seg_decode(bcd_freq[15:12]);  // tens Hz
+    HEX4 = seven_seg_decode(bcd_freq[19:16]);  // hundreds Hz
+    HEX5 = seven_seg_decode(bcd_freq[23:20]);  // thousands Hz
 end
 
 endmodule
