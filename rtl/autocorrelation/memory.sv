@@ -1,6 +1,5 @@
 module memory #(
-  parameter P24_BIT = 1,
-  parameter int DATA_WIDTH = (P24_BIT ? 24 : 16),
+  parameter int DATA_WIDTH = 27,
   parameter int ADDR_WIDTH = 10
 )(
   input  logic                  i_clk,
