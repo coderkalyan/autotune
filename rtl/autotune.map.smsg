@@ -1,2 +1,5 @@
-Info (10281): Verilog HDL Declaration information at autotune.sv(156): object "INIT_DONE" differs only in case from object "init_done" in the same scope File: /home/kalyan/Documents/school/ece554/autotune/rtl/autotune.sv Line: 156
-Info (10281): Verilog HDL Declaration information at autotune.sv(158): object "INIT_ERR" differs only in case from object "init_err" in the same scope File: /home/kalyan/Documents/school/ece554/autotune/rtl/autotune.sv Line: 158
+Warning (10273): Verilog HDL warning at i2c_master.sv(58): extended using "x" or "z" File: C:/Users/avery/ece554/autotune/rtl/i2c_master.sv Line: 58
+Warning (10273): Verilog HDL warning at i2c_master.sv(59): extended using "x" or "z" File: C:/Users/avery/ece554/autotune/rtl/i2c_master.sv Line: 59
+Warning (10273): Verilog HDL warning at i2c_master.sv(60): extended using "x" or "z" File: C:/Users/avery/ece554/autotune/rtl/i2c_master.sv Line: 60
+Warning (10273): Verilog HDL warning at i2c_master.sv(138): extended using "x" or "z" File: C:/Users/avery/ece554/autotune/rtl/i2c_master.sv Line: 138
+Warning (10273): Verilog HDL warning at i2c_master.sv(202): extended using "x" or "z" File: C:/Users/avery/ece554/autotune/rtl/i2c_master.sv Line: 202

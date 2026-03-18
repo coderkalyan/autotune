@@ -5,12 +5,12 @@
 module lpf #(
     parameter int FC_HZ = 1300
 ) (
-    input  wire         clk,
-    input  wire         rst,
+    input  wire    clk,
+    input  wire    rst,
     input  fixed_t i_data,
-    input  wire         i_valid,
+    input  wire    i_valid,
     output fixed_t o_data,
-    output wire         o_valid
+    output wire    o_valid
 );
     localparam real FS_HZ = 48000.0;
     localparam real PI = 3.1415927;
@@ -22,9 +22,9 @@ module lpf #(
 
     // y[n] = alpha * x[n] + (1 - alpha) * y[n-1]
     logic signed [53:0] x;
-    always_comb x = fixed_mul_raw(FALPHA, i_data) + fixed_mul_raw(fixed_t'(FONE - FALPHA), y);
-
     fixed_t y;
+    always_comb x = fixed_mul_raw(FALPHA, i_data) + fixed_mul_raw(FONE - FALPHA, y);
+
     always_ff @(posedge clk) begin
         if (rst)
             y <= '0;
