@@ -1,31 +1,25 @@
+`include "../fixed.sv"
+
 module autocorrelate_top #(
-  parameter DATA_WIDTH  = 4,
-  parameter WINDOW_BITS = 3
+  parameter WINDOW_BITS = 10,
+  parameter START_L = 0,
+  parameter STEP = 16,
+  parameter SIM = 0
 ) (
   input  clk,
   input  rst,
-  // Memory write port (from external controller)
-  input                          wr,
-  input  [DATA_WIDTH-1:0]        data_in,
-  input  [WINDOW_BITS-1:0]       wr_addr,
-  // Pulse en=1 for one clock to start a full sweep over L = 0..WINDOW_SIZE-1
+  input fixed_t                  x_data,  //global pointer (same for all parallel instances)
+  input fixed_t                  y_data,  //local pointer (different for each parallel instance based on START_L and STEP)
+  output [WINDOW_BITS-1:0]       y_addr,
+  // Pulse en=1 for one clock to start a full sweep with START_L and STEP
   input                          en,
-  // results[L] holds the autocorrelation value at lag L after done is asserted
-  output reg signed [DATA_WIDTH*2-1:0] results [0:2**WINDOW_BITS-1],
-  output reg                     done
+  // results[L] holds the autocorrelation value at lag START_L + L*STEP after done is asserted
+  output fmac_t     results [0:(2**WINDOW_BITS / STEP)-1],
+  output reg                     single_done,
+  output reg                     all_done
 );
 
   localparam WINDOW_SIZE = 2**WINDOW_BITS;
-
-  wire                          mem_data_valid;
-  wire                          mem_rd;
-  wire [WINDOW_BITS-1:0]        mem_addr_1;
-  wire [WINDOW_BITS-1:0]        mem_addr_2;
-  wire signed [DATA_WIDTH-1:0]  data_out_1;
-  wire signed [DATA_WIDTH-1:0]  data_out_2;
-
-  // When writing, external wr_addr drives addr_1; reads use autocorrelate's output
-  wire [WINDOW_BITS-1:0] addr_1 = wr ? wr_addr : mem_addr_1;
 
   // ----------------------------------------------------------------
   // Iteration FSM: sweeps current_L from 0 to WINDOW_SIZE-1,
@@ -34,26 +28,30 @@ module autocorrelate_top #(
   typedef enum logic [1:0] {IDLE, TRIGGER, WAIT} state_t;
   state_t state;
 
-  reg [WINDOW_BITS-1:0]         current_L;
-  reg                           autocorr_en;
-  wire signed [DATA_WIDTH*2-1:0] autocorr_result;
-  wire                           autocorr_done;
+  reg [$clog2(WINDOW_SIZE + STEP)-1:0] current_L; // needs enough bits to hold WINDOW_SIZE + STEP 
+                                                          // for the final increment after the last lag
+  reg autocorr_en;
+  fmac_t autocorr_result; 
+  wire autocorr_done;
+  logic [$clog2(WINDOW_SIZE / STEP)-1:0] res_idx;
 
   always_ff @(posedge clk) begin
     if (rst) begin
       state       <= IDLE;
-      current_L   <= '0;
+      current_L   <= START_L;
       autocorr_en <= 0;
-      done        <= 0;
+      all_done    <= 0;
+      res_idx     <= 0;
     end else begin
       autocorr_en <= 0;   // default: pulse only when TRIGGER fires
-      done        <= 0;
+      all_done           <= 0;   
 
       case (state)
         // Wait for an en pulse, then start sweep from L=0
         IDLE: begin
+          res_idx <= 0;
           if (en) begin
-            current_L <= '0;
+            current_L <= START_L;
             state     <= TRIGGER;
           end
         end
@@ -67,12 +65,13 @@ module autocorrelate_top #(
         // Wait for autocorrelate to finish, store result, then advance L
         WAIT: begin
           if (autocorr_done) begin
-            results[current_L] <= autocorr_result;
-            if (current_L == WINDOW_BITS'(WINDOW_SIZE - 1)) begin
-              done  <= 1;
+            results[res_idx] <= autocorr_result;
+            res_idx <= res_idx + 1;
+            if (current_L >= WINDOW_SIZE) begin
               state <= IDLE;
+              all_done <= 1;       // Signal that the entire sweep is done
             end else begin
-              current_L <= current_L + 1;
+              current_L <= current_L + STEP;
               state     <= TRIGGER;
             end
           end
@@ -83,43 +82,41 @@ module autocorrelate_top #(
     end
   end
 
-  // ----------------------------------------------------------------
-  // Memory
-  // ----------------------------------------------------------------
-  memory #(
-    .DATA_WIDTH(DATA_WIDTH),
-    .ADDR_WIDTH(WINDOW_BITS)
-  ) memory_inst (
-    .clk       (clk),
-    .wr        (wr),
-    .rd        (mem_rd),
-    .data_in   (data_in),
-    .addr_1    (addr_1),
-    .addr_2    (mem_addr_2),
-    .data_out_1(data_out_1),
-    .data_out_2(data_out_2),
-    .data_valid(mem_data_valid)
-  );
+  assign single_done = autocorr_done;
 
   // ----------------------------------------------------------------
   // Autocorrelate (single-lag engine)
   // ----------------------------------------------------------------
-  autocorrelate #(
-    .DATA_WIDTH (DATA_WIDTH),
-    .WINDOW_BITS(WINDOW_BITS)
-  ) autocorrelate_inst (
-    .clk           (clk),
-    .rst           (rst),
-    .L             (current_L),
-    .mem_data_valid(mem_data_valid),
-    .en            (autocorr_en),
-    .mem_data_1    (data_out_1),
-    .mem_data_2    (data_out_2),
-    .mem_addr_1    (mem_addr_1),
-    .mem_addr_2    (mem_addr_2),
-    .mem_rd        (mem_rd),
-    .result        (autocorr_result),
-    .done          (autocorr_done)
-  );
+  generate
+    if (SIM) begin 
+      autocorrelation_sim_mod #(
+        .WBITS(WINDOW_BITS)
+      ) autocorrelate_inst (
+        .clk(clk),
+        .rst(rst),
+        .i_lag(current_L[WINDOW_BITS-1:0]),
+        .i_en(autocorr_en),
+        .i_xdata(x_data),  //global pointer
+        .i_ydata(y_data),  //local pointer
+        .o_yaddr(y_addr),    //local pointer translated to memory address
+        .o_result(autocorr_result),
+        .o_done(autocorr_done)
+      );
+    end else begin 
+      autocorrelate #(
+        .WINDOW_SIZE(WINDOW_SIZE)
+      ) autocorrelate_inst (
+        .clk           (clk),
+        .rst           (rst),
+        .i_lag         (current_L[WINDOW_BITS-1:0]), // autocorrelate only needs the lower WINDOW_BITS of current_L for addressing
+        .i_en          (autocorr_en),
+        .i_xdata       (x_data),  //global pointer
+        .i_ydata       (y_data),  //local pointer
+        .o_ydata       (y_addr),    //local pointer translated to memory address
+        .o_result      (autocorr_result),
+        .o_done        (autocorr_done)
+      );
+    end
+  endgenerate
 
 endmodule
