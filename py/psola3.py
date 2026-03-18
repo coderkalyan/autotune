@@ -313,9 +313,11 @@ def synthesize_pitch_shift(
     n_samples: int,
     *,
     fs_hz: float,
-    target_f0_at_time,
+    target_f0_at_time=None,
+    use_target_curve: bool = True,
+    constant_pitch_factor: float = 1.0,
 ) -> np.ndarray:
-    """Overlap-add grains while changing synthesis step size to shift pitch.
+    """Overlap-add grains with either target-curve autotune or fixed transposition.
 
     `ai` walks through analysis grains.
     `s` walks through synthesis (output) time.
@@ -372,17 +374,22 @@ def synthesize_pitch_shift(
 
         if period <= 0:
             pitch_factor = 1.0
+        elif not use_target_curve:
+            # Constant-factor mode: scale everything uniformly.
+            pitch_factor = float(constant_pitch_factor)
+            if pitch_factor <= 0.0:
+                pitch_factor = 1.0
         else:
+            # Target mode: follow user-defined target f0(t).
             # f0 = sample_rate / period_samples.
             current_f0 = float(fs_hz) / float(period)
-            target_f0 = float(target_f0_at_time(s / float(fs_hz)))
+            target_f0 = 0.0 if target_f0_at_time is None else float(target_f0_at_time(s / float(fs_hz)))
             if current_f0 > 0.0 and target_f0 > 0.0:
                 # >1 means pitch up, <1 means pitch down.
                 pitch_factor = target_f0 / current_f0
-                # print(target_f0, current_f0, pitch_factor)
             else:
                 pitch_factor = 1.0
-
+        
         # Synthesis hop in samples:
         #   hop_out ~= T / pitch_factor
         # If pitch_factor is 2.0 (one octave up), hop roughly halves.
@@ -404,6 +411,8 @@ def run_pass_through(
     fs_hz: int = 48000,
     start_s: float = 0.0,
     end_s: float | None = None,
+    use_target_curve: bool = True,
+    constant_pitch_factor: float = 2 ** (2 / 12),
     target_points_hz: list[tuple[float, float]] | None = None,
 ) -> np.ndarray:
     """Full pipeline: read input, detect epochs, synthesize, then write output.
@@ -447,6 +456,10 @@ def run_pass_through(
     median_period = float(np.median(periods))
     base_f0 = float(fs_hz) / median_period
 
+    # Mode selection:
+    # - use_target_curve=True: autotune against target points below.
+    # - use_target_curve=False: ignore target and use constant_pitch_factor.
+    
     # Demo target: every 0.1 s, move up one semitone.
     # Formula: frequency ratio per semitone = 2^(1/12).
     # Note: this demo currently overwrites `target_points_hz` input on purpose
@@ -455,19 +468,43 @@ def run_pass_through(
     for i in range(10):
         target_points_hz.append((i / 10.0, base_f0 * (2 ** (i / 12))))
 
-    if target_points_hz is None:
-        up_2st = base_f0 * (2 ** (2 / 12))
-        down_2st = base_f0 * (2 ** (-2 / 12))
-        target_points_hz = [
-            (0.0, base_f0),
-            (0.35 * duration_s, up_2st),
-            (0.70 * duration_s, down_2st),
-            (duration_s, base_f0),
-        ]
+    # target_f0_at_time = None
+    
+    if use_target_curve:
+        # If caller did not provide a curve, choose one preset below.
+        # QUICK TOGGLE: uncomment ONE preset block and keep others commented.
+        if target_points_hz is None:
+            # Preset A (default): lock to base pitch (flat target).
+            target_points_hz = [
+                (0.0, base_f0),
+                (duration_s, base_f0),
+            ]
 
-    # Step 5: convert discrete points into a callable target function.
-    target_f0_at_time = make_target_curve(target_points_hz)
-    print("target curve (Hz):", target_points_hz)
+            # Preset B: lock to +2 semitones above base pitch.
+            # up_2st = base_f0 * (2 ** (2 / 12))
+            # target_points_hz = [
+            #     (0.0, up_2st),
+            #     (duration_s, up_2st),
+            # ]
+
+            # Preset C: expressive contour (up then down then return).
+            # up_2st = base_f0 * (2 ** (2 / 12))
+            # down_2st = base_f0 * (2 ** (-2 / 12))
+            # target_points_hz = [
+            #     (0.0, base_f0),
+            #     (0.35 * duration_s, up_2st),
+            #     (0.70 * duration_s, down_2st),
+            #     (duration_s, base_f0),
+            # ]
+
+        # Step 5a: convert points into a callable target f0(t).
+        target_f0_at_time = make_target_curve(target_points_hz)
+        print("mode: target curve")
+        print("target curve (Hz):", target_points_hz)
+    else:
+        # Step 5b: constant transposition mode (global scale change).
+        print("mode: constant pitch factor")
+        print("constant pitch factor:", constant_pitch_factor)
 
     # Step 6: run PSOLA overlap-add synthesis with time-varying target pitch.
     y = synthesize_pitch_shift(
@@ -475,6 +512,8 @@ def run_pass_through(
         n_samples=x.size,
         fs_hz=float(fs_hz),
         target_f0_at_time=target_f0_at_time,
+        use_target_curve=use_target_curve,
+        constant_pitch_factor=constant_pitch_factor,
     )
 
     # Step 7: write outputs in raw and WAV formats.
@@ -497,6 +536,13 @@ if __name__ == "__main__":
     output_pcm = f"{base}_psola3_target.pcm"
     output_wav = f"{base}_psola3_target.wav"
 
+    # Easy mode toggle:
+    # True  -> target-based autotune (uses target presets in run_pass_through)
+    # False -> constant transposition using constant_pitch_factor
+    use_target_curve = False
+    # Example: +2 semitones for constant mode.
+    constant_pitch_factor = 2 ** (2 / 12)
+
     run_pass_through(
         input_pcm=input_pcm,
         output_pcm=output_pcm,
@@ -504,4 +550,6 @@ if __name__ == "__main__":
         fs_hz=fs_hz,
         start_s=0.0,
         end_s=None,
+        use_target_curve=use_target_curve,
+        constant_pitch_factor=constant_pitch_factor,
     )
