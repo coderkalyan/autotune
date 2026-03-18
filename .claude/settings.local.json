@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /Users/vishrutagrawal/repos/classes/spring-2026/ece554/autotune -type f -name README* -o -name Makefile* -o -name *.md -o -name CMakeLists.txt -o -name package.json -o -name .cursorrules -o -name CLAUDE.md)"
+    ]
+  }
+}
