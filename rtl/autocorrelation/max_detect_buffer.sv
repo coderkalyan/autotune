@@ -1,5 +1,5 @@
 module max_detect_buffer #(
-  parameter P24_BIT = 1,
+  parameter int P24_BIT = 1,
   parameter int DATA_WIDTH = (P24_BIT ? 24 : 16)
 ) (
   input logic i_clk,

@@ -16,9 +16,6 @@ module audio_cntrl #(
                                                 //  when configuring the Codec
     output logic o_config_done,                 // Flag indicating done configuring Codec
 
-    output logic [2*DATA_WIDTH-1:0] o_data_bypass,
-    output logic i2s_over,
-
     // Codec facing IO
 
     input logic i_aud_adcdat,                   // Data line from the ADC (I2S)
@@ -56,14 +53,11 @@ logic [7:0] reg_data;
 // CDC HANDLING      //
 ///////////////////////
 
-assign o_data_bypass = {left_data,right_data};
-assign i2s_over = recv_over;
-
 // FIFO for ADC Data to FPGA
 generate 
     if (P24_BIT) begin : ADC_FIFO_24
         // Note: this FIFO has a depth of 8 Words
-        fifo_2_24(
+        fifo_2_24 adc_fifo (
             .aclr(i_rst),                       // Reset for FIFO
             .data({left_data,right_data}),      // Data to FIFO (From ADC)
             .rdclk(i_clk_50M),                  // Read clk
@@ -77,7 +71,7 @@ generate
     end 
     else begin : ADC_FIFO_16
         // Note: this FIFO has a depth of 8 Words;   
-        fifo_2_16 (
+        fifo_2_16 adc_fifo (
             .aclr(i_rst),                       // Reset for FIFO
             .data({left_data,right_data}),      // Data to FIFO (From ADC)
             .rdclk(i_clk_50M),                  // Read clk
@@ -95,7 +89,7 @@ endgenerate
 generate 
     if (P24_BIT) begin : DAC_FIFO_24
         // Note: this FIFO has a depth of 8 Words
-        fifo_2_24(
+        fifo_2_24 dac_fifo (
             .aclr(i_rst),           // Reset for FIFO
             .data(i_data),          // Data to FIFO (From FPGA)
             .rdclk(o_bck),          // Read clk
@@ -109,7 +103,7 @@ generate
     end 
     else begin : DAC_FIFO_16
         // Note: this FIFO has a depth of 8 Words;   
-        fifo_2_16 (
+        fifo_2_16 dac_fifo (
             .aclr(i_rst),           // Reset for FIFO
             .data(i_data),          // Data to FIFO (From FPGA)
             .rdclk(o_bck),          // I2S Bit Clock 
