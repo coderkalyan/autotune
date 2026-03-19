@@ -1,12 +1,12 @@
 `include "../fixed.sv"
 
-`define SIM
 // Circular buffer for incoming data from the ADC
 // 256 data points per segment, 5 segments per buffer
 // 16 bit depth per data point
 // 11 bits needed to address 1280 data points
 module circular_buffer #(
-  parameter READ_PORTS = 1
+  parameter READ_PORTS = 1,
+  parameter SIM = 0 
 ) (
   input logic clk,
   input logic rst,
@@ -25,38 +25,35 @@ module circular_buffer #(
   logic [10:0] wr_ptr, rd_ptr; // 11 bits to address 2048 locations, but we will only use 1280 for the buffer
   logic [10:0] rd_addr[0:READ_PORTS-1];
 
-  `ifdef SIM
   generate
     genvar k;
-    for (k = 0; k < READ_PORTS; k++) begin 
-      memory #(
-        .DATA_WIDTH(27),
-        .ADDR_WIDTH(11)
-      ) memory_inst (
-        .i_clk(clk),
-        .i_data(i_wr_data),
-        .i_wr_addr(wr_ptr),
-        .i_rd_addr(rd_addr[k]),
-        .i_wr_en(i_wr_en),
-        .o_data(o_data[k])
-      );
+    if (SIM) begin
+      for (k = 0; k < READ_PORTS; k++) begin 
+        memory #(
+          .DATA_WIDTH(27),
+          .ADDR_WIDTH(11)
+        ) memory_inst (
+          .i_clk(clk),
+          .i_data(i_wr_data),
+          .i_wr_addr(wr_ptr),
+          .i_rd_addr(rd_addr[k]),
+          .i_wr_en(i_wr_en),
+          .o_data(o_data[k])
+        );
+      end
+    end else begin 
+      for (k = 0; k < READ_PORTS; k++) begin : PARALLEL_BRAM
+        bram_27_2k bram_24_2k_inst (
+          .clock(clk),
+          .data(i_wr_data),
+          .rdaddress(rd_addr[k]),
+          .wraddress(wr_ptr),
+          .wren(i_wr_en),
+          .q(o_data[k])
+        );
+      end
     end
   endgenerate
-  `else
-  generate
-    genvar i;
-    for (i = 0; i < READ_PORTS; i++) begin : PARALLEL_BRAM
-      bram_27_2k bram_24_2k_inst (
-        .clock(clk),
-        .data(i_wr_data),
-        .rdaddress(rd_addr[i]),
-        .wraddress(wr_ptr),
-        .wren(i_wr_en),
-        .q(o_data[i])
-      );
-    end
-  endgenerate
-  `endif
 
   always_ff @(posedge clk) begin
     if (rst) begin

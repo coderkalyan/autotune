@@ -8,8 +8,6 @@ module autocorrelate_top_tb;
   localparam int STEP        = 16;
   localparam int SIM         = 1;
 
-  localparam int NUM_RESULTS = (2**WINDOW_BITS) / STEP;
-
   logic clk;
   logic rst;
   logic en;
@@ -18,7 +16,7 @@ module autocorrelate_top_tb;
   fixed_t y_data;
 
   logic [WINDOW_BITS-1:0] y_addr;
-  fmac_t results [0:NUM_RESULTS-1];
+  fmac_t results;
   logic single_done;
   logic all_done;
 
@@ -84,15 +82,17 @@ module autocorrelate_top_tb;
     $display("[%0t] Starting first sweep", $time);
     pulse_en();
 
+    while (!all_done) begin 
+      if (single_done) begin
+        $display("[%0t] result = %0d", $time, results);
+      end
+      @(negedge clk);
+    end
+
     // Wait long enough for the full run to complete
-    wait (all_done == 1'b1);
     $display("[%0t] First sweep complete", $time);
 
-    // Print results array once at end
-    $display("----- Final results snapshot -----");
-    for (k = 0; k < NUM_RESULTS; k++) begin
-      $display("results[%0d] = %0d", k, results[k]);
-    end
+
 
     repeat (10) @(posedge clk);
     $stop;
