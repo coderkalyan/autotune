@@ -26,13 +26,16 @@ logic enable;
 logic ptr_reset;
 
 // ----------------------------------------------------------------
-// Internal Logic
+// Internal Signals and Registers
 // ----------------------------------------------------------------
 
 assign eff_addr = {x_addr, y_addr}; 
 assign x_data = eff_data[0];
 
-// global pointer logic 
+// ----------------------------------------------------------------
+// Global Pointer Logic
+// ----------------------------------------------------------------
+
 always @(posedge i_clk) begin
     if (i_rst) 
         x_addr <= '0;  
@@ -41,6 +44,10 @@ always @(posedge i_clk) begin
     else 
         x_addr <= x_addr + 1; // increment global pointer to sweep through the window
 end
+
+// ----------------------------------------------------------------
+// Write Counter and State Machine to track when to start autocorrelation
+// ----------------------------------------------------------------
 
 // counter for writes to circular buffer
 always @(posedge i_clk) begin
