@@ -4,6 +4,9 @@
 // Q11.16 fixed point representation.
 typedef logic signed [26:0] fixed_t;
 
+// Q32.16 fixed point representation.
+typedef logic signed [47:0] fmac_t;
+
 // 16 bit signed integer audio.
 typedef logic signed [15:0] audio_t;
 
