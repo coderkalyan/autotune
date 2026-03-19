@@ -1,4 +1,4 @@
-`include "../fixed.sv"
+`include "/fixed.sv"
 
 module autocorrelate_top #(
   parameter WINDOW_BITS = 10,

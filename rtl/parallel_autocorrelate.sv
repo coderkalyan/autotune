@@ -1,4 +1,4 @@
-`include "../fixed.sv"
+`include "/fixed.sv"
 
 module parallel_autocorrelate #(
     parameter STAMPS = 16,
