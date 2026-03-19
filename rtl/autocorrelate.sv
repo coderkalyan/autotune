@@ -36,6 +36,7 @@ module autocorrelate #(
       state   <= IDLE;
       o_done  <= '0;
     end else begin
+      o_done <= 0; // default
       case (state)
         IDLE: begin
           if (i_en) begin
