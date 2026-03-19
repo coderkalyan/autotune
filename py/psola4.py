@@ -130,6 +130,8 @@ def extract_grain_samples(signal: np.ndarray, center: int, period: int) -> np.nd
 
     # Allocate destination grain and copy only valid input overlap.
     grain = np.zeros(length, dtype=np.float64)
+    # Normal (ideal) grain read window in absolute input coordinates.
+    # This is what we would read if the signal were infinite.
     start = center - period
     end = center + period
 
@@ -341,15 +343,24 @@ def overlap_add_grain(output_signal: np.ndarray, grain: Grain, synth_center: int
     if length <= 0:
         return
 
+    # Normal (ideal) output placement window for this grain center.
+    # If output were unbounded, we'd write the full grain to [start, end).
     start = synth_center - period
     end = start + length
+
+    # Clipped output window after enforcing valid output buffer bounds.
+    # out_start/out_end are the actual write range into output_signal.
     out_start = max(0, start)
     out_end = min(n_samples, end)
     if out_end <= out_start:
         return
 
-    # Map clipped output span back into grain-local coordinates.
+    ### Map clipped output span back into grain-local coordinates. ###
+
+    # grain_start is the first grain index aligned with out_start in output.
     grain_start = out_start - start
+
+    # grain_end is one-past-last grain index aligned with out_end in output.
     grain_end = grain_start + (out_end - out_start)
     output_signal[out_start:out_end] += grain.samples[grain_start:grain_end]
 
@@ -639,7 +650,8 @@ def run_pass_through(
 
 if __name__ == "__main__":
     FS_HZ = 48000
-    INPUT_PCM = "twinkle.pcm"
+    # INPUT_PCM = "twinkle.pcm"
+    INPUT_PCM = "DAZBEE_Acapella.pcm"
 
     base, _ext = os.path.splitext(INPUT_PCM)
     OUTPUT_PCM = f"{base}_psola4_target.pcm"
