@@ -49,33 +49,11 @@ module autocorrelate_top #(
         IDLE: begin
           if (i_en) begin
             current_L <= START_L;
-            // o_autocorr_en_ptr <= 1;
-            // state     <= TRIGGER;
             state <= WAIT;
           end
         end
-
-        // Assert en to autocorrelate for exactly one cycle with current_L
-        TRIGGER: begin
-          //  o_autocorr_en_ptr <= 1;
-          state       <= WAIT;
-        end
-
         // Wait for autocorrelate to finish, store result, then advance L
-        WAIT: begin
-          // if (autocorr_done) begin
-          //   //o_result <= autocorr_result;
-          //   if (current_L >= WINDOW_SIZE-1) begin
-          //     state <= IDLE;
-          //     o_all_done <= 1;       // Signal that the entire sweep is done
-          //   end else begin
-          //     o_result <= autocorr_result;
-          //     current_L <= current_L + STEP;
-          //     state     <= WAIT;
-          //     o_autocorr_en_ptr <= 1;  
-          //   end
-          // end
-          
+        WAIT: begin          
           if (current_L >= WINDOW_SIZE) begin
               state <= IDLE;
               o_all_done <= 1;       // Signal that the entire sweep is done
@@ -83,7 +61,6 @@ module autocorrelate_top #(
           if (autocorr_done) begin
               o_result <= autocorr_result;
               current_L <= current_L + STEP;
-              //state     <= TRIGGER;
               state     <= WAIT;
               o_autocorr_en_ptr <= (current_L + STEP < WINDOW_SIZE) ? 1 : 0; // pulse en for next lag if we haven't reached the end of the sweep
           end
