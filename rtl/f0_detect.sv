@@ -65,7 +65,8 @@ module f0_detect #(
         end
 
         POST: begin
-          o_period <= argmax;
+          //o_period <= argmax;
+          o_period <= argmax - 15;
           o_done   <= 1'b1;
           o_valid  <= candidate && (max >= (r0 >> 2));
           state    <= IDLE;
