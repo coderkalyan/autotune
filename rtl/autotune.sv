@@ -7,341 +7,402 @@
 
 module autotune (
 
-	//////////// ADC //////////
-	output		          		ADC_CONVST,
-	output		          		ADC_DIN,
-	input 		          		ADC_DOUT,
-	output		          		ADC_SCLK,
+    //////////// ADC //////////
+    output ADC_CONVST,
+    output ADC_DIN,
+    input  ADC_DOUT,
+    output ADC_SCLK,
 
-	//////////// Audio //////////
-	input 		          		AUD_ADCDAT,
-	inout 		          		AUD_ADCLRCK,
-	inout 		          		AUD_BCLK,
-	output		          		AUD_DACDAT,
-	inout 		          		AUD_DACLRCK,
-	output		          		AUD_XCK,
+    //////////// Audio //////////
+    input  AUD_ADCDAT,
+    inout  AUD_ADCLRCK,
+    inout  AUD_BCLK,
+    output AUD_DACDAT,
+    inout  AUD_DACLRCK,
+    output AUD_XCK,
 
-	//////////// CLOCK //////////
-	input 		          		CLOCK2_50,
-	input 		          		CLOCK3_50,
-	input 		          		CLOCK4_50,
-	input 		          		CLOCK_50,
+    //////////// CLOCK //////////
+    input CLOCK2_50,
+    input CLOCK3_50,
+    input CLOCK4_50,
+    input CLOCK_50,
 
-	//////////// SDRAM //////////
-	output		    [12:0]		DRAM_ADDR,
-	output		     [1:0]		DRAM_BA,
-	output		          		DRAM_CAS_N,
-	output		          		DRAM_CKE,
-	output		          		DRAM_CLK,
-	output		          		DRAM_CS_N,
-	inout 		    [15:0]		DRAM_DQ,
-	output		          		DRAM_LDQM,
-	output		          		DRAM_RAS_N,
-	output		          		DRAM_UDQM,
-	output		          		DRAM_WE_N,
+    //////////// SDRAM //////////
+    output [12:0] DRAM_ADDR,
+    output [ 1:0] DRAM_BA,
+    output        DRAM_CAS_N,
+    output        DRAM_CKE,
+    output        DRAM_CLK,
+    output        DRAM_CS_N,
+    inout  [15:0] DRAM_DQ,
+    output        DRAM_LDQM,
+    output        DRAM_RAS_N,
+    output        DRAM_UDQM,
+    output        DRAM_WE_N,
 
-	//////////// I2C for Audio and Video-In //////////
-	output		          		FPGA_I2C_SCLK,
-	inout 		          		FPGA_I2C_SDAT,
+    //////////// I2C for Audio and Video-In //////////
+    output FPGA_I2C_SCLK,
+    inout  FPGA_I2C_SDAT,
 
-	//////////// SEG7 //////////
-	output		     [6:0]		HEX0,
-	output		     [6:0]		HEX1,
-	output		     [6:0]		HEX2,
-	output		     [6:0]		HEX3,
-	output		     [6:0]		HEX4,
-	output		     [6:0]		HEX5,
+    //////////// SEG7 //////////
+    output [6:0] HEX0,
+    output [6:0] HEX1,
+    output [6:0] HEX2,
+    output [6:0] HEX3,
+    output [6:0] HEX4,
+    output [6:0] HEX5,
 
-	//////////// IR //////////
-	input 		          		IRDA_RXD,
-	output		          		IRDA_TXD,
+    //////////// IR //////////
+    input  IRDA_RXD,
+    output IRDA_TXD,
 
-	//////////// KEY //////////
-	input 		     [3:0]		KEY,
+    //////////// KEY //////////
+    input [3:0] KEY,
 
-	//////////// LED //////////
-	output		     [9:0]		LEDR,
+    //////////// LED //////////
+    output [9:0] LEDR,
 
-	//////////// PS2 //////////
-	inout 		          		PS2_CLK,
-	inout 		          		PS2_CLK2,
-	inout 		          		PS2_DAT,
-	inout 		          		PS2_DAT2,
+    //////////// PS2 //////////
+    inout PS2_CLK,
+    inout PS2_CLK2,
+    inout PS2_DAT,
+    inout PS2_DAT2,
 
-	//////////// SW //////////
-	input 		     [9:0]		SW,
+    //////////// SW //////////
+    input [9:0] SW,
 
-	//////////// Video-In //////////
-	input 		          		TD_CLK27,
-	input 		     [7:0]		TD_DATA,
-	input 		          		TD_HS,
-	output		          		TD_RESET_N,
-	input 		          		TD_VS,
+    //////////// Video-In //////////
+    input        TD_CLK27,
+    input  [7:0] TD_DATA,
+    input        TD_HS,
+    output       TD_RESET_N,
+    input        TD_VS,
 
-	//////////// VGA //////////
-	output		          		VGA_BLANK_N,
-	output		     [7:0]		VGA_B,
-	output		          		VGA_CLK,
-	output		     [7:0]		VGA_G,
-	output		          		VGA_HS,
-	output		     [7:0]		VGA_R,
-	output		          		VGA_SYNC_N,
-	output		          		VGA_VS
+    //////////// VGA //////////
+    output       VGA_BLANK_N,
+    output [7:0] VGA_B,
+    output       VGA_CLK,
+    output [7:0] VGA_G,
+    output       VGA_HS,
+    output [7:0] VGA_R,
+    output       VGA_SYNC_N,
+    output       VGA_VS
 );
-    wire rst = ~KEY[0];
+  wire rst = ~KEY[0];
 
-    // Safe defaults for unused interfaces (codec bypass test only)
-    assign ADC_CONVST  = 1'b0;
-    assign ADC_DIN     = 1'b0;
-    assign ADC_SCLK    = 1'b0;
-    //assign AUD_DACDAT  = 1'b0;
-    //assign AUD_XCK     = 1'b0;
-    assign TD_RESET_N  = 1'b1;
+  // Safe defaults for unused interfaces (codec bypass test only)
+  assign ADC_CONVST  = 1'b0;
+  assign ADC_DIN     = 1'b0;
+  assign ADC_SCLK    = 1'b0;
+  //assign AUD_DACDAT  = 1'b0;
+  //assign AUD_XCK     = 1'b0;
+  assign TD_RESET_N  = 1'b1;
 
-    // Leave shared audio clocks/LRCK as Hi-Z (not used for analogue bypass)
-    //assign AUD_ADCLRCK = 1'bz;
-    //assign AUD_BCLK    = 1'bz;
-    //assign AUD_DACLRCK = 1'bz;
-
-
-    assign IRDA_TXD   = 1'b1;
-
-    assign DRAM_ADDR  = '0;
-    assign DRAM_BA    = '0;
-    assign DRAM_CAS_N = 1'b1;
-    assign DRAM_CKE   = 1'b0;
-    assign DRAM_CLK   = 1'b0;
-    assign DRAM_CS_N  = 1'b1;
-    assign DRAM_LDQM  = 1'b0;
-    assign DRAM_RAS_N = 1'b1;
-    assign DRAM_UDQM  = 1'b0;
-    assign DRAM_WE_N  = 1'b1;
-
-    assign VGA_BLANK_N= 1'b1;
-    assign VGA_B      = '0;
-    assign VGA_CLK    = 1'b0;
-    assign VGA_G      = '0;
-    assign VGA_HS     = 1'b0;
-    assign VGA_R      = '0;
-    assign VGA_SYNC_N = 1'b1;
-    assign VGA_VS     = 1'b0;
-
-    logic [31:0] dac_data, adc_data;
-    logic        dac_en, dac_full, adc_en, adc_empty;
-    logic        config_err, config_done;
-    logic        lrck;
-    audio_cntrl #(
-        .P24_BIT(0)
-    ) audio_cntrl(
-        .i_clk_50M(CLOCK_50),
-        .i_rst(rst),
-        .i_data(dac_data),
-        .i_fifo_wr_en(dac_en),
-        .i_fifo_rd_en(adc_en),
-        .o_read_empty(adc_empty),
-        .o_write_full(dac_full),
-        .o_data(adc_data),
-        .o_config_err(config_err),
-        .o_config_done(config_done),
-        .i_aud_adcdat(AUD_ADCDAT),
-        .o_aud_dacdat(AUD_DACDAT),
-        .o_bck(AUD_BCLK),
-        .o_aud_lrck(lrck),
-        .o_aud_xck(AUD_XCK),
-        .o_i2c_sclk(FPGA_I2C_SCLK),
-        .o_i2c_sdat(FPGA_I2C_SDAT)
-    );
-
-    assign AUD_ADCLRCK = lrck;
-    assign AUD_DACLRCK = lrck;
-
-    logic [10:0] sample_counter;
-    always_ff @(posedge CLOCK_50) begin
-        if (rst)
-            sample_counter <= '0;
-        else if (sample_counter == 11'd1040)
-            sample_counter <= '0;
-        else
-            sample_counter <= sample_counter + 11'd1;
-    end
-
-    // 48000 / 100 = 480Hz
-    // logic [8:0] wave_counter;
-    // always_ff @(posedge CLOCK_50) begin
-    //     if (rst)
-    //         wave_counter <= '0;
-    //     else if (wave_counter == 9'd239)
-    //         wave_counter <= '0;
-    //     else if (sample_counter == 11'd0)
-    //         wave_counter <= wave_counter + 9'd1;
-    // end
-
-    // assign dac_data = {2{(wave_counter < 9'd120) ? 16'd0800 : 16'd0}}; //verifying dac configuration is correct
-    // assign dac_en = sample_counter == 11'd0;
-    // assign adc_en = sample_counter == 11'd0;
-
-    logic [0:0] r_adc_en;
-    // always_ff @(posedge CLOCK_50) begin
-    //     if (rst)
-    //         r_adc_en <= '0;
-    //     else
-    //         r_adc_en <= adc_en;
-    // end
+  // Leave shared audio clocks/LRCK as Hi-Z (not used for analogue bypass)
+  //assign AUD_ADCLRCK = 1'bz;
+  //assign AUD_BCLK    = 1'bz;
+  //assign AUD_DACLRCK = 1'bz;
 
 
-    // audio_t ldata, rdata;
-    // assign ldata = audio_t'(adc_data[15: 0]);
-    // assign rdata = audio_t'(adc_data[31:16]);
-    logic signed [15:0] ldata, rdata;
-    assign ldata = signed'(adc_data[31:16]);
-    assign rdata = signed'(adc_data[15: 0]);
+  assign IRDA_TXD    = 1'b1;
 
-    fixed_t lf, rf;
-    assign lf = `FIXED_ATOF(ldata);
-    assign rf = `FIXED_ATOF(rdata);
+  assign DRAM_ADDR   = '0;
+  assign DRAM_BA     = '0;
+  assign DRAM_CAS_N  = 1'b1;
+  assign DRAM_CKE    = 1'b0;
+  assign DRAM_CLK    = 1'b0;
+  assign DRAM_CS_N   = 1'b1;
+  assign DRAM_LDQM   = 1'b0;
+  assign DRAM_RAS_N  = 1'b1;
+  assign DRAM_UDQM   = 1'b0;
+  assign DRAM_WE_N   = 1'b1;
 
-    fixed_t lpf_lf;
-    // lpf #(.FC_HZ(1000)) lpf1 (
-    //     .clk(CLOCK_50),
-    //     .rst(rst),
-    //     .i_data(lf),
-    //     .i_valid(adc_en),
-    //     .o_data(lpf_lf),
-    //     .o_valid(r_adc_en)
-    // );
-    //
-    fixed_t lpf_rf;
-    // lpf #(.FC_HZ(1000)) lpf2 (
-    //     .clk(CLOCK_50),
-    //     .rst(rst),
-    //     .i_data(rf),
-    //     .i_valid(adc_en),
-    //     .o_data(lpf_rf),
-    //     // .o_valid(r_adc_en)
-    // );
+  assign VGA_BLANK_N = 1'b1;
+  assign VGA_B       = '0;
+  assign VGA_CLK     = 1'b0;
+  assign VGA_G       = '0;
+  assign VGA_HS      = 1'b0;
+  assign VGA_R       = '0;
+  assign VGA_SYNC_N  = 1'b1;
+  assign VGA_VS      = 1'b0;
 
-    // --- Internal Signals: Left Channel ---
-    fixed_t lpf_lf_s1, lpf_lf_s2; // Intermediate stage outputs
-    logic   v_l_s1, v_l_s2;       // Intermediate valid signals
+  logic [31:0] dac_data, adc_data;
+  logic dac_en, dac_full, adc_en, adc_empty;
+  logic config_err, config_done;
+  logic lrck;
+  audio_cntrl #(
+      .P24_BIT(0)
+  ) audio_cntrl (
+      .i_clk_50M(CLOCK_50),
+      .i_rst(rst),
+      .i_data(dac_data),
+      .i_fifo_wr_en(dac_en),
+      .i_fifo_rd_en(adc_en),
+      .o_read_empty(adc_empty),
+      .o_write_full(dac_full),
+      .o_data(adc_data),
+      .o_config_err(config_err),
+      .o_config_done(config_done),
+      .i_aud_adcdat(AUD_ADCDAT),
+      .o_aud_dacdat(AUD_DACDAT),
+      .o_bck(AUD_BCLK),
+      .o_aud_lrck(lrck),
+      .o_aud_xck(AUD_XCK),
+      .o_i2c_sclk(FPGA_I2C_SCLK),
+      .o_i2c_sdat(FPGA_I2C_SDAT)
+  );
 
-    // --- Internal Signals: Right Channel ---
-    fixed_t lpf_rf_s1, lpf_rf_s2; // Intermediate stage outputs
-    logic   v_r_s1, v_r_s2;       // Intermediate valid signals
+  assign AUD_ADCLRCK = lrck;
+  assign AUD_DACLRCK = lrck;
 
-    // ============================================================
-    // LEFT CHANNEL (lf)
-    // ============================================================
-    lpf #(.FC_HZ(10000)) lpf_l_inst1 (
-        .clk(CLOCK_50), .rst(rst),
-        .i_data(lf),         .i_valid(adc_en),
-        .o_data(lpf_lf_s1),  .o_valid(v_l_s1)
-    );
+  logic [10:0] sample_counter;
+  always_ff @(posedge CLOCK_50) begin
+    if (rst) sample_counter <= '0;
+    else if (sample_counter == 11'd1040) sample_counter <= '0;
+    else sample_counter <= sample_counter + 11'd1;
+  end
 
-    lpf #(.FC_HZ(10000)) lpf_l_inst2 (
-        .clk(CLOCK_50), .rst(rst),
-        .i_data(lpf_lf_s1),  .i_valid(v_l_s1),
-        .o_data(lpf_lf_s2),  .o_valid(v_l_s2)
-    );
+  // 48000 / 100 = 480Hz
+  // logic [8:0] wave_counter;
+  // always_ff @(posedge CLOCK_50) begin
+  //     if (rst)
+  //         wave_counter <= '0;
+  //     else if (wave_counter == 9'd239)
+  //         wave_counter <= '0;
+  //     else if (sample_counter == 11'd0)
+  //         wave_counter <= wave_counter + 9'd1;
+  // end
 
-    lpf #(.FC_HZ(10000)) lpf_l_inst3 (
-        .clk(CLOCK_50), .rst(rst),
-        .i_data(lpf_lf_s2),  .i_valid(v_l_s2),
-        .o_data(lpf_lf),     .o_valid(r_adc_en) // Final Left Output
-    );
+  // assign dac_data = {2{(wave_counter < 9'd120) ? 16'd0800 : 16'd0}}; //verifying dac configuration is correct
+  // assign dac_en = sample_counter == 11'd0;
+  // assign adc_en = sample_counter == 11'd0;
 
-    // ============================================================
-    // RIGHT CHANNEL (rf)
-    // ============================================================
-    lpf #(.FC_HZ(400)) lpf_r_inst1 (
-        .clk(CLOCK_50), .rst(rst),
-        .i_data(rf),         .i_valid(adc_en),
-        .o_data(lpf_rf_s1),  .o_valid(v_r_s1)
-    );
+  logic [0:0] r_adc_en;
+  // always_ff @(posedge CLOCK_50) begin
+  //     if (rst)
+  //         r_adc_en <= '0;
+  //     else
+  //         r_adc_en <= adc_en;
+  // end
 
-    lpf #(.FC_HZ(400)) lpf_r_inst2 (
-        .clk(CLOCK_50), .rst(rst),
-        .i_data(lpf_rf_s1),  .i_valid(v_r_s1),
-        .o_data(lpf_rf_s2),  .o_valid(v_r_s2)
-    );
 
-    lpf #(.FC_HZ(400)) lpf_r_inst3 (
-        .clk(CLOCK_50), .rst(rst),
-        .i_data(lpf_rf_s2),  .i_valid(v_r_s2),
-        .o_data(lpf_rf),     .o_valid()         // Final Right Output (valid is redundant)
-    );
+  // audio_t ldata, rdata;
+  // assign ldata = audio_t'(adc_data[15: 0]);
+  // assign rdata = audio_t'(adc_data[31:16]);
+  logic signed [15:0] ldata, rdata;
+  assign ldata = signed'(adc_data[31:16]);
+  assign rdata = signed'(adc_data[15:0]);
 
-    logic [14:0] counter;
-    always_ff @(posedge CLOCK_50) begin
-        if (rst)
-            counter <= '0;
-        else if (adc_en)
-            counter <= counter + 12'd1;
-    end
+  fixed_t lf, rf;
+  assign lf = `FIXED_ATOF(ldata);
+  assign rf = `FIXED_ATOF(rdata);
 
-    fixed_t hann;
-    hanning #(.N(4096)) hanning (
-        .clk(CLOCK_50),
-        .rst(rst),
-        .i_index(counter[14:3]),
-        .o_data(hann)
-    );
+  fixed_t lpf_lf;
+  // lpf #(.FC_HZ(1000)) lpf1 (
+  //     .clk(CLOCK_50),
+  //     .rst(rst),
+  //     .i_data(lf),
+  //     .i_valid(adc_en),
+  //     .o_data(lpf_lf),
+  //     .o_valid(r_adc_en)
+  // );
+  //
+  fixed_t lpf_rf;
+  // lpf #(.FC_HZ(1000)) lpf2 (
+  //     .clk(CLOCK_50),
+  //     .rst(rst),
+  //     .i_data(rf),
+  //     .i_valid(adc_en),
+  //     .o_data(lpf_rf),
+  //     // .o_valid(r_adc_en)
+  // );
 
-    assign adc_en = !adc_empty;
-    assign dac_en = r_adc_en & SW[0];
+  // --- Internal Signals: Left Channel ---
+  fixed_t lpf_lf_s1, lpf_lf_s2;  // Intermediate stage outputs
+  logic v_l_s1, v_l_s2;  // Intermediate valid signals
 
-    logic [31:0] r_adc_data;
+  // --- Internal Signals: Right Channel ---
+  fixed_t lpf_rf_s1, lpf_rf_s2;  // Intermediate stage outputs
+  logic v_r_s1, v_r_s2;  // Intermediate valid signals
 
-    fixed_t hann_lf, hann_rf;
-    always_comb hann_lf = fixed_mul(hann, lpf_lf);
-    always_comb hann_rf = fixed_mul(hann, lpf_rf);
-    // assign r_adc_data = {`FIXED_FTOA(lpf_lf), `FIXED_FTOA(lpf_rf)};
-    assign r_adc_data = {`FIXED_FTOA(hann_lf), `FIXED_FTOA(hann_rf)};
-    // assign r_adc_data = {16'd0, `FIXED_FTOA(lpf_lf)};
-    // always_ff @(posedge CLOCK_50) begin
-    //     if (rst)
-    //         r_adc_data <= '0;
-    //     else
-    //         // r_adc_data <= {rdata, ldata};
-    //         r_adc_data <= {`FIXED_FTOA(lpf_rf), `FIXED_FTOA(lpf_lf)};
-    // end
+  // ============================================================
+  // LEFT CHANNEL (lf)
+  // ============================================================
+  lpf #(
+      .FC_HZ(10000)
+  ) lpf_l_inst1 (
+      .clk(CLOCK_50),
+      .rst(rst),
+      .i_data(lf),
+      .i_valid(adc_en),
+      .o_data(lpf_lf_s1),
+      .o_valid(v_l_s1)
+  );
 
-    // assign dac_data = {`FIXED_FTOA(rf), `FIXED_FTOA(lf)};
-    assign dac_data = r_adc_data;
-    // assign dac_data = adc_data;
-    // assign dac_data = r_adc_data;
+  lpf #(
+      .FC_HZ(10000)
+  ) lpf_l_inst2 (
+      .clk(CLOCK_50),
+      .rst(rst),
+      .i_data(lpf_lf_s1),
+      .i_valid(v_l_s1),
+      .o_data(lpf_lf_s2),
+      .o_valid(v_l_s2)
+  );
 
-    assign LEDR[0] = config_done;
-    assign LEDR[1] = config_err;
-    assign LEDR[2] = adc_empty;
-    assign LEDR[3] = dac_full;
-    assign LEDR[4] = i2s_over;
-    // assign LEDR[5] = lpf_valid;
-    // assign LEDR[2] = codec_done;
-    // assign LEDR[3] = codec_error;
-    // assign LEDR[4] = codec_start;
-    assign LEDR[9] = rst;
+  lpf #(
+      .FC_HZ(10000)
+  ) lpf_l_inst3 (
+      .clk(CLOCK_50),
+      .rst(rst),
+      .i_data(lpf_lf_s2),
+      .i_valid(v_l_s2),
+      .o_data(lpf_lf),
+      .o_valid(r_adc_en)  // Final Left Output
+  );
 
-    // 7-seg hex decoder (active-low segments on DE1-SoC)
-    function automatic logic [6:0] hex7(input logic [3:0] v);
-        unique case (v)
-            4'h0: hex7 = 7'b1000000;
-            4'h1: hex7 = 7'b1111001;
-            4'h2: hex7 = 7'b0100100;
-            4'h3: hex7 = 7'b0110000;
-            4'h4: hex7 = 7'b0011001;
-            4'h5: hex7 = 7'b0010010;
-            4'h6: hex7 = 7'b0000010;
-            4'h7: hex7 = 7'b1111000;
-            4'h8: hex7 = 7'b0000000;
-            4'h9: hex7 = 7'b0010000;
-            4'hA: hex7 = 7'b0001000;
-            4'hB: hex7 = 7'b0000011;
-            4'hC: hex7 = 7'b1000110;
-            4'hD: hex7 = 7'b0100001;
-            4'hE: hex7 = 7'b0000110;
-            4'hF: hex7 = 7'b0001110;
-            default: hex7 = 7'b1111111;
-        endcase
-    endfunction
+  // ============================================================
+  // RIGHT CHANNEL (rf)
+  // ============================================================
+  lpf #(
+      .FC_HZ(400)
+  ) lpf_r_inst1 (
+      .clk(CLOCK_50),
+      .rst(rst),
+      .i_data(rf),
+      .i_valid(adc_en),
+      .o_data(lpf_rf_s1),
+      .o_valid(v_r_s1)
+  );
 
+  lpf #(
+      .FC_HZ(400)
+  ) lpf_r_inst2 (
+      .clk(CLOCK_50),
+      .rst(rst),
+      .i_data(lpf_rf_s1),
+      .i_valid(v_r_s1),
+      .o_data(lpf_rf_s2),
+      .o_valid(v_r_s2)
+  );
+
+  lpf #(
+      .FC_HZ(400)
+  ) lpf_r_inst3 (
+      .clk    (CLOCK_50),
+      .rst    (rst),
+      .i_data (lpf_rf_s2),
+      .i_valid(v_r_s2),
+      .o_data (lpf_rf),
+      .o_valid()            // Final Right Output (valid is redundant)
+  );
+
+  logic [14:0] counter;
+  always_ff @(posedge CLOCK_50) begin
+    if (rst) counter <= '0;
+    else if (adc_en) counter <= counter + 12'd1;
+  end
+
+  fixed_t hann;
+  hanning #(
+      .N(4096)
+  ) hanning (
+      .clk(CLOCK_50),
+      .rst(rst),
+      .i_index(counter[14:3]),
+      .o_data(hann)
+  );
+
+  assign adc_en = !adc_empty;
+  assign dac_en = r_adc_en & SW[0];
+
+  logic [31:0] r_adc_data;
+
+  fixed_t hann_lf, hann_rf;
+  always_comb hann_lf = fixed_mul(hann, lpf_lf);
+  always_comb hann_rf = fixed_mul(hann, lpf_rf);
+  // assign r_adc_data = {`FIXED_FTOA(lpf_lf), `FIXED_FTOA(lpf_rf)};
+  assign r_adc_data = {`FIXED_FTOA(hann_lf), `FIXED_FTOA(hann_rf)};
+  // assign r_adc_data = {16'd0, `FIXED_FTOA(lpf_lf)};
+  // always_ff @(posedge CLOCK_50) begin
+  //     if (rst)
+  //         r_adc_data <= '0;
+  //     else
+  //         // r_adc_data <= {rdata, ldata};
+  //         r_adc_data <= {`FIXED_FTOA(lpf_rf), `FIXED_FTOA(lpf_lf)};
+  // end
+
+  // assign dac_data = {`FIXED_FTOA(rf), `FIXED_FTOA(lf)};
+  assign dac_data   = r_adc_data;
+  // assign dac_data = adc_data;
+  // assign dac_data = r_adc_data;
+
+  logic pitch_done, pitch_valid;
+  logic [9:0] pitch_period;
+  pitch_detection #(
+      .WINDOW_SIZE(1024),
+      .STAMPS(16)
+  ) pitch_detection (
+      .clk(CLOCK_50),
+      .rst(rst),
+      .i_wr_en(r_adc_en),
+      .i_proc_data(lpf_lf),
+      .o_period(pitch_period),
+      .o_valid(pitch_valid),
+      .o_done(pitch_done)
+  );
+
+  logic r_pitch_valid;
+  always_ff @(posedge CLOCK_50) begin
+    if (rst)
+      r_pitch_valid <= 1'b0;
+    else if (pitch_done)
+      r_pitch_valid <= pitch_valid;
+  end
+
+  assign LEDR[0] = config_done;
+  assign LEDR[1] = config_err;
+  assign LEDR[2] = adc_empty;
+  assign LEDR[3] = dac_full;
+  assign LEDR[4] = pitch_done;
+  assign LEDR[5] = r_pitch_valid;
+  // assign LEDR[2] = codec_done;
+  // assign LEDR[3] = codec_error;
+  // assign LEDR[4] = codec_start;
+  assign LEDR[9] = rst;
+
+  // 7-seg hex decoder (active-low segments on DE1-SoC)
+  function automatic logic [6:0] hex7(input logic [3:0] v);
+    unique case (v)
+      4'h0: hex7 = 7'b1000000;
+      4'h1: hex7 = 7'b1111001;
+      4'h2: hex7 = 7'b0100100;
+      4'h3: hex7 = 7'b0110000;
+      4'h4: hex7 = 7'b0011001;
+      4'h5: hex7 = 7'b0010010;
+      4'h6: hex7 = 7'b0000010;
+      4'h7: hex7 = 7'b1111000;
+      4'h8: hex7 = 7'b0000000;
+      4'h9: hex7 = 7'b0010000;
+      4'hA: hex7 = 7'b0001000;
+      4'hB: hex7 = 7'b0000011;
+      4'hC: hex7 = 7'b1000110;
+      4'hD: hex7 = 7'b0100001;
+      4'hE: hex7 = 7'b0000110;
+      4'hF: hex7 = 7'b0001110;
+      default: hex7 = 7'b1111111;
+    endcase
+  endfunction
+
+  always_comb begin
+    // HEX0 = hex7(pitch_period[3:0]);
+    // HEX1 = hex7(pitch_period[7:4]);
+    // HEX2 = hex7(pitch_period[9:8]);
+    HEX0 = hex7(bcd_freq[3:0]);    // hundredths Hz
+    HEX1 = hex7(bcd_freq[7:4]);    // tenths Hz^M
+    HEX2 = hex7(bcd_freq[11:8]);   // ones Hz^M
+    HEX3 = hex7(bcd_freq[15:12]);  // tens Hz^M
+    HEX4 = hex7(bcd_freq[19:16]);  // hundreds Hz^M
+    HEX5 = hex7(bcd_freq[23:20]);  // thousands Hz^M
+  end
 endmodule

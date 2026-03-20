@@ -6,14 +6,14 @@ module f0_detect #(
     parameter int LAG_MAX = 480,
     parameter int WBITS = $clog2(WINDOW_SIZE)
 ) (
-    input  wire                      clk,
-    input  wire                      rst,
-    input  wire                      i_start,
-    input  wire                      i_valid,
-    input  wire fmac_t               i_sample,
-    output logic                     o_done,
-    output logic                     o_valid,
-    output logic       [WBITS - 1:0] o_period
+    input  wire                 clk,
+    input  wire                 rst,
+    input  wire                 i_start,
+    input  wire                 i_valid,
+    input  fmac_t               i_sample,
+    output logic                o_done,
+    output logic                o_valid,
+    output logic  [WBITS - 1:0] o_period
 );
   typedef enum logic [1:0] {
     IDLE,

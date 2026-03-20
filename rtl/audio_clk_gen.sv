@@ -14,7 +14,7 @@ generate
     if (P24_BIT) begin : gen_24_bit
         pll_mult_24_bit (
             .refclk(i_clk_50M),
-            .rst(i_i_rst),
+            .rst(i_rst),
             .outclk_0(o_clk_12_28M),
             .outclk_1(o_clk_bit)
         );
@@ -22,7 +22,7 @@ generate
     else begin : gen_16_bit
         pll_mult_16_bit (
             .refclk(i_clk_50M),
-            .rst(i_i_rst),
+            .rst(i_rst),
             .outclk_0(o_clk_12_28M),
             .outclk_1(o_clk_bit)
         );
