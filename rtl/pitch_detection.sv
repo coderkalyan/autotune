@@ -47,7 +47,9 @@ fmac_t buf_sample;
 // Simple Combinational
 // ----------------------------------------------------------------
 
-assign eff_addr = {x_addr, y_addr}; 
+// assign eff_addr = {x_addr, y_addr}; 
+assign eff_addr[0] = x_addr;
+assign eff_addr[1:STAMPS] = y_addr;
 
 // ----------------------------------------------------------------
 // Global Pointer Logic
@@ -154,18 +156,19 @@ autocorrelate_buffer #(
     .i_results(results),
     .o_busy(buf_busy),
     .o_valid(buf_valid),
-    .o_sample(buf_sample) 
+    .o_sample(buf_sample)
 );
 
 // ----------------------------------------------------------------
 // Peak Detection
 // ----------------------------------------------------------------
 f0_detect #(
-  .LAG_MIN(50)  
+  .LAG_MIN(48),
+  .LAG_MAX(480),
 ) iF0 (
   .clk(clk),
   .rst(rst),
-  .i_start(buf_valid), 
+  .i_start(enable),
   .i_valid(buf_valid),
   .i_sample(buf_sample),
   .o_period(o_period),

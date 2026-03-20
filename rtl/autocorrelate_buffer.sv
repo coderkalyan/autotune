@@ -8,13 +8,13 @@
 module autocorrelate_buffer #(
     parameter int STAMPS = 16
 ) (
-    input  wire        clk,
-    input  wire        rst,
-    input  wire        i_valid,
-    input  wire fmac_t i_results[STAMPS],
-    output logic       o_busy,
-    output logic       o_valid,
-    output fmac_t      o_sample
+    input  wire   clk,
+    input  wire   rst,
+    input  wire   i_valid,
+    input  fmac_t i_results[STAMPS],
+    output logic  o_busy,
+    output logic  o_valid,
+    output fmac_t o_sample
 );
   localparam int SBITS = $clog2(STAMPS);
   typedef enum logic {

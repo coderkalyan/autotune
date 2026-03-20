@@ -4,15 +4,15 @@ module autocorrelate #(
     parameter int WINDOW_SIZE = 1024,
     parameter int WBITS = $clog2(WINDOW_SIZE)
 ) (
-    input  wire                       clk,
-    input  wire                       rst,
-    input  wire         [WBITS - 1:0] i_lag,
-    input  wire                       i_en,
-    input  wire fixed_t               i_xdata,
-    input  wire fixed_t               i_ydata,
-    output logic        [WBITS - 1:0] o_yaddr,
-    output fmac_t                     o_result,
-    output logic                      o_done
+    input  wire                  clk,
+    input  wire                  rst,
+    input  wire    [WBITS - 1:0] i_lag,
+    input  wire                  i_en,
+    input  fixed_t               i_xdata,
+    input  fixed_t               i_ydata,
+    output logic   [WBITS - 1:0] o_yaddr,
+    output fmac_t                o_result,
+    output logic                 o_done
 );
   // Cyclone V DSP has an internal 64-bit accumulator, which is sufficient
   // for our purposes. In the worst case, we have 1024 samples of 16-bit
@@ -33,10 +33,10 @@ module autocorrelate #(
 
   always_ff @(posedge clk) begin
     if (rst) begin
-      state   <= IDLE;
-      o_done  <= '0;
+      state  <= IDLE;
+      o_done <= '0;
     end else begin
-      o_done <= 0; // default
+      o_done <= 0;  // default
       case (state)
         IDLE: begin
           if (i_en) begin
@@ -57,21 +57,17 @@ module autocorrelate #(
           accum   <= accum + fixed_mul_raw(i_xdata, i_ydata);
           o_yaddr <= o_yaddr + 1;
 
-          if (counter == WBITS'(WINDOW_SIZE - 1))
-            state <= DONE;
+          if (counter == WBITS'(WINDOW_SIZE - 1)) state <= DONE;
           else begin
             counter <= counter + 1;
 
-            if (o_yaddr == '0)
-                state <= MASK;
+            if (o_yaddr == '0) state <= MASK;
           end
         end
 
         MASK: begin
-          if (counter == WBITS'(WINDOW_SIZE - 1))
-            state <= DONE;
-          else
-            counter <= counter + 1;
+          if (counter == WBITS'(WINDOW_SIZE - 1)) state <= DONE;
+          else counter <= counter + 1;
         end
 
         DONE: begin
