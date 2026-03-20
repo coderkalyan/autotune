@@ -1,4 +1,4 @@
-`include "../fixed.sv"
+`include "fixed.sv"
 
 // Circular buffer for incoming data from the ADC
 // 256 data points per segment, 5 segments per buffer
@@ -28,7 +28,7 @@ module circular_buffer #(
   generate
     genvar k;
     if (SIM) begin
-      for (k = 0; k < READ_PORTS; k++) begin 
+      for (k = 0; k < READ_PORTS; k++) begin : PARALLEL_BRAM
         memory #(
           .DATA_WIDTH(27),
           .ADDR_WIDTH(11)
