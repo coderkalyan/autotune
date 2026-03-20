@@ -1,43 +1,60 @@
-`include "/fixed.sv"
+`include "fixed.sv"
 
 module pitch_detection #(
-    parameter STAMPS = 16  
+    parameter WINDOW_SIZE = 1024,
+    parameter STAMPS = 16,
+    parameter WBITS = $clog2(WINDOW_SIZE)
 )(
-    input i_clk,
-    input i_rst, 
+    input clk,
+    input rst, 
     input i_wr_en,
-    input fixed_t i_proc_data
+    input fixed_t i_proc_data,
+    output logic [WBITS-1:0] o_period, 
+    output logic o_valid,
+    output logic o_done
 );
 
 // ----------------------------------------------------------------
-// Parameters and typedefs
+// Internal signals and registers
 // ----------------------------------------------------------------
+
+// Circular buffer read/write addresses and data
 logic [9:0] y_addr [0:STAMPS-1];
 logic [9:0] x_addr; 
-logic [9:0] wr_count; 
 fixed_t eff_data [0:STAMPS]; 
 logic [9:0] eff_addr [0:STAMPS]; 
+
+// write counter to track cb writes
+logic [9:0] wr_count; 
+
+// results from parallel autocorrelation engine
 fmac_t results [0:STAMPS-1];
-fixed_t x_data;
+
+// control signals for parallel autocorrelation engine
 logic single_done;
 logic all_done;
 logic seg_full;
 logic enable;
 logic ptr_reset;
 
+// serialization buffer flags 
+logic buf_busy;
+logic buf_valid;
+fmac_t buf_sample;
+
+
 // ----------------------------------------------------------------
-// Internal Signals and Registers
+// Simple Combinational
 // ----------------------------------------------------------------
 
 assign eff_addr = {x_addr, y_addr}; 
-assign x_data = eff_data[0];
 
 // ----------------------------------------------------------------
 // Global Pointer Logic
 // ----------------------------------------------------------------
 
-always @(posedge i_clk) begin
-    if (i_rst) 
+always @(posedge clk) begin
+    if (rst) 
         x_addr <= '0;  
     else if (ptr_reset | enable)
         x_addr <= 0; 
@@ -50,8 +67,8 @@ end
 // ----------------------------------------------------------------
 
 // counter for writes to circular buffer
-always @(posedge i_clk) begin
-    if (i_rst) 
+always @(posedge clk) begin
+    if (rst) 
         wr_count <= '0;  
     else if (i_wr_en)
         wr_count <= wr_count + 1; 
@@ -61,8 +78,8 @@ end
 typedef enum logic [1:0] {FILL_BUFFER, AUTOCORR} state_t;
 state_t state, next_state;
 
-always @(posedge i_clk) begin
-    if (i_rst) 
+always @(posedge clk) begin
+    if (rst) 
         state <= FILL_BUFFER;
     else
         state <= next_state;
@@ -93,10 +110,10 @@ end
 // ----------------------------------------------------------------
 circular_buffer #(
   .READ_PORTS(STAMPS + 1), // global pointer + 16 local pointers
-  .SIM(1)
+  .SIM(1)   // Set SIM=0 for ip BRAM
 ) iCB (
-  .clk(i_clk),
-  .rst(i_rst),
+  .clk(clk),
+  .rst(rst),
   .i_wr_en(i_wr_en),
   .i_wr_data(i_proc_data),
   .i_inc_rd_ptr(all_done),
@@ -113,9 +130,9 @@ parallel_autocorrelate #(
   .STAMPS(STAMPS),
   .SIM(0)
 ) iAUTO_CORR (
-  .i_clk(i_clk),
-  .i_rst(i_rst),
-  .i_x_data(x_data),
+  .clk(clk),
+  .rst(rst),
+  .i_x_data(eff_data[0]),
   .i_y_data(eff_data[1:STAMPS]),
   .o_y_addr(y_addr),                    
   .i_en(enable),                       
@@ -128,11 +145,32 @@ parallel_autocorrelate #(
 // ----------------------------------------------------------------
 // Autocorrelation Result Serializer
 // ----------------------------------------------------------------
-// TODO:
+autocorrelate_buffer #(
+    .STAMPS(STAMPS)
+) iBUF (
+    .clk(clk),
+    .rst(rst),
+    .i_valid(single_done), // pulse when the first instance is done, which indicates the global pointer has completed a full sweep and is back at the start
+    .i_results(results),
+    .o_busy(buf_busy),
+    .o_valid(buf_valid),
+    .o_sample(buf_sample) 
+);
 
 // ----------------------------------------------------------------
 // Peak Detection
 // ----------------------------------------------------------------
-// TODO
+f0_detect #(
+  .LAG_MIN(100)  
+) iF0 (
+  .clk(clk),
+  .rst(rst),
+  .i_start(buf_valid), 
+  .i_valid(buf_valid),
+  .i_sample(buf_sample),
+  .o_period(o_period),
+  .o_valid(o_valid),
+  .o_done(o_done)
+);
 
 endmodule

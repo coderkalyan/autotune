@@ -10,8 +10,6 @@ typedef logic signed [47:0] fmac_t;
 // 16 bit signed integer audio.
 typedef logic signed [15:0] audio_t;
 
-typedef logic signed [47:0] fmac_t;
-
 function automatic logic signed [53:0] fixed_mul_raw(input fixed_t a, input fixed_t b);
     logic signed [53:0] product = a * b;
     return product;

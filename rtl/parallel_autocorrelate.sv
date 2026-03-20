@@ -1,12 +1,12 @@
-`include "/fixed.sv"
+`include "fixed.sv"
 
 module parallel_autocorrelate #(
     parameter STAMPS = 16,
     parameter STAMPS_ACTUAL = 1024 % STAMPS == 0 ? STAMPS : 16,
     parameter SIM = 0
 )(
-  input  i_clk,
-  input  i_rst,
+  input  clk,
+  input  rst,
   // Memory write port (from external controller)
 
   input fixed_t i_x_data,                                   // global pointer (same for all parallel instances)
@@ -48,8 +48,8 @@ generate
       .STEP(STAMPS_ACTUAL),
       .SIM(SIM)
     ) autocorrelate_top_inst (
-      .clk(i_clk),
-      .rst(i_rst),
+      .clk(clk),
+      .rst(rst),
       .i_xdata(i_x_data),
       .i_ydata(i_y_data[i]),
       .i_en(i_en),
