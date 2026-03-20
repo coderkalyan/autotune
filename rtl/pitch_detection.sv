@@ -161,7 +161,7 @@ autocorrelate_buffer #(
 // Peak Detection
 // ----------------------------------------------------------------
 f0_detect #(
-  .LAG_MIN(100)  
+  .LAG_MIN(50)  
 ) iF0 (
   .clk(clk),
   .rst(rst),

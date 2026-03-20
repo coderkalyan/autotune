@@ -33,7 +33,7 @@ logic o_done;
 sine_source_48khz #(
     .CLK_HZ(50_000_000),
     .SAMPLE_HZ(48_000),
-    .TONE_HZ(440.0),
+    .TONE_HZ(660.0),
     .AMPLITUDE(1000.0)
 ) src (
     .clk(clk),
