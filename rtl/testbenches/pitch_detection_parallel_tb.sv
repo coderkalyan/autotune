@@ -12,8 +12,8 @@ localparam SINE = 1;
 // --------------------------------------------------------------------------
 // Signals
 // --------------------------------------------------------------------------
-logic i_clk;
-logic i_rst;
+logic clk;
+logic rst;
 logic i_wr_en;
 fixed_t i_proc_data;
 fmac_t expected [0:1023]; 
@@ -25,8 +25,8 @@ fixed_t window [0:1279]; // enough space for 1024 samples + 256 wraparound sampl
 pitch_detection #(
     .STAMPS(STAMPS)
 ) dut (
-    .i_clk(i_clk),
-    .i_rst(i_rst),
+    .clk(clk),
+    .rst(rst),
     .i_wr_en(i_wr_en),
     .i_proc_data(i_proc_data)
 );
@@ -35,8 +35,8 @@ pitch_detection #(
 // Clock Generation (100 MHz)
 // --------------------------------------------------------------------------
 initial begin
-    i_clk = 0;
-    forever #5 i_clk = ~i_clk;
+    clk = 0;
+    forever #5 clk = ~clk;
 end
 
 // --------------------------------------------------------------------------
@@ -108,17 +108,17 @@ task apply_vector_1024;
     // ensure clean start
     i_wr_en     = 0;
     i_proc_data = '0;
-    @(posedge i_clk);
+    @(posedge clk);
 
     // stream samples
     for (i = 0; i < 1024; i++) begin
-      @(posedge i_clk);
+      @(posedge clk);
       i_proc_data = in_vec[i];
       i_wr_en     = 1;
     end
 
     // deassert write
-    @(posedge i_clk);
+    @(posedge clk);
     i_wr_en     = 0;
     i_proc_data = '0;
   end
@@ -133,17 +133,17 @@ task apply_vector_256;
     // ensure clean start
     i_wr_en     = 0;
     i_proc_data = '0;
-    @(posedge i_clk);
+    @(posedge clk);
 
     // stream samples
     for (i = 0; i < 256; i++) begin
-      @(posedge i_clk);
+      @(posedge clk);
       i_proc_data = in_vec[i];
       i_wr_en     = 1;
     end
 
     // deassert write
-    @(posedge i_clk);
+    @(posedge clk);
     i_wr_en     = 0;
     i_proc_data = '0;
   end
@@ -183,14 +183,14 @@ integer j;
 integer k;
 initial begin
     // Initialize signals
-    i_rst       = 1;
+    rst       = 1;
     i_wr_en     = 0;
     i_proc_data = '0;
     k = 0;
 
     // deassert reset after a few cycles
-    repeat (5) @(posedge i_clk);
-    i_rst = 0;
+    repeat (5) @(posedge clk);
+    rst = 0;
 
     if(SINE) begin 
       $display("Testing with 60 Hz sine wave input...");
@@ -218,7 +218,7 @@ initial begin
         $display("Error: enable signal did not go high after filling buffer w 1024 samples");
         $stop;
     end 
-    @(posedge i_clk);
+    @(posedge clk);
     if (dut.x_addr !== '0) begin
         $display("Error: x_addr did not reset after filling buffer w 1024 samples");
         $stop;
@@ -227,7 +227,7 @@ initial begin
     
     while(!dut.all_done) begin 
         @(posedge dut.single_done) begin
-            repeat (2)@(posedge i_clk);
+            repeat (2)@(posedge clk);
             for (j = 0; j < STAMPS; j++) begin
                 if (dut.results[j] !== expected[(k * STAMPS) + j]) begin
                     $display("ERROR: Did not receive expected results for iteration %d, stamp %d. Got %d, expected %d", k, j, dut.results[j], expected[(k * STAMPS) + j]);
@@ -236,7 +236,7 @@ initial begin
             end
             k++;
         end
-        @(posedge i_clk);
+        @(posedge clk);
     end
 
     $display("WINDOW 1 RESULTS MATCH EXPECTED!");
@@ -263,7 +263,7 @@ initial begin
         $display("Error: enable signal did not go high after filling buffer w 1024 samples");
         $stop;
     end 
-    @(posedge i_clk);
+    @(posedge clk);
     if (dut.x_addr !== '0) begin
         $display("Error: x_addr did not reset after filling buffer w 1024 samples");
         $stop;
@@ -272,7 +272,7 @@ initial begin
     k = 0; // reset k to check results for wraparound test
     while(!dut.all_done) begin 
         @(posedge dut.single_done) begin
-            repeat (2)@(posedge i_clk);
+            repeat (2)@(posedge clk);
             for (j = 0; j < STAMPS; j++) begin
                 if (dut.results[j] !== expected[(k * STAMPS) + j]) begin
                     $display("ERROR: Did not receive expected results for iteration %d, stamp %d. Got %d, expected %d", k, j, dut.results[j], expected[(k * STAMPS) + j]);
@@ -281,7 +281,7 @@ initial begin
             end
             k++;
         end
-        @(posedge i_clk);
+        @(posedge clk);
     end
 
     $display("WINDOW 2 RESULTS MATCH EXPECTED!");
