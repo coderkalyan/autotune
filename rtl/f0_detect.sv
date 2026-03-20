@@ -2,8 +2,8 @@
 
 module f0_detect #(
     parameter int WINDOW_SIZE = 1024,
-    parameter int LAG_MIN = 200,
-    parameter int LAG_MAX = WINDOW_SIZE,
+    parameter int LAG_MIN = 48,
+    parameter int LAG_MAX = 480,
     parameter int WBITS = $clog2(WINDOW_SIZE)
 ) (
     input  wire                      clk,
@@ -65,8 +65,7 @@ module f0_detect #(
         end
 
         POST: begin
-          //o_period <= argmax;
-          o_period <= argmax - 15;
+          o_period <= argmax;
           o_done   <= 1'b1;
           o_valid  <= candidate && (max >= (r0 >> 2));
           state    <= IDLE;

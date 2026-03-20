@@ -59,7 +59,7 @@ module autocorrelate_top #(
               o_all_done <= 1;       // Signal that the entire sweep is done
           end
           if (autocorr_done) begin
-              o_result <= autocorr_result;
+              //o_result <= autocorr_result;
               current_L <= current_L + STEP;
               state     <= WAIT;
               o_autocorr_en_ptr <= (current_L + STEP < WINDOW_SIZE) ? 1 : 0; // pulse en for next lag if we haven't reached the end of the sweep
@@ -71,6 +71,7 @@ module autocorrelate_top #(
     end
   end
 
+  assign o_result = autocorr_result;
   assign o_single_done = autocorr_done;
 
   // ----------------------------------------------------------------
