@@ -17,6 +17,7 @@ module f0_detect #(
 );
   typedef enum logic [1:0] {
     IDLE,
+    ZERO,
     BUSY,
     POST
   } state_t;
@@ -25,6 +26,8 @@ module f0_detect #(
   logic [WBITS - 1:0] counter, argmax;
   fmac_t max, r0;
   logic candidate;
+
+  wire lt = i_sample < fmac_t'(0);
   always_ff @(posedge clk) begin
     if (rst) begin
       state   <= IDLE;
@@ -35,7 +38,7 @@ module f0_detect #(
       case (state)
         IDLE: begin
           if (i_start) begin
-            state     <= BUSY;
+            state     <= ZERO;
             counter   <= '0;
             max       <= '0;
             o_done    <= 1'b0;
@@ -44,9 +47,21 @@ module f0_detect #(
           end
         end
 
-        BUSY: begin
+        ZERO: begin
           if (i_valid) begin
             if (counter == '0) r0 <= i_sample;
+
+            counter <= counter + 1;
+
+            // Check for a zero crossing before starting argmax.
+            if (i_sample < fmac_t'(0))
+              state <= BUSY;
+          end
+        end
+
+        BUSY: begin
+          if (i_valid) begin
+            // if (counter == '0) r0 <= i_sample;
 
             // Only look for peaks within LAG_MIN/LAG_MAX.
             if (counter >= LAG_MIN && counter <= LAG_MAX) begin
