@@ -395,14 +395,14 @@ module autotune (
   endfunction
 
   always_comb begin
-    // HEX0 = hex7(pitch_period[3:0]);
-    // HEX1 = hex7(pitch_period[7:4]);
-    // HEX2 = hex7(pitch_period[9:8]);
-    HEX0 = hex7(bcd_freq[3:0]);    // hundredths Hz
-    HEX1 = hex7(bcd_freq[7:4]);    // tenths Hz^M
-    HEX2 = hex7(bcd_freq[11:8]);   // ones Hz^M
-    HEX3 = hex7(bcd_freq[15:12]);  // tens Hz^M
-    HEX4 = hex7(bcd_freq[19:16]);  // hundreds Hz^M
-    HEX5 = hex7(bcd_freq[23:20]);  // thousands Hz^M
+    HEX0 = hex7(pitch_period[3:0]);
+    HEX1 = hex7(pitch_period[7:4]);
+    HEX2 = hex7(pitch_period[9:8]);
+    // HEX0 = hex7(bcd_freq[3:0]);    // hundredths Hz
+    // HEX1 = hex7(bcd_freq[7:4]);    // tenths Hz^M
+    // HEX2 = hex7(bcd_freq[11:8]);   // ones Hz^M
+    // HEX3 = hex7(bcd_freq[15:12]);  // tens Hz^M
+    // HEX4 = hex7(bcd_freq[19:16]);  // hundreds Hz^M
+    // HEX5 = hex7(bcd_freq[23:20]);  // thousands Hz^M
   end
 endmodule
