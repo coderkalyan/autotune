@@ -25,7 +25,7 @@ fixed_t eff_data [0:STAMPS];
 logic [9:0] eff_addr [0:STAMPS]; 
 
 // write counter to track cb writes
-logic [9:0] wr_count; 
+logic [9:0] wr_count;
 
 // results from parallel autocorrelation engine
 fmac_t results [0:STAMPS-1];
@@ -37,7 +37,7 @@ logic seg_full;
 logic enable;
 logic ptr_reset;
 
-// serialization buffer flags 
+// serialization buffer flags
 logic buf_busy;
 logic buf_valid;
 fmac_t buf_sample;
@@ -47,7 +47,7 @@ fmac_t buf_sample;
 // Simple Combinational
 // ----------------------------------------------------------------
 
-// assign eff_addr = {x_addr, y_addr}; 
+// assign eff_addr = {x_addr, y_addr};
 assign eff_addr[0] = x_addr;
 assign eff_addr[1:STAMPS] = y_addr;
 
@@ -164,7 +164,7 @@ autocorrelate_buffer #(
 // ----------------------------------------------------------------
 f0_detect #(
   .LAG_MIN(48),
-  .LAG_MAX(480),
+  .LAG_MAX(480)
 ) iF0 (
   .clk(clk),
   .rst(rst),

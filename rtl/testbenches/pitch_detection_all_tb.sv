@@ -95,7 +95,7 @@ initial begin
         wait (o_done == 1);
         $display("Pitch detection done at %0t", $time);
         $display("Detected period: %0d samples", o_period);
-        $display("Detected frequency: %0d Hz", SAMPLING_FREQ / o_period);
+        $display("Detected frequency: %0d Hz", real'(SAMPLING_FREQ) / real'(o_period));
 
         $display("YAHOO! ALL TESTS PASSED!");
         $stop();
