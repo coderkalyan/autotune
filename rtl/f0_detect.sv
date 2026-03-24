@@ -27,6 +27,32 @@ module f0_detect #(
   fmac_t max, r0;
   logic candidate;
 
+  // Compare normalized autocorrelation:
+  // i_sample / cur_overlap > max_raw / best_overlap
+  // <=> i_sample * best_overlap > max_raw * cur_overlap
+  // note: added biasing to prevent small lags from being over boosted
+
+  // TODO: this currently does not take advantage of our 27 bit multiplies
+  //       may want to refactor to use those block more efficiently
+
+  logic [WBITS:0] cur_overlap, best_overlap;
+  logic signed [63:0] cur_score, best_score;
+  localparam NORM_BIAS = 256;
+
+  assign cur_overlap  = WINDOW_SIZE - counter;
+  assign best_overlap = WINDOW_SIZE - argmax;
+
+  assign cur_score  = $signed(i_sample) * $signed({1'b0, best_overlap + NORM_BIAS});
+  assign best_score = $signed(max)  * $signed({1'b0, cur_overlap + NORM_BIAS});
+
+  // Threshold comparison logic to use normalized values
+  // max / (1024-lag) >= (r0 / 1024) * alpha
+  // <=> max * 1024 >= (r0 * alpha) * (1024-lag)
+  logic signed [63:0] lhs, rhs;
+  assign lhs = $signed(max) * WINDOW_SIZE;
+  assign rhs = ($signed(r0) >>> 2) * $signed(best_overlap);
+
+
   wire lt = i_sample < fmac_t'(0);
   always_ff @(posedge clk) begin
     if (rst) begin
@@ -64,11 +90,23 @@ module f0_detect #(
             // if (counter == '0) r0 <= i_sample;
 
             // Only look for peaks within LAG_MIN/LAG_MAX.
+            // if (counter >= LAG_MIN && counter <= LAG_MAX) begin
+            //   if (i_sample > max) begin
+            //     max       <= i_sample;
+            //     argmax    <= counter;
+            //     candidate <= 1'b1;
+            //   end
+            // end
+
+            // Use normalized values to account for lesser overlapping samples 
             if (counter >= LAG_MIN && counter <= LAG_MAX) begin
-              if (i_sample > max) begin
-                max       <= i_sample;
+              if (!candidate) begin
+                max   <= i_sample;
                 argmax    <= counter;
                 candidate <= 1'b1;
+              end else if (cur_score > best_score) begin
+                max   <= i_sample;
+                argmax    <= counter;
               end
             end
 
@@ -82,7 +120,8 @@ module f0_detect #(
         POST: begin
           o_period <= argmax;
           o_done   <= 1'b1;
-          o_valid  <= candidate && (max >= (r0 >> 2));
+          //o_valid  <= candidate && (max >= (r0 >> 2));
+          o_valid  <= candidate && (lhs >= rhs);
           state    <= IDLE;
         end
 
