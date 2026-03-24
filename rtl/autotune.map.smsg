@@ -1,3 +1,6 @@
+Info (10281): Verilog HDL Declaration information at uart_rx.sv(10): object "receiving" differs only in case from object "RECEIVING" in the same scope File: C:/Users/avery/ece554/autotune/rtl/uart_rx.sv Line: 10
+Warning (10268): Verilog HDL information at max_detect_buffer.sv(16): always construct contains both blocking and non-blocking assignments File: C:/Users/avery/ece554/autotune/rtl/max_detect_buffer.sv Line: 16
+Info (10281): Verilog HDL Declaration information at lpf.sv(17): object "X" differs only in case from object "x" in the same scope File: C:/Users/avery/ece554/autotune/rtl/lpf.sv Line: 17
 Warning (10273): Verilog HDL warning at i2c_master.sv(58): extended using "x" or "z" File: C:/Users/avery/ece554/autotune/rtl/i2c_master.sv Line: 58
 Warning (10273): Verilog HDL warning at i2c_master.sv(59): extended using "x" or "z" File: C:/Users/avery/ece554/autotune/rtl/i2c_master.sv Line: 59
 Warning (10273): Verilog HDL warning at i2c_master.sv(60): extended using "x" or "z" File: C:/Users/avery/ece554/autotune/rtl/i2c_master.sv Line: 60
