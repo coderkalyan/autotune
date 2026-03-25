@@ -8,22 +8,21 @@ module target_freq #(
     input rst,
     input i_rxd,
     input [WBITS-1:0] i_period,
-    output o_shift_ratio // TODO fill in type/bitwidth once determined
+    output fmac_t o_shift_ratio 
 );
 
 // ----------------------------------------------------------------
 // Internal Signals
-// ---------------------------------------------------------------
+// ----------------------------------------------------------------
 
 wire note_on_trigger;
 wire [6:0] note_number;
 wire [6:0] velocity;
-
-fixed_t frequency;
+wire [9:0] target_lag;
 
 // ----------------------------------------------------------------
 // MIDI Receiver
-// ---------------------------------------------------------------
+// ----------------------------------------------------------------
 midi_receiver midi_receiver0(
     .clk(clk),
     .rst(rst),
@@ -35,18 +34,19 @@ midi_receiver midi_receiver0(
 
 // ----------------------------------------------------------------
 // Frequency LUT 
-// ---------------------------------------------------------------
+// ----------------------------------------------------------------
 midi_freq_lut lut0 (
     .note(note_number),
-    .frequency(frequency)
+    .frequency(target_lag)
 );
 
 // ----------------------------------------------------------------
 // Note Selection / Shift ratio
-// ---------------------------------------------------------------
-
-// TODO: this logic needs to be written still
-
-
+// ----------------------------------------------------------------
+note_selection iNS(
+    .actual_lag(i_period),
+    .target_lag(target_lag),
+    .shift_ratio(o_shift_ratio)
+);
 
 endmodule
