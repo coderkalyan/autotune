@@ -4,6 +4,8 @@
 //=======================================================
 
 `include "fixed.sv"
+`default_nettype none
+import global_enums::*;
 
 module autotune (
 
@@ -353,11 +355,18 @@ module autotune (
   );
 
   logic r_pitch_valid;
+  logic [9:0] r_pitch_period;
   always_ff @(posedge CLOCK_50) begin
     if (rst)
-      r_pitch_valid <= 1'b0;
+      begin
+        r_pitch_valid <= 1'b0;
+        r_pitch_period <= '0;
+      end
     else if (pitch_done)
-      r_pitch_valid <= pitch_valid;
+      begin
+        r_pitch_valid <= pitch_valid;
+        r_pitch_period <= pitch_period;
+      end
   end
 
   assign LEDR[0] = config_done;
@@ -394,10 +403,67 @@ module autotune (
     endcase
   endfunction
 
+
+  
+  function automatic logic [6:0] hex7_notes(input hex_t val);
+      case (val)
+          ZERO:  hex7_notes = 7'b1000000;
+          ONE:   hex7_notes = 7'b1111001;
+          TWO:   hex7_notes = 7'b0100100;
+          THREE: hex7_notes = 7'b0110000;
+          FOUR:  hex7_notes = 7'b0011001;
+          FIVE:  hex7_notes = 7'b0010010;
+          SIX:   hex7_notes = 7'b0000010;
+          SEVEN: hex7_notes = 7'b1111000;
+          EIGHT: hex7_notes = 7'b0000000;
+          NINE:  hex7_notes = 7'b0011000;
+          A:     hex7_notes = 7'b0001000;
+          B:     hex7_notes = 7'b0000011;
+          C:     hex7_notes = 7'b1000110;
+          D:     hex7_notes = 7'b0100001;
+          E:     hex7_notes = 7'b0000110;
+          F:     hex7_notes = 7'b0001110;
+
+          // Optional patterns for G and S (customize if needed)
+          G: hex7_notes = 7'b0000010;  // similar to '6'
+          S: hex7_notes = 7'b0010010;  // similar to '5'
+
+          NONE: hex7_notes = 7'b1111111;
+
+          default: hex7_notes = 7'b1111111;
+      endcase
+  endfunction
+
+
+    logic [9:0] lag_out;
+    nearest_note_lut nearest_note_lut (
+        .in_lag(r_pitch_period),
+        .nearest_note_lag(lag_out)
+    );
+    
+    hex_t note0, note1, note2;
+    
+    // Instantiate note_name_lut
+    note_name_lut u_note_name_lut (
+        .nearest_note_lag(lag_out),
+        .HEX2(note2),
+        .HEX1(note1),
+        .HEX0(note0)
+    );
+
   always_comb begin
-    HEX0 = hex7(pitch_period[3:0]);
-    HEX1 = hex7(pitch_period[7:4]);
-    HEX2 = hex7(pitch_period[9:8]);
+    // HEX0 = hex7(pitch_period[3:0]);
+    // HEX1 = hex7(pitch_period[7:4]);
+    // HEX2 = hex7(pitch_period[9:8]);
+
+    // HEX0 = hex7(lag_out[3:0]);
+    // HEX1 = hex7(lag_out[7:4]);
+    // HEX2 = hex7(lag_out[9:8]);
+
+    HEX0 = hex7_notes(note0);
+    HEX1 = hex7_notes(note1);
+    HEX2 = hex7_notes(note2);
+
     // HEX0 = hex7(bcd_freq[3:0]);    // hundredths Hz
     // HEX1 = hex7(bcd_freq[7:4]);    // tenths Hz^M
     // HEX2 = hex7(bcd_freq[11:8]);   // ones Hz^M
