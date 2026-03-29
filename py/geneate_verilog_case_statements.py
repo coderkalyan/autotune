@@ -112,6 +112,39 @@ def gen_threshold_block():
     lines.append("    end")
     return "\n".join(lines)
 
+# ── midi to lag 3: case statements ─────────────────────────────────
+
+def gen_midi_lag_block():
+    B = LAG_BITS
+    # lines = [
+    #     "    always_comb begin",
+    #     f"        // Threshold = floor(sqrt(lag[n] * lag[n-1])) — logarithmic midpoint between semitones.",
+    #     f"        // Fs = {FS} Hz.  Ordered from largest lag (lowest pitch) to smallest.",
+    # ]
+    lines = ["    case (MIDI_in)"]
+    for i, n in enumerate(notes):
+        thr     = n["threshold"]
+        lag     = n["lag"]
+        label   = f"{n['name']}{n['oct']}"
+        midi = n['midi']
+        comment = f"// MIDI {n['midi']:>2}  {label:<5}  ~{n['freq']:.2f} Hz"
+        # cond    = f"if (in_lag >= {B}'d{thr})" if i == 0 else f"else if (in_lag >= {B}'d{thr})"
+        # lines.append(f"         {cond:<35} nearest_note_lag = {B}'d{lag}; {comment}")
+        # cond    = f"if (MIDI_in == {B}'d{midi})" if i == 0 else f"else if (MIDI_in == {B}'d{midi})"
+        # lines.append(f"         {cond:<35} LAG_out = {B}'d{lag}; {comment}")
+        lines.append(
+            f"        {B}'d{midi:<4}: LAGOUT = {B}'d{lag}; {comment}"
+                     )
+    last = notes[-1]
+    # lines.append(
+    #     f"        else                                       nearest_note_lag = {B}'d{last['lag']}; "
+    #     f"// MIDI {last['midi']}  {last['name']}{last['oct']} (above range)"
+    # )
+    lines.append(f"        default : LAGOUT = {B}'d{0};")
+    lines.append("    endcase")
+    return "\n".join(lines)
+
+    
 # ── Generate Block 2: case statement ─────────────────────────────────────────
 
 def gen_case_block():
@@ -134,12 +167,15 @@ def gen_case_block():
 
 threshold_block = gen_threshold_block()
 case_block      = gen_case_block()
+midi_block      = gen_midi_lag_block()
 
 output = "\n\n".join([
-    "// ── Block 1: in_lag -> nearest_note_lag ─────────────────────────────────────",
-    threshold_block,
-    "// ── Block 2: nearest_note_lag -> HEXNOTE ───────────────────────────────────",
-    case_block,
+    # "// ── Block 1: in_lag -> nearest_note_lag ─────────────────────────────────────",
+    # threshold_block,
+    # "// ── Block 2: nearest_note_lag -> HEXNOTE ───────────────────────────────────",
+    # case_block,
+    "// ── midi to lag 3: case statements ─────────────────────────────────",
+    midi_block,
 ])
 
 print(output)
