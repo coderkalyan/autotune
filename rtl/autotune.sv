@@ -170,98 +170,29 @@ module autotune (
   assign lf = `FIXED_ATOF(ldata);
   assign rf = `FIXED_ATOF(rdata);
 
-  localparam int NUM_CHANNELS = 2;
-  logic [11:0] hann_pointers[NUM_CHANNELS];
-
-  always_ff @(posedge CLOCK_50) begin
-    if (rst) begin
-      hann_pointers[0] <= 0;
-      hann_pointers[1] <= 2048;
-    end else if (adc_en) begin
-      hann_pointers[0] <= hann_pointers[0] + 12'd1;
-      hann_pointers[1] <= hann_pointers[1] + 12'd1;
-    end
-  end
-
-  // genvar i;
-  // generate
-  //   for (i = 0; i < NUM_CHANNELS; i++) begin : hann_pointer_gen
-  //     always_ff @(posedge CLOCK_50) begin
-  //       if (rst) begin
-  //         hann_pointers[i] <= '0;
-  //       end else if (adc_en) begin
-  //         hann_pointers[i] <= hann_pointers[i] + 12'd1;
-  //       end
-  //     end
-  //   end
-  // endgenerate
-
-  logic [14:0] counter;
-  always_ff @(posedge CLOCK_50) begin
-    if (rst) counter <= '0;
-    else if (adc_en) counter <= counter + 12'd1;
-  end
-
-  logic [11:0] hann_index;
-  fixed_t hann;
-  hanning #(
-      .N(4096)
-  ) hanning (
+  fixed_t out_lf, out_rf;
+  logic out_valid;
+  psola psola_left (
       .clk(CLOCK_50),
       .rst(rst),
-      // .i_index(counter[14:3]),
-      .i_index(hann_index),
-      .o_data(hann)
+      .i_data(lf),
+      .i_valid(adc_en),
+      .o_data(out_lf),
+      .o_valid(out_valid),
+  );
+  psola psola_right (
+      .clk(CLOCK_50),
+      .rst(rst),
+      .i_data(rf),
+      .i_valid(adc_en),
+      .o_data(out_rf),
+      .o_valid(),
   );
 
-  typedef enum logic {
-    IDLE,
-    BUSY
-  } state_t;
+  assign adc_en   = !adc_empty;
+  assign dac_en   = out_valid & SW[0];
 
-  state_t state;
-  logic [6:0] channel;
-  fixed_t sample, out;
-  logic done;
-  always_ff @(posedge CLOCK_50) begin
-    if (rst) begin
-      state <= IDLE;
-    end else begin
-      case (state)
-        IDLE: begin
-          done <= 1'b0;
-
-          if (adc_en) begin
-            state   <= BUSY;
-            sample  <= lf;
-            out     <= 0;
-            channel <= 0;
-          end
-        end
-        BUSY: begin
-          if (channel < 2) begin
-            out     <= out + fixed_mul(sample, hann);
-            channel <= channel + 1;
-          end else begin
-            state <= IDLE;
-            done  <= 1'b1;
-          end
-        end
-        default: state <= IDLE;
-      endcase
-    end
-  end
-
-  always_comb hann_index = hann_pointers[channel];
-
-  assign adc_en = !adc_empty;
-  assign dac_en = done & SW[0];
-
-  fixed_t hann_lf, hann_rf;
-  // always_comb hann_lf = fixed_mul(hann, lf);
-  // always_comb hann_rf = fixed_mul(hann, rf);
-  // assign dac_data = {`FIXED_FTOA(hann_lf), `FIXED_FTOA(hann_rf)};
-  assign dac_data = {`FIXED_FTOA(out), `FIXED_FTOA(out)};
+  assign dac_data = {`FIXED_FTOA(out_lf), `FIXED_FTOA(out_rf)};
 
   logic pitch_done, pitch_valid;
   logic [9:0] pitch_period;
