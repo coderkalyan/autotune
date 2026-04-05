@@ -71,7 +71,9 @@ module autotune (
     inout PS2_DAT2,
 
     //////////// SW //////////
-    input [9:0] SW,
+    input [ 9:0] SW,
+
+    inout [35:0] GPIO,
 
     //////////// Video-In //////////
     input        TD_CLK27,
@@ -369,6 +371,53 @@ module autotune (
       end
   end
 
+  wire rxd;
+  wire [1:0] br_cfg;
+
+  // GPIO[5] as RX input
+  assign rxd = GPIO[5];
+
+  // MIDI Signals
+  wire note_on_trigger;
+  wire [6:0] note_number;
+  wire [6:0] velocity;
+
+  // Instantiate midi receiver here
+  midi_receiver midi_receiver0(
+    .clk(CLOCK_50),
+    .rst(rst),
+    .midi_rx(rxd),
+    .note_on_trigger(note_on_trigger),
+    .note_number(note_number),
+    .velocity(velocity)
+    );
+
+  // Frequency LUT and Display Logic
+  wire [26:0] frequency;
+  wire [23:0] bcd_freq;
+
+  // LUT to get Q11.16 frequency from note number
+  midi_freq_lut lut0 (
+    .note(note_number),
+    .frequency(frequency)
+  );
+
+  // Convert Q11.16 frequency to 6 BCD decimal digits for display
+  bin_to_bcd bcd0 (
+    .freq_q1116(frequency),
+    .bcd(bcd_freq)
+  );
+
+  // Display output UART TX interface.
+  uart_tx uart_tx_inst (
+    .clk(CLOCK_50),
+    .rst(rst),
+    .trmt(1'b1),
+    .tx_data({8'hAA}),
+    .tx_done(LEDR[6]),
+    .TX(GPIO[4])
+  );
+
   assign LEDR[0] = config_done;
   assign LEDR[1] = config_err;
   assign LEDR[2] = adc_empty;
@@ -456,6 +505,7 @@ module autotune (
     // HEX1 = hex7(pitch_period[7:4]);
     // HEX2 = hex7(pitch_period[9:8]);
 
+<<<<<<< Updated upstream
     // HEX0 = hex7(lag_out[3:0]);
     // HEX1 = hex7(lag_out[7:4]);
     // HEX2 = hex7(lag_out[9:8]);
@@ -470,5 +520,13 @@ module autotune (
     // HEX3 = hex7(bcd_freq[15:12]);  // tens Hz^M
     // HEX4 = hex7(bcd_freq[19:16]);  // hundreds Hz^M
     // HEX5 = hex7(bcd_freq[23:20]);  // thousands Hz^M
+=======
+    HEX0 = hex7(bcd_freq[3:0]);    // hundredths Hz
+    HEX1 = hex7(bcd_freq[7:4]);    // tenths Hz
+    HEX2 = hex7(bcd_freq[11:8]);   // ones Hz
+    HEX3 = hex7(bcd_freq[15:12]);  // tens Hz
+    HEX4 = hex7(bcd_freq[19:16]);  // hundreds Hz
+    HEX5 = hex7(bcd_freq[23:20]);  // thousands Hz
+>>>>>>> Stashed changes
   end
 endmodule

@@ -1,0 +1,13 @@
+# Enable all rules then disable exceptions
+--ruleset=all
+
+# Example rule settings
+--rule_config=line-length=100
+--rule_config=no-tabs
+--rule_config=explicit-parameter-storage-type
+--rule_config=module-port
+--rule_config=signal-name-style:style_regex="^[a-z0-9_]+$"
+
+# Disable selected rules
+--rules=-module-filename
+--rules=-endif-comment
