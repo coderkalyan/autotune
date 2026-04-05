@@ -1,12 +1,13 @@
 `include "fixed.sv"
 
 module psola (
-    input  wire    clk,
-    input  wire    rst,
-    input  fixed_t i_data,
-    input  wire    i_valid,
-    output fixed_t o_data,
-    output logic   o_valid
+    input  wire          clk,
+    input  wire          rst,
+    input  wire    [9:0] i_lag,
+    input  fixed_t       i_data,
+    input  wire          i_valid,
+    output fixed_t       o_data,
+    output logic         o_valid
 );
   localparam int NUM_CHANNELS = 2;
   logic [9:0] hann_pointers[NUM_CHANNELS];
@@ -28,13 +29,13 @@ module psola (
       hann_pointers[0] <= hann_pointers[0] + 10'd1;
       hann_pointers[1] <= hann_pointers[1] + 10'd1;
 
-      // if (hann_pointers[0] == 10'd512) begin
-      //   hann_pointers[0] <= 10'd0;
-      // end
-      //
-      // if (hann_pointers[1] == 10'd512) begin
-      //   hann_pointers[1] <= 10'd0;
-      // end
+      if (hann_pointers[0] == (i_lag << 1)) begin
+        hann_pointers[0] <= 10'd0;
+      end
+
+      if (hann_pointers[1] == (i_lag << 1)) begin
+        hann_pointers[1] <= 10'd0;
+      end
     end
   end
 
@@ -56,7 +57,7 @@ module psola (
   hanning_var hanning (
       .clk(clk),
       .rst(rst),
-      .i_lag(10'd512),
+      .i_lag(i_lag),
       .i_index(hann_index),
       .o_data(hann)
   );
