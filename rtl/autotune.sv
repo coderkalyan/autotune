@@ -159,147 +159,16 @@ module autotune (
   assign AUD_ADCLRCK = lrck;
   assign AUD_DACLRCK = lrck;
 
-  logic [10:0] sample_counter;
-  always_ff @(posedge CLOCK_50) begin
-    if (rst) sample_counter <= '0;
-    else if (sample_counter == 11'd1040) sample_counter <= '0;
-    else sample_counter <= sample_counter + 11'd1;
-  end
-
-  // 48000 / 100 = 480Hz
-  // logic [8:0] wave_counter;
-  // always_ff @(posedge CLOCK_50) begin
-  //     if (rst)
-  //         wave_counter <= '0;
-  //     else if (wave_counter == 9'd239)
-  //         wave_counter <= '0;
-  //     else if (sample_counter == 11'd0)
-  //         wave_counter <= wave_counter + 9'd1;
-  // end
-
-  // assign dac_data = {2{(wave_counter < 9'd120) ? 16'd0800 : 16'd0}}; //verifying dac configuration is correct
-  // assign dac_en = sample_counter == 11'd0;
-  // assign adc_en = sample_counter == 11'd0;
-
   logic [0:0] r_adc_en;
-  // always_ff @(posedge CLOCK_50) begin
-  //     if (rst)
-  //         r_adc_en <= '0;
-  //     else
-  //         r_adc_en <= adc_en;
-  // end
 
-
-  // audio_t ldata, rdata;
-  // assign ldata = audio_t'(adc_data[15: 0]);
-  // assign rdata = audio_t'(adc_data[31:16]);
-  logic signed [15:0] ldata, rdata;
+  // Convert 16 bit ADC samples into fixed point format.
+  audio_t ldata, rdata;
   assign ldata = signed'(adc_data[31:16]);
   assign rdata = signed'(adc_data[15:0]);
 
   fixed_t lf, rf;
   assign lf = `FIXED_ATOF(ldata);
   assign rf = `FIXED_ATOF(rdata);
-
-  fixed_t lpf_lf;
-  // lpf #(.FC_HZ(1000)) lpf1 (
-  //     .clk(CLOCK_50),
-  //     .rst(rst),
-  //     .i_data(lf),
-  //     .i_valid(adc_en),
-  //     .o_data(lpf_lf),
-  //     .o_valid(r_adc_en)
-  // );
-  //
-  fixed_t lpf_rf;
-  // lpf #(.FC_HZ(1000)) lpf2 (
-  //     .clk(CLOCK_50),
-  //     .rst(rst),
-  //     .i_data(rf),
-  //     .i_valid(adc_en),
-  //     .o_data(lpf_rf),
-  //     // .o_valid(r_adc_en)
-  // );
-
-  // --- Internal Signals: Left Channel ---
-  fixed_t lpf_lf_s1, lpf_lf_s2;  // Intermediate stage outputs
-  logic v_l_s1, v_l_s2;  // Intermediate valid signals
-
-  // --- Internal Signals: Right Channel ---
-  fixed_t lpf_rf_s1, lpf_rf_s2;  // Intermediate stage outputs
-  logic v_r_s1, v_r_s2;  // Intermediate valid signals
-
-  // ============================================================
-  // LEFT CHANNEL (lf)
-  // ============================================================
-  lpf #(
-      .FC_HZ(10000)
-  ) lpf_l_inst1 (
-      .clk(CLOCK_50),
-      .rst(rst),
-      .i_data(lf),
-      .i_valid(adc_en),
-      .o_data(lpf_lf_s1),
-      .o_valid(v_l_s1)
-  );
-
-  lpf #(
-      .FC_HZ(10000)
-  ) lpf_l_inst2 (
-      .clk(CLOCK_50),
-      .rst(rst),
-      .i_data(lpf_lf_s1),
-      .i_valid(v_l_s1),
-      .o_data(lpf_lf_s2),
-      .o_valid(v_l_s2)
-  );
-
-  lpf #(
-      .FC_HZ(10000)
-  ) lpf_l_inst3 (
-      .clk(CLOCK_50),
-      .rst(rst),
-      .i_data(lpf_lf_s2),
-      .i_valid(v_l_s2),
-      .o_data(lpf_lf),
-      .o_valid(r_adc_en)  // Final Left Output
-  );
-
-  // ============================================================
-  // RIGHT CHANNEL (rf)
-  // ============================================================
-  lpf #(
-      .FC_HZ(400)
-  ) lpf_r_inst1 (
-      .clk(CLOCK_50),
-      .rst(rst),
-      .i_data(rf),
-      .i_valid(adc_en),
-      .o_data(lpf_rf_s1),
-      .o_valid(v_r_s1)
-  );
-
-  lpf #(
-      .FC_HZ(400)
-  ) lpf_r_inst2 (
-      .clk(CLOCK_50),
-      .rst(rst),
-      .i_data(lpf_rf_s1),
-      .i_valid(v_r_s1),
-      .o_data(lpf_rf_s2),
-      .o_valid(v_r_s2)
-  );
-
-  lpf #(
-      .FC_HZ(400)
-  ) lpf_r_inst3 (
-      .clk    (CLOCK_50),
-      .rst    (rst),
-      .i_data (lpf_rf_s2),
-      .i_valid(v_r_s2),
-      .o_data (lpf_rf),
-      .o_valid()            // Final Right Output (valid is redundant)
-  );
 
   logic [14:0] counter;
   always_ff @(posedge CLOCK_50) begin
@@ -318,28 +187,12 @@ module autotune (
   );
 
   assign adc_en = !adc_empty;
-  assign dac_en = r_adc_en & SW[0];
-
-  logic [31:0] r_adc_data;
+  assign dac_en = adc_en & SW[0];
 
   fixed_t hann_lf, hann_rf;
-  always_comb hann_lf = fixed_mul(hann, lpf_lf);
-  always_comb hann_rf = fixed_mul(hann, lpf_rf);
-  // assign r_adc_data = {`FIXED_FTOA(lpf_lf), `FIXED_FTOA(lpf_rf)};
-  assign r_adc_data = {`FIXED_FTOA(hann_lf), `FIXED_FTOA(hann_rf)};
-  // assign r_adc_data = {16'd0, `FIXED_FTOA(lpf_lf)};
-  // always_ff @(posedge CLOCK_50) begin
-  //     if (rst)
-  //         r_adc_data <= '0;
-  //     else
-  //         // r_adc_data <= {rdata, ldata};
-  //         r_adc_data <= {`FIXED_FTOA(lpf_rf), `FIXED_FTOA(lpf_lf)};
-  // end
-
-  // assign dac_data = {`FIXED_FTOA(rf), `FIXED_FTOA(lf)};
-  assign dac_data   = r_adc_data;
-  // assign dac_data = adc_data;
-  // assign dac_data = r_adc_data;
+  always_comb hann_lf = fixed_mul(hann, lf);
+  always_comb hann_rf = fixed_mul(hann, rf);
+  assign dac_data = {`FIXED_FTOA(hann_lf), `FIXED_FTOA(hann_rf)};
 
   logic pitch_done, pitch_valid;
   logic [9:0] pitch_period;
@@ -349,8 +202,8 @@ module autotune (
   ) pitch_detection (
       .clk(CLOCK_50),
       .rst(rst),
-      .i_wr_en(r_adc_en),
-      .i_proc_data(lpf_lf),
+      .i_wr_en(adc_en),
+      .i_proc_data(lf),
       .o_period(pitch_period),
       .o_valid(pitch_valid),
       .o_done(pitch_done)
@@ -505,7 +358,6 @@ module autotune (
     // HEX1 = hex7(pitch_period[7:4]);
     // HEX2 = hex7(pitch_period[9:8]);
 
-<<<<<<< Updated upstream
     // HEX0 = hex7(lag_out[3:0]);
     // HEX1 = hex7(lag_out[7:4]);
     // HEX2 = hex7(lag_out[9:8]);
@@ -520,13 +372,5 @@ module autotune (
     // HEX3 = hex7(bcd_freq[15:12]);  // tens Hz^M
     // HEX4 = hex7(bcd_freq[19:16]);  // hundreds Hz^M
     // HEX5 = hex7(bcd_freq[23:20]);  // thousands Hz^M
-=======
-    HEX0 = hex7(bcd_freq[3:0]);    // hundredths Hz
-    HEX1 = hex7(bcd_freq[7:4]);    // tenths Hz
-    HEX2 = hex7(bcd_freq[11:8]);   // ones Hz
-    HEX3 = hex7(bcd_freq[15:12]);  // tens Hz
-    HEX4 = hex7(bcd_freq[19:16]);  // hundreds Hz
-    HEX5 = hex7(bcd_freq[23:20]);  // thousands Hz
->>>>>>> Stashed changes
   end
 endmodule
