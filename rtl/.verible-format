@@ -1,0 +1,5 @@
+indentation_spaces: 2
+column_limit: 100
+wrap_spaces: 4
+line_break_penalty: 2
+over_column_limit_penalty: 100
