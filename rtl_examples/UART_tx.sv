@@ -1,6 +1,6 @@
-module UART_tx(
+module uart_tx(
   input logic clk,
-  input logic rst_n,
+  input logic rst,
   input logic trmt,
   input logic [7:0] tx_data,
   output logic tx_done,
@@ -19,15 +19,15 @@ module UART_tx(
   state_t state, next_state;
 
   // baud counter
-  always_ff @(posedge clk, negedge rst_n) begin
-    if (!rst_n) baud_cnt <= '0;
+  always_ff @(posedge clk) begin
+    if (rst) baud_cnt <= '0;
     else if (load || shift) baud_cnt <= '0;
     else if (transmitting) baud_cnt <= baud_cnt + 1;
   end
 
   // shift register
-  always_ff @(posedge clk, negedge rst_n) begin
-    if (!rst_n) tx_shft_reg <= '1;  // Initialize to all 1s so TX idles high
+  always_ff @(posedge clk) begin
+    if (rst) tx_shft_reg <= '1;  // Initialize to all 1s so TX idles high
     else if (load) tx_shft_reg <= {tx_data, 1'b0};
     else if (shift) tx_shft_reg <= {1'b1, tx_shft_reg[8:1]};
   end
@@ -36,21 +36,21 @@ module UART_tx(
 
   // bit counter
   always_ff @(posedge clk, negedge rst_n) begin
-    if (!rst_n) bit_cnt <= '0;
+    if (rst) bit_cnt <= '0;
     else if (load) bit_cnt <= '0;
     else if (shift) bit_cnt <= bit_cnt + 1;
   end
 
   // tx_done SR flop
   always_ff @(posedge clk, negedge rst_n) begin
-    if (!rst_n) tx_done <= '0;
+    if (rst) tx_done <= '0;
     else if (set_done) tx_done <= '1;
     else if (load) tx_done <= '0;
   end
 
   // state register
   always_ff @(posedge clk, negedge rst_n) begin
-    if (!rst_n) state <= IDLE;
+    if (rst) state <= IDLE;
     else state <= next_state;
   end
 
