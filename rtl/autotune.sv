@@ -71,7 +71,7 @@ module autotune (
     inout PS2_DAT2,
 
     //////////// SW //////////
-    input [ 9:0] SW,
+    input [9:0] SW,
 
     inout [35:0] GPIO,
 
@@ -170,29 +170,98 @@ module autotune (
   assign lf = `FIXED_ATOF(ldata);
   assign rf = `FIXED_ATOF(rdata);
 
+  localparam int NUM_CHANNELS = 2;
+  logic [11:0] hann_pointers[NUM_CHANNELS];
+
+  always_ff @(posedge CLOCK_50) begin
+    if (rst) begin
+      hann_pointers[0] <= 0;
+      hann_pointers[1] <= 2048;
+    end else if (adc_en) begin
+      hann_pointers[0] <= hann_pointers[0] + 12'd1;
+      hann_pointers[1] <= hann_pointers[1] + 12'd1;
+    end
+  end
+
+  // genvar i;
+  // generate
+  //   for (i = 0; i < NUM_CHANNELS; i++) begin : hann_pointer_gen
+  //     always_ff @(posedge CLOCK_50) begin
+  //       if (rst) begin
+  //         hann_pointers[i] <= '0;
+  //       end else if (adc_en) begin
+  //         hann_pointers[i] <= hann_pointers[i] + 12'd1;
+  //       end
+  //     end
+  //   end
+  // endgenerate
+
   logic [14:0] counter;
   always_ff @(posedge CLOCK_50) begin
     if (rst) counter <= '0;
     else if (adc_en) counter <= counter + 12'd1;
   end
 
+  logic [11:0] hann_index;
   fixed_t hann;
   hanning #(
       .N(4096)
   ) hanning (
       .clk(CLOCK_50),
       .rst(rst),
-      .i_index(counter[14:3]),
+      // .i_index(counter[14:3]),
+      .i_index(hann_index),
       .o_data(hann)
   );
 
+  typedef enum logic {
+    IDLE,
+    BUSY
+  } state_t;
+
+  state_t state;
+  logic [6:0] channel;
+  fixed_t sample, out;
+  logic done;
+  always_ff @(posedge CLOCK_50) begin
+    if (rst) begin
+      state <= IDLE;
+    end else begin
+      case (state)
+        IDLE: begin
+          done <= 1'b0;
+
+          if (adc_en) begin
+            state   <= BUSY;
+            sample  <= lf;
+            out     <= 0;
+            channel <= 0;
+          end
+        end
+        BUSY: begin
+          if (channel < 2) begin
+            out     <= out + fixed_mul(sample, hann);
+            channel <= channel + 1;
+          end else begin
+            state <= IDLE;
+            done  <= 1'b1;
+          end
+        end
+        default: state <= IDLE;
+      endcase
+    end
+  end
+
+  always_comb hann_index = hann_pointers[channel];
+
   assign adc_en = !adc_empty;
-  assign dac_en = adc_en & SW[0];
+  assign dac_en = done & SW[0];
 
   fixed_t hann_lf, hann_rf;
-  always_comb hann_lf = fixed_mul(hann, lf);
-  always_comb hann_rf = fixed_mul(hann, rf);
-  assign dac_data = {`FIXED_FTOA(hann_lf), `FIXED_FTOA(hann_rf)};
+  // always_comb hann_lf = fixed_mul(hann, lf);
+  // always_comb hann_rf = fixed_mul(hann, rf);
+  // assign dac_data = {`FIXED_FTOA(hann_lf), `FIXED_FTOA(hann_rf)};
+  assign dac_data = {`FIXED_FTOA(out), `FIXED_FTOA(out)};
 
   logic pitch_done, pitch_valid;
   logic [9:0] pitch_period;
@@ -212,16 +281,13 @@ module autotune (
   logic r_pitch_valid;
   logic [9:0] r_pitch_period;
   always_ff @(posedge CLOCK_50) begin
-    if (rst)
-      begin
-        r_pitch_valid <= 1'b0;
-        r_pitch_period <= '0;
-      end
-    else if (pitch_done)
-      begin
-        r_pitch_valid <= pitch_valid;
-        r_pitch_period <= pitch_period;
-      end
+    if (rst) begin
+      r_pitch_valid  <= 1'b0;
+      r_pitch_period <= '0;
+    end else if (pitch_done) begin
+      r_pitch_valid  <= pitch_valid;
+      r_pitch_period <= pitch_period;
+    end
   end
 
   wire rxd;
@@ -236,14 +302,14 @@ module autotune (
   wire [6:0] velocity;
 
   // Instantiate midi receiver here
-  midi_receiver midi_receiver0(
-    .clk(CLOCK_50),
-    .rst(rst),
-    .midi_rx(rxd),
-    .note_on_trigger(note_on_trigger),
-    .note_number(note_number),
-    .velocity(velocity)
-    );
+  midi_receiver midi_receiver0 (
+      .clk(CLOCK_50),
+      .rst(rst),
+      .midi_rx(rxd),
+      .note_on_trigger(note_on_trigger),
+      .note_number(note_number),
+      .velocity(velocity)
+  );
 
   // Frequency LUT and Display Logic
   wire [26:0] frequency;
@@ -251,24 +317,24 @@ module autotune (
 
   // LUT to get Q11.16 frequency from note number
   midi_freq_lut lut0 (
-    .note(note_number),
-    .frequency(frequency)
+      .note(note_number),
+      .frequency(frequency)
   );
 
   // Convert Q11.16 frequency to 6 BCD decimal digits for display
   bin_to_bcd bcd0 (
-    .freq_q1116(frequency),
-    .bcd(bcd_freq)
+      .freq_q1116(frequency),
+      .bcd(bcd_freq)
   );
 
   // Display output UART TX interface.
   uart_tx uart_tx_inst (
-    .clk(CLOCK_50),
-    .rst(rst),
-    .trmt(1'b1),
-    .tx_data({8'hAA}),
-    .tx_done(LEDR[6]),
-    .TX(GPIO[4])
+      .clk(CLOCK_50),
+      .rst(rst),
+      .trmt(1'b1),
+      .tx_data({8'hAA}),
+      .tx_done(LEDR[6]),
+      .TX(GPIO[4])
   );
 
   assign LEDR[0] = config_done;
@@ -306,52 +372,52 @@ module autotune (
   endfunction
 
 
-  
+
   function automatic logic [6:0] hex7_notes(input hex_t val);
-      case (val)
-          ZERO:  hex7_notes = 7'b1000000;
-          ONE:   hex7_notes = 7'b1111001;
-          TWO:   hex7_notes = 7'b0100100;
-          THREE: hex7_notes = 7'b0110000;
-          FOUR:  hex7_notes = 7'b0011001;
-          FIVE:  hex7_notes = 7'b0010010;
-          SIX:   hex7_notes = 7'b0000010;
-          SEVEN: hex7_notes = 7'b1111000;
-          EIGHT: hex7_notes = 7'b0000000;
-          NINE:  hex7_notes = 7'b0011000;
-          A:     hex7_notes = 7'b0001000;
-          B:     hex7_notes = 7'b0000011;
-          C:     hex7_notes = 7'b1000110;
-          D:     hex7_notes = 7'b0100001;
-          E:     hex7_notes = 7'b0000110;
-          F:     hex7_notes = 7'b0001110;
+    case (val)
+      ZERO:  hex7_notes = 7'b1000000;
+      ONE:   hex7_notes = 7'b1111001;
+      TWO:   hex7_notes = 7'b0100100;
+      THREE: hex7_notes = 7'b0110000;
+      FOUR:  hex7_notes = 7'b0011001;
+      FIVE:  hex7_notes = 7'b0010010;
+      SIX:   hex7_notes = 7'b0000010;
+      SEVEN: hex7_notes = 7'b1111000;
+      EIGHT: hex7_notes = 7'b0000000;
+      NINE:  hex7_notes = 7'b0011000;
+      A:     hex7_notes = 7'b0001000;
+      B:     hex7_notes = 7'b0000011;
+      C:     hex7_notes = 7'b1000110;
+      D:     hex7_notes = 7'b0100001;
+      E:     hex7_notes = 7'b0000110;
+      F:     hex7_notes = 7'b0001110;
 
-          // Optional patterns for G and S (customize if needed)
-          G: hex7_notes = 7'b0000010;  // similar to '6'
-          S: hex7_notes = 7'b0010010;  // similar to '5'
+      // Optional patterns for G and S (customize if needed)
+      G: hex7_notes = 7'b0000010;  // similar to '6'
+      S: hex7_notes = 7'b0010010;  // similar to '5'
 
-          NONE: hex7_notes = 7'b1111111;
+      NONE: hex7_notes = 7'b1111111;
 
-          default: hex7_notes = 7'b1111111;
-      endcase
+      default: hex7_notes = 7'b1111111;
+    endcase
   endfunction
 
 
-    logic [9:0] lag_out;
-    nearest_note_lut nearest_note_lut (
-        .in_lag(r_pitch_period),
-        .nearest_note_lag(lag_out)
-    );
-    
-    hex_t note0, note1, note2;
-    
-    // Instantiate note_name_lut
-    note_name_lut u_note_name_lut (
-        .nearest_note_lag(lag_out),
-        .HEX2(note2),
-        .HEX1(note1),
-        .HEX0(note0)
-    );
+  logic [9:0] lag_out;
+  nearest_note_lut nearest_note_lut (
+      .in_lag(r_pitch_period),
+      .nearest_note_lag(lag_out)
+  );
+
+  hex_t note0, note1, note2;
+
+  // Instantiate note_name_lut
+  note_name_lut u_note_name_lut (
+      .nearest_note_lag(lag_out),
+      .HEX2(note2),
+      .HEX1(note1),
+      .HEX0(note0)
+  );
 
   always_comb begin
     // HEX0 = hex7(pitch_period[3:0]);
