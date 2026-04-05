@@ -24,8 +24,7 @@ fixed_t index_fixed_reg;
 assign index_fixed = fixed_t'({1'b0, i_index, 16'd0});
 
 hanning #(
-    .N(1024),
-    .B(10)
+    .N(1024)
 ) hanning_inst (
     .clk(clk),
     .rst(rst),
@@ -51,6 +50,8 @@ always @(posedge clk) begin
     end
 end
 
-assign index_eff = fixed_mul(index_fixed_reg, scaling_factor)[16 +: 10];
+fixed_t index_mul;
+assign index_mul = fixed_mul(index_fixed_reg, scaling_factor);
+assign index_eff = index_mul[16 +: 10];
 
 endmodule
