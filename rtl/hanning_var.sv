@@ -4,27 +4,28 @@ module hanning_var(
     input wire           clk,
     input wire           rst,
     input wire [9:0]     i_lag,
-    input wire [10:0]    i_index, // worse case 2*1023 indexes 
+    input wire [9:0]    i_index, // worse case 2*490 indexes 
     output fixed_t       o_data
 );
 
 /*
-    lut_idx[i] = i_index * 4096 / i_lag
+    lut_idx[i] = i_index * 1024 / 2*i_lag
+               = i_index * 512 / i_lag
     weff[i] = wlut[lut_idx[i]]
 */
 
-localparam fixed_t LENGTH_FIXED = fixed_t'(4096 << 16);
-logic [11:0] index_eff;
+localparam fixed_t LENGTH_FIXED = fixed_t'({1'b0,10'd512,16'd0}); 
+logic [9:0] index_eff;
 fixed_t lag_flipped;
 fixed_t scaling_factor;
 fixed_t index_fixed;
 fixed_t index_fixed_reg;
 
-assign index_fixed = fixed_t'(i_index << 16);
+assign index_fixed = fixed_t'({1'b0, i_index, 16'd0});
 
 hanning #(
-    .N(4096),
-    .B(12)
+    .N(1024),
+    .B(10)
 ) hanning_inst (
     .clk(clk),
     .rst(rst),
@@ -34,7 +35,7 @@ hanning #(
 
 // LUT to perform reciprocal of i_lag
 reciprocal_lut iRL(
-    .target_lag(i_lag << 1),  
+    .target_lag(i_lag),  
     .fliped_target(lag_flipped)
 );
 
@@ -50,6 +51,6 @@ always @(posedge clk) begin
     end
 end
 
-assign index_eff = fixed_mul(index_fixed_reg, scaling_factor)[16 +: 12];
+assign index_eff = fixed_mul(index_fixed_reg, scaling_factor)[16 +: 10];
 
 endmodule
