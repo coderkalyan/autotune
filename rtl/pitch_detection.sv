@@ -14,6 +14,35 @@ module pitch_detection #(
     output logic o_done
 );
 
+// Second order low pass filter on input data before any autocorrelation
+// logic.
+logic   valid [2];
+fixed_t data  [2];
+
+lpf #(
+    .FC_HZ(1000)
+) (
+    .clk(clk),
+    .rst(rst),
+    .i_valid(i_wr_en),
+    .i_data(i_proc_data),
+    .o_valid(valid[0]),
+    .o_data(data[0])
+);
+
+lpf #(
+    .FC_HZ(1000)
+) (
+    .clk(clk),
+    .rst(rst),
+    .i_valid(valid[0]),
+    .i_data(data[0]),
+    .o_valid(valid[1]),
+    .o_data(data[1])
+);
+
+// NOTE: Autocorrelation uses data[1] and valid[1] as inputs.
+
 // ----------------------------------------------------------------
 // Internal signals and registers
 // ----------------------------------------------------------------
@@ -72,7 +101,7 @@ end
 always @(posedge clk) begin
     if (rst) 
         wr_count <= '0;  
-    else if (i_wr_en)
+    else if (valid[1])
         wr_count <= wr_count + 1; 
 end
 
@@ -116,8 +145,8 @@ circular_buffer #(
 ) iCB (
   .clk(clk),
   .rst(rst),
-  .i_wr_en(i_wr_en),
-  .i_wr_data(i_proc_data),
+  .i_wr_en(valid[1]),
+  .i_wr_data(data[1]),
   .i_inc_rd_ptr(all_done),
   .i_rd_addr(eff_addr), // concatenate global pointer and local pointers for circular buffer read addresses
   .o_data(eff_data),  // concatenate global data and local data from circular buffer read ports
