@@ -22,21 +22,25 @@ module psola (
     end
   end
 
-  logic [1:0] seq;
-  fixed_t frac;
+  localparam real PITCH_FACTOR = 1.9;  // 1.059463;  // 587.33 / 739.99;  // 4.0 / 3.0;
+  localparam real ADVANCE = 1.0 / PITCH_FACTOR;
+
+  fixed_t advance, grain_counter, next_grain_counter;
+
   always_comb begin
-    case (seq)
-      2'h0: frac = `FIXED_RTOF(0);
-      2'h1: frac = `FIXED_RTOF(0.75);
-      2'h2: frac = `FIXED_RTOF(0.50);
-      2'h3: frac = `FIXED_RTOF(0.25);
-      default: frac = `FIXED_RTOF(0);
-    endcase
+    advance = `FIXED_RTOF(ADVANCE);
+
+    // Advance the grain counter by the specified amount, and then normalize.
+    next_grain_counter = grain_counter + advance;
+    next_grain_counter = fixed_t'({11'h0, next_grain_counter[15:0]});
   end
+
+  fixed_t frac;
+  assign frac = fixed_t'({11'h0, grain_counter[15:0]});
 
   fixed_t frac_lag, out_lag;
   assign frac_lag = fixed_mul(frac, fixed_t'({1'b0, i_lag, 16'h0}));
-  assign out_lag  = fixed_mul(`FIXED_RTOF(0.75), fixed_t'({1'b0, i_lag, 16'h0}));
+  assign out_lag  = fixed_mul(advance, fixed_t'({1'b0, i_lag, 16'h0}));
 
   localparam int NUM_CHANNELS = 16;
   localparam int CBITS = $clog2(NUM_CHANNELS);
@@ -101,9 +105,9 @@ module psola (
 
   always_ff @(posedge clk) begin
     if (rst) begin
-      seq <= 0;
+      grain_counter <= 0;
     end else if (enqueue) begin
-      seq <= seq + 1;
+      grain_counter <= next_grain_counter;
     end
   end
 
@@ -123,6 +127,9 @@ module psola (
     PIPELINE,
     BUSY
   } state_t;
+
+  // Debug only data for each channel.
+  fixed_t channels[NUM_CHANNELS];
 
   state_t state;
   logic [CBITS:0] channel;
@@ -149,9 +156,9 @@ module psola (
           if (channel < NUM_CHANNELS + 1) begin
             if (active[channel-1]) begin
               acc <= acc + fixed_mul(history[rptrs[channel-1]], hann);
+              channels[channel-1] <= fixed_mul(history[rptrs[channel-1]], hann);
             end
 
-            // rptrs[channel-1] <= rptrs[channel-1] + 1;
             channel <= channel + 1;
           end else begin
             state   <= IDLE;
@@ -164,8 +171,5 @@ module psola (
     end
   end
 
-  // Clamp to valid pointer range; past NUM_CHANNELS the pipeline is already
-  // loaded so the value doesn't matter.
-  always_comb
-    hann_index = (channel < NUM_CHANNELS) ? hann_ptrs[channel] : hann_ptrs[NUM_CHANNELS-1];
+  assign hann_index = hann_ptrs[channel];
 endmodule
