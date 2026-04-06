@@ -175,7 +175,7 @@ module autotune (
   psola psola_left (
       .clk(CLOCK_50),
       .rst(rst),
-      // .i_lag(10'd256),
+      .i_lag(r_pitch_period),
       .i_data(lf),
       .i_valid(adc_en),
       .o_data(out_lf),
@@ -184,7 +184,7 @@ module autotune (
   psola psola_right (
       .clk(CLOCK_50),
       .rst(rst),
-      // .i_lag(10'd256),
+      .i_lag(r_pitch_period),
       .i_data(rf),
       .i_valid(adc_en),
       .o_data(out_rf),

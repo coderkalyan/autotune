@@ -14,6 +14,7 @@ module psola_tb;
   logic clk, rst;
   fixed_t i_data, o_data;
   logic i_valid, o_valid;
+  logic [9:0] i_lag;
 
   psola dut (.*);
 
@@ -28,6 +29,7 @@ module psola_tb;
     rst     = 1'b1;
     i_data  = '0;
     i_valid = 1'b0;
+    i_lag   = 48000 / 440;
     repeat (4) @(posedge clk);
     @(negedge clk) rst = 1'b0;
     repeat (2) @(posedge clk);
