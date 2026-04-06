@@ -1,13 +1,13 @@
 `include "fixed.sv"
 
 module psola (
-    input  wire          clk,
-    input  wire          rst,
-    input  wire    [9:0] i_lag,
-    input  fixed_t       i_data,
-    input  wire          i_valid,
-    output fixed_t       o_data,
-    output logic         o_valid
+    input  wire    clk,
+    input  wire    rst,
+    // input  wire    [9:0] i_lag,
+    input  fixed_t i_data,
+    input  wire    i_valid,
+    output fixed_t o_data,
+    output logic   o_valid
 );
   localparam int NUM_CHANNELS = 2;
   logic [9:0] hann_pointers[NUM_CHANNELS];
@@ -29,47 +29,39 @@ module psola (
       hann_pointers[0] <= hann_pointers[0] + 10'd1;
       hann_pointers[1] <= hann_pointers[1] + 10'd1;
 
-      if (hann_pointers[0] == (i_lag << 1)) begin
-        hann_pointers[0] <= 10'd0;
-      end
-
-      if (hann_pointers[1] == (i_lag << 1)) begin
-        hann_pointers[1] <= 10'd0;
-      end
+      // if (hann_pointers[0] == (i_lag << 1)) begin
+      //   hann_pointers[0] <= 10'd0;
+      // end
+      //
+      // if (hann_pointers[1] == (i_lag << 1)) begin
+      //   hann_pointers[1] <= 10'd0;
+      // end
     end
   end
 
-  // genvar i;
-  // generate
-  //   for (i = 0; i < NUM_CHANNELS; i++) begin : hann_pointer_gen
-  //     always_ff @(posedge clk) begin
-  //       if (rst) begin
-  //         hann_pointers[i] <= '0;
-  //       end else if (adc_en) begin
-  //         hann_pointers[i] <= hann_pointers[i] + 12'd1;
-  //       end
-  //     end
-  //   end
-  // endgenerate
-
   logic [9:0] hann_index;
   fixed_t hann;
-  hanning_var hanning (
-      .clk(clk),
-      .rst(rst),
-      .i_lag(i_lag),
-      .i_index(hann_index),
-      .o_data(hann)
-  );
 
-  // hanning #(
-  //     .N(1024)
-  // ) hanning (
+  // hanning_var hanning (
   //     .clk(clk),
   //     .rst(rst),
+  //     .i_lag(i_lag),
   //     .i_index(hann_index),
   //     .o_data(hann)
   // );
+
+  fixed_t hann_comb;
+  hanning #(
+      .N(1024)
+  ) hanning (
+      .clk(clk),
+      .rst(rst),
+      .i_index(hann_index),
+      .o_data(hann_comb)
+  );
+
+  always_ff @(posedge clk)
+    hann <= hann_comb;
 
   typedef enum logic {
     IDLE,
@@ -78,7 +70,7 @@ module psola (
 
   state_t state;
   logic [6:0] channel;
-  fixed_t sample;
+  fixed_t sample, acc;
   always_ff @(posedge clk) begin
     if (rst) begin
       state <= IDLE;
@@ -90,7 +82,7 @@ module psola (
           if (i_valid) begin
             state   <= BUSY;
             sample  <= i_data;
-            o_data  <= 0;
+            acc  <= 0;
             channel <= 0;
           end
         end
@@ -98,10 +90,11 @@ module psola (
           // channel 0 is a pipeline prime cycle (hanning_var has 1-cycle latency);
           // accumulate on channels 1..NUM_CHANNELS, then output.
           if (channel < NUM_CHANNELS + 1) begin
-            if (channel > 0) o_data <= o_data + fixed_mul(sample, hann);
+            acc <= acc + fixed_mul(sample, hann);
             channel <= channel + 1;
           end else begin
             state   <= IDLE;
+            o_data  <= acc;
             o_valid <= 1'b1;
           end
         end
