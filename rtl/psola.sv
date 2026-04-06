@@ -4,6 +4,7 @@ module psola (
     input  wire    clk,
     input  wire    rst,
     input  wire    [9:0] i_lag,
+    input  fixed_t i_advance,  // 1/pitch_factor in Q11.16; <1 = pitch up, >1 = pitch down
     input  fixed_t i_data,
     input  wire    i_valid,
     output fixed_t o_data,
@@ -22,16 +23,11 @@ module psola (
     end
   end
 
-  localparam real PITCH_FACTOR = 1.059463;  // 587.33 / 739.99;  // 4.0 / 3.0;
-  localparam real ADVANCE = 1.0 / PITCH_FACTOR;
-
-  fixed_t advance, grain_counter, next_grain_counter;
+  fixed_t grain_counter, next_grain_counter;
 
   always_comb begin
-    advance = `FIXED_RTOF(ADVANCE);
-
     // Advance the grain counter by the specified amount, and then normalize.
-    next_grain_counter = grain_counter + advance;
+    next_grain_counter = grain_counter + i_advance;
     next_grain_counter = fixed_t'({11'h0, next_grain_counter[15:0]});
   end
 
@@ -40,7 +36,7 @@ module psola (
 
   fixed_t frac_lag, out_lag;
   assign frac_lag = fixed_mul(frac, fixed_t'({1'b0, i_lag, 16'h0}));
-  assign out_lag  = fixed_mul(advance, fixed_t'({1'b0, i_lag, 16'h0}));
+  assign out_lag  = fixed_mul(i_advance, fixed_t'({1'b0, i_lag, 16'h0}));
 
   localparam int NUM_CHANNELS = 16;
   localparam int CBITS = $clog2(NUM_CHANNELS);
@@ -94,14 +90,16 @@ module psola (
     end
   end
 
+  wire [9:0] output_threshold = out_lag[16 +: 10];
   logic [9:0] output_counter;
   always_ff @(posedge clk) begin
     if (rst) begin
       output_counter <= 10'd0;
     end else if (i_valid) begin
-      output_counter <= (output_counter == out_lag[16+:10]) ? 0 : (output_counter + 1);
+      output_counter <= (output_counter >= output_threshold) ? 0 : (output_counter + 1);
     end
   end
+
 
   assign enqueue = (output_counter == 0) && i_valid;
 

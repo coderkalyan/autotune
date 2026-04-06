@@ -1,22 +1,32 @@
 `timescale 1ns / 1ps
 `include "../fixed.sv"
 
-// Verifies PSOLA passthrough across a frequency transition:
-//   samples 0..9999  : 440 Hz (lag ≈ 109 samples)
-//   samples 10000..  : linear glide over 500 samples up to 4 semitones (≈554 Hz, lag ≈ 87)
-// Output should remain within fixed-point error of the input throughout.
+// Drives PSOLA with two input-frequency segments, each with a mid-segment
+// pitch-factor update, to exercise both upward and downward pitch shifting.
+//
+//   samples 0..4999   : 440 Hz,  pitch_factor = 1.2  (up ~3.2 semitones)
+//   samples 5000..9999 : 440 Hz,  pitch_factor = 0.9  (down ~1.9 semitones)
+//   samples 10000..14999: ~1320 Hz, pitch_factor = 1.3  (up ~4.5 semitones)
+//   samples 15000..19999: ~1320 Hz, pitch_factor = 0.95 (down ~0.9 semitones)
+//
+// i_advance = 1 / pitch_factor; values < 1 pitch up, > 1 pitch down.
 module psola_tb;
   localparam int  CLK_PERIOD  = 10;
   localparam int  N_SAMPLES   = 20000;
   localparam real FS          = 48000.0;
   localparam real FREQ1       = 440.0;
-  localparam real FREQ2       = FREQ1 * 3; // 554.365;  // 440 * 2^(4/12) — 4 semitones up
+  localparam real FREQ2       = FREQ1 * 3;  // ~1320 Hz
   localparam int  TRANS_START = 10000;
-  localparam int  TRANS_LEN   = 50;      // ~10 ms glide at 48 kHz
-  localparam real EPSILON     = 4.0 / 65536.0;
+  localparam int  TRANS_LEN   = 50;
+
+  // Pitch factors — two per frequency segment, one > 1 and one < 1.
+  localparam real PF_S1A = 1.5;   // segment 1 first half  (pitch up)
+  localparam real PF_S1B = 0.7;   // segment 1 second half (pitch down)
+  localparam real PF_S2A = 1.3;   // segment 2 first half  (pitch up)
+  localparam real PF_S2B = 0.95;  // segment 2 second half (pitch down)
 
   logic       clk, rst;
-  fixed_t     i_data, o_data;
+  fixed_t     i_data, o_data, i_advance;
   logic       i_valid, o_valid;
   logic [9:0] i_lag;
 
@@ -25,27 +35,36 @@ module psola_tb;
   initial clk = 1'b0;
   always #(CLK_PERIOD / 2) clk = ~clk;
 
-  function automatic real abs_r(input real x);
-    return (x < 0.0) ? -x : x;
-  endfunction
-
-  real phase;  // running phase accumulator
+  real phase;
 
   initial begin
-    rst     = 1'b1;
-    i_data  = '0;
-    i_valid = 1'b0;
-    i_lag   = 10'($rtoi(FS / FREQ1 + 0.5));
-    phase   = 0.0;
+    rst       = 1'b1;
+    i_data    = '0;
+    i_valid   = 1'b0;
+    i_lag     = 10'($rtoi(FS / FREQ1 + 0.5));
+    i_advance = fixed_rtof(1.0 / PF_S1A);
+    phase     = 0.0;
     repeat (4) @(posedge clk);
     @(negedge clk) rst = 1'b0;
     repeat (2) @(posedge clk);
 
     for (int s = 0; s < N_SAMPLES; s++) begin
-      real    v_in, v_out, freq, t;
+      real    v_in, v_out, freq, t, pitch_factor;
       fixed_t sample;
 
-      // Linearly interpolate frequency after TRANS_START
+      // --- pitch factor: update once in the middle of each segment ---
+      if (s < TRANS_START / 2)
+        pitch_factor = PF_S1A;
+      else if (s < TRANS_START)
+        pitch_factor = PF_S1B;
+      else if (s < TRANS_START + (N_SAMPLES - TRANS_START) / 2)
+        pitch_factor = PF_S2A;
+      else
+        pitch_factor = PF_S2B;
+
+      i_advance = fixed_rtof(1.0 / pitch_factor);
+
+      // --- input frequency: linear glide at TRANS_START ---
       if (s < TRANS_START) begin
         freq = FREQ1;
       end else if (s < TRANS_START + TRANS_LEN) begin
@@ -55,10 +74,7 @@ module psola_tb;
         freq = FREQ2;
       end
 
-      // Lag = nearest integer period in samples at FS
       i_lag  = 10'($rtoi(FS / freq + 0.5));
-
-      // Advance phase accumulator and generate sample
       v_in   = $sin(phase);
       phase += 2.0 * 3.14159265358979 * freq / FS;
       sample = fixed_rtof(v_in);
@@ -75,14 +91,11 @@ module psola_tb;
       do @(posedge clk); while (!o_valid);
 
       v_out = fixed_ftor(o_data);
-      if (abs_r(v_out - v_in) > EPSILON) begin
-        $display("FAIL sample %0d (freq=%.1f lag=%0d): in=%f out=%f diff=%e", s, freq, i_lag, v_in,
-                 v_out, abs_r(v_out - v_in));
-        // $fatal;
-      end
+      $display("s=%5d freq=%7.1f pf=%.2f lag=%3d in=%8.5f out=%8.5f", s, freq, pitch_factor,
+               i_lag, v_in, v_out);
     end
 
-    $display("All %0d PSOLA passthrough checks passed.", N_SAMPLES);
+    $display("Done.");
     $finish;
   end
 
