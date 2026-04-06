@@ -1,21 +1,19 @@
-import { Button } from "@/components/ui/button"
+import { FrequencyChart } from "@/components/FrequencyChart"
+import { SerialStatus } from "@/components/SerialStatus"
+import { useFrequencyData } from "@/hooks/useWebSocket"
 
-export function App() {
+export default function App() {
+  const { points, connected } = useFrequencyData()
+
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
-        </div>
-        <div className="font-mono text-xs text-muted-foreground">
-          (Press <kbd>d</kbd> to toggle dark mode)
-        </div>
+    <div className="h-screen flex flex-col p-4 gap-4 bg-background">
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-semibold">Autotune — Live Pitch</h1>
+        <SerialStatus connected={connected} />
+      </div>
+      <div className="flex-1 min-h-0">
+        <FrequencyChart points={points} />
       </div>
     </div>
   )
 }
-
-export default App
