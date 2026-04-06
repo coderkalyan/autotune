@@ -3,7 +3,7 @@
 module psola (
     input  wire    clk,
     input  wire    rst,
-    // input  wire    [9:0] i_lag,
+    input  wire    [9:0] i_lag,
     input  fixed_t i_data,
     input  wire    i_valid,
     output fixed_t o_data,
@@ -47,7 +47,7 @@ module psola (
             // Start the next channel when enqueuing a grain.
             hann_ptrs[i] <= 0;
             active[i]    <= 1'b1;
-          end else if (hann_ptrs[i] == 10'd1023) begin
+          end else if (hann_ptrs[i] == (i_lag << 1)) begin
             // Dequeue completed grains.
             active[i] <= 1'b0;
           end
@@ -69,7 +69,7 @@ module psola (
     if (rst) begin
       output_counter <= 10'd0;
     end else if (valid) begin
-      output_counter <= (output_counter == 10'd511) ? 0 : (output_counter + 1);
+      output_counter <= (output_counter == i_lag) ? 0 : (output_counter + 1);
     end
   end
 
@@ -78,25 +78,13 @@ module psola (
   logic [9:0] hann_index;
   fixed_t hann;
 
-  // hanning_var hanning (
-  //     .clk(clk),
-  //     .rst(rst),
-  //     .i_lag(i_lag),
-  //     .i_index(hann_index),
-  //     .o_data(hann)
-  // );
-
-  fixed_t hann_comb;
-  hanning #(
-      .N(1024)
-  ) hanning (
+  hanning_var hanning (
       .clk(clk),
       .rst(rst),
+      .i_lag(i_lag),
       .i_index(hann_index),
-      .o_data(hann_comb)
+      .o_data(hann)
   );
-
-  always_ff @(posedge clk) hann <= hann_comb;
 
   typedef enum logic [1:0] {
     IDLE,
