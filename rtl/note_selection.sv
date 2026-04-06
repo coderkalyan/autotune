@@ -3,15 +3,20 @@
 module note_selection (
     input [9:0] actual_lag,
     input [9:0] target_lag,
-    output fmac_t shift_ratio
+    output fixed_t shift_ratio
 );
 
 /*
-Shift ratio = f(target) / f(actual) = lag(actual) / lag(target)
+Shift ratio = f(actual) / f(target) 
+            = lag(new) / lag(actual)
+            = lag(new) * 1 / lag(actual)
+            
+
+
 - TODO: may need to do some work to "clean" autocorrelation input
-- Check if (lag(target) < lag(actual) * 2) & (lag(target) > lag(actual) * 0.5)
+- Check if (lag(target) =< lag(actual) * 2) & (lag(target) >= lag(actual) * 0.5)
     - based on this saturate to target_sat
-- Use a LUT to compute 1 / lag(target_eff), then multiply
+- Use a LUT to compute 1 / lag(actual_eff), then multiply
 */
 
 // TODO: temporary variable in case need to do some smoothing on actual_lag input 
@@ -34,8 +39,8 @@ end
 // Reciprocal LUT
 // ----------------------------------------------------------------
 fixed_t reciprocal;
-reciprocal_lut (
-    .target_lag(target_eff),
+reciprocal_lut iRL(
+    .target_lag(actual_eff),
     .fliped_target(reciprocal)
 );
 
@@ -43,7 +48,7 @@ reciprocal_lut (
 // Nearest Note LUT
 // ----------------------------------------------------------------
 logic [9:0] nearest_note;
-nearest_note_lut (
+nearest_note_lut iNNL(
     .in_lag(actual_eff),
     .nearest_note_lag(nearest_note)
 );
@@ -51,10 +56,10 @@ nearest_note_lut (
 // ----------------------------------------------------------------
 // Ratio Logic
 // ----------------------------------------------------------------
-fixed_t actual_fixed;
+fixed_t target_fixed;
 
-assign actual_fixed = fixed_t'({1'b0,actual_eff,16'd0});
-assign shift_ratio = actual_fixed * reciprocal;
+assign target_fixed = fixed_t'({1'b0,target_eff,16'd0});
+assign shift_ratio = fixed_mul(target_fixed, reciprocal);
 assign target_eff = (target_lag == 0) ? nearest_note : target_sat;
 
 
