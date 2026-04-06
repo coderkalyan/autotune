@@ -9,18 +9,34 @@ module psola (
     output fixed_t o_data,
     output logic   o_valid
 );
-  logic [7:0] counter;
+  localparam int HISTORY = 512;  // ~= MAX_LAG
+  localparam int HBITS = $clog2(HISTORY);
+  fixed_t history[HISTORY];
+  logic [HBITS - 1:0] wptr;
   always_ff @(posedge clk) begin
     if (rst) begin
-      counter <= 8'b0;
+      wptr <= 0;
     end else if (i_valid) begin
-      counter <= counter + 8'd1;
+      history[wptr] <= i_data;
+      wptr          <= wptr + 1;
     end
   end
 
-  logic valid;
-  // assign valid = counter == 8'd0;
-  assign valid = i_valid;
+  logic [1:0] seq;
+  fixed_t frac;
+  always_comb begin
+    case (seq)
+      2'h0: frac = `FIXED_RTOF(0);
+      2'h1: frac = `FIXED_RTOF(0.75);
+      2'h2: frac = `FIXED_RTOF(0.50);
+      2'h3: frac = `FIXED_RTOF(0.25);
+      default: frac = `FIXED_RTOF(0);
+    endcase
+  end
+
+  fixed_t frac_lag, out_lag;
+  assign frac_lag = fixed_mul(frac, fixed_t'({1'b0, i_lag, 16'h0}));
+  assign out_lag  = fixed_mul(`FIXED_RTOF(0.75), fixed_t'({1'b0, i_lag, 16'h0}));
 
   localparam int NUM_CHANNELS = 16;
   localparam int CBITS = $clog2(NUM_CHANNELS);
@@ -29,6 +45,7 @@ module psola (
   logic               active       [NUM_CHANNELS];
   logic               enqueue;
   logic [CBITS - 1:0] next_channel;
+  logic [HBITS - 1:0] rptrs        [NUM_CHANNELS];
 
   genvar i;
   generate
@@ -37,9 +54,15 @@ module psola (
         if (rst) begin
           hann_ptrs[i] <= 0;
           active[i]    <= 1'b0;
+          rptrs[i]     <= 0;
         end else begin
+          // Increment all read pointers once per sample.
+          if (i_valid) begin
+            rptrs[i] <= rptrs[i] + 1;
+          end
+
           // Increment all active channels.
-          if (active[i] && valid) begin
+          if (active[i] && i_valid) begin
             hann_ptrs[i] <= hann_ptrs[i] + 1;
           end
 
@@ -47,6 +70,7 @@ module psola (
             // Start the next channel when enqueuing a grain.
             hann_ptrs[i] <= 0;
             active[i]    <= 1'b1;
+            rptrs[i]     <= wptr - frac_lag[16+:10];
           end else if (hann_ptrs[i] == (i_lag << 1)) begin
             // Dequeue completed grains.
             active[i] <= 1'b0;
@@ -68,12 +92,20 @@ module psola (
   always_ff @(posedge clk) begin
     if (rst) begin
       output_counter <= 10'd0;
-    end else if (valid) begin
-      output_counter <= (output_counter == i_lag) ? 0 : (output_counter + 1);
+    end else if (i_valid) begin
+      output_counter <= (output_counter == out_lag[16+:10]) ? 0 : (output_counter + 1);
     end
   end
 
-  assign enqueue = (output_counter == 0) && (valid);
+  assign enqueue = (output_counter == 0) && i_valid;
+
+  always_ff @(posedge clk) begin
+    if (rst) begin
+      seq <= 0;
+    end else if (enqueue) begin
+      seq <= seq + 1;
+    end
+  end
 
   logic [9:0] hann_index;
   fixed_t hann;
@@ -94,7 +126,7 @@ module psola (
 
   state_t state;
   logic [CBITS:0] channel;
-  fixed_t sample, acc;
+  fixed_t acc;
   always_ff @(posedge clk) begin
     if (rst) begin
       state <= IDLE;
@@ -105,7 +137,6 @@ module psola (
 
           if (i_valid) begin
             state <= PIPELINE;
-            sample <= i_data;
             acc <= 0;
             channel <= 0;
           end
@@ -117,9 +148,10 @@ module psola (
         BUSY: begin
           if (channel < NUM_CHANNELS + 1) begin
             if (active[channel-1]) begin
-              acc <= acc + fixed_mul(sample, hann);
+              acc <= acc + fixed_mul(history[rptrs[channel-1]], hann);
             end
 
+            // rptrs[channel-1] <= rptrs[channel-1] + 1;
             channel <= channel + 1;
           end else begin
             state   <= IDLE;
