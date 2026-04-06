@@ -1,19 +1,23 @@
 `timescale 1ns / 1ps
 `include "../fixed.sv"
 
-// Verifies that the barebones PSOLA passthrough (two Hanning grains 50% out
-// of phase, no pitch shift) reconstructs the input signal within fixed-point
-// error bounds.  The two overlapping windows sum to ~1.0, so output ≈ input.
+// Verifies PSOLA passthrough across a frequency transition:
+//   samples 0..9999  : 440 Hz (lag ≈ 109 samples)
+//   samples 10000..  : linear glide over 500 samples up to 4 semitones (≈554 Hz, lag ≈ 87)
+// Output should remain within fixed-point error of the input throughout.
 module psola_tb;
-  localparam int CLK_PERIOD = 10;
-  localparam int N_SAMPLES = 20000;
-  // Hanning LUT quantisation (≤1 LSB per entry) plus two fixed_mul
-  // truncation errors.  For |sample| ≤ 1.0: total error ≤ 3/65536.
-  localparam real EPSILON = 4.0 / 65536.0;
+  localparam int  CLK_PERIOD  = 10;
+  localparam int  N_SAMPLES   = 20000;
+  localparam real FS          = 48000.0;
+  localparam real FREQ1       = 440.0;
+  localparam real FREQ2       = FREQ1 * 3; // 554.365;  // 440 * 2^(4/12) — 4 semitones up
+  localparam int  TRANS_START = 10000;
+  localparam int  TRANS_LEN   = 50;      // ~10 ms glide at 48 kHz
+  localparam real EPSILON     = 4.0 / 65536.0;
 
-  logic clk, rst;
-  fixed_t i_data, o_data;
-  logic i_valid, o_valid;
+  logic       clk, rst;
+  fixed_t     i_data, o_data;
+  logic       i_valid, o_valid;
   logic [9:0] i_lag;
 
   psola dut (.*);
@@ -25,21 +29,38 @@ module psola_tb;
     return (x < 0.0) ? -x : x;
   endfunction
 
+  real phase;  // running phase accumulator
+
   initial begin
     rst     = 1'b1;
     i_data  = '0;
     i_valid = 1'b0;
-    i_lag   = 48000 / 440;
+    i_lag   = 10'($rtoi(FS / FREQ1 + 0.5));
+    phase   = 0.0;
     repeat (4) @(posedge clk);
     @(negedge clk) rst = 1'b0;
     repeat (2) @(posedge clk);
 
     for (int s = 0; s < N_SAMPLES; s++) begin
-      real v_in, v_out;
+      real    v_in, v_out, freq, t;
       fixed_t sample;
 
-      // 440 Hz sine wave at 48 kHz – exercises a range of amplitudes
-      v_in   = $sin(2.0 * 3.14159265358979 * 440.0 * real'(s) / 48000.0);
+      // Linearly interpolate frequency after TRANS_START
+      if (s < TRANS_START) begin
+        freq = FREQ1;
+      end else if (s < TRANS_START + TRANS_LEN) begin
+        t    = real'(s - TRANS_START) / real'(TRANS_LEN);
+        freq = FREQ1 + (FREQ2 - FREQ1) * t;
+      end else begin
+        freq = FREQ2;
+      end
+
+      // Lag = nearest integer period in samples at FS
+      i_lag  = 10'($rtoi(FS / freq + 0.5));
+
+      // Advance phase accumulator and generate sample
+      v_in   = $sin(phase);
+      phase += 2.0 * 3.14159265358979 * freq / FS;
       sample = fixed_rtof(v_in);
 
       // Assert i_valid for exactly one cycle
@@ -50,13 +71,13 @@ module psola_tb;
       @(negedge clk);
       i_valid = 1'b0;
 
-      // Wait for PSOLA to finish processing (≈3 cycles)
+      // Wait for PSOLA to finish processing
       do @(posedge clk); while (!o_valid);
 
       v_out = fixed_ftor(o_data);
       if (abs_r(v_out - v_in) > EPSILON) begin
-        $display("FAIL sample %0d: in=%f out=%f diff=%e (> epsilon=%e)", s, v_in, v_out, abs_r(
-                 v_out - v_in), EPSILON);
+        $display("FAIL sample %0d (freq=%.1f lag=%0d): in=%f out=%f diff=%e", s, freq, i_lag, v_in,
+                 v_out, abs_r(v_out - v_in));
         // $fatal;
       end
     end
