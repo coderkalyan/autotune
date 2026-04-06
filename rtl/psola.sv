@@ -22,7 +22,7 @@ module psola (
     end
   end
 
-  localparam real PITCH_FACTOR = 1.9;  // 1.059463;  // 587.33 / 739.99;  // 4.0 / 3.0;
+  localparam real PITCH_FACTOR = 1.059463;  // 587.33 / 739.99;  // 4.0 / 3.0;
   localparam real ADVANCE = 1.0 / PITCH_FACTOR;
 
   fixed_t advance, grain_counter, next_grain_counter;
@@ -50,6 +50,7 @@ module psola (
   logic               enqueue;
   logic [CBITS - 1:0] next_channel;
   logic [HBITS - 1:0] rptrs        [NUM_CHANNELS];
+  logic [9:0]         lags         [NUM_CHANNELS];
 
   genvar i;
   generate
@@ -75,7 +76,8 @@ module psola (
             hann_ptrs[i] <= 0;
             active[i]    <= 1'b1;
             rptrs[i]     <= wptr - frac_lag[16+:10];
-          end else if (hann_ptrs[i] == (i_lag << 1)) begin
+            lags[i]      <= i_lag;
+          end else if (hann_ptrs[i] == (lags[i] << 1)) begin
             // Dequeue completed grains.
             active[i] <= 1'b0;
           end
@@ -111,14 +113,12 @@ module psola (
     end
   end
 
-  logic [9:0] hann_index;
   fixed_t hann;
-
   hanning_var hanning (
       .clk(clk),
       .rst(rst),
-      .i_lag(i_lag),
-      .i_index(hann_index),
+      .i_lag(lags[channel]),
+      .i_index(hann_ptrs[channel]),
       .o_data(hann)
   );
 
@@ -170,6 +170,4 @@ module psola (
       endcase
     end
   end
-
-  assign hann_index = hann_ptrs[channel];
 endmodule
