@@ -2,7 +2,7 @@
 
 module pitch_detection #(
     parameter WINDOW_SIZE = 1024,
-    parameter STAMPS = 16,
+    parameter STAMPS = 32,
     parameter WBITS = $clog2(WINDOW_SIZE)
 )(
     input clk,
