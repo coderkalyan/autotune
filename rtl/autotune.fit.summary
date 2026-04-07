@@ -1,17 +1,17 @@
-Fitter Status : Successful - Thu Mar 26 19:17:42 2026
+Fitter Status : Successful - Tue Apr  7 16:05:15 2026
 Quartus Prime Version : 25.1std.0 Build 1129 10/21/2025 SC Lite Edition
 Revision Name : autotune
 Top-level Entity Name : autotune
 Family : Cyclone V
 Device : 5CSEMA5F31C6
 Timing Models : Final
-Logic utilization (in ALMs) : 3,474 / 32,070 ( 11 % )
-Total registers : 3667
+Logic utilization (in ALMs) : 13,118 / 32,070 ( 41 % )
+Total registers : 22085
 Total pins : 204 / 457 ( 45 % )
 Total virtual pins : 0
 Total block memory bits : 940,544 / 4,065,280 ( 23 % )
 Total RAM Blocks : 104 / 397 ( 26 % )
-Total DSP Blocks : 37 / 87 ( 43 % )
+Total DSP Blocks : 38 / 87 ( 44 % )
 Total HSSI RX PCSs : 0
 Total HSSI PMA RX Deserializers : 0
 Total HSSI TX PCSs : 0

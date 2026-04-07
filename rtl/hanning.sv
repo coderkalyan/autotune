@@ -12,8 +12,8 @@ module hanning #(
     output fixed_t           o_data
 );
   logic [31:0] rom[N];
-  // initial $readmemh("hanning.mem", rom);
-  initial $readmemh("/home/kalyan/Documents/school/ece554/autotune/rtl/hanning.mem", rom);
+  initial $readmemh("hanning.mem", rom);
+  // initial $readmemh("/home/kalyan/Documents/school/ece554/autotune/rtl/hanning.mem", rom);
 
   always_comb o_data = fixed_t'(rom[i_index][26:0]);
 endmodule

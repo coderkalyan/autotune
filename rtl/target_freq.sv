@@ -8,7 +8,7 @@ module target_freq #(
     input rst,
     input i_rxd,
     input [WBITS-1:0] i_period,
-    output fmac_t o_shift_ratio 
+    output fixed_t o_shift_ratio 
 );
 
 // ----------------------------------------------------------------
@@ -26,7 +26,7 @@ wire [9:0] target_lag;
 midi_receiver midi_receiver0(
     .clk(clk),
     .rst(rst),
-    .midi_rx(rxd),
+    .midi_rx(i_rxd),
     .note_on_trigger(note_on_trigger),
     .note_number(note_number),
     .velocity(velocity)
@@ -35,9 +35,9 @@ midi_receiver midi_receiver0(
 // ----------------------------------------------------------------
 // Frequency LUT 
 // ----------------------------------------------------------------
-midi_freq_lut lut0 (
+midi_freq_lut lut0 ( // TODO: this need to change to 10 bit length
     .note(note_number),
-    .frequency(target_lag)
+    .frequency(target_lag) //fixed_t length
 );
 
 // ----------------------------------------------------------------

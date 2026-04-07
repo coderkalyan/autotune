@@ -21,7 +21,7 @@ fixed_t data  [2];
 
 lpf #(
     .FC_HZ(1000)
-) (
+) i_lpf_pp_1 (
     .clk(clk),
     .rst(rst),
     .i_valid(i_wr_en),
@@ -32,7 +32,7 @@ lpf #(
 
 lpf #(
     .FC_HZ(1000)
-) (
+) i_lpf_pp_2 (
     .clk(clk),
     .rst(rst),
     .i_valid(valid[0]),

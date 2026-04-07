@@ -1,14 +1,14 @@
-Analysis & Synthesis Status : Successful - Thu Mar 26 19:16:09 2026
+Analysis & Synthesis Status : Successful - Tue Apr  7 15:55:00 2026
 Quartus Prime Version : 25.1std.0 Build 1129 10/21/2025 SC Lite Edition
 Revision Name : autotune
 Top-level Entity Name : autotune
 Family : Cyclone V
 Logic utilization (in ALMs) : N/A
-Total registers : 3836
+Total registers : 22273
 Total pins : 204
 Total virtual pins : 0
 Total block memory bits : 940,544
-Total DSP Blocks : 37
+Total DSP Blocks : 38
 Total HSSI RX PCSs : 0
 Total HSSI PMA RX Deserializers : 0
 Total HSSI TX PCSs : 0
