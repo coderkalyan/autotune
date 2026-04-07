@@ -1,6 +1,6 @@
 import numpy as np
 
-N = 4096
+N = 1024
 n = np.arange(N)
 window = 0.5 - 0.5 * np.cos(2 * np.pi * n / N)
 normalized_window = window
