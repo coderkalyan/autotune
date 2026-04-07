@@ -112,6 +112,7 @@ module psola (
   end
 
   fixed_t hann;
+  logic [CBITS:0] channel;
   hanning_var hanning (
       .clk(clk),
       .rst(rst),
@@ -130,7 +131,6 @@ module psola (
   fixed_t channels[NUM_CHANNELS];
 
   state_t state;
-  logic [CBITS:0] channel;
   fixed_t acc;
   always_ff @(posedge clk) begin
     if (rst) begin
