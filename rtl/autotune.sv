@@ -267,6 +267,7 @@ module autotune (
       .clk(CLOCK_50),
       .rst(rst),
       .trmt(1'b1),
+      .clk_div(16'd1600),
       .tx_data({8'hAA}),
       .tx_done(LEDR[6]),
       .TX(GPIO[4])
