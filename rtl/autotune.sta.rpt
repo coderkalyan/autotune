@@ -1,5 +1,5 @@
 Timing Analyzer report for autotune
-Thu Mar 26 19:18:02 2026
+Tue Apr  7 16:06:24 2026
 Quartus Prime Version 25.1std.0 Build 1129 10/21/2025 SC Lite Edition
 
 
@@ -99,24 +99,18 @@ on the Quartus Prime software download page.
 ; Processors                 ; Number      ;
 +----------------------------+-------------+
 ; Number detected on machine ; 12          ;
-; Maximum allowed            ; 12          ;
+; Maximum allowed            ; 6           ;
 ;                            ;             ;
-; Average used               ; 3.76        ;
-; Maximum used               ; 12          ;
+; Average used               ; 3.61        ;
+; Maximum used               ; 6           ;
 ;                            ;             ;
 ; Usage by Processor         ; % Time Used ;
 ;     Processor 1            ; 100.0%      ;
-;     Processor 2            ;  27.8%      ;
-;     Processor 3            ;  27.4%      ;
-;     Processor 4            ;  27.4%      ;
-;     Processor 5            ;  24.1%      ;
-;     Processor 6            ;  24.1%      ;
-;     Processor 7            ;  24.1%      ;
-;     Processor 8            ;  24.1%      ;
-;     Processor 9            ;  24.1%      ;
-;     Processor 10           ;  24.1%      ;
-;     Processor 11           ;  24.1%      ;
-;     Processor 12           ;  24.1%      ;
+;     Processor 2            ;  55.0%      ;
+;     Processor 3            ;  54.3%      ;
+;     Processor 4            ;  54.2%      ;
+;     Processor 5            ;  48.8%      ;
+;     Processor 6            ;  48.8%      ;
 +----------------------------+-------------+
 
 
@@ -125,37 +119,37 @@ on the Quartus Prime software download page.
 +---------------+--------+--------------------------+
 ; SDC File Path ; Status ; Read at                  ;
 +---------------+--------+--------------------------+
-; autotune.sdc  ; OK     ; Thu Mar 26 19:17:54 2026 ;
+; autotune.sdc  ; OK     ; Tue Apr  7 16:05:50 2026 ;
 +---------------+--------+--------------------------+
 
 
-+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Clocks                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ;
-+-----------------------------------------------------------------------------------+-----------+---------+------------+-------+---------+------------+-----------+-------------+-------+--------+-----------+------------+----------+---------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------+
-; Clock Name                                                                        ; Type      ; Period  ; Frequency  ; Rise  ; Fall    ; Duty Cycle ; Divide by ; Multiply by ; Phase ; Offset ; Edge List ; Edge Shift ; Inverted ; Master                                                                          ; Source                                                                               ; Targets                                                                               ;
-+-----------------------------------------------------------------------------------+-----------+---------+------------+-------+---------+------------+-----------+-------------+-------+--------+-----------+------------+----------+---------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------+
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; Generated ; 2.466   ; 405.52 MHz ; 0.000 ; 1.233   ; 50.00      ; 64        ; 519         ;       ;        ;           ;            ; false    ; CLOCK_50                                                                        ; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|refclkin      ; { audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0] }   ;
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; Generated ; 81.387  ; 12.29 MHz  ; 0.000 ; 40.693  ; 50.00      ; 33        ; 1           ;       ;        ;           ;            ; false    ; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0] ; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|vco0ph[0] ; { audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk } ;
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; Generated ; 651.098 ; 1.54 MHz   ; 0.000 ; 325.549 ; 50.00      ; 264       ; 1           ;       ;        ;           ;            ; false    ; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0] ; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|vco0ph[0] ; { audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk } ;
-; clk_audxck                                                                        ; Base      ; 54.253  ; 18.43 MHz  ; 0.000 ; 27.126  ;            ;           ;             ;       ;        ;           ;            ;          ;                                                                                 ;                                                                                      ; { AUD_XCK }                                                                           ;
-; clk_dram                                                                          ; Base      ; 10.000  ; 100.0 MHz  ; 0.000 ; 5.000   ;            ;           ;             ;       ;        ;           ;            ;          ;                                                                                 ;                                                                                      ; { DRAM_CLK }                                                                          ;
-; clk_vga                                                                           ; Base      ; 9.259   ; 108.0 MHz  ; 0.000 ; 4.629   ;            ;           ;             ;       ;        ;           ;            ;          ;                                                                                 ;                                                                                      ; { VGA_CLK }                                                                           ;
-; CLOCK2_50                                                                         ; Base      ; 20.000  ; 50.0 MHz   ; 0.000 ; 10.000  ;            ;           ;             ;       ;        ;           ;            ;          ;                                                                                 ;                                                                                      ; { CLOCK2_50 }                                                                         ;
-; CLOCK3_50                                                                         ; Base      ; 20.000  ; 50.0 MHz   ; 0.000 ; 10.000  ;            ;           ;             ;       ;        ;           ;            ;          ;                                                                                 ;                                                                                      ; { CLOCK3_50 }                                                                         ;
-; CLOCK4_50                                                                         ; Base      ; 20.000  ; 50.0 MHz   ; 0.000 ; 10.000  ;            ;           ;             ;       ;        ;           ;            ;          ;                                                                                 ;                                                                                      ; { CLOCK4_50 }                                                                         ;
-; CLOCK_50                                                                          ; Base      ; 20.000  ; 50.0 MHz   ; 0.000 ; 10.000  ;            ;           ;             ;       ;        ;           ;            ;          ;                                                                                 ;                                                                                      ; { CLOCK_50 }                                                                          ;
-; tv_27m                                                                            ; Base      ; 37.037  ; 27.0 MHz   ; 0.000 ; 18.518  ;            ;           ;             ;       ;        ;           ;            ;          ;                                                                                 ;                                                                                      ; { TD_CLK27 }                                                                          ;
-+-----------------------------------------------------------------------------------+-----------+---------+------------+-------+---------+------------+-----------+-------------+-------+--------+-----------+------------+----------+---------------------------------------------------------------------------------+--------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------+
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Clocks                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ;
++---------------------------------------------------------------------------------------+-----------+---------+------------+-------+---------+------------+-----------+-------------+-------+--------+-----------+------------+----------+-------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+
+; Clock Name                                                                            ; Type      ; Period  ; Frequency  ; Rise  ; Fall    ; Duty Cycle ; Divide by ; Multiply by ; Phase ; Offset ; Edge List ; Edge Shift ; Inverted ; Master                                                                              ; Source                                                                                   ; Targets                                                                                   ;
++---------------------------------------------------------------------------------------+-----------+---------+------------+-------+---------+------------+-----------+-------------+-------+--------+-----------+------------+----------+-------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+
+; clk_audxck                                                                            ; Base      ; 54.253  ; 18.43 MHz  ; 0.000 ; 27.126  ;            ;           ;             ;       ;        ;           ;            ;          ;                                                                                     ;                                                                                          ; { AUD_XCK }                                                                               ;
+; clk_dram                                                                              ; Base      ; 10.000  ; 100.0 MHz  ; 0.000 ; 5.000   ;            ;           ;             ;       ;        ;           ;            ;          ;                                                                                     ;                                                                                          ; { DRAM_CLK }                                                                              ;
+; clk_vga                                                                               ; Base      ; 9.259   ; 108.0 MHz  ; 0.000 ; 4.629   ;            ;           ;             ;       ;        ;           ;            ;          ;                                                                                     ;                                                                                          ; { VGA_CLK }                                                                               ;
+; CLOCK2_50                                                                             ; Base      ; 20.000  ; 50.0 MHz   ; 0.000 ; 10.000  ;            ;           ;             ;       ;        ;           ;            ;          ;                                                                                     ;                                                                                          ; { CLOCK2_50 }                                                                             ;
+; CLOCK3_50                                                                             ; Base      ; 20.000  ; 50.0 MHz   ; 0.000 ; 10.000  ;            ;           ;             ;       ;        ;           ;            ;          ;                                                                                     ;                                                                                          ; { CLOCK3_50 }                                                                             ;
+; CLOCK4_50                                                                             ; Base      ; 20.000  ; 50.0 MHz   ; 0.000 ; 10.000  ;            ;           ;             ;       ;        ;           ;            ;          ;                                                                                     ;                                                                                          ; { CLOCK4_50 }                                                                             ;
+; CLOCK_50                                                                              ; Base      ; 20.000  ; 50.0 MHz   ; 0.000 ; 10.000  ;            ;           ;             ;       ;        ;           ;            ;          ;                                                                                     ;                                                                                          ; { CLOCK_50 }                                                                              ;
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; Generated ; 2.466   ; 405.52 MHz ; 0.000 ; 1.233   ; 50.00      ; 64        ; 519         ;       ;        ;           ;            ; false    ; CLOCK_50                                                                            ; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|refclkin      ; { iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0] }   ;
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; Generated ; 81.387  ; 12.29 MHz  ; 0.000 ; 40.693  ; 50.00      ; 33        ; 1           ;       ;        ;           ;            ; false    ; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0] ; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|vco0ph[0] ; { iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk } ;
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; Generated ; 651.098 ; 1.54 MHz   ; 0.000 ; 325.549 ; 50.00      ; 264       ; 1           ;       ;        ;           ;            ; false    ; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0] ; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|vco0ph[0] ; { iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk } ;
+; tv_27m                                                                                ; Base      ; 37.037  ; 27.0 MHz   ; 0.000 ; 18.518  ;            ;           ;             ;       ;        ;           ;            ;          ;                                                                                     ;                                                                                          ; { TD_CLK27 }                                                                              ;
++---------------------------------------------------------------------------------------+-----------+---------+------------+-------+---------+------------+-----------+-------------+-------+--------+-----------+------------+----------+-------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------+
 
 
-+-------------------------------------------------------------------------------------------------------------------------+
-; Slow 1100mV 85C Model Fmax Summary                                                                                      ;
-+------------+-----------------+-----------------------------------------------------------------------------------+------+
-; Fmax       ; Restricted Fmax ; Clock Name                                                                        ; Note ;
-+------------+-----------------+-----------------------------------------------------------------------------------+------+
-; 64.28 MHz  ; 64.28 MHz       ; CLOCK_50                                                                          ;      ;
-; 271.89 MHz ; 271.89 MHz      ; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ;      ;
-+------------+-----------------+-----------------------------------------------------------------------------------+------+
++-----------------------------------------------------------------------------------------------------------------------------+
+; Slow 1100mV 85C Model Fmax Summary                                                                                          ;
++------------+-----------------+---------------------------------------------------------------------------------------+------+
+; Fmax       ; Restricted Fmax ; Clock Name                                                                            ; Note ;
++------------+-----------------+---------------------------------------------------------------------------------------+------+
+; 58.21 MHz  ; 58.21 MHz       ; CLOCK_50                                                                              ;      ;
+; 107.47 MHz ; 107.47 MHz      ; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ;      ;
++------------+-----------------+---------------------------------------------------------------------------------------+------+
 This panel reports FMAX for every clock in the design, regardless of the user-specified clock periods.  FMAX is only computed for paths where the source and destination registers or ports are driven by the same clock.  Paths of different clocks, including generated clocks, are ignored.  For paths between a clock and its inversion, FMAX is computed as if the rising and falling edges are scaled along with FMAX, such that the duty cycle (in terms of a percentage) is maintained. Altera recommends that you always use clock constraints and other slack reports for sign-off analysis.
 
 
@@ -165,24 +159,24 @@ This panel reports FMAX for every clock in the design, regardless of the user-sp
 HTML report is unavailable in plain text report export.
 
 
-+-------------------------------------------------------------------------------------------------------------+
-; Slow 1100mV 85C Model Setup Summary                                                                         ;
-+-----------------------------------------------------------------------------------+---------+---------------+
-; Clock                                                                             ; Slack   ; End Point TNS ;
-+-----------------------------------------------------------------------------------+---------+---------------+
-; CLOCK_50                                                                          ; 4.443   ; 0.000         ;
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 647.420 ; 0.000         ;
-+-----------------------------------------------------------------------------------+---------+---------------+
++-----------------------------------------------------------------------------------------------------------------+
+; Slow 1100mV 85C Model Setup Summary                                                                             ;
++---------------------------------------------------------------------------------------+---------+---------------+
+; Clock                                                                                 ; Slack   ; End Point TNS ;
++---------------------------------------------------------------------------------------+---------+---------------+
+; CLOCK_50                                                                              ; 2.822   ; 0.000         ;
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 641.793 ; 0.000         ;
++---------------------------------------------------------------------------------------+---------+---------------+
 
 
-+-----------------------------------------------------------------------------------------------------------+
-; Slow 1100mV 85C Model Hold Summary                                                                        ;
-+-----------------------------------------------------------------------------------+-------+---------------+
-; Clock                                                                             ; Slack ; End Point TNS ;
-+-----------------------------------------------------------------------------------+-------+---------------+
-; CLOCK_50                                                                          ; 0.208 ; 0.000         ;
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 0.292 ; 0.000         ;
-+-----------------------------------------------------------------------------------+-------+---------------+
++---------------------------------------------------------------------------------------------------------------+
+; Slow 1100mV 85C Model Hold Summary                                                                            ;
++---------------------------------------------------------------------------------------+-------+---------------+
+; Clock                                                                                 ; Slack ; End Point TNS ;
++---------------------------------------------------------------------------------------+-------+---------------+
+; CLOCK_50                                                                              ; 0.212 ; 0.000         ;
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 0.362 ; 0.000         ;
++---------------------------------------------------------------------------------------+-------+---------------+
 
 
 ------------------------------------------
@@ -197,16 +191,16 @@ No paths to report.
 No paths to report.
 
 
-+-------------------------------------------------------------------------------------------------------------+
-; Slow 1100mV 85C Model Minimum Pulse Width Summary                                                           ;
-+-----------------------------------------------------------------------------------+---------+---------------+
-; Clock                                                                             ; Slack   ; End Point TNS ;
-+-----------------------------------------------------------------------------------+---------+---------------+
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; 1.233   ; 0.000         ;
-; CLOCK_50                                                                          ; 8.872   ; 0.000         ;
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 40.512  ; 0.000         ;
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 324.318 ; 0.000         ;
-+-----------------------------------------------------------------------------------+---------+---------------+
++-----------------------------------------------------------------------------------------------------------------+
+; Slow 1100mV 85C Model Minimum Pulse Width Summary                                                               ;
++---------------------------------------------------------------------------------------+---------+---------------+
+; Clock                                                                                 ; Slack   ; End Point TNS ;
++---------------------------------------------------------------------------------------+---------+---------------+
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; 1.233   ; 0.000         ;
+; CLOCK_50                                                                              ; 8.867   ; 0.000         ;
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 40.513  ; 0.000         ;
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 324.313 ; 0.000         ;
++---------------------------------------------------------------------------------------+---------+---------------+
 
 
 -----------------------------------------------
@@ -218,7 +212,7 @@ Typical MTBF of Design is 1e+09 years or 3.15e+16 seconds.
 Number of Synchronizer Chains Found: 16
 Shortest Synchronizer Chain: 2 Registers
 Fraction of Chains for which MTBFs Could Not be Calculated: 0.000
-Worst Case Available Settling Time: 34.269 ns
+Worst Case Available Settling Time: 30.245 ns
 
 Worst-Case MTBF values are calculated based on the worst-case silicon characteristics, with worst-case operating conditions.
   - Under worst-case conditions, an increase of 100ps in available settling time will increase MTBF values by a factor of 79.4
@@ -227,35 +221,35 @@ Typical MTBF values are calculated based on the nominal silicon characteristics,
 
 
 
-+-------------------------------------------------------------------------------------------------------------------------+
-; Slow 1100mV 0C Model Fmax Summary                                                                                       ;
-+------------+-----------------+-----------------------------------------------------------------------------------+------+
-; Fmax       ; Restricted Fmax ; Clock Name                                                                        ; Note ;
-+------------+-----------------+-----------------------------------------------------------------------------------+------+
-; 64.2 MHz   ; 64.2 MHz        ; CLOCK_50                                                                          ;      ;
-; 282.01 MHz ; 282.01 MHz      ; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ;      ;
-+------------+-----------------+-----------------------------------------------------------------------------------+------+
++-----------------------------------------------------------------------------------------------------------------------------+
+; Slow 1100mV 0C Model Fmax Summary                                                                                           ;
++------------+-----------------+---------------------------------------------------------------------------------------+------+
+; Fmax       ; Restricted Fmax ; Clock Name                                                                            ; Note ;
++------------+-----------------+---------------------------------------------------------------------------------------+------+
+; 57.92 MHz  ; 57.92 MHz       ; CLOCK_50                                                                              ;      ;
+; 112.23 MHz ; 112.23 MHz      ; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ;      ;
++------------+-----------------+---------------------------------------------------------------------------------------+------+
 This panel reports FMAX for every clock in the design, regardless of the user-specified clock periods.  FMAX is only computed for paths where the source and destination registers or ports are driven by the same clock.  Paths of different clocks, including generated clocks, are ignored.  For paths between a clock and its inversion, FMAX is computed as if the rising and falling edges are scaled along with FMAX, such that the duty cycle (in terms of a percentage) is maintained. Altera recommends that you always use clock constraints and other slack reports for sign-off analysis.
 
 
-+-------------------------------------------------------------------------------------------------------------+
-; Slow 1100mV 0C Model Setup Summary                                                                          ;
-+-----------------------------------------------------------------------------------+---------+---------------+
-; Clock                                                                             ; Slack   ; End Point TNS ;
-+-----------------------------------------------------------------------------------+---------+---------------+
-; CLOCK_50                                                                          ; 4.424   ; 0.000         ;
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 647.552 ; 0.000         ;
-+-----------------------------------------------------------------------------------+---------+---------------+
++-----------------------------------------------------------------------------------------------------------------+
+; Slow 1100mV 0C Model Setup Summary                                                                              ;
++---------------------------------------------------------------------------------------+---------+---------------+
+; Clock                                                                                 ; Slack   ; End Point TNS ;
++---------------------------------------------------------------------------------------+---------+---------------+
+; CLOCK_50                                                                              ; 2.735   ; 0.000         ;
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 642.188 ; 0.000         ;
++---------------------------------------------------------------------------------------+---------+---------------+
 
 
-+-----------------------------------------------------------------------------------------------------------+
-; Slow 1100mV 0C Model Hold Summary                                                                         ;
-+-----------------------------------------------------------------------------------+-------+---------------+
-; Clock                                                                             ; Slack ; End Point TNS ;
-+-----------------------------------------------------------------------------------+-------+---------------+
-; CLOCK_50                                                                          ; 0.158 ; 0.000         ;
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 0.275 ; 0.000         ;
-+-----------------------------------------------------------------------------------+-------+---------------+
++---------------------------------------------------------------------------------------------------------------+
+; Slow 1100mV 0C Model Hold Summary                                                                             ;
++---------------------------------------------------------------------------------------+-------+---------------+
+; Clock                                                                                 ; Slack ; End Point TNS ;
++---------------------------------------------------------------------------------------+-------+---------------+
+; CLOCK_50                                                                              ; 0.184 ; 0.000         ;
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 0.364 ; 0.000         ;
++---------------------------------------------------------------------------------------+-------+---------------+
 
 
 -----------------------------------------
@@ -270,16 +264,16 @@ No paths to report.
 No paths to report.
 
 
-+-------------------------------------------------------------------------------------------------------------+
-; Slow 1100mV 0C Model Minimum Pulse Width Summary                                                            ;
-+-----------------------------------------------------------------------------------+---------+---------------+
-; Clock                                                                             ; Slack   ; End Point TNS ;
-+-----------------------------------------------------------------------------------+---------+---------------+
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; 1.233   ; 0.000         ;
-; CLOCK_50                                                                          ; 8.905   ; 0.000         ;
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 40.484  ; 0.000         ;
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 324.296 ; 0.000         ;
-+-----------------------------------------------------------------------------------+---------+---------------+
++-----------------------------------------------------------------------------------------------------------------+
+; Slow 1100mV 0C Model Minimum Pulse Width Summary                                                                ;
++---------------------------------------------------------------------------------------+---------+---------------+
+; Clock                                                                                 ; Slack   ; End Point TNS ;
++---------------------------------------------------------------------------------------+---------+---------------+
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; 1.233   ; 0.000         ;
+; CLOCK_50                                                                              ; 8.900   ; 0.000         ;
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 40.493  ; 0.000         ;
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 324.285 ; 0.000         ;
++---------------------------------------------------------------------------------------+---------+---------------+
 
 
 ----------------------------------------------
@@ -291,7 +285,7 @@ Typical MTBF of Design is 1e+09 years or 3.15e+16 seconds.
 Number of Synchronizer Chains Found: 16
 Shortest Synchronizer Chain: 2 Registers
 Fraction of Chains for which MTBFs Could Not be Calculated: 0.000
-Worst Case Available Settling Time: 34.520 ns
+Worst Case Available Settling Time: 30.670 ns
 
 Worst-Case MTBF values are calculated based on the worst-case silicon characteristics, with worst-case operating conditions.
   - Under worst-case conditions, an increase of 100ps in available settling time will increase MTBF values by a factor of 5.2
@@ -300,24 +294,24 @@ Typical MTBF values are calculated based on the nominal silicon characteristics,
 
 
 
-+-------------------------------------------------------------------------------------------------------------+
-; Fast 1100mV 85C Model Setup Summary                                                                         ;
-+-----------------------------------------------------------------------------------+---------+---------------+
-; Clock                                                                             ; Slack   ; End Point TNS ;
-+-----------------------------------------------------------------------------------+---------+---------------+
-; CLOCK_50                                                                          ; 11.220  ; 0.000         ;
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 648.945 ; 0.000         ;
-+-----------------------------------------------------------------------------------+---------+---------------+
++-----------------------------------------------------------------------------------------------------------------+
+; Fast 1100mV 85C Model Setup Summary                                                                             ;
++---------------------------------------------------------------------------------------+---------+---------------+
+; Clock                                                                                 ; Slack   ; End Point TNS ;
++---------------------------------------------------------------------------------------+---------+---------------+
+; CLOCK_50                                                                              ; 9.287   ; 0.000         ;
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 644.422 ; 0.000         ;
++---------------------------------------------------------------------------------------+---------+---------------+
 
 
-+-----------------------------------------------------------------------------------------------------------+
-; Fast 1100mV 85C Model Hold Summary                                                                        ;
-+-----------------------------------------------------------------------------------+-------+---------------+
-; Clock                                                                             ; Slack ; End Point TNS ;
-+-----------------------------------------------------------------------------------+-------+---------------+
-; CLOCK_50                                                                          ; 0.127 ; 0.000         ;
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 0.171 ; 0.000         ;
-+-----------------------------------------------------------------------------------+-------+---------------+
++---------------------------------------------------------------------------------------------------------------+
+; Fast 1100mV 85C Model Hold Summary                                                                            ;
++---------------------------------------------------------------------------------------+-------+---------------+
+; Clock                                                                                 ; Slack ; End Point TNS ;
++---------------------------------------------------------------------------------------+-------+---------------+
+; CLOCK_50                                                                              ; 0.128 ; 0.000         ;
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 0.178 ; 0.000         ;
++---------------------------------------------------------------------------------------+-------+---------------+
 
 
 ------------------------------------------
@@ -332,16 +326,16 @@ No paths to report.
 No paths to report.
 
 
-+-------------------------------------------------------------------------------------------------------------+
-; Fast 1100mV 85C Model Minimum Pulse Width Summary                                                           ;
-+-----------------------------------------------------------------------------------+---------+---------------+
-; Clock                                                                             ; Slack   ; End Point TNS ;
-+-----------------------------------------------------------------------------------+---------+---------------+
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; 1.233   ; 0.000         ;
-; CLOCK_50                                                                          ; 8.478   ; 0.000         ;
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 40.591  ; 0.000         ;
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 324.436 ; 0.000         ;
-+-----------------------------------------------------------------------------------+---------+---------------+
++-----------------------------------------------------------------------------------------------------------------+
+; Fast 1100mV 85C Model Minimum Pulse Width Summary                                                               ;
++---------------------------------------------------------------------------------------+---------+---------------+
+; Clock                                                                                 ; Slack   ; End Point TNS ;
++---------------------------------------------------------------------------------------+---------+---------------+
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; 1.233   ; 0.000         ;
+; CLOCK_50                                                                              ; 8.475   ; 0.000         ;
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 40.593  ; 0.000         ;
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 324.431 ; 0.000         ;
++---------------------------------------------------------------------------------------+---------+---------------+
 
 
 -----------------------------------------------
@@ -353,7 +347,7 @@ Typical MTBF of Design is 1e+09 years or 3.15e+16 seconds.
 Number of Synchronizer Chains Found: 16
 Shortest Synchronizer Chain: 2 Registers
 Fraction of Chains for which MTBFs Could Not be Calculated: 0.000
-Worst Case Available Settling Time: 36.453 ns
+Worst Case Available Settling Time: 33.618 ns
 
 Worst-Case MTBF values are calculated based on the worst-case silicon characteristics, with worst-case operating conditions.
   - Under worst-case conditions, an increase of 100ps in available settling time will increase MTBF values by a factor of 79.4
@@ -362,24 +356,24 @@ Typical MTBF values are calculated based on the nominal silicon characteristics,
 
 
 
-+-------------------------------------------------------------------------------------------------------------+
-; Fast 1100mV 0C Model Setup Summary                                                                          ;
-+-----------------------------------------------------------------------------------+---------+---------------+
-; Clock                                                                             ; Slack   ; End Point TNS ;
-+-----------------------------------------------------------------------------------+---------+---------------+
-; CLOCK_50                                                                          ; 11.889  ; 0.000         ;
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 649.136 ; 0.000         ;
-+-----------------------------------------------------------------------------------+---------+---------------+
++-----------------------------------------------------------------------------------------------------------------+
+; Fast 1100mV 0C Model Setup Summary                                                                              ;
++---------------------------------------------------------------------------------------+---------+---------------+
+; Clock                                                                                 ; Slack   ; End Point TNS ;
++---------------------------------------------------------------------------------------+---------+---------------+
+; CLOCK_50                                                                              ; 10.547  ; 0.000         ;
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 645.278 ; 0.000         ;
++---------------------------------------------------------------------------------------+---------+---------------+
 
 
-+-----------------------------------------------------------------------------------------------------------+
-; Fast 1100mV 0C Model Hold Summary                                                                         ;
-+-----------------------------------------------------------------------------------+-------+---------------+
-; Clock                                                                             ; Slack ; End Point TNS ;
-+-----------------------------------------------------------------------------------+-------+---------------+
-; CLOCK_50                                                                          ; 0.108 ; 0.000         ;
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 0.133 ; 0.000         ;
-+-----------------------------------------------------------------------------------+-------+---------------+
++---------------------------------------------------------------------------------------------------------------+
+; Fast 1100mV 0C Model Hold Summary                                                                             ;
++---------------------------------------------------------------------------------------+-------+---------------+
+; Clock                                                                                 ; Slack ; End Point TNS ;
++---------------------------------------------------------------------------------------+-------+---------------+
+; CLOCK_50                                                                              ; 0.109 ; 0.000         ;
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 0.168 ; 0.000         ;
++---------------------------------------------------------------------------------------+-------+---------------+
 
 
 -----------------------------------------
@@ -394,16 +388,16 @@ No paths to report.
 No paths to report.
 
 
-+-------------------------------------------------------------------------------------------------------------+
-; Fast 1100mV 0C Model Minimum Pulse Width Summary                                                            ;
-+-----------------------------------------------------------------------------------+---------+---------------+
-; Clock                                                                             ; Slack   ; End Point TNS ;
-+-----------------------------------------------------------------------------------+---------+---------------+
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; 1.233   ; 0.000         ;
-; CLOCK_50                                                                          ; 8.431   ; 0.000         ;
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 40.584  ; 0.000         ;
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 324.434 ; 0.000         ;
-+-----------------------------------------------------------------------------------+---------+---------------+
++-----------------------------------------------------------------------------------------------------------------+
+; Fast 1100mV 0C Model Minimum Pulse Width Summary                                                                ;
++---------------------------------------------------------------------------------------+---------+---------------+
+; Clock                                                                                 ; Slack   ; End Point TNS ;
++---------------------------------------------------------------------------------------+---------+---------------+
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; 1.233   ; 0.000         ;
+; CLOCK_50                                                                              ; 8.429   ; 0.000         ;
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; 40.585  ; 0.000         ;
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 324.433 ; 0.000         ;
++---------------------------------------------------------------------------------------+---------+---------------+
 
 
 ----------------------------------------------
@@ -415,7 +409,7 @@ Typical MTBF of Design is 1e+09 years or 3.15e+16 seconds.
 Number of Synchronizer Chains Found: 16
 Shortest Synchronizer Chain: 2 Registers
 Fraction of Chains for which MTBFs Could Not be Calculated: 0.000
-Worst Case Available Settling Time: 36.811 ns
+Worst Case Available Settling Time: 34.356 ns
 
 Worst-Case MTBF values are calculated based on the worst-case silicon characteristics, with worst-case operating conditions.
   - Under worst-case conditions, an increase of 100ps in available settling time will increase MTBF values by a factor of 5.2
@@ -424,22 +418,22 @@ Typical MTBF values are calculated based on the nominal silicon characteristics,
 
 
 
-+-------------------------------------------------------------------------------------------------------------------------------------------------+
-; Multicorner Timing Analysis Summary                                                                                                             ;
-+------------------------------------------------------------------------------------+---------+-------+----------+---------+---------------------+
-; Clock                                                                              ; Setup   ; Hold  ; Recovery ; Removal ; Minimum Pulse Width ;
-+------------------------------------------------------------------------------------+---------+-------+----------+---------+---------------------+
-; Worst-case Slack                                                                   ; 4.424   ; 0.108 ; N/A      ; N/A     ; 1.233               ;
-;  CLOCK_50                                                                          ; 4.424   ; 0.108 ; N/A      ; N/A     ; 8.431               ;
-;  audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; N/A     ; N/A   ; N/A      ; N/A     ; 1.233               ;
-;  audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; N/A     ; N/A   ; N/A      ; N/A     ; 40.484              ;
-;  audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 647.420 ; 0.133 ; N/A      ; N/A     ; 324.296             ;
-; Design-wide TNS                                                                    ; 0.0     ; 0.0   ; 0.0      ; 0.0     ; 0.0                 ;
-;  CLOCK_50                                                                          ; 0.000   ; 0.000 ; N/A      ; N/A     ; 0.000               ;
-;  audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; N/A     ; N/A   ; N/A      ; N/A     ; 0.000               ;
-;  audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; N/A     ; N/A   ; N/A      ; N/A     ; 0.000               ;
-;  audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 0.000   ; 0.000 ; N/A      ; N/A     ; 0.000               ;
-+------------------------------------------------------------------------------------+---------+-------+----------+---------+---------------------+
++-----------------------------------------------------------------------------------------------------------------------------------------------------+
+; Multicorner Timing Analysis Summary                                                                                                                 ;
++----------------------------------------------------------------------------------------+---------+-------+----------+---------+---------------------+
+; Clock                                                                                  ; Setup   ; Hold  ; Recovery ; Removal ; Minimum Pulse Width ;
++----------------------------------------------------------------------------------------+---------+-------+----------+---------+---------------------+
+; Worst-case Slack                                                                       ; 2.735   ; 0.109 ; N/A      ; N/A     ; 1.233               ;
+;  CLOCK_50                                                                              ; 2.735   ; 0.109 ; N/A      ; N/A     ; 8.429               ;
+;  iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; N/A     ; N/A   ; N/A      ; N/A     ; 1.233               ;
+;  iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; N/A     ; N/A   ; N/A      ; N/A     ; 40.493              ;
+;  iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 641.793 ; 0.168 ; N/A      ; N/A     ; 324.285             ;
+; Design-wide TNS                                                                        ; 0.0     ; 0.0   ; 0.0      ; 0.0     ; 0.0                 ;
+;  CLOCK_50                                                                              ; 0.000   ; 0.000 ; N/A      ; N/A     ; 0.000               ;
+;  iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; N/A     ; N/A   ; N/A      ; N/A     ; 0.000               ;
+;  iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; N/A     ; N/A   ; N/A      ; N/A     ; 0.000               ;
+;  iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 0.000   ; 0.000 ; N/A      ; N/A     ; 0.000               ;
++----------------------------------------------------------------------------------------+---------+-------+----------+---------+---------------------+
 
 
 +------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -1442,29 +1436,29 @@ Typical MTBF values are calculated based on the nominal silicon characteristics,
 +---------------+--------------+---------------------+---------------------+------------------------------+------------------------------+---------------------+---------------------+--------------------------------------+--------------------------------------+-----------------------------+-----------------------------+----------------------------+----------------------------+-----------------------------+-----------------------------+--------------------+--------------------+-------------------------------------+-------------------------------------+----------------------------+----------------------------+---------------------------+---------------------------+
 
 
-+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Setup Transfers                                                                                                                                                                                                   ;
-+-----------------------------------------------------------------------------------+-----------------------------------------------------------------------------------+----------+----------+----------+----------+
-; From Clock                                                                        ; To Clock                                                                          ; RR Paths ; FR Paths ; RF Paths ; FF Paths ;
-+-----------------------------------------------------------------------------------+-----------------------------------------------------------------------------------+----------+----------+----------+----------+
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 953      ; 0        ; 0        ; 0        ;
-; CLOCK_50                                                                          ; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 8        ; 0        ; 0        ; 0        ;
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; CLOCK_50                                                                          ; 8        ; 0        ; 0        ; 0        ;
-; CLOCK_50                                                                          ; CLOCK_50                                                                          ; 24364634 ; 0        ; 0        ; 0        ;
-+-----------------------------------------------------------------------------------+-----------------------------------------------------------------------------------+----------+----------+----------+----------+
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Setup Transfers                                                                                                                                                                                                            ;
++---------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------+-----------+----------+----------+----------+
+; From Clock                                                                            ; To Clock                                                                              ; RR Paths  ; FR Paths ; RF Paths ; FF Paths ;
++---------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------+-----------+----------+----------+----------+
+; CLOCK_50                                                                              ; CLOCK_50                                                                              ; 192409018 ; 0        ; 0        ; 0        ;
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; CLOCK_50                                                                              ; 8         ; 0        ; 0        ; 0        ;
+; CLOCK_50                                                                              ; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 8         ; 0        ; 0        ; 0        ;
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 952       ; 0        ; 0        ; 0        ;
++---------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------+-----------+----------+----------+----------+
 Entries labeled "false path" only account for clock-to-clock false paths and not path-based false paths. As a result, actual path counts may be lower than reported.
 
 
-+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Hold Transfers                                                                                                                                                                                                    ;
-+-----------------------------------------------------------------------------------+-----------------------------------------------------------------------------------+----------+----------+----------+----------+
-; From Clock                                                                        ; To Clock                                                                          ; RR Paths ; FR Paths ; RF Paths ; FF Paths ;
-+-----------------------------------------------------------------------------------+-----------------------------------------------------------------------------------+----------+----------+----------+----------+
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 953      ; 0        ; 0        ; 0        ;
-; CLOCK_50                                                                          ; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 8        ; 0        ; 0        ; 0        ;
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; CLOCK_50                                                                          ; 8        ; 0        ; 0        ; 0        ;
-; CLOCK_50                                                                          ; CLOCK_50                                                                          ; 24364634 ; 0        ; 0        ; 0        ;
-+-----------------------------------------------------------------------------------+-----------------------------------------------------------------------------------+----------+----------+----------+----------+
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Hold Transfers                                                                                                                                                                                                             ;
++---------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------+-----------+----------+----------+----------+
+; From Clock                                                                            ; To Clock                                                                              ; RR Paths  ; FR Paths ; RF Paths ; FF Paths ;
++---------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------+-----------+----------+----------+----------+
+; CLOCK_50                                                                              ; CLOCK_50                                                                              ; 192409018 ; 0        ; 0        ; 0        ;
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; CLOCK_50                                                                              ; 8         ; 0        ; 0        ; 0        ;
+; CLOCK_50                                                                              ; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 8         ; 0        ; 0        ; 0        ;
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; 952       ; 0        ; 0        ; 0        ;
++---------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------+-----------+----------+----------+----------+
 Entries labeled "false path" only account for clock-to-clock false paths and not path-based false paths. As a result, actual path counts may be lower than reported.
 
 
@@ -1480,37 +1474,37 @@ No dedicated SERDES Transmitter circuitry present in device or used in design
 No non-DPA dedicated SERDES Receiver circuitry present in device or used in design
 
 
-+------------------------------------------------+
-; Unconstrained Paths Summary                    ;
-+---------------------------------+-------+------+
-; Property                        ; Setup ; Hold ;
-+---------------------------------+-------+------+
-; Illegal Clocks                  ; 0     ; 0    ;
-; Unconstrained Clocks            ; 0     ; 0    ;
-; Unconstrained Input Ports       ; 5     ; 5    ;
-; Unconstrained Input Port Paths  ; 4039  ; 4039 ;
-; Unconstrained Output Ports      ; 54    ; 54   ;
-; Unconstrained Output Port Paths ; 307   ; 307  ;
-+---------------------------------+-------+------+
++-------------------------------------------------+
+; Unconstrained Paths Summary                     ;
++---------------------------------+-------+-------+
+; Property                        ; Setup ; Hold  ;
++---------------------------------+-------+-------+
+; Illegal Clocks                  ; 0     ; 0     ;
+; Unconstrained Clocks            ; 0     ; 0     ;
+; Unconstrained Input Ports       ; 4     ; 4     ;
+; Unconstrained Input Port Paths  ; 22493 ; 22493 ;
+; Unconstrained Output Ports      ; 29    ; 29    ;
+; Unconstrained Output Port Paths ; 213   ; 213   ;
++---------------------------------+-------+-------+
 
 
-+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Clock Status Summary                                                                                                                                                                            ;
-+-----------------------------------------------------------------------------------+-----------------------------------------------------------------------------------+-----------+-------------+
-; Target                                                                            ; Clock                                                                             ; Type      ; Status      ;
-+-----------------------------------------------------------------------------------+-----------------------------------------------------------------------------------+-----------+-------------+
-; AUD_XCK                                                                           ; clk_audxck                                                                        ; Base      ; Constrained ;
-; CLOCK2_50                                                                         ; CLOCK2_50                                                                         ; Base      ; Constrained ;
-; CLOCK3_50                                                                         ; CLOCK3_50                                                                         ; Base      ; Constrained ;
-; CLOCK4_50                                                                         ; CLOCK4_50                                                                         ; Base      ; Constrained ;
-; CLOCK_50                                                                          ; CLOCK_50                                                                          ; Base      ; Constrained ;
-; DRAM_CLK                                                                          ; clk_dram                                                                          ; Base      ; Constrained ;
-; TD_CLK27                                                                          ; tv_27m                                                                            ; Base      ; Constrained ;
-; VGA_CLK                                                                           ; clk_vga                                                                           ; Base      ; Constrained ;
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; Generated ; Constrained ;
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; Generated ; Constrained ;
-; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; Generated ; Constrained ;
-+-----------------------------------------------------------------------------------+-----------------------------------------------------------------------------------+-----------+-------------+
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Clock Status Summary                                                                                                                                                                                    ;
++---------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------+-----------+-------------+
+; Target                                                                                ; Clock                                                                                 ; Type      ; Status      ;
++---------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------+-----------+-------------+
+; AUD_XCK                                                                               ; clk_audxck                                                                            ; Base      ; Constrained ;
+; CLOCK2_50                                                                             ; CLOCK2_50                                                                             ; Base      ; Constrained ;
+; CLOCK3_50                                                                             ; CLOCK3_50                                                                             ; Base      ; Constrained ;
+; CLOCK4_50                                                                             ; CLOCK4_50                                                                             ; Base      ; Constrained ;
+; CLOCK_50                                                                              ; CLOCK_50                                                                              ; Base      ; Constrained ;
+; DRAM_CLK                                                                              ; clk_dram                                                                              ; Base      ; Constrained ;
+; TD_CLK27                                                                              ; tv_27m                                                                                ; Base      ; Constrained ;
+; VGA_CLK                                                                               ; clk_vga                                                                               ; Base      ; Constrained ;
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]   ; Generated ; Constrained ;
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk ; Generated ; Constrained ;
+; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk ; Generated ; Constrained ;
++---------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------+-----------+-------------+
 
 
 +------------------------------------------------------------------------------------------------------+
@@ -1520,7 +1514,6 @@ No non-DPA dedicated SERDES Receiver circuitry present in device or used in desi
 +---------------+--------------------------------------------------------------------------------------+
 ; AUD_ADCDAT    ; No input delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; FPGA_I2C_SDAT ; No input delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; GPIO[5]       ; No input delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; KEY[0]        ; No input delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; SW[0]         ; No input delay, min/max delays, false-path exceptions, or max skew assignments found ;
 +---------------+--------------------------------------------------------------------------------------+
@@ -1537,7 +1530,6 @@ No non-DPA dedicated SERDES Receiver circuitry present in device or used in desi
 ; AUD_DACLRCK   ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; FPGA_I2C_SCLK ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; FPGA_I2C_SDAT ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; GPIO[4]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; HEX0[0]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; HEX0[1]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; HEX0[2]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
@@ -1553,37 +1545,13 @@ No non-DPA dedicated SERDES Receiver circuitry present in device or used in desi
 ; HEX1[5]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; HEX1[6]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; HEX2[0]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX2[1]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; HEX2[2]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; HEX2[3]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX2[4]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; HEX2[5]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; HEX2[6]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX3[0]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX3[1]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX3[2]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX3[3]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX3[4]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX3[5]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX3[6]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX4[0]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX4[1]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX4[2]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX4[3]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX4[4]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX4[5]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX4[6]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX5[0]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX5[2]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX5[3]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX5[4]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX5[5]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; LEDR[0]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; LEDR[1]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; LEDR[2]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; LEDR[4]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; LEDR[5]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; LEDR[6]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; LEDR[9]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 +---------------+---------------------------------------------------------------------------------------+
 
@@ -1595,7 +1563,6 @@ No non-DPA dedicated SERDES Receiver circuitry present in device or used in desi
 +---------------+--------------------------------------------------------------------------------------+
 ; AUD_ADCDAT    ; No input delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; FPGA_I2C_SDAT ; No input delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; GPIO[5]       ; No input delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; KEY[0]        ; No input delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; SW[0]         ; No input delay, min/max delays, false-path exceptions, or max skew assignments found ;
 +---------------+--------------------------------------------------------------------------------------+
@@ -1612,7 +1579,6 @@ No non-DPA dedicated SERDES Receiver circuitry present in device or used in desi
 ; AUD_DACLRCK   ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; FPGA_I2C_SCLK ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; FPGA_I2C_SDAT ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; GPIO[4]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; HEX0[0]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; HEX0[1]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; HEX0[2]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
@@ -1628,37 +1594,13 @@ No non-DPA dedicated SERDES Receiver circuitry present in device or used in desi
 ; HEX1[5]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; HEX1[6]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; HEX2[0]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX2[1]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; HEX2[2]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; HEX2[3]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX2[4]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; HEX2[5]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; HEX2[6]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX3[0]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX3[1]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX3[2]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX3[3]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX3[4]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX3[5]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX3[6]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX4[0]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX4[1]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX4[2]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX4[3]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX4[4]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX4[5]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX4[6]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX5[0]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX5[2]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX5[3]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX5[4]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; HEX5[5]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; LEDR[0]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; LEDR[1]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; LEDR[2]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; LEDR[4]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; LEDR[5]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; LEDR[6]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 ; LEDR[9]       ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 +---------------+---------------------------------------------------------------------------------------+
 
@@ -1669,74 +1611,74 @@ No non-DPA dedicated SERDES Receiver circuitry present in device or used in desi
 Info: *******************************************************************
 Info: Running Quartus Prime Timing Analyzer
     Info: Version 25.1std.0 Build 1129 10/21/2025 SC Lite Edition
-    Info: Processing started: Thu Mar 26 19:17:52 2026
+    Info: Processing started: Tue Apr  7 16:05:44 2026
 Info: Command: quartus_sta autotune -c autotune
 Info: qsta_default_script.tcl version: #1
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
-Info (20030): Parallel compilation is enabled and will use 12 of the 12 processors detected
+Info (20030): Parallel compilation is enabled and will use 6 of the 6 processors detected
 Info (21077): Low junction temperature is 0 degrees C
 Info (21077): High junction temperature is 85 degrees C
 Info (332164): Evaluating HDL-embedded SDC commands
     Info (332165): Entity dcfifo_a3q1
-        Info (332166): set_false_path -from *rdptr_g* -to *ws_dgrp|dffpipe_fd9:dffpipe9|dffe10a* 
-        Info (332166): set_false_path -from *delayed_wrptr_g* -to *rs_dgwp|dffpipe_ed9:dffpipe6|dffe7a* 
+        Info (332166): set_false_path -from *rdptr_g* -to *ws_dgrp|dffpipe_dd9:dffpipe13|dffe14a* 
+        Info (332166): set_false_path -from *delayed_wrptr_g* -to *rs_dgwp|dffpipe_cd9:dffpipe10|dffe11a* 
 Info (332104): Reading SDC File: 'autotune.sdc'
-Warning (332049): Ignored create_clock at autotune.sdc(18): Time value "1.536 MH" is not valid File: /home/kalyan/Documents/school/ece554/autotune/rtl/autotune.sdc Line: 18
-    Info (332050): create_clock -period "1.536 MH" -name clk_audbck [get_ports AUD_BCLK] File: /home/kalyan/Documents/school/ece554/autotune/rtl/autotune.sdc Line: 18
-Warning (332049): Ignored create_clock at autotune.sdc(18): Option -period: Invalid clock period File: /home/kalyan/Documents/school/ece554/autotune/rtl/autotune.sdc Line: 18
-Warning (332174): Ignored filter at autotune.sdc(29): altera_reserved_tck could not be matched with a port or pin or register or keeper or net or combinational node or node File: /home/kalyan/Documents/school/ece554/autotune/rtl/autotune.sdc Line: 29
-Warning (332049): Ignored create_clock at autotune.sdc(29): Argument <targets> is not an object ID File: /home/kalyan/Documents/school/ece554/autotune/rtl/autotune.sdc Line: 29
-    Info (332050): create_clock -name {altera_reserved_tck} -period 40 {altera_reserved_tck} File: /home/kalyan/Documents/school/ece554/autotune/rtl/autotune.sdc Line: 29
-Warning (332174): Ignored filter at autotune.sdc(30): altera_reserved_tdi could not be matched with a port File: /home/kalyan/Documents/school/ece554/autotune/rtl/autotune.sdc Line: 30
-Warning (332174): Ignored filter at autotune.sdc(30): altera_reserved_tck could not be matched with a clock File: /home/kalyan/Documents/school/ece554/autotune/rtl/autotune.sdc Line: 30
-Warning (332049): Ignored set_input_delay at autotune.sdc(30): Argument <targets> is an empty collection File: /home/kalyan/Documents/school/ece554/autotune/rtl/autotune.sdc Line: 30
-    Info (332050): set_input_delay -clock altera_reserved_tck -clock_fall 3 [get_ports altera_reserved_tdi] File: /home/kalyan/Documents/school/ece554/autotune/rtl/autotune.sdc Line: 30
-Warning (332049): Ignored set_input_delay at autotune.sdc(30): Argument -clock is not an object ID File: /home/kalyan/Documents/school/ece554/autotune/rtl/autotune.sdc Line: 30
-Warning (332174): Ignored filter at autotune.sdc(31): altera_reserved_tms could not be matched with a port File: /home/kalyan/Documents/school/ece554/autotune/rtl/autotune.sdc Line: 31
-Warning (332049): Ignored set_input_delay at autotune.sdc(31): Argument <targets> is an empty collection File: /home/kalyan/Documents/school/ece554/autotune/rtl/autotune.sdc Line: 31
-    Info (332050): set_input_delay -clock altera_reserved_tck -clock_fall 3 [get_ports altera_reserved_tms] File: /home/kalyan/Documents/school/ece554/autotune/rtl/autotune.sdc Line: 31
-Warning (332049): Ignored set_input_delay at autotune.sdc(31): Argument -clock is not an object ID File: /home/kalyan/Documents/school/ece554/autotune/rtl/autotune.sdc Line: 31
-Warning (332174): Ignored filter at autotune.sdc(32): altera_reserved_tdo could not be matched with a port File: /home/kalyan/Documents/school/ece554/autotune/rtl/autotune.sdc Line: 32
-Warning (332049): Ignored set_output_delay at autotune.sdc(32): Argument <targets> is an empty collection File: /home/kalyan/Documents/school/ece554/autotune/rtl/autotune.sdc Line: 32
-    Info (332050): set_output_delay -clock altera_reserved_tck 3 [get_ports altera_reserved_tdo] File: /home/kalyan/Documents/school/ece554/autotune/rtl/autotune.sdc Line: 32
-Warning (332049): Ignored set_output_delay at autotune.sdc(32): Argument -clock is not an object ID File: /home/kalyan/Documents/school/ece554/autotune/rtl/autotune.sdc Line: 32
+Warning (332049): Ignored create_clock at autotune.sdc(18): Time value "1.536 MH" is not valid File: C:/Users/avery/ece554/autotune/rtl/autotune.sdc Line: 18
+    Info (332050): create_clock -period "1.536 MH" -name clk_audbck [get_ports AUD_BCLK] File: C:/Users/avery/ece554/autotune/rtl/autotune.sdc Line: 18
+Warning (332049): Ignored create_clock at autotune.sdc(18): Option -period: Invalid clock period File: C:/Users/avery/ece554/autotune/rtl/autotune.sdc Line: 18
+Warning (332174): Ignored filter at autotune.sdc(29): altera_reserved_tck could not be matched with a port or pin or register or keeper or net or combinational node or node File: C:/Users/avery/ece554/autotune/rtl/autotune.sdc Line: 29
+Warning (332049): Ignored create_clock at autotune.sdc(29): Argument <targets> is not an object ID File: C:/Users/avery/ece554/autotune/rtl/autotune.sdc Line: 29
+    Info (332050): create_clock -name {altera_reserved_tck} -period 40 {altera_reserved_tck} File: C:/Users/avery/ece554/autotune/rtl/autotune.sdc Line: 29
+Warning (332174): Ignored filter at autotune.sdc(30): altera_reserved_tdi could not be matched with a port File: C:/Users/avery/ece554/autotune/rtl/autotune.sdc Line: 30
+Warning (332174): Ignored filter at autotune.sdc(30): altera_reserved_tck could not be matched with a clock File: C:/Users/avery/ece554/autotune/rtl/autotune.sdc Line: 30
+Warning (332049): Ignored set_input_delay at autotune.sdc(30): Argument <targets> is an empty collection File: C:/Users/avery/ece554/autotune/rtl/autotune.sdc Line: 30
+    Info (332050): set_input_delay -clock altera_reserved_tck -clock_fall 3 [get_ports altera_reserved_tdi] File: C:/Users/avery/ece554/autotune/rtl/autotune.sdc Line: 30
+Warning (332049): Ignored set_input_delay at autotune.sdc(30): Argument -clock is not an object ID File: C:/Users/avery/ece554/autotune/rtl/autotune.sdc Line: 30
+Warning (332174): Ignored filter at autotune.sdc(31): altera_reserved_tms could not be matched with a port File: C:/Users/avery/ece554/autotune/rtl/autotune.sdc Line: 31
+Warning (332049): Ignored set_input_delay at autotune.sdc(31): Argument <targets> is an empty collection File: C:/Users/avery/ece554/autotune/rtl/autotune.sdc Line: 31
+    Info (332050): set_input_delay -clock altera_reserved_tck -clock_fall 3 [get_ports altera_reserved_tms] File: C:/Users/avery/ece554/autotune/rtl/autotune.sdc Line: 31
+Warning (332049): Ignored set_input_delay at autotune.sdc(31): Argument -clock is not an object ID File: C:/Users/avery/ece554/autotune/rtl/autotune.sdc Line: 31
+Warning (332174): Ignored filter at autotune.sdc(32): altera_reserved_tdo could not be matched with a port File: C:/Users/avery/ece554/autotune/rtl/autotune.sdc Line: 32
+Warning (332049): Ignored set_output_delay at autotune.sdc(32): Argument <targets> is an empty collection File: C:/Users/avery/ece554/autotune/rtl/autotune.sdc Line: 32
+    Info (332050): set_output_delay -clock altera_reserved_tck 3 [get_ports altera_reserved_tdo] File: C:/Users/avery/ece554/autotune/rtl/autotune.sdc Line: 32
+Warning (332049): Ignored set_output_delay at autotune.sdc(32): Argument -clock is not an object ID File: C:/Users/avery/ece554/autotune/rtl/autotune.sdc Line: 32
 Info (332110): Deriving PLL clocks
-    Info (332110): create_generated_clock -source {audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|refclkin} -divide_by 64 -multiply_by 519 -duty_cycle 50.00 -name {audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]} {audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]}
-    Info (332110): create_generated_clock -source {audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|vco0ph[0]} -divide_by 33 -duty_cycle 50.00 -name {audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk} {audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk}
-    Info (332110): create_generated_clock -source {audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|vco0ph[0]} -divide_by 264 -duty_cycle 50.00 -name {audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk} {audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk}
+    Info (332110): create_generated_clock -source {iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|refclkin} -divide_by 64 -multiply_by 519 -duty_cycle 50.00 -name {iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]} {iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]}
+    Info (332110): create_generated_clock -source {iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|vco0ph[0]} -divide_by 33 -duty_cycle 50.00 -name {iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk} {iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk}
+    Info (332110): create_generated_clock -source {iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|vco0ph[0]} -divide_by 264 -duty_cycle 50.00 -name {iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk} {iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk}
 Info (332151): Clock uncertainty is not calculated until you update the timing netlist.
-Warning (332174): Ignored filter at autotune.sdc(101): VGA_BLANK could not be matched with a port File: /home/kalyan/Documents/school/ece554/autotune/rtl/autotune.sdc Line: 101
-Warning (332049): Ignored set_output_delay at autotune.sdc(101): Argument <targets> is an empty collection File: /home/kalyan/Documents/school/ece554/autotune/rtl/autotune.sdc Line: 101
-    Info (332050): set_output_delay -max -clock clk_vga 0.215 [get_ports VGA_BLANK] File: /home/kalyan/Documents/school/ece554/autotune/rtl/autotune.sdc Line: 101
-Warning (332049): Ignored set_output_delay at autotune.sdc(102): Argument <targets> is an empty collection File: /home/kalyan/Documents/school/ece554/autotune/rtl/autotune.sdc Line: 102
-    Info (332050): set_output_delay -min -clock clk_vga -1.485 [get_ports VGA_BLANK] File: /home/kalyan/Documents/school/ece554/autotune/rtl/autotune.sdc Line: 102
+Warning (332174): Ignored filter at autotune.sdc(101): VGA_BLANK could not be matched with a port File: C:/Users/avery/ece554/autotune/rtl/autotune.sdc Line: 101
+Warning (332049): Ignored set_output_delay at autotune.sdc(101): Argument <targets> is an empty collection File: C:/Users/avery/ece554/autotune/rtl/autotune.sdc Line: 101
+    Info (332050): set_output_delay -max -clock clk_vga 0.215 [get_ports VGA_BLANK] File: C:/Users/avery/ece554/autotune/rtl/autotune.sdc Line: 101
+Warning (332049): Ignored set_output_delay at autotune.sdc(102): Argument <targets> is an empty collection File: C:/Users/avery/ece554/autotune/rtl/autotune.sdc Line: 102
+    Info (332050): set_output_delay -min -clock clk_vga -1.485 [get_ports VGA_BLANK] File: C:/Users/avery/ece554/autotune/rtl/autotune.sdc Line: 102
 Info (332097): The following timing edges are non-unate.  The Timing Analyzer will assume pos-unate behavior for these edges in the clock network.
-    Info (332098): Cell: audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL  from: refclkin  to: fbclk
-    Info (332098): Cell: audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER  from: vco0ph[0]  to: divclk
-    Info (332098): Cell: audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_REFCLK_SELECT  from: clkin[0]  to: clkout
-    Info (332098): Cell: audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER  from: vco0ph[0]  to: divclk
+    Info (332098): Cell: iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL  from: refclkin  to: fbclk
+    Info (332098): Cell: iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER  from: vco0ph[0]  to: divclk
+    Info (332098): Cell: iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_REFCLK_SELECT  from: clkin[0]  to: clkout
+    Info (332098): Cell: iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER  from: vco0ph[0]  to: divclk
 Info (332123): Deriving Clock Uncertainty. Please refer to report_sdc in the Timing Analyzer to see clock uncertainties.
 Info: Found TIMING_ANALYZER_REPORT_SCRIPT_INCLUDE_DEFAULT_ANALYSIS = ON
 Info: Analyzing Slow 1100mV 85C Model
-Info (332146): Worst-case setup slack is 4.443
+Info (332146): Worst-case setup slack is 2.822
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):     4.443               0.000 CLOCK_50 
-    Info (332119):   647.420               0.000 audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
-Info (332146): Worst-case hold slack is 0.208
+    Info (332119):     2.822               0.000 CLOCK_50 
+    Info (332119):   641.793               0.000 iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
+Info (332146): Worst-case hold slack is 0.212
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):     0.208               0.000 CLOCK_50 
-    Info (332119):     0.292               0.000 audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     0.212               0.000 CLOCK_50 
+    Info (332119):     0.362               0.000 iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
 Info (332140): No Recovery paths to report
 Info (332140): No Removal paths to report
 Info (332146): Worst-case minimum pulse width slack is 1.233
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):     1.233               0.000 audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0] 
-    Info (332119):     8.872               0.000 CLOCK_50 
-    Info (332119):    40.512               0.000 audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):   324.318               0.000 audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     1.233               0.000 iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0] 
+    Info (332119):     8.867               0.000 CLOCK_50 
+    Info (332119):    40.513               0.000 iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):   324.313               0.000 iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
 Info (332114): Report Metastability: Found 16 synchronizer chains.
     Info (332114): Worst-Case MTBF of Design is 1e+09 years or 3.15e+16 seconds.
     Info (332114): Typical MTBF of Design is 1e+09 years or 3.15e+16 seconds.
@@ -1744,7 +1686,7 @@ Info (332114): Report Metastability: Found 16 synchronizer chains.
     Info (332114): Number of Synchronizer Chains Found: 16
     Info (332114): Shortest Synchronizer Chain: 2 Registers
     Info (332114): Fraction of Chains for which MTBFs Could Not be Calculated: 0.000
-    Info (332114): Worst Case Available Settling Time: 34.269 ns
+    Info (332114): Worst Case Available Settling Time: 30.245 ns
     Info (332114): 
     Info (332114): Worst-Case MTBF values are calculated based on the worst-case silicon characteristics, with worst-case operating conditions.
     Info (332114):   - Under worst-case conditions, an increase of 100ps in available settling time will increase MTBF values by a factor of 79.4
@@ -1754,30 +1696,30 @@ Info: Analyzing Slow 1100mV 0C Model
 Info (334003): Started post-fitting delay annotation
 Info (334004): Delay annotation completed successfully
 Info (332097): The following timing edges are non-unate.  The Timing Analyzer will assume pos-unate behavior for these edges in the clock network.
-    Info (332098): Cell: audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL  from: refclkin  to: fbclk
-    Info (332098): Cell: audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER  from: vco0ph[0]  to: divclk
-    Info (332098): Cell: audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_REFCLK_SELECT  from: clkin[0]  to: clkout
-    Info (332098): Cell: audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER  from: vco0ph[0]  to: divclk
+    Info (332098): Cell: iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL  from: refclkin  to: fbclk
+    Info (332098): Cell: iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER  from: vco0ph[0]  to: divclk
+    Info (332098): Cell: iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_REFCLK_SELECT  from: clkin[0]  to: clkout
+    Info (332098): Cell: iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER  from: vco0ph[0]  to: divclk
 Info (332123): Deriving Clock Uncertainty. Please refer to report_sdc in the Timing Analyzer to see clock uncertainties.
-Info (332146): Worst-case setup slack is 4.424
+Info (332146): Worst-case setup slack is 2.735
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):     4.424               0.000 CLOCK_50 
-    Info (332119):   647.552               0.000 audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
-Info (332146): Worst-case hold slack is 0.158
+    Info (332119):     2.735               0.000 CLOCK_50 
+    Info (332119):   642.188               0.000 iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
+Info (332146): Worst-case hold slack is 0.184
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):     0.158               0.000 CLOCK_50 
-    Info (332119):     0.275               0.000 audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     0.184               0.000 CLOCK_50 
+    Info (332119):     0.364               0.000 iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
 Info (332140): No Recovery paths to report
 Info (332140): No Removal paths to report
 Info (332146): Worst-case minimum pulse width slack is 1.233
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):     1.233               0.000 audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0] 
-    Info (332119):     8.905               0.000 CLOCK_50 
-    Info (332119):    40.484               0.000 audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):   324.296               0.000 audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     1.233               0.000 iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0] 
+    Info (332119):     8.900               0.000 CLOCK_50 
+    Info (332119):    40.493               0.000 iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):   324.285               0.000 iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
 Info (332114): Report Metastability: Found 16 synchronizer chains.
     Info (332114): Worst-Case MTBF of Design is 1e+09 years or 3.15e+16 seconds.
     Info (332114): Typical MTBF of Design is 1e+09 years or 3.15e+16 seconds.
@@ -1785,7 +1727,7 @@ Info (332114): Report Metastability: Found 16 synchronizer chains.
     Info (332114): Number of Synchronizer Chains Found: 16
     Info (332114): Shortest Synchronizer Chain: 2 Registers
     Info (332114): Fraction of Chains for which MTBFs Could Not be Calculated: 0.000
-    Info (332114): Worst Case Available Settling Time: 34.520 ns
+    Info (332114): Worst Case Available Settling Time: 30.670 ns
     Info (332114): 
     Info (332114): Worst-Case MTBF values are calculated based on the worst-case silicon characteristics, with worst-case operating conditions.
     Info (332114):   - Under worst-case conditions, an increase of 100ps in available settling time will increase MTBF values by a factor of 5.2
@@ -1795,30 +1737,30 @@ Info: Analyzing Fast 1100mV 85C Model
 Info (334003): Started post-fitting delay annotation
 Info (334004): Delay annotation completed successfully
 Info (332097): The following timing edges are non-unate.  The Timing Analyzer will assume pos-unate behavior for these edges in the clock network.
-    Info (332098): Cell: audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL  from: refclkin  to: fbclk
-    Info (332098): Cell: audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER  from: vco0ph[0]  to: divclk
-    Info (332098): Cell: audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_REFCLK_SELECT  from: clkin[0]  to: clkout
-    Info (332098): Cell: audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER  from: vco0ph[0]  to: divclk
+    Info (332098): Cell: iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL  from: refclkin  to: fbclk
+    Info (332098): Cell: iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER  from: vco0ph[0]  to: divclk
+    Info (332098): Cell: iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_REFCLK_SELECT  from: clkin[0]  to: clkout
+    Info (332098): Cell: iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER  from: vco0ph[0]  to: divclk
 Info (332123): Deriving Clock Uncertainty. Please refer to report_sdc in the Timing Analyzer to see clock uncertainties.
-Info (332146): Worst-case setup slack is 11.220
+Info (332146): Worst-case setup slack is 9.287
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):    11.220               0.000 CLOCK_50 
-    Info (332119):   648.945               0.000 audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
-Info (332146): Worst-case hold slack is 0.127
+    Info (332119):     9.287               0.000 CLOCK_50 
+    Info (332119):   644.422               0.000 iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
+Info (332146): Worst-case hold slack is 0.128
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):     0.127               0.000 CLOCK_50 
-    Info (332119):     0.171               0.000 audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     0.128               0.000 CLOCK_50 
+    Info (332119):     0.178               0.000 iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
 Info (332140): No Recovery paths to report
 Info (332140): No Removal paths to report
 Info (332146): Worst-case minimum pulse width slack is 1.233
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):     1.233               0.000 audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0] 
-    Info (332119):     8.478               0.000 CLOCK_50 
-    Info (332119):    40.591               0.000 audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):   324.436               0.000 audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     1.233               0.000 iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0] 
+    Info (332119):     8.475               0.000 CLOCK_50 
+    Info (332119):    40.593               0.000 iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):   324.431               0.000 iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
 Info (332114): Report Metastability: Found 16 synchronizer chains.
     Info (332114): Worst-Case MTBF of Design is 1e+09 years or 3.15e+16 seconds.
     Info (332114): Typical MTBF of Design is 1e+09 years or 3.15e+16 seconds.
@@ -1826,7 +1768,7 @@ Info (332114): Report Metastability: Found 16 synchronizer chains.
     Info (332114): Number of Synchronizer Chains Found: 16
     Info (332114): Shortest Synchronizer Chain: 2 Registers
     Info (332114): Fraction of Chains for which MTBFs Could Not be Calculated: 0.000
-    Info (332114): Worst Case Available Settling Time: 36.453 ns
+    Info (332114): Worst Case Available Settling Time: 33.618 ns
     Info (332114): 
     Info (332114): Worst-Case MTBF values are calculated based on the worst-case silicon characteristics, with worst-case operating conditions.
     Info (332114):   - Under worst-case conditions, an increase of 100ps in available settling time will increase MTBF values by a factor of 79.4
@@ -1834,30 +1776,30 @@ Info (332114): Report Metastability: Found 16 synchronizer chains.
     Info (332114):   - Under typical conditions, an increase of 100ps in available settling time will increase MTBF values by a factor of 17.8
 Info: Analyzing Fast 1100mV 0C Model
 Info (332097): The following timing edges are non-unate.  The Timing Analyzer will assume pos-unate behavior for these edges in the clock network.
-    Info (332098): Cell: audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL  from: refclkin  to: fbclk
-    Info (332098): Cell: audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER  from: vco0ph[0]  to: divclk
-    Info (332098): Cell: audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_REFCLK_SELECT  from: clkin[0]  to: clkout
-    Info (332098): Cell: audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER  from: vco0ph[0]  to: divclk
+    Info (332098): Cell: iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL  from: refclkin  to: fbclk
+    Info (332098): Cell: iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER  from: vco0ph[0]  to: divclk
+    Info (332098): Cell: iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_REFCLK_SELECT  from: clkin[0]  to: clkout
+    Info (332098): Cell: iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER  from: vco0ph[0]  to: divclk
 Info (332123): Deriving Clock Uncertainty. Please refer to report_sdc in the Timing Analyzer to see clock uncertainties.
-Info (332146): Worst-case setup slack is 11.889
+Info (332146): Worst-case setup slack is 10.547
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):    11.889               0.000 CLOCK_50 
-    Info (332119):   649.136               0.000 audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
-Info (332146): Worst-case hold slack is 0.108
+    Info (332119):    10.547               0.000 CLOCK_50 
+    Info (332119):   645.278               0.000 iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
+Info (332146): Worst-case hold slack is 0.109
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):     0.108               0.000 CLOCK_50 
-    Info (332119):     0.133               0.000 audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     0.109               0.000 CLOCK_50 
+    Info (332119):     0.168               0.000 iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
 Info (332140): No Recovery paths to report
 Info (332140): No Removal paths to report
 Info (332146): Worst-case minimum pulse width slack is 1.233
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):     1.233               0.000 audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0] 
-    Info (332119):     8.431               0.000 CLOCK_50 
-    Info (332119):    40.584               0.000 audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
-    Info (332119):   324.434               0.000 audio_cntrl|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):     1.233               0.000 iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0] 
+    Info (332119):     8.429               0.000 CLOCK_50 
+    Info (332119):    40.585               0.000 iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk 
+    Info (332119):   324.433               0.000 iTOP|iAUD_CNTRL|iCLKGEN|comb_3|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk 
 Info (332114): Report Metastability: Found 16 synchronizer chains.
     Info (332114): Worst-Case MTBF of Design is 1e+09 years or 3.15e+16 seconds.
     Info (332114): Typical MTBF of Design is 1e+09 years or 3.15e+16 seconds.
@@ -1865,7 +1807,7 @@ Info (332114): Report Metastability: Found 16 synchronizer chains.
     Info (332114): Number of Synchronizer Chains Found: 16
     Info (332114): Shortest Synchronizer Chain: 2 Registers
     Info (332114): Fraction of Chains for which MTBFs Could Not be Calculated: 0.000
-    Info (332114): Worst Case Available Settling Time: 36.811 ns
+    Info (332114): Worst Case Available Settling Time: 34.356 ns
     Info (332114): 
     Info (332114): Worst-Case MTBF values are calculated based on the worst-case silicon characteristics, with worst-case operating conditions.
     Info (332114):   - Under worst-case conditions, an increase of 100ps in available settling time will increase MTBF values by a factor of 5.2
@@ -1873,10 +1815,10 @@ Info (332114): Report Metastability: Found 16 synchronizer chains.
     Info (332114):   - Under typical conditions, an increase of 100ps in available settling time will increase MTBF values by a factor of 17.8
 Info (332102): Design is not fully constrained for setup requirements
 Info (332102): Design is not fully constrained for hold requirements
-Info: Quartus Prime Timing Analyzer was successful. 0 errors, 18 warnings
-    Info: Peak virtual memory: 1112 megabytes
-    Info: Processing ended: Thu Mar 26 19:18:02 2026
-    Info: Elapsed time: 00:00:10
-    Info: Total CPU time (on all processors): 00:00:32
+Info: Quartus Prime Timing Analyzer was successful. 0 errors, 19 warnings
+    Info: Peak virtual memory: 5918 megabytes
+    Info: Processing ended: Tue Apr  7 16:06:24 2026
+    Info: Elapsed time: 00:00:40
+    Info: Total CPU time (on all processors): 00:01:46
 
 
