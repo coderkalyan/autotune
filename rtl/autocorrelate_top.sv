@@ -21,6 +21,7 @@ module autocorrelate_top #(
 );
 
   localparam WINDOW_SIZE = 2**WINDOW_BITS;
+  localparam WINDOW_SIZE_HALF = 2**(WINDOW_BITS-1); //AUTO corrolations stops early at 512
 
   // ----------------------------------------------------------------
   // Iteration FSM: sweeps current_L from 0 to WINDOW_SIZE-1,
@@ -54,7 +55,7 @@ module autocorrelate_top #(
         end
         // Wait for autocorrelate to finish, store result, then advance L
         WAIT: begin          
-          if (current_L >= WINDOW_SIZE) begin
+          if (current_L >= WINDOW_SIZE_HALF) begin
               state <= IDLE;
               o_all_done <= 1;       // Signal that the entire sweep is done
           end
@@ -62,7 +63,7 @@ module autocorrelate_top #(
               //o_result <= autocorr_result;
               current_L <= current_L + STEP;
               state     <= WAIT;
-              o_autocorr_en_ptr <= (current_L + STEP < WINDOW_SIZE) ? 1 : 0; // pulse en for next lag if we haven't reached the end of the sweep
+              o_autocorr_en_ptr <= (current_L + STEP < WINDOW_SIZE_HALF) ? 1 : 0; // pulse en for next lag if we haven't reached the end of the sweep
           end
         end
 

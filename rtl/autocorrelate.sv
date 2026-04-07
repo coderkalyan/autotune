@@ -61,7 +61,7 @@ module autocorrelate #(
           else begin
             counter <= counter + 1;
 
-            if (o_yaddr == '0) state <= MASK;
+            // if (o_yaddr == '0) state <= MASK;
           end
         end
 
