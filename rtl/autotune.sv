@@ -172,26 +172,26 @@ module autotune (
 
   fixed_t out_lf, out_rf;
   logic out_valid;
-  psola psola_left (
-      .clk(CLOCK_50),
-      .rst(rst),
-      .i_lag(r_pitch_period),
-      .i_advance(`FIXED_RTOF(1.0 / 1.05)),
-      .i_data(lf),
-      .i_valid(adc_en),
-      .o_data(out_lf),
-      .o_valid(out_valid),
-  );
-  psola psola_right (
-      .clk(CLOCK_50),
-      .rst(rst),
-      .i_lag(r_pitch_period),
-      .i_advance(`FIXED_RTOF(1.0 / 1.05)),
-      .i_data(rf),
-      .i_valid(adc_en),
-      .o_data(out_rf),
-      .o_valid(),
-  );
+  // psola psola_left (
+  //     .clk(CLOCK_50),
+  //     .rst(rst),
+  //     .i_lag(r_pitch_period),
+  //     .i_advance(`FIXED_RTOF(1.0 / 1.05)),
+  //     .i_data(lf),
+  //     .i_valid(adc_en),
+  //     .o_data(out_lf),
+  //     .o_valid(out_valid),
+  // );
+  // psola psola_right (
+  //     .clk(CLOCK_50),
+  //     .rst(rst),
+  //     .i_lag(r_pitch_period),
+  //     .i_advance(`FIXED_RTOF(1.0 / 1.05)),
+  //     .i_data(rf),
+  //     .i_valid(adc_en),
+  //     .o_data(out_rf),
+  //     .o_valid(),
+  // );
 
   assign adc_en   = !adc_empty;
   assign dac_en   = out_valid & SW[0];
@@ -200,18 +200,18 @@ module autotune (
 
   logic pitch_done, pitch_valid;
   logic [9:0] pitch_period;
-  pitch_detection #(
-      .WINDOW_SIZE(1024),
-      .STAMPS(16)
-  ) pitch_detection (
-      .clk(CLOCK_50),
-      .rst(rst),
-      .i_wr_en(adc_en),
-      .i_proc_data(lf),
-      .o_period(pitch_period),
-      .o_valid(pitch_valid),
-      .o_done(pitch_done)
-  );
+  // pitch_detection #(
+  //     .WINDOW_SIZE(1024),
+  //     .STAMPS(16)
+  // ) pitch_detection (
+  //     .clk(CLOCK_50),
+  //     .rst(rst),
+  //     .i_wr_en(adc_en),
+  //     .i_proc_data(lf),
+  //     .o_period(pitch_period),
+  //     .o_valid(pitch_valid),
+  //     .o_done(pitch_done)
+  // );
 
   logic r_pitch_valid;
   logic [9:0] r_pitch_period;
@@ -246,21 +246,21 @@ module autotune (
       .velocity(velocity)
   );
 
-  // Frequency LUT and Display Logic
-  wire [26:0] frequency;
-  wire [23:0] bcd_freq;
+  // // Frequency LUT and Display Logic
+  // wire [26:0] frequency;
+  // wire [23:0] bcd_freq;
 
-  // LUT to get Q11.16 frequency from note number
-  midi_freq_lut lut0 (
-      .note(note_number),
-      .frequency(frequency)
-  );
+  // // LUT to get Q11.16 frequency from note number
+  // midi_freq_lut lut0 (
+  //     .note(note_number),
+  //     .frequency(frequency)
+  // );
 
-  // Convert Q11.16 frequency to 6 BCD decimal digits for display
-  bin_to_bcd bcd0 (
-      .freq_q1116(frequency),
-      .bcd(bcd_freq)
-  );
+  // // Convert Q11.16 frequency to 6 BCD decimal digits for display
+  // bin_to_bcd bcd0 (
+  //     .freq_q1116(frequency),
+  //     .bcd(bcd_freq)
+  // );
 
   // Display output UART TX interface.
   uart_tx uart_tx_inst (
