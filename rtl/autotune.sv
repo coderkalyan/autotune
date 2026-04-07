@@ -263,15 +263,25 @@ module autotune (
   // );
 
   // Display output UART TX interface.
+  // clk_div = 50_000_000 / 115_200 ≈ 434  →  ~115,200 baud (matches script default)
+  logic tx_done_pulse;
   uart_tx uart_tx_inst (
       .clk(CLOCK_50),
       .rst(rst),
       .trmt(1'b1),
       .clk_div(16'd1600),
-      .tx_data({8'hAA}),
-      .tx_done(LEDR[6]),
+      .tx_data(8'hAA),
+      .tx_done(tx_done_pulse),
       .TX(GPIO[4])
   );
+
+  // tx_done is a single-cycle pulse when trmt is always-high; latch it so the LED stays lit.
+  logic tx_done_sticky;
+  always_ff @(posedge CLOCK_50)
+    if (rst) tx_done_sticky <= 1'b0;
+    else if (tx_done_pulse) tx_done_sticky <= 1'b1;
+
+  assign LEDR[6] = tx_done_sticky;
 
   assign LEDR[0] = config_done;
   assign LEDR[1] = config_err;
@@ -364,9 +374,9 @@ module autotune (
     // HEX1 = hex7(lag_out[7:4]);
     // HEX2 = hex7(lag_out[9:8]);
 
-    HEX0 = hex7_notes(note0);
-    HEX1 = hex7_notes(note1);
-    HEX2 = hex7_notes(note2);
+    // HEX0 = hex7_notes(note0);
+    // HEX1 = hex7_notes(note1);
+    // HEX2 = hex7_notes(note2);
 
     // HEX0 = hex7(bcd_freq[3:0]);    // hundredths Hz
     // HEX1 = hex7(bcd_freq[7:4]);    // tenths Hz^M
