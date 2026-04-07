@@ -129,249 +129,35 @@ module autotune (
   assign VGA_R       = '0;
   assign VGA_SYNC_N  = 1'b1;
   assign VGA_VS      = 1'b0;
-
-  logic [31:0] dac_data, adc_data;
-  logic dac_en, dac_full, adc_en, adc_empty;
-  logic config_err, config_done;
+  
   logic lrck;
-  audio_cntrl #(
-      .P24_BIT(0)
-  ) audio_cntrl (
-      .i_clk_50M(CLOCK_50),
-      .i_rst(rst),
-      .i_data(dac_data),
-      .i_fifo_wr_en(dac_en),
-      .i_fifo_rd_en(adc_en),
-      .o_read_empty(adc_empty),
-      .o_write_full(dac_full),
-      .o_data(adc_data),
-      .o_config_err(config_err),
-      .o_config_done(config_done),
-      .i_aud_adcdat(AUD_ADCDAT),
-      .o_aud_dacdat(AUD_DACDAT),
-      .o_bck(AUD_BCLK),
-      .o_aud_lrck(lrck),
-      .o_aud_xck(AUD_XCK),
-      .o_i2c_sclk(FPGA_I2C_SCLK),
-      .o_i2c_sdat(FPGA_I2C_SDAT)
-  );
 
   assign AUD_ADCLRCK = lrck;
   assign AUD_DACLRCK = lrck;
 
-  logic [0:0] r_adc_en;
-
-  // Convert 16 bit ADC samples into fixed point format.
-  audio_t ldata, rdata;
-  assign ldata = signed'(adc_data[31:16]);
-  assign rdata = signed'(adc_data[15:0]);
-
-  fixed_t lf, rf;
-  assign lf = `FIXED_ATOF(ldata);
-  assign rf = `FIXED_ATOF(rdata);
-
-  fixed_t out_lf, out_rf;
-  logic out_valid;
-  psola psola_left (
-      .clk(CLOCK_50),
-      .rst(rst),
-      .i_lag(r_pitch_period),
-      .i_advance(`FIXED_RTOF(1.0 / 1.05)),
-      .i_data(lf),
-      .i_valid(adc_en),
-      .o_data(out_lf),
-      .o_valid(out_valid),
-  );
-  psola psola_right (
-      .clk(CLOCK_50),
-      .rst(rst),
-      .i_lag(r_pitch_period),
-      .i_advance(`FIXED_RTOF(1.0 / 1.05)),
-      .i_data(rf),
-      .i_valid(adc_en),
-      .o_data(out_rf),
-      .o_valid(),
+  top #(
+    .WINDOW_SIZE(1024)
+  ) iTOP ( 
+    .clk(CLOCK_50),
+    .rst(rst),
+    .i_aud_adcdat(AUD_ADCDAT),
+    .o_aud_dacdat(AUD_DACDAT),
+    .o_aud_bclk(AUD_BCLK),
+    .o_aud_lrck(lrck),
+    .o_aud_xck(AUD_XCK),
+    .o_fpga_i2c_sclk(FPGA_I2C_SCLK),
+    .o_fpga_i2c_sdat(FPGA_I2C_SDAT),
+    .i_rxd(GPIO[5]),
+    .o_txd(GPIO[4]),
+    .i_mech(SW[0]),
+    .SW(SW),
+    .LEDR(LEDR),
+    .HEX0(HEX0),
+    .HEX1(HEX1),
+    .HEX2(HEX2),
+    .HEX3(HEX3),
+    .HEX4(HEX4),
+    .HEX5(HEX5)
   );
 
-  assign adc_en   = !adc_empty;
-  assign dac_en   = out_valid & SW[0];
-
-  assign dac_data = {`FIXED_FTOA(out_lf), `FIXED_FTOA(out_rf)};
-
-  logic pitch_done, pitch_valid;
-  logic [9:0] pitch_period;
-  pitch_detection #(
-      .WINDOW_SIZE(1024),
-      .STAMPS(16)
-  ) pitch_detection (
-      .clk(CLOCK_50),
-      .rst(rst),
-      .i_wr_en(adc_en),
-      .i_proc_data(lf),
-      .o_period(pitch_period),
-      .o_valid(pitch_valid),
-      .o_done(pitch_done)
-  );
-
-  logic r_pitch_valid;
-  logic [9:0] r_pitch_period;
-  always_ff @(posedge CLOCK_50) begin
-    if (rst) begin
-      r_pitch_valid  <= 1'b0;
-      r_pitch_period <= '0;
-    end else if (pitch_done) begin
-      r_pitch_valid  <= pitch_valid;
-      r_pitch_period <= pitch_period;
-    end
-  end
-
-  wire rxd;
-  wire [1:0] br_cfg;
-
-  // GPIO[5] as RX input
-  assign rxd = GPIO[5];
-
-  // MIDI Signals
-  wire note_on_trigger;
-  wire [6:0] note_number;
-  wire [6:0] velocity;
-
-  // Instantiate midi receiver here
-  midi_receiver midi_receiver0 (
-      .clk(CLOCK_50),
-      .rst(rst),
-      .midi_rx(rxd),
-      .note_on_trigger(note_on_trigger),
-      .note_number(note_number),
-      .velocity(velocity)
-  );
-
-  // Frequency LUT and Display Logic
-  wire [26:0] frequency;
-  wire [23:0] bcd_freq;
-
-  // LUT to get Q11.16 frequency from note number
-  midi_freq_lut lut0 (
-      .note(note_number),
-      .frequency(frequency)
-  );
-
-  // Convert Q11.16 frequency to 6 BCD decimal digits for display
-  bin_to_bcd bcd0 (
-      .freq_q1116(frequency),
-      .bcd(bcd_freq)
-  );
-
-  // Display output UART TX interface.
-  uart_tx uart_tx_inst (
-      .clk(CLOCK_50),
-      .rst(rst),
-      .trmt(1'b1),
-      .tx_data({8'hAA}),
-      .tx_done(LEDR[6]),
-      .TX(GPIO[4])
-  );
-
-  assign LEDR[0] = config_done;
-  assign LEDR[1] = config_err;
-  assign LEDR[2] = adc_empty;
-  assign LEDR[3] = dac_full;
-  assign LEDR[4] = pitch_done;
-  assign LEDR[5] = r_pitch_valid;
-  // assign LEDR[2] = codec_done;
-  // assign LEDR[3] = codec_error;
-  // assign LEDR[4] = codec_start;
-  assign LEDR[9] = rst;
-
-  // 7-seg hex decoder (active-low segments on DE1-SoC)
-  function automatic logic [6:0] hex7(input logic [3:0] v);
-    unique case (v)
-      4'h0: hex7 = 7'b1000000;
-      4'h1: hex7 = 7'b1111001;
-      4'h2: hex7 = 7'b0100100;
-      4'h3: hex7 = 7'b0110000;
-      4'h4: hex7 = 7'b0011001;
-      4'h5: hex7 = 7'b0010010;
-      4'h6: hex7 = 7'b0000010;
-      4'h7: hex7 = 7'b1111000;
-      4'h8: hex7 = 7'b0000000;
-      4'h9: hex7 = 7'b0010000;
-      4'hA: hex7 = 7'b0001000;
-      4'hB: hex7 = 7'b0000011;
-      4'hC: hex7 = 7'b1000110;
-      4'hD: hex7 = 7'b0100001;
-      4'hE: hex7 = 7'b0000110;
-      4'hF: hex7 = 7'b0001110;
-      default: hex7 = 7'b1111111;
-    endcase
-  endfunction
-
-
-
-  function automatic logic [6:0] hex7_notes(input hex_t val);
-    case (val)
-      ZERO:  hex7_notes = 7'b1000000;
-      ONE:   hex7_notes = 7'b1111001;
-      TWO:   hex7_notes = 7'b0100100;
-      THREE: hex7_notes = 7'b0110000;
-      FOUR:  hex7_notes = 7'b0011001;
-      FIVE:  hex7_notes = 7'b0010010;
-      SIX:   hex7_notes = 7'b0000010;
-      SEVEN: hex7_notes = 7'b1111000;
-      EIGHT: hex7_notes = 7'b0000000;
-      NINE:  hex7_notes = 7'b0011000;
-      A:     hex7_notes = 7'b0001000;
-      B:     hex7_notes = 7'b0000011;
-      C:     hex7_notes = 7'b1000110;
-      D:     hex7_notes = 7'b0100001;
-      E:     hex7_notes = 7'b0000110;
-      F:     hex7_notes = 7'b0001110;
-
-      // Optional patterns for G and S (customize if needed)
-      G: hex7_notes = 7'b0000010;  // similar to '6'
-      S: hex7_notes = 7'b0010010;  // similar to '5'
-
-      NONE: hex7_notes = 7'b1111111;
-
-      default: hex7_notes = 7'b1111111;
-    endcase
-  endfunction
-
-
-  logic [9:0] lag_out;
-  nearest_note_lut nearest_note_lut (
-      .in_lag(r_pitch_period),
-      .nearest_note_lag(lag_out)
-  );
-
-  hex_t note0, note1, note2;
-
-  // Instantiate note_name_lut
-  note_name_lut u_note_name_lut (
-      .nearest_note_lag(lag_out),
-      .HEX2(note2),
-      .HEX1(note1),
-      .HEX0(note0)
-  );
-
-  always_comb begin
-    // HEX0 = hex7(pitch_period[3:0]);
-    // HEX1 = hex7(pitch_period[7:4]);
-    // HEX2 = hex7(pitch_period[9:8]);
-
-    // HEX0 = hex7(lag_out[3:0]);
-    // HEX1 = hex7(lag_out[7:4]);
-    // HEX2 = hex7(lag_out[9:8]);
-
-    HEX0 = hex7_notes(note0);
-    HEX1 = hex7_notes(note1);
-    HEX2 = hex7_notes(note2);
-
-    // HEX0 = hex7(bcd_freq[3:0]);    // hundredths Hz
-    // HEX1 = hex7(bcd_freq[7:4]);    // tenths Hz^M
-    // HEX2 = hex7(bcd_freq[11:8]);   // ones Hz^M
-    // HEX3 = hex7(bcd_freq[15:12]);  // tens Hz^M
-    // HEX4 = hex7(bcd_freq[19:16]);  // hundreds Hz^M
-    // HEX5 = hex7(bcd_freq[23:20]);  // thousands Hz^M
-  end
 endmodule

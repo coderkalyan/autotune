@@ -43,23 +43,6 @@ logic [31:0] adc_data;
 assign ldata = signed'(adc_data[31:16]);
 assign rdata = signed'(adc_data[15:0]);
 
-fixed_t lf, rf;
-assign lf = `FIXED_ATOF(ldata);
-assign rf = `FIXED_ATOF(rdata); 
-
-// Autocorrelation output 
-logic [WBITS-1:0] pitch_period;
-logic pitch_valid;
-logic pitch_done;
-
-// LPF outputs (left and right channels)
-fixed_t lpf_lf;
-fixed_t lpf_rf;
-logic lpf_done;
-
-// Reciprocal of the pitch factor
-fixed_t pitch_factor_recip;
-
 // PSOLA outputs (left and right channels)
 fixed_t psola_lf;
 fixed_t psola_rf; 
@@ -72,7 +55,7 @@ assign adc_en = !adc_empty;
 // FIFO write logic
 logic dac_en, dac_full;
 logic [31:0] dac_data;
-assign dac_en = psola_valid & i_mech & SW[0];
+assign dac_en = psola_valid & SW[0];
 assign dac_data = {`FIXED_FTOA(psola_lf), `FIXED_FTOA(psola_rf)};
 
 // ----------------------------------------------------------------
@@ -101,102 +84,42 @@ audio_cntrl #(
 );
 
 // ----------------------------------------------------------------
-// Preprocessing
+// Main Compute Module
 // ----------------------------------------------------------------
-preprocessing #(
-    .CHANNELS(0),    // default: 0 lpf left and right data; 1 lpf left channel only 
-    .L_FC(10000),
-    .R_FC(400)
-) iPP (
-    .clk(clk),
-    .rst(rst),
-    .i_lf(lf),
-    .i_rf(rf),
-    .i_en(adc_en),
-    .o_lpf_lf(lpf_lf),
-    .o_lpf_rf(lpf_rf),
-    .o_lpf_valid(lpf_done)
-);
-
-// ----------------------------------------------------------------
-// Pitch Detection
-// ----------------------------------------------------------------
-pitch_detection #(
-    .WINDOW_SIZE(WINDOW_SIZE),
-    .STAMPS(16)
-) iPD (
-    .clk(clk),
-    .rst(rst),
-    .i_wr_en(lpf_done),
-    .i_proc_data(lpf_lf),
-    .o_period(pitch_period),
-    .o_valid(pitch_valid),
-    .o_done(pitch_done)
-);
-logic [9:0] r_pitch_period;
-logic r_pitch_valid;
-always_ff @(posedge clk) begin
-    if (rst) begin
-        r_pitch_period <= '0;
-        r_pitch_valid <= 1'b0;
-    end else if (pitch_done) begin
-        r_pitch_period <= pitch_period;
-        r_pitch_valid <= pitch_valid;
-    end
-end
-
-// ----------------------------------------------------------------
-// Target Frequency 
-// ----------------------------------------------------------------
-target_freq #( 
+compute #(
     .WINDOW_SIZE(WINDOW_SIZE)
-) iTF (
+) iCOMPUTE (
     .clk(clk),
     .rst(rst),
+    .adc_en(adc_en),
+    .ldata(ldata),
+    .rdata(rdata),
     .i_rxd(i_rxd),
-    .i_period(pitch_period),
-    .o_shift_ratio(pitch_factor_recip)
-);
-
-
-// ----------------------------------------------------------------
-// PSOLA
-// ----------------------------------------------------------------
-psola iPSOLA_L ( 
-    .clk(clk),
-    .rst(rst),
-    .i_lag(r_pitch_period),
-    .i_advance(pitch_factor_recip),
-    .i_data(lf),
-    .i_valid(adc_en),
-    .o_data(psola_lf),
-    .o_valid(psola_valid)
-);
-
-psola iPSOLA_R ( 
-    .clk(clk),
-    .rst(rst),
-    .i_lag(r_pitch_period),
-    .i_advance(pitch_factor_recip),
-    .i_data(rf),
-    .i_valid(adc_en),
-    .o_data(psola_rf),
-    .o_valid()
+    .test_pitch_factor(), // left unconnected for synthesis
+    .psola_lf(psola_lf),
+    .psola_rf(psola_rf),
+    .psola_valid(psola_valid),
+    .HEX0(HEX0),
+    .HEX1(HEX1),
+    .HEX2(HEX2),
+    .HEX3(HEX3),
+    .HEX4(HEX4),
+    .HEX5(HEX5)
 );
 
 // ----------------------------------------------------------------
 // Display Control
 // ----------------------------------------------------------------
 // TODO: fill in once finished
-transmitter iPI_UART (
-    .clk(clk),
-    .rst(rst),
-    .i_start(),
-    .i_data({8'hAA}),
-    .i_tx_en(),
-    .o_txd(o_txd),
-    .o_busy()
-);
+// transmitter iPI_UART (
+//     .clk(clk),
+//     .rst(rst),
+//     .i_start(),
+//     .i_data({8'hAA}),
+//     .i_tx_en(),
+//     .o_txd(o_txd),
+//     .o_busy()
+// );
 
 // ----------------------------------------------------------------
 // FPGA IO Control 
@@ -205,14 +128,13 @@ assign LEDR[0] = config_done;
 assign LEDR[1] = config_err;
 assign LEDR[2] = adc_empty;
 assign LEDR[3] = dac_full;
-assign LEDR[4] = pitch_done;
-assign LEDR[5] = r_pitch_valid;
+//assign LEDR[4] = ;
+//assign LEDR[5] = ;
 //assign LEDR[6] = ;
 //assign LEDR[7] = ;
 //assign LEDR[8] = ;
 assign LEDR[9] = rst;
 
-// TODO: HEX displays
 
 
 endmodule 
