@@ -1,6 +1,7 @@
-__pycache__/
+__pycache__
 *.pcm
 work/
 *.vcd
 *.out
-venv/
+venv
+node_modules
