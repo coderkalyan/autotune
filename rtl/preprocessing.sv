@@ -98,7 +98,7 @@ lpf #(
       .i_data(lpf_lf_s2), 
       .i_valid(v_l_s2), 
       .o_data(o_lpf_lf),
-      .o_valid(o_lpf_lf_valid)  
+      .o_valid(o_lpf_valid)  
   );
 
 endmodule
