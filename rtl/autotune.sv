@@ -107,7 +107,6 @@ module autotune (
   //assign AUD_BCLK    = 1'bz;
   //assign AUD_DACLRCK = 1'bz;
 
-
   assign IRDA_TXD    = 1'b1;
 
   assign DRAM_ADDR   = '0;
@@ -225,11 +224,12 @@ module autotune (
     end
   end
 
-  wire rxd;
+  wire rxd, txd;
   wire [1:0] br_cfg;
 
   // GPIO[5] as RX input
   assign rxd = GPIO[5];
+  assign GPIO[4] = txd;
 
   // MIDI Signals
   wire note_on_trigger;
@@ -263,13 +263,12 @@ module autotune (
   );
 
   // Display output UART TX interface.
-  uart_tx uart_tx_inst (
-      .clk(CLOCK_50),
-      .rst(rst),
-      .trmt(1'b1),
-      .tx_data({8'hAA}),
-      .tx_done(LEDR[6]),
-      .TX(GPIO[4])
+  pitch_transmitter pitch_transmitter_inst(
+    .clk(CLOCK_50),
+    .rst(rst),
+    .pitch_period(r_pitch_period),
+    .pitch_valid(r_pitch_valid),
+    .TX(txd)
   );
 
   assign LEDR[0] = config_done;
