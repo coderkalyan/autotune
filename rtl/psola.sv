@@ -4,7 +4,7 @@ module psola (
     input  wire    clk,
     input  wire    rst,
     input  wire    [9:0] i_lag,
-    input  fixed_t i_advance,  // 1/pitch_factor in Q11.16; <1 = pitch up, >1 = pitch down
+    input  fixed_t i_advance,
     input  fixed_t i_data,
     input  wire    i_valid,
     output fixed_t o_data,
@@ -46,7 +46,7 @@ module psola (
   logic               enqueue;
   logic [CBITS - 1:0] next_channel;
   logic [HBITS - 1:0] rptrs        [NUM_CHANNELS];
-  logic [9:0]         lags         [NUM_CHANNELS];
+  logic [        9:0] lags         [NUM_CHANNELS];
 
   genvar i;
   generate
@@ -90,7 +90,7 @@ module psola (
     end
   end
 
-  wire [9:0] output_threshold = out_lag[16 +: 10];
+  wire  [9:0] output_threshold = out_lag[16+:10];
   logic [9:0] output_counter;
   always_ff @(posedge clk) begin
     if (rst) begin
@@ -131,7 +131,9 @@ module psola (
   fixed_t channels[NUM_CHANNELS];
 
   state_t state;
-  fixed_t acc;
+  logic [CBITS:0] channel;
+  fixed_t num, den;
+  real o_frac;
   always_ff @(posedge clk) begin
     if (rst) begin
       state <= IDLE;
@@ -142,7 +144,8 @@ module psola (
 
           if (i_valid) begin
             state <= PIPELINE;
-            acc <= 0;
+            num <= 0;
+            den <= 0;
             channel <= 0;
           end
         end
@@ -153,14 +156,19 @@ module psola (
         BUSY: begin
           if (channel < NUM_CHANNELS + 1) begin
             if (active[channel-1]) begin
-              acc <= acc + fixed_mul(history[rptrs[channel-1]], hann);
+              // PSOLA calculation.
+              num <= num + fixed_mul(history[rptrs[channel-1]], hann);
+              den <= den + fixed_mul(hann, hann);
+
+              // Windowed grain visualizer.
               channels[channel-1] <= fixed_mul(history[rptrs[channel-1]], hann);
             end
 
             channel <= channel + 1;
           end else begin
             state   <= IDLE;
-            o_data  <= acc;
+            o_data  <= `FIXED_RTOF(`FIXED_FTOR(num) / `FIXED_FTOR(den));
+            o_frac  <= `FIXED_FTOR(num) / `FIXED_FTOR(den);
             o_valid <= 1'b1;
           end
         end

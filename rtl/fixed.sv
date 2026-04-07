@@ -33,7 +33,7 @@ endfunction
 `endif
 
 `define FIXED_RTOF(x) fixed_t'(x * real'(1 << 16))
-`define FIXED_FTOR(x) real'(x) / real'(1 << 16)
+`define FIXED_FTOR(x) (real'(x) / real'(1 << 16))
 
 function automatic fixed_t fixed_atof(input audio_t x);
     return 27'(x) << 10;
