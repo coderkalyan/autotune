@@ -8,7 +8,7 @@ module uart_tx(
   output logic TX
 );
   logic load, transmitting, set_done, shift;
-  logic [12:0] baud_cnt;
+  logic [15:0] baud_cnt;
   logic [8:0] tx_shft_reg;
   logic [3:0] bit_cnt;
 
@@ -22,7 +22,7 @@ module uart_tx(
   // baud counter
   always_ff @(posedge clk) begin
     if (rst) baud_cnt <= '0;
-    else if (start) baud_cnt <= {1'b0, clk_div[15:1]};
+    else if (load) baud_cnt <= {1'b0, clk_div[15:1]};
     else if (shift) baud_cnt <= clk_div;
     else if (transmitting) baud_cnt <= baud_cnt - 1;
   end
