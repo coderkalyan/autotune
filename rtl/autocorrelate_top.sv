@@ -17,7 +17,8 @@ module autocorrelate_top #(
   output fmac_t                  o_result,
   output reg                     o_autocorr_en_ptr, // used for reseting global pointer at the start of a new sweep
   output reg                     o_single_done,
-  output reg                     o_all_done
+  output reg                     o_all_done,
+  output reg                     o_lpc_ready // goes high when the first 12 autocorrelation results are finished (e.g. ready to start LPC analysis)
 );
 
   localparam WINDOW_SIZE = 2**WINDOW_BITS;
@@ -33,6 +34,7 @@ module autocorrelate_top #(
                                                           // for the final increment after the last lag
   fmac_t autocorr_result; 
   wire autocorr_done;
+  reg [3:0] autocorr_cnt; // counts first 12 autocorrelations; saturates at 12 (for LPC analysis)
 
   always_ff @(posedge clk) begin
     if (rst) begin
@@ -49,6 +51,8 @@ module autocorrelate_top #(
         IDLE: begin
           if (i_en) begin
             current_L <= START_L;
+            autocorr_cnt <= 0;
+            o_lpc_ready <= 0;
             state <= WAIT;
           end
         end
@@ -63,6 +67,12 @@ module autocorrelate_top #(
               current_L <= current_L + STEP;
               state     <= WAIT;
               o_autocorr_en_ptr <= (current_L + STEP < WINDOW_SIZE) ? 1 : 0; // pulse en for next lag if we haven't reached the end of the sweep
+
+              if (autocorr_cnt < 12) begin
+                autocorr_cnt <= autocorr_cnt + 1;
+                if (autocorr_cnt == 11)
+                  o_lpc_ready <= 1;
+              end
           end
         end
 
