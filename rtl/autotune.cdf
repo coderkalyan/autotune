@@ -6,7 +6,7 @@ JedecChain;
 	P ActionCode(Ign)
 		Device PartName(SOCVHPS) MfrSpec(OpMask(0));
 	P ActionCode(Cfg)
-		Device PartName(5CSEMA5F31) Path("/home/kalyan/Documents/school/ece554/autotune/rtl/") File("autotune.sof") MfrSpec(OpMask(1));
+		Device PartName(5CSEMA5F31) Path("C:/Users/avery/ece554/autotune/rtl/") File("autotune.sof") MfrSpec(OpMask(1));
 
 ChainEnd;
 
