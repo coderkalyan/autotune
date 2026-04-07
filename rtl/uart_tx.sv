@@ -3,6 +3,7 @@ module uart_tx(
   input logic rst,
   input logic trmt,
   input logic [7:0] tx_data,
+  input logic [15:0] clk_div,
   output logic tx_done,
   output logic TX
 );
@@ -21,8 +22,9 @@ module uart_tx(
   // baud counter
   always_ff @(posedge clk) begin
     if (rst) baud_cnt <= '0;
-    else if (load || shift) baud_cnt <= '0;
-    else if (transmitting) baud_cnt <= baud_cnt + 1;
+    else if (start) baud_cnt <= {1'b0, clk_div[15:1]};
+    else if (shift) baud_cnt <= clk_div;
+    else if (transmitting) baud_cnt <= baud_cnt - 1;
   end
 
   // shift register
@@ -69,7 +71,7 @@ module uart_tx(
       end
       TRANSMITTING: begin
         transmitting = '1;
-        if (baud_cnt == 13'd5207) begin
+        if (baud_cnt == 16'd0) begin
           shift = '1;
           if (bit_cnt == 4'd9) begin
             next_state = IDLE;
