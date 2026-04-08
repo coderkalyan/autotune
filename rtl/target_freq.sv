@@ -35,9 +35,9 @@ midi_receiver midi_receiver0(
 // ----------------------------------------------------------------
 // Frequency LUT 
 // ----------------------------------------------------------------
-midi_freq_lut lut0 ( // TODO: this need to change to 10 bit length
-    .note(note_number),
-    .frequency(target_lag) //fixed_t length
+midi_lag_lut lut0 ( 
+    .i_midi(note_number),
+    .o_lag(target_lag) 
 );
 
 // ----------------------------------------------------------------
