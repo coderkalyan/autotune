@@ -47,8 +47,16 @@ logic lpf_done;
 // Reciprocal of the pitch factor
 fixed_t pitch_factor_recip;
 
+// PSOLA output 
+fixed_t psola_lf_real;
+fixed_t psola_rf_real;
+
+logic [9:0] r_pitch_period;
+logic r_pitch_valid;
+
 assign o_pitch_period = r_pitch_period;
 assign o_pitch_valid = r_pitch_valid;
+
 
 // ----------------------------------------------------------------
 // Preprocessing
@@ -73,7 +81,7 @@ preprocessing #(
 // ----------------------------------------------------------------
 pitch_detection #(
     .WINDOW_SIZE(WINDOW_SIZE),
-    .STAMPS(16)
+    .STAMPS(32)
 ) iPD (
     .clk(clk),
     .rst(rst),
@@ -83,8 +91,6 @@ pitch_detection #(
     .o_valid(pitch_valid),
     .o_done(pitch_done)
 );
-logic [9:0] r_pitch_period;
-logic r_pitch_valid;
 always_ff @(posedge clk) begin
     if (rst) begin
         r_pitch_period <= '0;
