@@ -122,14 +122,6 @@ compute #(
 // ----------------------------------------------------------------
 // Display Control
 // ----------------------------------------------------------------
-// pitch_transmitter pitch_transmitter_inst(
-//     .clk(CLOCK_50),
-//     .rst(rst),
-//     .pitch_period(pitch_period),
-//     .pitch_valid(pitch_valid),
-//     .TX(txd)
-// );
-
 uart_tx_wrapper iTX_WRAP (
     .clk(clk),
     .rst(rst),
