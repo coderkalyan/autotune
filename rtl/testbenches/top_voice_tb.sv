@@ -53,6 +53,8 @@ compute #(
     .psola_lf(psola_lf),
     .psola_rf(psola_rf),
     .psola_valid(psola_valid),
+    .o_pitch_period(),
+    .o_pitch_valid(),
     .HEX0(),
     .HEX1(),
     .HEX2(),
