@@ -158,4 +158,5 @@ module autotune (
     .HEX4(HEX4),
     .HEX5(HEX5)
   );
+
 endmodule
