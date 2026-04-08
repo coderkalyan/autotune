@@ -15,8 +15,9 @@ module compute #(
     output fixed_t psola_lf,
     output fixed_t psola_rf,
     output logic psola_valid,
-    output logic [9:0] o_pitch_period,
-    output logic o_pitch_valid,
+    output logic [9:0] or_pitch_period,
+    output logic or_pitch_valid,
+    output logic o_pitch_done,
     output [6:0] HEX0,
     output [6:0] HEX1,
     output [6:0] HEX2,
@@ -37,7 +38,6 @@ assign rf = `FIXED_ATOF(rdata);
 // Autocorrelation output 
 logic [WBITS-1:0] pitch_period;
 logic pitch_valid;
-logic pitch_done;
 
 // LPF outputs (left and right channels)
 fixed_t lpf_lf;
@@ -54,8 +54,8 @@ fixed_t psola_rf_real;
 logic [9:0] r_pitch_period;
 logic r_pitch_valid;
 
-assign o_pitch_period = r_pitch_period;
-assign o_pitch_valid = r_pitch_valid;
+assign or_pitch_period = r_pitch_period;
+assign or_pitch_valid = r_pitch_valid;
 
 
 // ----------------------------------------------------------------
@@ -89,13 +89,13 @@ pitch_detection #(
     .i_proc_data(lpf_lf),
     .o_period(pitch_period),
     .o_valid(pitch_valid),
-    .o_done(pitch_done)
+    .o_done(o_pitch_done)
 );
 always_ff @(posedge clk) begin
     if (rst) begin
         r_pitch_period <= '0;
         r_pitch_valid <= 1'b0;
-    end else if (pitch_done) begin
+    end else if (o_pitch_done) begin
         r_pitch_period <= pitch_period;
         r_pitch_valid <= pitch_valid;
     end

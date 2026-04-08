@@ -58,8 +58,13 @@ logic [31:0] dac_data;
 assign dac_en = psola_valid & SW[0];
 assign dac_data = {`FIXED_FTOA(psola_lf), `FIXED_FTOA(psola_rf)};
 
+// pitch period signals
 logic [9:0] pitch_period;
 logic pitch_valid;
+logic pitch_done;
+
+// display output
+logic transmission_done;
 
 // ----------------------------------------------------------------
 // Audio Control
@@ -103,8 +108,9 @@ compute #(
     .psola_lf(psola_lf),
     .psola_rf(psola_rf),
     .psola_valid(psola_valid),
-    .o_pitch_period(pitch_period),
-    .o_pitch_valid(pitch_valid),
+    .or_pitch_period(pitch_period),
+    .or_pitch_valid(pitch_valid),
+    .o_pitch_done(pitch_done),
     .HEX0(HEX0),
     .HEX1(HEX1),
     .HEX2(HEX2),
@@ -116,12 +122,22 @@ compute #(
 // ----------------------------------------------------------------
 // Display Control
 // ----------------------------------------------------------------
-pitch_transmitter pitch_transmitter_inst(
-    .clk(CLOCK_50),
+// pitch_transmitter pitch_transmitter_inst(
+//     .clk(CLOCK_50),
+//     .rst(rst),
+//     .pitch_period(pitch_period),
+//     .pitch_valid(pitch_valid),
+//     .TX(txd)
+// );
+
+uart_tx_wrapper iTX_WRAP (
+    .clk(clk),
     .rst(rst),
-    .pitch_period(pitch_period),
-    .pitch_valid(pitch_valid),
-    .TX(txd)
+    .ir_pitch_period(pitch_period),
+    .ir_pitch_valid(pitch_valid),
+    .i_pitch_done(pitch_done),
+    .o_transmission_done(transmission_done),
+    .o_tx(o_txd)
 );
 
 // ----------------------------------------------------------------
@@ -131,7 +147,7 @@ assign LEDR[0] = config_done;
 assign LEDR[1] = config_err;
 assign LEDR[2] = adc_empty;
 assign LEDR[3] = dac_full;
-//assign LEDR[4] = ;
+assign LEDR[4] = transmission_done;
 //assign LEDR[5] = ;
 //assign LEDR[6] = ;
 //assign LEDR[7] = ;
