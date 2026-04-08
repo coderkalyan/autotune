@@ -111,8 +111,15 @@ module psola (
     end
   end
 
-  fixed_t hann;
   logic [CBITS:0] channel;
+  logic [HBITS-1:0] rd_addr;
+  fixed_t hist_rd_data;
+
+  always_comb rd_addr = rptrs[channel];
+
+  always_ff @(posedge clk) hist_rd_data <= history[rd_addr];
+
+  fixed_t hann;
   hanning_var hanning (
       .clk(clk),
       .rst(rst),
@@ -153,8 +160,8 @@ module psola (
         BUSY: begin
           if (channel < NUM_CHANNELS + 1) begin
             if (active[channel-1]) begin
-              acc <= acc + fixed_mul(history[rptrs[channel-1]], hann);
-              channels[channel-1] <= fixed_mul(history[rptrs[channel-1]], hann);
+              acc <= acc + fixed_mul(hist_rd_data, hann);
+              channels[channel-1] <= fixed_mul(hist_rd_data, hann);
             end
 
             channel <= channel + 1;
