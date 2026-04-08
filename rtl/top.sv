@@ -91,7 +91,7 @@ audio_cntrl #(
 // ----------------------------------------------------------------
 compute #(
     .WINDOW_SIZE(WINDOW_SIZE),
-    .TESTBENCH(1)   //if 1 bypasses and uses test_pitch_factor as the pf
+    .TESTBENCH(0)   //if 1 bypasses and uses test_pitch_factor as the pf
 ) iCOMPUTE (
     .clk(clk),
     .rst(rst),
