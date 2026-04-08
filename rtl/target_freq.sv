@@ -45,7 +45,8 @@ midi_lag_lut lut0 (
 // ----------------------------------------------------------------
 note_selection iNS(
     .actual_lag(i_period),
-    .target_lag(target_lag),
+    // .target_lag(target_lag),
+    .target_lag({10'd109}),
     .shift_ratio(o_shift_ratio)
 );
 
