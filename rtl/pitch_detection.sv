@@ -199,10 +199,20 @@ f0_detect #(
   .o_done(period_done)
 );
 
+// Period done is held high, but we want a pulse for hysteresis.
+logic hyst_prev;
+always_ff @(posedge clk) begin
+  if (rst) begin
+    hyst_prev <= 1'b0;
+  end else begin
+    hyst_prev <= period_done;
+  end
+end
+
 hysteresis hyst (
   .clk(clk),
   .rst(rst),
-  .i_en(period_done && period_valid),
+  .i_en(!hyst_prev && period_done && period_valid),
   .i_period(period),
   .o_period(o_period)
 );

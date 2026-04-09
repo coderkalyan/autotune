@@ -18,6 +18,8 @@ module compute #(
     output logic [9:0] or_pitch_period,
     output logic or_pitch_valid,
     output logic o_pitch_done,
+    output logic o_vad_active,
+    output logic o_vad_voiced,
     output [6:0] HEX0,
     output [6:0] HEX1,
     output [6:0] HEX2,
@@ -76,6 +78,24 @@ preprocessing #(
     .o_lpf_valid(lpf_done)
 );
 
+// Voice activation detection.
+logic vad_active, vad_voiced;
+vad #(
+  // This window size is unrelated to the autocorrelation pipeline.
+  .WINDOW_SIZE(480),
+  .MAX_PERIODS(12)
+) vad (
+  .clk(clk),
+  .rst(rst),
+  .i_data(lf),
+  .i_valid(adc_en),
+  .o_active(vad_active),
+  .o_voiced(vad_voiced)
+);
+
+assign o_vad_active = vad_active;
+assign o_vad_voiced = vad_voiced;
+
 // ----------------------------------------------------------------
 // Pitch Detection
 // ----------------------------------------------------------------
@@ -125,7 +145,7 @@ psola iPSOLA_L (
     .clk(clk),
     .rst(rst),
     .i_lag(r_pitch_period),
-    .i_lag_valid(r_pitch_valid),
+    .i_lag_valid(r_pitch_valid & vad_voiced),
     .i_advance(eff_pitch_factor),
     .i_data(lf),
     .i_valid(adc_en),
@@ -137,7 +157,7 @@ psola iPSOLA_R (
     .clk(clk),
     .rst(rst),
     .i_lag(r_pitch_period),
-    .i_lag_valid(r_pitch_valid),
+    .i_lag_valid(r_pitch_valid & vad_voiced),
     .i_advance(eff_pitch_factor),
     .i_data(rf),
     .i_valid(adc_en),

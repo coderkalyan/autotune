@@ -1,39 +1,47 @@
 module vad #(
-    parameter P24_BIT = 1,
-    parameter K =  5,      // Essentially how snappy the envelope is
-    parameter THRESHOLD = 2000,
-    parameter DATA_WIDTH = P24_BIT ? 24 : 16
-)(
-    input logic i_clk,
-    input logic i_rst,
-    input logic new_data,
-    input logic signed [DATA_WIDTH-1:0] i_data,
-    output logic active
+    parameter int WINDOW_SIZE = 512,
+    parameter int WBITS = $clog2(WINDOW_SIZE),
+    parameter int MAX_PERIODS = 10
+) (
+    input  wire    clk,
+    input  wire    rst,
+    input  fixed_t i_data,
+    input  wire    i_valid,
+    output logic   o_active,
+    output logic   o_voiced
 );
+  localparam int ZC_THRESHOLD = MAX_PERIODS * 8;
+  localparam int ENERGY_THRESHOLD = 0;  // 200000;
 
-// Extract the signal envelope 
-// y[n] = y[n-1] + (abs(x[n]) - y[n-1]) / 2^k
-logic [DATA_WIDTH-1:0] magnitude;
-logic signed [DATA_WIDTH:0] diff;
-logic signed [DATA_WIDTH:0] y_eff;
-logic [DATA_WIDTH-1:0] y_prev;
-logic [DATA_WIDTH-1:0] y;
+  logic [WBITS - 1:0] count, zero_count;
+  logic [27 + WBITS - 1:0] energy;
+  fixed_t prev;
+  wire min_energy = (energy >> 16) > ENERGY_THRESHOLD;
+  always_ff @(posedge clk) begin
+    if (rst) begin
+      count      <= '0;
+      zero_count <= '0;
+      prev       <= 0;
+      o_active   <= 1'b0;
+      o_voiced   <= 1'b0;
+      energy     <= 0;
+    end else if (i_valid) begin
+      // Increment the window counter, and check for zero crossing.
+      count  <= count + 1;
+      prev   <= i_data;
+      energy <= energy + fixed_mul(i_data, i_data);
+      if (prev[26] != i_data[26]) begin
+        zero_count <= zero_count + 1;
+      end
 
-assign magnitude = i_data[DATA_WIDTH-1] ? -i_data : i_data;
-assign diff = $signed({1'b0,magnitude}) - $signed({1'b0,y_prev});
-assign y_eff = $signed({1'b0,y_prev}) + (diff >>> K);
-
-always @(posedge i_clk) begin 
-    if (i_rst) begin 
-        y <= '0;
-        y_prev <= '0;
-    end else if (new_data) begin 
-        y <= y_eff[DATA_WIDTH-1:0];
-        y_prev <= y;
+      // At the end of a window, check for voiced.
+      if (count == (WINDOW_SIZE - 1)) begin
+        o_active   <= min_energy;
+        o_voiced   <= min_energy && (zero_count < ZC_THRESHOLD);
+        zero_count <= 0;
+        energy     <= 0;
+      end
     end
-end
-
-// Detect places where envelope exceeds threshold
-assign active = y >= THRESHOLD;
-
+  end
 endmodule
+

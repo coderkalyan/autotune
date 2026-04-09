@@ -94,9 +94,10 @@ audio_cntrl #(
 // ----------------------------------------------------------------
 // Main Compute Module
 // ----------------------------------------------------------------
+logic vad_active, vad_voiced;
 compute #(
     .WINDOW_SIZE(WINDOW_SIZE),
-    .TESTBENCH(0)   //if 1 bypasses and uses test_pitch_factor as the pf
+    .TESTBENCH(1)   //if 1 bypasses and uses test_pitch_factor as the pf
 ) iCOMPUTE (
     .clk(clk),
     .rst(rst),
@@ -104,13 +105,16 @@ compute #(
     .ldata(ldata),
     .rdata(rdata),
     .i_rxd(i_rxd),
-    .test_pitch_factor(`FIXED_RTOF(1.0 / 1.33)), 
+    // .test_pitch_factor(`FIXED_RTOF(1.0 / 1.33)),
+    .test_pitch_factor(`FIXED_RTOF(1.0 / 1.02)),
     .psola_lf(psola_lf),
     .psola_rf(psola_rf),
     .psola_valid(psola_valid),
     .or_pitch_period(pitch_period),
     .or_pitch_valid(pitch_valid),
     .o_pitch_done(pitch_done),
+    .o_vad_active(vad_active),
+    .o_vad_voiced(vad_voiced),
     .HEX0(HEX0),
     .HEX1(HEX1),
     .HEX2(HEX2),
@@ -141,11 +145,9 @@ assign LEDR[2] = pitch_valid;
 assign LEDR[3] = adc_empty;
 assign LEDR[4] = dac_full;
 assign LEDR[5] = transmission_done;
-//assign LEDR[6] = ;
-assign LEDR[7] = adc_empty;
-assign LEDR[8] = dac_full;
+assign LEDR[7] = vad_active;
+assign LEDR[8] = vad_voiced;
+// assign LEDR[7] = adc_empty;
+// assign LEDR[8] = dac_full;
 assign LEDR[9] = rst;
-
-
-
-endmodule 
+endmodule
