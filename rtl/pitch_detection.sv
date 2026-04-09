@@ -6,10 +6,10 @@ module pitch_detection #(
     parameter WBITS = $clog2(WINDOW_SIZE)
 )(
     input clk,
-    input rst, 
+    input rst,
     input i_wr_en,
     input fixed_t i_proc_data,
-    output logic [WBITS-1:0] o_period, 
+    output logic [WBITS-1:0] o_period,
     output logic o_valid,
     output logic o_done
 );
@@ -43,9 +43,7 @@ lpf #(
 
 // NOTE: Autocorrelation uses data[1] and valid[1] as inputs.
 
-// ----------------------------------------------------------------
 // Internal signals and registers
-// ----------------------------------------------------------------
 
 // Circular buffer read/write addresses and data
 logic [9:0] y_addr [0:STAMPS-1];
@@ -85,11 +83,11 @@ assign eff_addr[1:STAMPS] = y_addr;
 // ----------------------------------------------------------------
 
 always @(posedge clk) begin
-    if (rst) 
-        x_addr <= '0;  
+    if (rst)
+        x_addr <= '0;
     else if (ptr_reset | enable)
-        x_addr <= 0; 
-    else 
+        x_addr <= 0;
+    else
         x_addr <= x_addr + 1; // increment global pointer to sweep through the window
 end
 
@@ -99,10 +97,10 @@ end
 
 // counter for writes to circular buffer
 always @(posedge clk) begin
-    if (rst) 
-        wr_count <= '0;  
+    if (rst)
+        wr_count <= '0;
     else if (valid[1])
-        wr_count <= wr_count + 1; 
+        wr_count <= wr_count + 1;
 end
 
 // State Machine to track when we have filled 1024 initial samples in the circular buffer and are ready to start autocorrelation
@@ -110,7 +108,7 @@ typedef enum logic [1:0] {FILL_BUFFER, AUTOCORR} state_t;
 state_t state, next_state;
 
 always @(posedge clk) begin
-    if (rst) 
+    if (rst)
         state <= FILL_BUFFER;
     else
         state <= next_state;
@@ -129,7 +127,7 @@ always_comb begin
         AUTOCORR: begin
             next_state = AUTOCORR; // stay in autocorrelation state indefinitely for now
             if (seg_full) begin
-                enable = 1'b1; 
+                enable = 1'b1;
             end
         end
         default: next_state = FILL_BUFFER;
@@ -165,17 +163,14 @@ parallel_autocorrelate #(
   .rst(rst),
   .i_x_data(eff_data[0]),
   .i_y_data(eff_data[1:STAMPS]),
-  .o_y_addr(y_addr),                    
-  .i_en(enable),                       
+  .o_y_addr(y_addr),
+  .i_en(enable),
   .o_results(results),
   .o_autocorr_en_ptr(ptr_reset),
   .o_single_done(single_done),  
   .o_all_done(all_done) 
 );
 
-// ----------------------------------------------------------------
-// Autocorrelation Result Serializer
-// ----------------------------------------------------------------
 autocorrelate_buffer #(
     .STAMPS(STAMPS)
 ) iBUF (
@@ -188,9 +183,8 @@ autocorrelate_buffer #(
     .o_sample(buf_sample)
 );
 
-// ----------------------------------------------------------------
-// Peak Detection
-// ----------------------------------------------------------------
+wire period_done, period_valid;
+wire [9:0] period;
 f0_detect #(
   .LAG_MIN(48),
   .LAG_MAX(480)
@@ -200,9 +194,26 @@ f0_detect #(
   .i_start(enable),
   .i_valid(buf_valid),
   .i_sample(buf_sample),
-  .o_period(o_period),
-  .o_valid(o_valid),
-  .o_done(o_done)
+  .o_period(period),
+  .o_valid(period_valid),
+  .o_done(period_done)
 );
 
+hysteresis hyst (
+  .clk(clk),
+  .rst(rst),
+  .i_en(period_done && period_valid),
+  .i_period(period),
+  .o_period(o_period)
+);
+
+always_ff @(posedge clk) begin
+  if (rst) begin
+    o_done <= 1'b0;
+    o_valid <= 1'b0;
+  end else begin
+    o_done <= period_done;
+    o_valid <= period_valid;
+  end
+end
 endmodule
