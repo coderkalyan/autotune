@@ -81,7 +81,7 @@ initial begin
 
     // TODO: use python script to convert .pcm file to .hex file, 
     // then read in the .hex file here to apply as stimulus to the DUT
-    fd = $fopen("C:/Users/avery/ece554/autotune/py/sine_440hz_48k.hex", "r");
+    fd = $fopen("/home/kalyan/Documents/school/ece554/autotune/py/viva.pcm", "rb");
     if (fd == 0) begin
         $display("ERROR: could not open hex file");
         $stop();
@@ -95,11 +95,14 @@ initial begin
         begin
             while (!$feof(fd)) begin
                 // read in hex sample and convert to signed 16-bit
+                $fread(sample, fd, 0, 2);
+                /*
                 status = $fscanf(fd, "%h\n", sample);
                 if (status != 1) begin
                     $display("ERROR: could not read sample from hex file, moving to next line");
                     continue;
                 end
+                */
                 ldata   = signed'(sample);
                 rdata   = signed'(sample);
                 adc_en = 1'b1;
