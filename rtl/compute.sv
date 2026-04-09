@@ -51,6 +51,10 @@ fixed_t pitch_factor_recip;
 fixed_t psola_lf_real;
 fixed_t psola_rf_real;
 
+//target frequency outputs
+mode_t mode;
+logic [9:0] target_lag;
+
 logic [9:0] r_pitch_period;
 logic r_pitch_valid;
 
@@ -111,7 +115,9 @@ target_freq #(
     .rst(rst),
     .i_rxd(i_rxd),
     .i_period(pitch_period),
-    .o_shift_ratio(pitch_factor_recip)
+    .o_shift_ratio(pitch_factor_recip),
+    .o_target_lag(target_lag),
+    .o_mode(mode)
 );
 
 
@@ -151,6 +157,8 @@ psola iPSOLA_R (
 // ----------------------------------------------------------------
 hex_display iHEX (
     .pitch_period(r_pitch_period),
+    .target_lag(target_lag),
+    .mode(mode),
     .HEX0(HEX0),
     .HEX1(HEX1),
     .HEX2(HEX2),

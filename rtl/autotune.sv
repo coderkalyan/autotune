@@ -159,4 +159,34 @@ module autotune (
     .HEX5(HEX5)
   );
 
+  // mode_t mode;
+  // logic [6:0] note_number;
+  // midi_receiver iRS( 
+  //   .clk(CLOCK_50),
+  //   .rst(rst),
+  //   .midi_rx(GPIO[5]),
+  //   .note_on_trigger(),
+  //   .note_number(note_number),
+  //   .velocity(),
+  //   .mode(mode)
+  // );
+
+  // logic[9:0] target_lag;
+  // midi_lag_lut iML (
+  //   .i_midi(note_number),
+  //   .o_lag(target_lag),
+  // );
+  
+  // hex_display iHEX (
+  //   .pitch_period(),
+  //   .target_lag(target_lag),
+  //   .mode(mode),
+  //   .HEX0(HEX0),
+  //   .HEX1(HEX1),
+  //   .HEX2(HEX2),
+  //   .HEX3(HEX3),
+  //   .HEX4(HEX4),
+  //   .HEX5(HEX5)
+  // );
+
 endmodule
