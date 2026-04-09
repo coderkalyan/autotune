@@ -137,13 +137,13 @@ uart_tx_wrapper iTX_WRAP (
 // ----------------------------------------------------------------
 assign LEDR[0] = config_done;
 assign LEDR[1] = config_err;
-assign LEDR[2] = adc_empty;
-assign LEDR[3] = dac_full;
-assign LEDR[4] = transmission_done;
-//assign LEDR[5] = ;
+assign LEDR[2] = pitch_valid;
+assign LEDR[3] = adc_empty;
+assign LEDR[4] = dac_full;
+assign LEDR[5] = transmission_done;
 //assign LEDR[6] = ;
-//assign LEDR[7] = ;
-//assign LEDR[8] = ;
+assign LEDR[7] = adc_empty;
+assign LEDR[8] = dac_full;
 assign LEDR[9] = rst;
 
 
