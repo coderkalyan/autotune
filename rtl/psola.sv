@@ -1,14 +1,15 @@
 `include "fixed.sv"
 
 module psola (
-    input  wire    clk,
-    input  wire    rst,
+    input  wire          clk,
+    input  wire          rst,
     input  wire    [9:0] i_lag,
-    input  fixed_t i_advance,  // 1/pitch_factor in Q11.16; <1 = pitch up, >1 = pitch down
-    input  fixed_t i_data,
-    input  wire    i_valid,
-    output fixed_t o_data,
-    output logic   o_valid
+    input  wire          i_lag_valid,
+    input  fixed_t       i_advance,    // 1/pitch_factor in Q11.16; <1 = pitch up, >1 = pitch down
+    input  fixed_t       i_data,
+    input  wire          i_valid,
+    output fixed_t       o_data,
+    output logic         o_valid
 );
   localparam int HISTORY = 512;  // ~= MAX_LAG
   localparam int HBITS = $clog2(HISTORY);
@@ -46,7 +47,7 @@ module psola (
   logic               enqueue;
   logic [CBITS - 1:0] next_channel;
   logic [HBITS - 1:0] rptrs        [NUM_CHANNELS];
-  logic [9:0]         lags         [NUM_CHANNELS];
+  logic [        9:0] lags         [NUM_CHANNELS];
 
   genvar i;
   generate
@@ -90,7 +91,7 @@ module psola (
     end
   end
 
-  wire [9:0] output_threshold = out_lag[16 +: 10];
+  wire  [9:0] output_threshold = out_lag[16+:10];
   logic [9:0] output_counter;
   always_ff @(posedge clk) begin
     if (rst) begin
@@ -138,7 +139,7 @@ module psola (
   fixed_t channels[NUM_CHANNELS];
 
   state_t state;
-  fixed_t acc;
+  fixed_t acc, original;
   always_ff @(posedge clk) begin
     if (rst) begin
       state <= IDLE;
@@ -148,9 +149,10 @@ module psola (
           o_valid <= 1'b0;
 
           if (i_valid) begin
-            state <= PIPELINE;
-            acc <= 0;
-            channel <= 0;
+            state    <= PIPELINE;
+            acc      <= 0;
+            channel  <= 0;
+            original <= i_data;
           end
         end
         PIPELINE: begin
@@ -167,7 +169,7 @@ module psola (
             channel <= channel + 1;
           end else begin
             state   <= IDLE;
-            o_data  <= acc;
+            o_data  <= i_lag_valid ? acc : original;
             o_valid <= 1'b1;
           end
         end
