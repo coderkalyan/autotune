@@ -8,7 +8,9 @@ module target_freq #(
     input rst,
     input i_rxd,
     input [WBITS-1:0] i_period,
-    output fixed_t o_shift_ratio 
+    output fixed_t o_shift_ratio,
+    output [9:0] o_target_lag,
+    output mode_t o_mode
 );
 
 // ----------------------------------------------------------------
@@ -18,7 +20,6 @@ module target_freq #(
 wire note_on_trigger;
 wire [6:0] note_number;
 wire [6:0] velocity;
-wire [9:0] target_lag;
 
 // ----------------------------------------------------------------
 // MIDI Receiver
@@ -29,7 +30,8 @@ midi_receiver midi_receiver0(
     .midi_rx(i_rxd),
     .note_on_trigger(note_on_trigger),
     .note_number(note_number),
-    .velocity(velocity)
+    .velocity(velocity),
+    .mode(o_mode)
 );
 
 // ----------------------------------------------------------------
@@ -37,7 +39,7 @@ midi_receiver midi_receiver0(
 // ----------------------------------------------------------------
 midi_lag_lut lut0 ( 
     .i_midi(note_number),
-    .o_lag(target_lag) 
+    .o_lag(o_target_lag) 
 );
 
 // ----------------------------------------------------------------
@@ -45,9 +47,9 @@ midi_lag_lut lut0 (
 // ----------------------------------------------------------------
 note_selection iNS(
     .actual_lag(i_period),
-    // .target_lag(target_lag),
-    .target_lag({10'd109}),
-    .shift_ratio(o_shift_ratio)
+    .target_lag(o_target_lag),
+    .shift_ratio(o_shift_ratio),
+    .mode(o_mode)
 );
 
 endmodule

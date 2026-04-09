@@ -2,6 +2,8 @@ import global_enums::*;
 
 module hex_display (
     input logic [9:0] pitch_period,
+    input logic [9:0] target_lag,
+    input mode_t mode,
     output logic [6:0] HEX0,
     output logic [6:0] HEX1,
     output logic [6:0] HEX2,
@@ -10,7 +12,7 @@ module hex_display (
     output logic [6:0] HEX5
 );
 
-hex_t note0, note1, note2;
+hex_t note0, note1, note2, note3, note4;
 
 logic [9:0] lag_out;
 nearest_note_lut nearest_note_lut (
@@ -19,12 +21,28 @@ nearest_note_lut nearest_note_lut (
 );
 
 // Instantiate note_name_lut
-note_name_lut u_note_name_lut (
+note_name_lut u_pitch_period_lut (
     .nearest_note_lag(lag_out),
     .HEX2(note2),
     .HEX1(note1),
     .HEX0(note0)
 );
+
+note_name_lut u_target_lag_lut (
+    .nearest_note_lag(target_lag),
+    .HEX2(),
+    .HEX1(note4),
+    .HEX0(note3)
+);
+
+hex_t eff_mode;
+always_comb begin 
+    case(mode)
+        AUTOTUNE: eff_mode = A;
+        VOCODE: eff_mode = V;
+        default: eff_mode = NONE;
+    endcase
+end
 
 always_comb begin
     // HEX0 = hex7(pitch_period[3:0]);
@@ -38,6 +56,9 @@ always_comb begin
     HEX0 = hex7_notes(note0);
     HEX1 = hex7_notes(note1);
     HEX2 = hex7_notes(note2);
+    HEX3 = hex7_notes(note3);
+    HEX4 = hex7_notes(note4);
+    HEX5 = hex7_notes(eff_mode);
 
     // HEX0 = hex7(bcd_freq[3:0]);    // hundredths Hz
     // HEX1 = hex7(bcd_freq[7:4]);    // tenths Hz^M
@@ -65,6 +86,7 @@ function automatic logic [6:0] hex7_notes(input hex_t val);
       D:     hex7_notes = 7'b0100001;
       E:     hex7_notes = 7'b0000110;
       F:     hex7_notes = 7'b0001110;
+      V:     hex7_notes = 7'b1000001;
 
       // Optional patterns for G and S (customize if needed)
       G: hex7_notes = 7'b0000010;  // similar to '6'
