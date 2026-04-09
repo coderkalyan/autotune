@@ -24,7 +24,7 @@ fixed_t psola_rf;
 logic psola_valid;
 
 // Audio Sample: 
-fixed_t sample;
+// fixed_t sample;
 
 // ----------------------------------------------------------------
 // Clock Generation
@@ -53,8 +53,10 @@ compute #(
     .psola_lf(psola_lf),
     .psola_rf(psola_rf),
     .psola_valid(psola_valid),
-    .o_pitch_period(),
-    .o_pitch_valid(),
+    .or_pitch_period(),
+    .or_pitch_valid(),
+    .o_vad_active(),
+    .o_vad_voiced(),
     .HEX0(),
     .HEX1(),
     .HEX2(),
@@ -81,7 +83,7 @@ initial begin
 
     // TODO: use python script to convert .pcm file to .hex file, 
     // then read in the .hex file here to apply as stimulus to the DUT
-    fd = $fopen("/home/kalyan/Documents/school/ece554/autotune/py/viva.pcm", "rb");
+    fd = $fopen("/home/kalyan/Documents/school/ece554/autotune/py/viva.mem", "rb");
     if (fd == 0) begin
         $display("ERROR: could not open hex file");
         $stop();
@@ -95,16 +97,16 @@ initial begin
         begin
             while (!$feof(fd)) begin
                 // read in hex sample and convert to signed 16-bit
-                $fread(sample, fd, 0, 2);
-                /*
-                status = $fscanf(fd, "%h\n", sample);
+                // $fread(sample, fd, 0, 2);
+                // status = $fscanf(fd, "%h\n", sample);
+                status = $fscanf(fd, "%h", ldata);
+                status = $fscanf(fd, "%h\n", rdata);
                 if (status != 1) begin
                     $display("ERROR: could not read sample from hex file, moving to next line");
                     continue;
                 end
-                */
-                ldata   = signed'(sample);
-                rdata   = signed'(sample);
+                // ldata   = signed'(sample);
+                // rdata   = signed'(sample);
                 adc_en = 1'b1;
                 @(posedge clk);
                 adc_en = 1'b0;
