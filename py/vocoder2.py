@@ -14,6 +14,7 @@ carrier's harmonic energy is shaped to match the input's spectral contour.
 import sys
 import numpy as np
 from scipy.signal import butter, sosfilt
+import matplotlib.pyplot as plt
 
 # ---- configurable constants ----
 FS_HZ = 48000
@@ -120,8 +121,9 @@ def make_carrier(
     t = np.arange(n, dtype=np.float64) / fs
 
     # Phase is kept in [0,1) so it wraps correctly inside the table reader.
-    phase_lo = (f0 / detune_ratio * t) % 1.0
-    phase_hi = (f0 * detune_ratio * t) % 1.0
+    phase_lo:np.ndarray = (f0 / detune_ratio * t) % 1.0
+    phase_hi:np.ndarray = (f0 * detune_ratio * t) % 1.0
+    # print("phase_hi", phase_hi)
 
     out = 0.5 * _read_table_lerp(table, phase_lo) + 0.5 * _read_table_lerp(
         table, phase_hi
@@ -144,14 +146,82 @@ def make_chord(
     """
     bank = build_wavetable_bank(alpha)
     out = np.zeros(n, dtype=np.float64)
-    for f0 in freqs:
-        out += make_carrier(n, fs, f0, alpha, detune_cents, bank)
+    x_axis = np.arange(n)
+    # plt.figure(3)
+    for i,f0 in enumerate(freqs):
+        y = make_carrier(n, fs, f0, alpha, detune_cents, bank)
+        # plt.plot(x_axis,y, label=f0)
+        out += y
     peak = np.max(np.abs(out))
     if peak > 0:
         out /= peak
     return out
 
 
+def causal_rms(x: np.ndarray, fs: int, window_ms: float = 50.0) -> np.ndarray:
+    """
+    Causal running RMS via a 2-pole IIR smoother on x^2.
+ 
+    Two cascaded single-pole sections are used instead of one:
+      - pole 1 smooths x^2, producing a running mean-square estimate
+      - pole 2 smooths that estimate again, steepening the rolloff to
+        -40 dB/decade so double-frequency ripple (which lives at 2*f_band
+        in the squared signal) is more strongly suppressed on low bands
+        where 2*f_band is close to the smoothing cutoff.
+ 
+    Both poles share the same alpha (same time constant). The impulse
+    response shape changes from pure exponential (1 pole) to n*(1-a)^n
+    (2 poles) — a soft onset that ramps up briefly before decaying, which
+    means the estimate reacts slightly more gradually to sudden onsets but
+    has a cleaner steady-state estimate.
+ 
+    window_ms is the RC time constant for each pole. 50 ms balances
+    stability against responsiveness for vocoder band gain tracking.
+    """
+    alpha: float = 1.0 - np.exp(-1.0 / (window_ms * 1e-3 * fs))
+ 
+    mean_sq: np.ndarray = np.zeros(len(x), dtype=np.float64)
+    state1: float = 0.0   # first pole state  — smooths x^2
+    state2: float = 0.0   # second pole state — smooths state1
+ 
+    for i, sample in enumerate(x):
+        sq: float = float(sample) ** 2
+        state1 = (1.0 - alpha) * state1 + alpha * sq       # pole 1
+        state2 = (1.0 - alpha) * state2 + alpha * state1   # pole 2
+        mean_sq[i] = state2
+ 
+    return np.sqrt(mean_sq)
+ 
+ 
+def asymmetric_follower(x: np.ndarray,
+                        fs: int,
+                        attack_ms: float = 3.0,
+                        release_ms: float = 100.0) -> np.ndarray:
+    """
+    Causal asymmetric envelope follower.
+ 
+    Uses a fast alpha on rising edges (attack) and a slow alpha on falling
+    edges (release). Input x should already be rectified (abs of band signal).
+ 
+      alpha = 1 - exp(-1 / (t_ms * 1e-3 * fs))   [exact bilinear form]
+ 
+    This is the same single-pole IIR as an RC lowpass, but the coefficient
+    switches each sample depending on whether the signal is rising or falling.
+    """
+    a_att: float = 1.0 - np.exp(-1.0 / (attack_ms  * 1e-3 * fs))
+    a_rel: float = 1.0 - np.exp(-1.0 / (release_ms * 1e-3 * fs))
+ 
+    env: np.ndarray = np.zeros(len(x), dtype=np.float64)
+    state: float = 0.0
+ 
+    for i, sample in enumerate(x):
+        alpha: float = a_att if float(sample) > state else a_rel
+        state = (1.0 - alpha) * state + alpha * float(sample)
+        env[i] = state
+ 
+    return env
+
+    
 def log_band_edges(n_bands: int, f_lo: float, f_hi: float) -> np.ndarray:
     """Return logarithmically spaced band edges.
 
@@ -235,16 +305,42 @@ def main(in_path: str, out_path: str) -> None:
         # group delay. For offline use sosfiltfilt() would give zero phase instead.
         band: np.ndarray = sosfilt(bp_sos, x)
 
-        # 2. Envelope follower: full-wave rectify then smooth with LPF.
+        # 2(old). Envelope follower: full-wave rectify then smooth with LPF.
         #    The *128 scalar compensates for energy loss from narrow bandpassing;
         #    it is a magic number — per-band RMS normalization would be more robust.
         #    TODO: use sosfiltfilt (zero-phase) for offline use to remove group-delay
         #          smear that makes transients sound "swimmy".
-        env: np.ndarray = sosfilt(env_sos, np.abs(band)) * 128
+        # env: np.ndarray = sosfilt(env_sos, np.abs(band)) * 128
+
 
         # 3. Bandpass the carrier identically so only harmonics inside [f1,f2]
         #    contribute — this is the key resynthesis step.
         carrier_band: np.ndarray = sosfilt(bp_sos, carrier)
+
+        # 2. Envelope follower: full-wave rectify then track amplitude over time.
+        #
+        #    CURRENT (simple LPF):
+        #        env = sosfilt(env_sos, np.abs(band)) * 128
+        #    Single pole at 30 Hz — same speed on attack and release.
+        #    The *128 is a magic scalar; too loud for some bands, too quiet for others.
+        #
+        #    IMPROVED (asymmetric follower + per-band causal RMS gain) — copy-paste to replace:
+        #    -------------------------------------------------------------------------
+        #        carrier_rms: np.ndarray = causal_rms(carrier_band, FS_HZ) + 1e-9
+        #        band_rms:    np.ndarray = causal_rms(band,          FS_HZ) + 1e-9
+        #        gain:        np.ndarray = band_rms / carrier_rms   # time-varying, shape (n,)
+        #        env: np.ndarray = asymmetric_follower(np.abs(band), FS_HZ) * gain
+        #    -------------------------------------------------------------------------
+        #    causal_rms() uses a 2-pole IIR on x^2 — the second pole adds -40 dB/decade
+        #    rolloff which suppresses double-frequency ripple on low bands (e.g. a 100 Hz
+        #    band produces x^2 content at 200 Hz; one pole barely attenuates it, two poles
+        #    largely remove it). gain is now an array not a scalar so it adjusts over time
+        #    as band energy shifts, replacing the fixed *128 magic number entirely.
+        # env: np.ndarray = asymmetric_follower(np.abs(band), FS_HZ) * 128
+        carrier_rms: np.ndarray = causal_rms(carrier_band, FS_HZ) + 1e-9
+        band_rms:    np.ndarray = causal_rms(band,          FS_HZ) + 1e-9
+        env_gain:    np.ndarray = band_rms / carrier_rms   # time-varying, shape (n,)
+        env: np.ndarray = asymmetric_follower(np.abs(band), FS_HZ) * env_gain
 
         # 4. Modulate carrier energy by the input envelope and accumulate.
         out += carrier_band * env
@@ -258,6 +354,52 @@ def main(in_path: str, out_path: str) -> None:
 
 
 if __name__ == "__main__":
+    # x = build_wavetable_bank()
+    # print(len(x))
+    # print(len(x[0]))
+    # print(x[0])
+    # ans = 0
+    # for i in x:
+    #     ans += len(i)
+    
+    # plt.figure(1)
+    # x_axis = np.arange(len(x[0]))
+    # print(x_axis)
+    # for i in range(len(x)):
+    #     plt.plot(x_axis,x[i],label=i)
+    
+    # print(ans)
+    # edges: np.ndarray = log_band_edges(N_BANDS, F_LO_HZ, F_HI_HZ)
+    # n = 440
+    # x_axis = np.arange(n)
+    # # C-major chord: C3 / E3 / G3.  alpha=0.03 gives a brighter timbre which
+    # # survives heavy bandpass filtering without sounding too muffled.
+    # carrier: np.ndarray = make_chord(
+    #     n=n, fs=FS_HZ, freqs=[130.81, 164.81, 196.00], alpha=0.00
+    #     # n=n, fs=FS_HZ, freqs=[440], alpha=0.00
+    # )
+
+    # plt.figure(2)
+    # plt.plot(x_axis, carrier)
+    
+    # plt.legend()
+    # plt.show()
+
+    # # Comb-filter chorus/reverb on the carrier via delay taps.
+    # # Applied before vocoding so the spatial width is baked into every band.
+    # wet: np.ndarray = np.zeros(n, dtype=np.float64)
+    # for delay_s, gain in FX_TAPS:
+    #     d: int = int(delay_s * FS_HZ)
+    #     if 0 < d < n:
+    #         wet[d:] += gain * carrier[:-d]
+    # carrier = carrier + FX_WET * wet
+    # for b in range(N_BANDS):
+    #     f1: float = float(edges[b])
+    #     f2: float = float(edges[b + 1])
+    #     if f2 >= FS_HZ / 2:
+    #         f2 = FS_HZ / 2 - 1.0  # clamp to Nyquist
+    #     if f1 >= f2:
+    #         continue
     if len(sys.argv) != 3:
         print("usage: python vocoder.py input.pcm output.pcm", file=sys.stderr)
         sys.exit(1)
