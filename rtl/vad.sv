@@ -37,7 +37,7 @@ module vad #(
       // At the end of a window, check for voiced.
       if (count == (WINDOW_SIZE - 1)) begin
         o_active   <= min_energy;
-        o_voiced   <= min_energy && (zero_count < ZC_THRESHOLD);
+        o_voiced   <= 1'b1;  // min_energy && (zero_count < ZC_THRESHOLD);
         zero_count <= 0;
         energy     <= 0;
       end

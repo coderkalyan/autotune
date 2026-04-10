@@ -83,7 +83,7 @@ initial begin
 
     // TODO: use python script to convert .pcm file to .hex file, 
     // then read in the .hex file here to apply as stimulus to the DUT
-    fd = $fopen("/home/kalyan/Documents/school/ece554/autotune/py/viva.mem", "rb");
+    fd = $fopen("/home/kalyan/Documents/school/ece554/autotune/py/nights.mem", "rb");
     if (fd == 0) begin
         $display("ERROR: could not open hex file");
         $stop();
