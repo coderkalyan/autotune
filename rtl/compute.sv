@@ -1,4 +1,5 @@
 `include "fixed.sv"
+import global_enums::*;
 
 module compute #(
     parameter WINDOW_SIZE = 1024,
@@ -20,6 +21,7 @@ module compute #(
     output logic o_pitch_done,
     output logic o_vad_active,
     output logic o_vad_voiced,
+    output mode_t o_mode,
     output [6:0] HEX0,
     output [6:0] HEX1,
     output [6:0] HEX2,
@@ -126,28 +128,52 @@ always_ff @(posedge clk) begin
 end
 
 // ----------------------------------------------------------------
-// Target Frequency 
+// MIDI Receiver
 // ----------------------------------------------------------------
-target_freq #( 
-    .WINDOW_SIZE(WINDOW_SIZE)
-) iTF (
+wire [127:0] notes;
+wire [6:0] encoders [0:7];
+midi_receiver midi_receiver0 (
     .clk(clk),
     .rst(rst),
-    .i_rxd(i_rxd),
-    .i_period(pitch_period),
-    .o_shift_ratio(pitch_factor_recip),
-    .o_target_lag(target_lag),
+    .i_midi_rx(i_rxd),
+    .o_notes(notes),
+    .o_encoders(encoders),
     .o_mode(mode)
 );
 
+assign o_mode = mode;
+
+wire [6:0] note_number;
+priority_encoder_128 encoder (
+  .in(notes),
+  .out(note_number),
+  .valid()
+);
+
+// ----------------------------------------------------------------
+// Frequency LUT
+// ----------------------------------------------------------------
+midi_lag_lut lut0 (
+    .i_midi(note_number),
+    .o_lag(target_lag)
+);
+
+// ----------------------------------------------------------------
+// Note Selection / Shift ratio
+// ----------------------------------------------------------------
+note_selection iNS (
+    .actual_lag(pitch_period),
+    .target_lag(target_lag),
+    .shift_ratio(pitch_factor_recip),
+    .mode(mode)
+);
 
 // ----------------------------------------------------------------
 // PSOLA
 // ----------------------------------------------------------------
-
 fixed_t eff_pitch_factor;
 assign eff_pitch_factor = TESTBENCH ? test_pitch_factor : pitch_factor_recip;
-psola iPSOLA_L ( 
+psola iPSOLA_L (
     .clk(clk),
     .rst(rst),
     .i_lag(r_pitch_period),
@@ -159,7 +185,7 @@ psola iPSOLA_L (
     .o_valid(psola_valid)
 );
 
-psola iPSOLA_R ( 
+psola iPSOLA_R (
     .clk(clk),
     .rst(rst),
     .i_lag(r_pitch_period),
@@ -179,6 +205,7 @@ hex_display iHEX (
     .pitch_period(r_pitch_period),
     .target_lag(target_lag),
     .mode(mode),
+    .i_encoders(encoders),
     .HEX0(HEX0),
     .HEX1(HEX1),
     .HEX2(HEX2),

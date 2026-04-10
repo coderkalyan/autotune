@@ -3,7 +3,7 @@ import global_enums::*;
 
 module note_selection (
     input [9:0] actual_lag,
-    input [9:0] target_lag, 
+    input [9:0] target_lag,
     input mode_t mode,
     output fixed_t shift_ratio
 );
@@ -17,9 +17,7 @@ Shift ratio = 1 / PF
             
 
 
-- TODO: may need to do some work to "clean" autocorrelation input
-- Check if (lag(target) =< lag(actual) * 2) & (lag(target) >= lag(actual) * 0.5)
-    - based on this saturate to target_sat
+- TODO:
 - Use a LUT to compute 1 / lag(actual_eff), then multiply
 */
 
@@ -65,13 +63,12 @@ fixed_t target_fixed;
 assign target_fixed = fixed_t'({1'b0,target_eff,16'd0});
 assign shift_ratio = fixed_mul(target_fixed, reciprocal);
 
-always_comb begin 
+always_comb begin
     case (mode)
+        PASSTHROUGH: target_eff = actual_eff;
         AUTOTUNE: target_eff = nearest_note;
         VOCODE: target_eff = target_sat;
-        default: target_eff = actual_eff; // default to passthrough  
+        default: target_eff = actual_eff; // default to passthrough
     endcase
 end
-
-
 endmodule

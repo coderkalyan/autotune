@@ -4,6 +4,7 @@ module hex_display (
     input logic [9:0] pitch_period,
     input logic [9:0] target_lag,
     input mode_t mode,
+    input logic [6:0] i_encoders [0:7],
     output logic [6:0] HEX0,
     output logic [6:0] HEX1,
     output logic [6:0] HEX2,
@@ -36,8 +37,10 @@ note_name_lut u_target_lag_lut (
 );
 
 hex_t eff_mode;
-always_comb begin 
+always_comb begin
     case(mode)
+        MUTE: eff_mode = NONE;
+        PASSTHROUGH: eff_mode = P;
         AUTOTUNE: eff_mode = A;
         VOCODE: eff_mode = V;
         default: eff_mode = NONE;
@@ -53,11 +56,17 @@ always_comb begin
     // HEX1 = hex7(lag_out[7:4]);
     // HEX2 = hex7(lag_out[9:8]);
 
-    HEX0 = hex7_notes(note0);
-    HEX1 = hex7_notes(note1);
-    HEX2 = hex7_notes(note2);
+
+    // HEX0 = hex7_notes(note0);
+    // HEX1 = hex7_notes(note1);
+    // HEX2 = hex7_notes(note2);
     HEX3 = hex7_notes(note3);
     HEX4 = hex7_notes(note4);
+
+    HEX0 = hex7_notes(hex_t'(i_encoders[0][3:0]));
+    HEX1 = hex7_notes(hex_t'(i_encoders[0][6:4]));
+    HEX2 = hex7_notes(hex_t'(i_encoders[1][6:4]));
+
     HEX5 = hex7_notes(eff_mode);
 
     // HEX0 = hex7(bcd_freq[3:0]);    // hundredths Hz
@@ -87,6 +96,7 @@ function automatic logic [6:0] hex7_notes(input hex_t val);
       E:     hex7_notes = 7'b0000110;
       F:     hex7_notes = 7'b0001110;
       V:     hex7_notes = 7'b1000001;
+      P:     hex7_notes = 7'b0011000;
 
       // Optional patterns for G and S (customize if needed)
       G: hex7_notes = 7'b0000010;  // similar to '6'
