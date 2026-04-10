@@ -18,18 +18,20 @@ typedef enum logic [4:0] {
       D     = 5'h0D,
       E     = 5'h0E,
       F     = 5'h0F,
-      V     = 5'h13,
-  
+
       // extra symbols
       G     = 5'h10,
       S     = 5'h11,
-      NONE  = 5'h12
+      NONE  = 5'h12,
+      V     = 5'h13,
+      P     = 5'h14
   } hex_t;
 
 typedef enum logic [1:0] {
-  NA = 2'b00,
-  AUTOTUNE = 2'b01,
-  VOCODE = 2'b10
+  MUTE = 2'b00,
+  PASSTHROUGH = 2'b01,
+  AUTOTUNE = 2'b10,
+  VOCODE = 2'b11
 } mode_t;
 
 endpackage
