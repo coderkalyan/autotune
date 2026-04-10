@@ -12,7 +12,7 @@ module audio_clk_gen #(
 //PLL IP Instantiation 
 generate
     if (P24_BIT) begin : gen_24_bit
-        pll_mult_24_bit (
+        pll_mult_24_bit pll (
             .refclk(i_clk_50M),
             .rst(i_rst),
             .outclk_0(o_clk_12_28M),
@@ -20,7 +20,7 @@ generate
         );
     end 
     else begin : gen_16_bit
-        pll_mult_16_bit (
+        pll_mult_16_bit pll (
             .refclk(i_clk_50M),
             .rst(i_rst),
             .outclk_0(o_clk_12_28M),

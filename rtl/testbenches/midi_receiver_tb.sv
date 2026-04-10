@@ -6,7 +6,7 @@ module midi_receiver_tb;
 
   // Signals
   logic clk;
-  logic rst_n;
+  logic rst;
   logic midi_rx;
   logic note_on_trigger;
   logic [6:0] note_number;
@@ -15,11 +15,11 @@ module midi_receiver_tb;
   // Instantiate the Device Under Test (DUT)
   midi_receiver dut (
     .clk(clk),
-    .rst_n(rst_n),
-    .midi_rx(midi_rx),
-    .note_on_trigger(note_on_trigger),
-    .note_number(note_number),
-    .velocity(velocity)
+    .rst(rst),
+    .i_midi_rx(midi_rx),
+    // .note_on_trigger(note_on_trigger),
+    .o_notes(note_number)
+    // .velocity(velocity)
   );
 
   // Clock Generation
@@ -51,12 +51,12 @@ module midi_receiver_tb;
   // Test Procedure
   initial begin
     // Initialize signals
-    rst_n = 0;
+    rst = 1;
     midi_rx = 1; // Idle state for UART is high
 
     // Apply Reset
     repeat (10) @(posedge clk);
-    rst_n = 1;
+    rst = 0;
     repeat (10) @(posedge clk);
 
     $display("Starting MIDI Processor Test...");
@@ -64,18 +64,25 @@ module midi_receiver_tb;
     // Test Case 1: Send Note On (Channel 1, Note 60 (C4), Velocity 64)
     // Message: 0x90 0x3C 0x40
     $display("Sending Note On: 0x90 0x3C 0x40");
-    send_byte(8'h90); // Status Byte (Note On, Channel 0)
-    
-    // Wait for processing (state transition)
-    repeat (100) @(posedge clk); 
-    
-    send_byte(8'h3C); // Note Number (60)
-    
+    send_byte(8'h99); // Status Byte (Note On, Channel 0)
+    repeat (100) @(posedge clk);
+    send_byte(8'h29); // Note Number (60)
+    repeat (100) @(posedge clk);
+    send_byte(8'h2D); // Velocity (64)
+    repeat (100) @(posedge clk);
+    send_byte(8'h99); // Status Byte (Note On, Channel 0)
+    repeat (100) @(posedge clk);
+    send_byte(8'h30); // Note Number (60)
+    repeat (100) @(posedge clk);
+    send_byte(8'h2D); // Velocity (64)
     repeat (100) @(posedge clk);
 
-    send_byte(8'h40); // Velocity (64)
-    
-    repeat (100) @(posedge clk);
+    // send_byte(8'hB0);
+    // repeat (100) @(posedge clk);
+    // send_byte(8'h29);
+    // repeat (100) @(posedge clk);
+    // send_byte(8'h2D);
+    // repeat (100) @(posedge clk);
 
     // Check outputs
     assert(note_on_trigger == 1) else $error("Test Failed: Expected note_on_trigger=1");
