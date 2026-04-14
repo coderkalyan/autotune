@@ -217,10 +217,10 @@ module bandpass_sosfilt_bank #(
                         o_data[bank_idx] <= post_o_data;
                         inflight         <= 1'b0;
 
-                        if (bank_idx == logic [BANKW-1:0]'(BANKS - 1)) begin
+                        if (bank_idx == (BANKS - 1)) begin
                             state <= DONE;
                         end else begin
-                            bank_idx <= bank_idx + logic [BANKW-1:0]'(1);
+                            bank_idx <= bank_idx + 1;
                         end
                     end
                 end

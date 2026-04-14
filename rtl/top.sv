@@ -94,6 +94,7 @@ audio_cntrl #(
 // Main Compute Module
 // ----------------------------------------------------------------
 logic vad_active, vad_voiced;
+mode_t mode;
 compute #(
     .WINDOW_SIZE(WINDOW_SIZE),
     .TESTBENCH(0)   //if 1 bypasses and uses test_pitch_factor as the pf
@@ -114,6 +115,7 @@ compute #(
     .o_pitch_done(pitch_done),
     .o_vad_active(vad_active),
     .o_vad_voiced(vad_voiced),
+    .o_mode(mode),
     .HEX0(HEX0),
     .HEX1(HEX1),
     .HEX2(HEX2),
@@ -131,6 +133,14 @@ uart_tx_wrapper iTX_WRAP (
     .ir_pitch_period(pitch_period),
     .ir_pitch_valid(pitch_valid),
     .i_pitch_done(pitch_done),
+    .i_vocode_bands(),
+    .i_mode(mode),
+    .i_vad_active(vad_active),
+    .i_vad_voiced(vad_voiced),
+    .i_dac_full(dac_full),
+    .i_adc_empty(adc_empty),
+    .i_config_done(config_done),
+    .i_config_err(config_err),
     .o_transmission_done(transmission_done),
     .o_tx(o_txd)
 );
