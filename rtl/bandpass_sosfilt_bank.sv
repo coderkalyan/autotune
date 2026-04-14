@@ -26,7 +26,7 @@ module bandpass_sosfilt_bank #(
     parameter real A2Table[BANKS] = '{default: 0.0},
 
     // Stage 1 coefficients (w -> y)
-    parameter real C0Table[BANKS] = '{default: 0.0},
+    parameter real C0Table[BANKS] = '{default: 1.0},
     parameter real C1Table[BANKS] = '{default: 0.0},
     parameter real C2Table[BANKS] = '{default: 0.0},
     parameter real D1Table[BANKS] = '{default: 0.0},
@@ -217,10 +217,10 @@ module bandpass_sosfilt_bank #(
                         o_data[bank_idx] <= post_o_data;
                         inflight         <= 1'b0;
 
-                        if (bank_idx == logic [BANKW-1:0]'(BANKS - 1)) begin
+                        if (bank_idx == (BANKS - 1)) begin
                             state <= DONE;
                         end else begin
-                            bank_idx <= bank_idx + logic [BANKW-1:0]'(1);
+                            bank_idx <= bank_idx + 1;
                         end
                     end
                 end
