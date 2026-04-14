@@ -128,65 +128,34 @@ module autotune (
   assign VGA_R       = '0;
   assign VGA_SYNC_N  = 1'b1;
   assign VGA_VS      = 1'b0;
-  
+
   logic lrck;
 
   assign AUD_ADCLRCK = lrck;
   assign AUD_DACLRCK = lrck;
 
   top #(
-    .WINDOW_SIZE(1024)
-  ) iTOP ( 
-    .clk(CLOCK_50),
-    .rst(rst),
-    .i_aud_adcdat(AUD_ADCDAT),
-    .o_aud_dacdat(AUD_DACDAT),
-    .o_aud_bclk(AUD_BCLK),
-    .o_aud_lrck(lrck),
-    .o_aud_xck(AUD_XCK),
-    .o_fpga_i2c_sclk(FPGA_I2C_SCLK),
-    .o_fpga_i2c_sdat(FPGA_I2C_SDAT),
-    .i_rxd(GPIO[5]),
-    .o_txd(GPIO[4]),
-    .i_mech(SW[0]),
-    .SW(SW),
-    .LEDR(LEDR),
-    .HEX0(HEX0),
-    .HEX1(HEX1),
-    .HEX2(HEX2),
-    .HEX3(HEX3),
-    .HEX4(HEX4),
-    .HEX5(HEX5)
+      .WINDOW_SIZE(1024)
+  ) iTOP (
+      .clk(CLOCK_50),
+      .rst(rst),
+      .i_aud_adcdat(AUD_ADCDAT),
+      .o_aud_dacdat(AUD_DACDAT),
+      .o_aud_bclk(AUD_BCLK),
+      .o_aud_lrck(lrck),
+      .o_aud_xck(AUD_XCK),
+      .o_fpga_i2c_sclk(FPGA_I2C_SCLK),
+      .o_fpga_i2c_sdat(FPGA_I2C_SDAT),
+      .i_rxd(GPIO[5]),
+      .o_txd(GPIO[4]),
+      .i_mech(SW[0]),
+      .SW(SW),
+      .LEDR(LEDR),
+      .HEX0(HEX0),
+      .HEX1(HEX1),
+      .HEX2(HEX2),
+      .HEX3(HEX3),
+      .HEX4(HEX4),
+      .HEX5(HEX5)
   );
-
-  // mode_t mode;
-  // logic [6:0] note_number;
-  // midi_receiver iRS( 
-  //   .clk(CLOCK_50),
-  //   .rst(rst),
-  //   .midi_rx(GPIO[5]),
-  //   .note_on_trigger(),
-  //   .note_number(note_number),
-  //   .velocity(),
-  //   .mode(mode)
-  // );
-
-  // logic[9:0] target_lag;
-  // midi_lag_lut iML (
-  //   .i_midi(note_number),
-  //   .o_lag(target_lag),
-  // );
-  
-  // hex_display iHEX (
-  //   .pitch_period(),
-  //   .target_lag(target_lag),
-  //   .mode(mode),
-  //   .HEX0(HEX0),
-  //   .HEX1(HEX1),
-  //   .HEX2(HEX2),
-  //   .HEX3(HEX3),
-  //   .HEX4(HEX4),
-  //   .HEX5(HEX5)
-  // );
-
 endmodule

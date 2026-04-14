@@ -43,10 +43,9 @@ logic [31:0] adc_data;
 assign ldata = signed'(adc_data[31:16]);
 assign rdata = signed'(adc_data[15:0]);
 
-// PSOLA outputs (left and right channels)
-fixed_t psola_lf;
-fixed_t psola_rf; 
-logic psola_valid; 
+// normalized audio outputs (left and right channels)
+fixed_t lf, rf;
+logic psola_valid;
 
 // FIFO read logic
 logic adc_en, adc_empty;
@@ -56,7 +55,7 @@ assign adc_en = !adc_empty;
 logic dac_en, dac_full;
 logic [31:0] dac_data;
 assign dac_en = psola_valid & SW[0];
-assign dac_data = {`FIXED_FTOA(psola_lf), `FIXED_FTOA(psola_rf)};
+assign dac_data = {`FIXED_FTOA(lf), `FIXED_FTOA(rf)};
 
 // pitch period signals
 logic [9:0] pitch_period;
@@ -102,14 +101,14 @@ compute #(
     .clk(clk),
     .rst(rst),
     .adc_en(adc_en),
-    .ldata(ldata),
-    .rdata(rdata),
+    .i_ldata(ldata),
+    .i_rdata(rdata),
     .i_rxd(i_rxd),
     .test_pitch_factor(`FIXED_RTOF(1.0 / 1.33)),
     // .test_pitch_factor(`FIXED_RTOF(1.0 / 1.02)),
-    .psola_lf(psola_lf),
-    .psola_rf(psola_rf),
-    .psola_valid(psola_valid),
+    .o_lf(lf),
+    .o_rf(rf),
+    .o_valid(psola_valid),
     .or_pitch_period(pitch_period),
     .or_pitch_valid(pitch_valid),
     .o_pitch_done(pitch_done),
