@@ -12,45 +12,78 @@ module vocoder #(
     parameter int attack_ms = 3,  //alpha attack
     parameter int release_ms = 100  //alpha attack
 ) (
-    input  wire    clk,
-    input  wire    rst,
-    input  wire    i_valid,
-    output fixed_t o_data,
-    output audio_t o_raw,
-    output logic   o_valid
+    input  wire            clk,
+    input  wire            rst,
+    input  wire            i_valid,
+    input  wire    [127:0] i_notes,
+    output fixed_t         o_data,
+    output audio_t         o_raw,
+    output logic           o_valid
 );
     audio_t rom[N];
     audio_t idx_rom[IDX_N];
     // initial $readmemh("sawtooth440.mem", rom);
     //first note is A0 MIDI 21
     //A4 is MIDI 69
-    initial $readmemh("sawtooth_total.mem", rom);
-    initial $readmemh("sawtooth_start_idx.mem", idx_rom);
+    // initial $readmemh("sawtooth_total.mem", rom);
+    // initial $readmemh("sawtooth_start_idx.mem", idx_rom);
+  // initial $readmemh("sawtooth440.mem", rom);
+  //first note is G#2 MIDI 44
+  //A4 is MIDI 69
+  // initial $readmemh("sawtooth_total.mem", rom);
+  // initial $readmemh("sawtooth_start_idx.mem", idx_rom);
+  initial $readmemh("/home/kalyan/Documents/school/ece554/autotune/rtl/sawtooth_total.mem", rom);
+  initial
+    $readmemh("/home/kalyan/Documents/school/ece554/autotune/rtl/sawtooth_start_idx.mem", idx_rom);
 
-    logic [16:0] idx;
-    logic [16:0] idx2;
-    logic [16:0] note;
+  localparam int NOTE_OFFSET = 44;
 
-    always_ff @(posedge clk) begin
-        if (rst) begin
-            o_valid <= 1'b0;
-            idx     <= idx_rom[25];
-            idx2     <= idx_rom[29];
-        end else begin
-            o_valid <= i_valid;
-            if (i_valid) begin
-                idx <= ((idx >= (idx_rom[26] - 1))) ? idx_rom[25] : (idx + 1);
-                idx2 <= ((idx2 >= (idx_rom[30] - 1))) ? idx_rom[29] : (idx2 + 1);
-            end
+  typedef enum logic [1:0] {
+    IDLE,
+    SYNTH,
+    OUTPUT
+  } state_t;
+
+  state_t state;
+  logic [7:0] note;
+  fixed_t sample;
+  int i;
+  logic [16:0] indices[40];
+  always_ff @(posedge clk) begin
+    if (rst) begin
+      state   <= IDLE;
+      o_valid <= 1'b0;
+
+      for (i = 0; i < 40; i = i + 1) indices[i] <= idx_rom[i];
+    end else begin
+      case (state)
+        IDLE: begin
+          if (i_valid) begin
+            state  <= SYNTH;
+            note   <= 0;
+            sample <= 0;
+          end
         end
+        SYNTH: begin
+          if (note != 7'd127) begin
+            if (i_notes[note]) begin
+              sample <= sample + (fixed_atof(rom[indices[note-NOTE_OFFSET]]) >> 7);
+              indices[note - NOTE_OFFSET] <= (indices[note - NOTE_OFFSET] == idx_rom[note - NOTE_OFFSET + 1] - 1) ? idx_rom[note - NOTE_OFFSET] : indices[note - NOTE_OFFSET] + 1;
+            end
+
+            note <= note + 7'd1;
+          end else begin
+            state   <= OUTPUT;
+            o_data  <= sample;
+            o_valid <= 1'b1;
+          end
+        end
+        OUTPUT: begin
+          state   <= IDLE;
+          o_valid <= 1'b0;
+        end
+        default: state <= IDLE;
+      endcase
     end
-
-    // assign o_data = rom[idx];
-    assign o_data = (fixed_atof(rom[idx]) >> 4) + (fixed_atof(rom[idx2] >> 4));
-    // assign o_raw = rom[idx];
-    assign o_raw  = idx;
-
-
-    // initial $readmemh("/home/kalyan/Documents/school/ece554/autotune/rtl/hanning.mem", rom);
-
+  end
 endmodule

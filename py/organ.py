@@ -6,29 +6,30 @@ fs = 48000
 dur = 10
 f0 = 440
 
-# Drawbars: dip the mids, keep lows strong, moderate top — less saw-like
-drawbars = [8, 5, 8, 4, 6, 5, 3, 5, 4]  # 16' 5⅓' 8' 4' 2⅔' 2' 1⅗' 1⅓' 1'
-# drawbars = [8, 6, 8, 6, 8, 8, 4, 6, 6]  # 16' 5⅓' 8' 4' 2⅔' 2' 1⅗' 1⅓' 1'
+# Mellow drawbars (dipped mids, moderate top)
+drawbars = [8, 5, 8, 4, 6, 5, 3, 5, 4]
 ratios = [0.5, 1.5, 1, 2, 3, 4, 5, 6, 8]
 
-# Fuller chord: sub-octave, octave, fifth, octave+root, just 3rd, 5th, octave up
-# Using just intonation (1.25 not 1.26) for more fusion
-# chord = [0.25, 0.5, 1, 1.26, 1.5, 2.0, 4.0]
-# amps  = [0.7, 0.7, 1, 0.3, 0.7, 0.8, 0.5]
-chord = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0]
-amps  = [0.8, 0.9, 0.5, 1.0, 0.6, 0.7, 0.5, 0.25]
+# Maj9 voicing with sub-octaves and fills
+# Ratios relative to f0: sub-sub, sub, 5th below, root, 5th, octave, 9th, 3rd+oct, 5th+oct
+chord = [0.125, 0.25, 0.375, 0.5, 0.75, 1.0, 1.125, 1.25, 1.5, 2.0]
+amps  = [0.6,   0.8,  0.5,   0.9, 0.6,  1.0, 0.4,   0.5,  0.6, 0.35]
 
-freqs = [f0 * ratio for ratio in chord]
+# 5-voice ensemble detune per note (cents)
+detunes_cents = [-7, -3, 0, 3, 7]
 
-# Synth (additive)
+freqs = [f0 * r for r in chord]
 t = np.arange(int(fs * dur)) / fs
 sig = np.zeros_like(t)
 
 for f, amp in zip(freqs, amps):
-    base = sum((d / 8) * np.sin(2 * np.pi * f * r * t) for d, r in zip(drawbars, ratios))
-    upper = sum((d / 8) * np.sin(2 * np.pi * f * (2 ** (5 / 1200)) * r * t) for d, r in zip(drawbars, ratios))
-    lower = sum((d / 8) * np.sin(2 * np.pi * f * (2 ** (-5 / 1200)) * r * t) for d, r in zip(drawbars, ratios))
-    sig += (base + upper + lower) * amp
+    for dc in detunes_cents:
+        fd = f * (2 ** (dc / 1200))
+        voice = sum((d / 8) * np.sin(2 * np.pi * fd * r * t)
+                    for d, r in zip(drawbars, ratios))
+        sig += voice * amp / len(detunes_cents)
+
+sig = sig / np.max(np.abs(sig))
 
 # echo
 FX_TAPS = [(0.017, 0.45), (0.029, 0.35), (0.053, 0.25), (0.091, 0.18)]
