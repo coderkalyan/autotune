@@ -5,8 +5,10 @@
 // a_att: float = 1.0 - np.exp(-1.0 / (attack_ms  * 1e-3 * fs))
 // a_rel: float = 1.0 - np.exp(-1.0 / (release_ms * 1e-3 * fs))
 module vocoder #(
-    parameter int N = 7438,
-    parameter int B = $clog2(N),
+    parameter int N = 30946,
+    // parameter int B = $clog2(N),
+    parameter int IDX_N = 89,
+    // parameter int IDX_B = $clog2(IDX_N),
     parameter int attack_ms = 3,  //alpha attack
     parameter int release_ms = 100  //alpha attack
 ) (
@@ -18,9 +20,9 @@ module vocoder #(
     output logic   o_valid
 );
     audio_t rom[N];
-    audio_t idx_rom[41];
+    audio_t idx_rom[IDX_N];
     // initial $readmemh("sawtooth440.mem", rom);
-    //first note is G#2 MIDI 44
+    //first note is A0 MIDI 21
     //A4 is MIDI 69
     initial $readmemh("sawtooth_total.mem", rom);
     initial $readmemh("sawtooth_start_idx.mem", idx_rom);
