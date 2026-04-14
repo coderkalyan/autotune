@@ -27,13 +27,8 @@ module vocoder #(
     //A4 is MIDI 69
     // initial $readmemh("sawtooth_total.mem", rom);
     // initial $readmemh("sawtooth_start_idx.mem", idx_rom);
-  // initial $readmemh("sawtooth440.mem", rom);
-  //first note is G#2 MIDI 44
-  //A4 is MIDI 69
-  // initial $readmemh("sawtooth_total.mem", rom);
-  // initial $readmemh("sawtooth_start_idx.mem", idx_rom);
-  initial $readmemh("/home/kalyan/Documents/school/ece554/autotune/rtl/sawtooth_total.mem", rom);
-  initial
+    initial $readmemh("/home/kalyan/Documents/school/ece554/autotune/rtl/sawtooth_total.mem", rom);
+    initial
     $readmemh("/home/kalyan/Documents/school/ece554/autotune/rtl/sawtooth_start_idx.mem", idx_rom);
 
   localparam int NOTE_OFFSET = 21;

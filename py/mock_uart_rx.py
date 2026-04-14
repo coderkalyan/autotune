@@ -7,6 +7,14 @@ import serial
 PORT = "COM3"
 BAUD = 31250
 
+NUM_BYTES = 128
+PAYLOAD_BITS = NUM_BYTES * 7  # 896
+
+FIXED_MASK = (1 << 27) - 1
+FIXED_SIGN = 1 << 26
+
+MODE_NAMES = {0: "MUTE", 1: "PASSTHROUGH", 2: "AUTOTUNE", 3: "VOCODE"}
+
 # -----------------------------
 # LUT
 # -----------------------------
@@ -81,6 +89,50 @@ def nearest_note_from_lag(lag: int):
     best_lag = min(LAG_TO_NOTE.keys(), key=lambda x: abs(x - lag))
     return best_lag, LAG_TO_NOTE[best_lag]
 
+
+def decode_payload(buf: list[int]) -> int:
+    """Reassemble 128 framed bytes (7 data bits each) into a 896-bit integer."""
+    bits = 0
+    for b in buf:
+        bits = (bits << 7) | (b & 0x7F)
+    return bits
+
+
+def unpack_payload(bits: int) -> dict:
+    """Extract all fields from a 896-bit payload integer."""
+    lag = (bits >> 886) & 0x3FF
+    valid = (bits >> 885) & 1
+
+    bands = []
+    for j in range(32):
+        shift = 884 - j * 27 - 26
+        raw = (bits >> shift) & FIXED_MASK
+        if raw & FIXED_SIGN:
+            raw -= 1 << 27
+        bands.append(raw)
+
+    mode = (bits >> 19) & 0x3
+    vad_active = (bits >> 18) & 1
+    vad_voiced = (bits >> 17) & 1
+    dac_full = (bits >> 16) & 1
+    adc_empty = (bits >> 15) & 1
+    config_done = (bits >> 14) & 1
+    config_err = (bits >> 13) & 1
+
+    return {
+        "lag": lag,
+        "valid": valid,
+        "vocode_bands": bands,
+        "mode": mode,
+        "vad_active": vad_active,
+        "vad_voiced": vad_voiced,
+        "dac_full": dac_full,
+        "adc_empty": adc_empty,
+        "config_done": config_done,
+        "config_err": config_err,
+    }
+
+
 class Parser:
     def __init__(self):
         self.buf = []
@@ -99,30 +151,22 @@ class Parser:
 
             self.buf.append(byte)
 
-            if len(self.buf) == 4:
+            if len(self.buf) == NUM_BYTES:
                 self.process_packet(self.buf)
                 self.buf = []
 
     def process_packet(self, buf):
-        valid = (buf[0] >> 6) & 1
-        if not valid:
+        bits = decode_payload(buf)
+        fields = unpack_payload(bits)
+
+        if not fields["valid"]:
             return
-
-        period_q = (
-            ((buf[0] & 0x3F) << 21) |
-            ((buf[1] & 0x7F) << 14) |
-            ((buf[2] & 0x7F) << 7)  |
-             (buf[3] & 0x7F)
-        )
-
-        # Use 10 LSBs for lag
-        lag = period_q & 0x3FF
-
+        lag = fields["lag"]
         if lag == 0:
             return
 
         best_lag, note = nearest_note_from_lag(lag)
-        print(f"lag={lag:4d} -> {note}")
+        print(f"lag={lag:4d} -> {note}  mode={MODE_NAMES[fields['mode']]}")
 
 def main():
     print(f"Opening {PORT} @ {BAUD} baud")
