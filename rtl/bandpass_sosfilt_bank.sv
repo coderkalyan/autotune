@@ -26,7 +26,7 @@ module bandpass_sosfilt_bank #(
     parameter real A2Table[BANKS] = '{default: 0.0},
 
     // Stage 1 coefficients (w -> y)
-    parameter real C0Table[BANKS] = '{default: 0.0},
+    parameter real C0Table[BANKS] = '{default: 1.0},
     parameter real C1Table[BANKS] = '{default: 0.0},
     parameter real C2Table[BANKS] = '{default: 0.0},
     parameter real D1Table[BANKS] = '{default: 0.0},

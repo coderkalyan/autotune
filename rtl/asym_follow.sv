@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 `include "fixed.sv"
-`default_nettype none
+// `default_nettype none
 
 module asym_follow #(
     parameter int BANKS = 1,
@@ -21,8 +21,8 @@ module asym_follow #(
     localparam real PI = 3.1415927;
     // localparam real X = 2.0 * PI * real'(FC_HZ) / FS_HZ;
     // localparam real ALPHA = X / (1.0 + X);
-    localparam real ALPHA_ATTACK = 1 -  exp(-1 / (ATTACK_MS * 1e-3 * FS_HZ));
-    localparam real ALPHA_RELEASE = 1 -  exp(-1 / (RELEASE_MS * 1e-3 * FS_HZ));
+    localparam real ALPHA_ATTACK = 1 -  $exp(-1 / (ATTACK_MS * 1e-3 * FS_HZ));
+    localparam real ALPHA_RELEASE = 1 -  $exp(-1 / (RELEASE_MS * 1e-3 * FS_HZ));
 
     localparam fixed_t FONE  = `FIXED_RTOF(1.0);
     localparam fixed_t FALPHA_ATTACK = `FIXED_RTOF(ALPHA_ATTACK);

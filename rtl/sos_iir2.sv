@@ -46,7 +46,7 @@ module sos_iir2 #(
         y_z2_sel = y_z2[i_bank];
 
 
-        p_b0 = fixed_mul_raw(i_b0, i_data-x_z2_sel);
+        p_b0 = fixed_mul_raw(i_b0, i_data);
         p_b1 = fixed_mul_raw(i_b1, x_z1_sel);
         p_b2 = fixed_mul_raw(i_b2, x_z2_sel);
         p_a1 = fixed_mul_raw(i_a1, y_z1_sel);
