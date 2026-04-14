@@ -95,6 +95,7 @@ module compute #(
       .rst(rst),
       .i_data(lf),
       .i_valid(adc_en),
+      .i_sensitivity(encoders[1]),
       .o_active(vad_active),
       .o_voiced(vad_voiced)
   );
@@ -211,37 +212,49 @@ module compute #(
       .o_valid(vocode_valid)
   );
 
+  // Volume control via MIDI encoder 0
+  // gain = encoders[0] / 2^VOL_SHIFT; midpoint (64) → gain 1.0, max (127) → ~2.0
+  localparam int VOL_SHIFT = 6;
+  wire [6:0] volume = encoders[0];
+
+  fixed_t pre_lf, pre_rf;
+  logic   pre_valid;
+
   always_comb begin
     case (mode)
       MUTE: begin
-        // Mute output but clock DAC with ADC clock.
-        o_lf = 0;
-        o_rf = 0;
-        o_valid = adc_en;
+        pre_lf = 0;
+        pre_rf = 0;
+        pre_valid = adc_en;
       end
       PASSTHROUGH: begin
-        o_lf = lf;
-        o_rf = rf;
-        o_valid = adc_en;
+        pre_lf = lf;
+        pre_rf = rf;
+        pre_valid = adc_en;
       end
       AUTOTUNE: begin
-        o_lf = psola_lf;
-        o_rf = psola_rf;
-        o_valid = psola_valid;
+        pre_lf = psola_lf;
+        pre_rf = psola_rf;
+        pre_valid = psola_valid;
       end
       VOCODE: begin
-        o_lf = vocode_data;
-        o_rf = vocode_data;
-        o_valid = vocode_valid;
+        pre_lf = vocode_data;
+        pre_rf = vocode_data;
+        pre_valid = vocode_valid;
       end
       default: begin
-        // Should not reach this case, mute output and don't clock DAC.
-        o_lf = 0;
-        o_rf = 0;
-        o_valid = 0;
+        pre_lf = 0;
+        pre_rf = 0;
+        pre_valid = 0;
       end
     endcase
   end
+
+  fixed_t vol_gain;
+  assign vol_gain = fixed_t'({1'b0, volume}) << (16 - VOL_SHIFT);
+  assign o_lf    = fixed_mul(pre_lf, vol_gain);
+  assign o_rf    = fixed_mul(pre_rf, vol_gain);
+  assign o_valid = pre_valid;
 
   // ----------------------------------------------------------------
   // Display Control

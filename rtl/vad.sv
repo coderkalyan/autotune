@@ -7,16 +7,18 @@ module vad #(
     input  wire    rst,
     input  fixed_t i_data,
     input  wire    i_valid,
+    input  wire [6:0] i_sensitivity,
     output logic   o_active,
     output logic   o_voiced
 );
   localparam int ZC_THRESHOLD = MAX_PERIODS * 8;
-  localparam int ENERGY_THRESHOLD = 0;  // 200000;
+  // Full scale ≈ 260,096 (127 << 11)
+  localparam int THRESH_SHIFT = 11;
 
   logic [WBITS - 1:0] count, zero_count;
   logic [27 + WBITS - 1:0] energy;
   fixed_t prev;
-  wire min_energy = (energy >> 16) > ENERGY_THRESHOLD;
+  wire min_energy = (energy >> 16) > (i_sensitivity << THRESH_SHIFT);
   always_ff @(posedge clk) begin
     if (rst) begin
       count      <= '0;
