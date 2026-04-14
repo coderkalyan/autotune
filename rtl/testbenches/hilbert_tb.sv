@@ -79,7 +79,7 @@ module hilbert_tb;
                     rms_del += d * d;
                 end
 
-                $display("s=%3d  in=%+7.4f  delayed=%+7.4f  hilbert=%+7.4f",
+                $display("s=%3d  in=%7.4f  delayed=%7.4f  hilbert=%7.4f",
                          s, fixed_ftor(i_data), fixed_ftor(o_delayed),
                          fixed_ftor(o_hilbert));
                 out_cnt++;
