@@ -1,21 +1,55 @@
-import { Button } from "@/components/ui/button"
+import { useCallback, useState } from "react"
+import { usePitchSocket } from "@/hooks/usePitchSocket"
+import { SplashScreen } from "@/components/splash/SplashScreen"
+import { WS_URL } from "@/config"
+import type { AppScreen } from "@/types"
 
-export function App() {
+// Lazy imports — screens are small but this keeps the initial bundle tight
+import { lazy, Suspense } from "react"
+const AutotuneScreen = lazy(() =>
+  import("@/components/autotune/AutotuneScreen").then((m) => ({ default: m.AutotuneScreen }))
+)
+const VocoderScreen = lazy(() =>
+  import("@/components/vocoder/VocoderScreen").then((m) => ({ default: m.VocoderScreen }))
+)
+
+export default function App() {
+  const [appScreen, setAppScreen] = useState<AppScreen>({ screen: "splash" })
+  const { readings, latest, connected } = usePitchSocket(WS_URL)
+
+  const navigate = useCallback((next: AppScreen) => {
+    setAppScreen(next)
+  }, [])
+
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
+    <div className="size-full overflow-hidden bg-background">
+      {appScreen.screen === "splash" && (
+        <div key="splash" className="screen-enter size-full">
+          <SplashScreen onNavigate={navigate} />
         </div>
-        <div className="font-mono text-xs text-muted-foreground">
-          (Press <kbd>d</kbd> to toggle dark mode)
+      )}
+
+      {appScreen.screen === "autotune" && (
+        <div key="autotune" className="screen-enter size-full">
+          <Suspense fallback={null}>
+            <AutotuneScreen
+              screenState={appScreen}
+              onNavigate={navigate}
+              readings={readings}
+              latest={latest}
+              connected={connected}
+            />
+          </Suspense>
         </div>
-      </div>
+      )}
+
+      {appScreen.screen === "vocoder" && (
+        <div key="vocoder" className="screen-enter size-full">
+          <Suspense fallback={null}>
+            <VocoderScreen onNavigate={navigate} />
+          </Suspense>
+        </div>
+      )}
     </div>
   )
 }
-
-export default App
