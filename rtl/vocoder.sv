@@ -36,7 +36,7 @@ module vocoder #(
   initial
     $readmemh("/home/kalyan/Documents/school/ece554/autotune/rtl/sawtooth_start_idx.mem", idx_rom);
 
-  localparam int NOTE_OFFSET = 44;
+  localparam int NOTE_OFFSET = 21;
 
   typedef enum logic [1:0] {
     IDLE,
@@ -48,13 +48,13 @@ module vocoder #(
   logic [7:0] note;
   fixed_t sample;
   int i;
-  logic [16:0] indices[40];
+  logic [16:0] indices[IDX_N];
   always_ff @(posedge clk) begin
     if (rst) begin
       state   <= IDLE;
       o_valid <= 1'b0;
 
-      for (i = 0; i < 40; i = i + 1) indices[i] <= idx_rom[i];
+      for (i = 0; i < IDX_N; i = i + 1) indices[i] <= idx_rom[i];
     end else begin
       case (state)
         IDLE: begin
