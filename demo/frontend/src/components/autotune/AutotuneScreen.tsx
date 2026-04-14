@@ -1,6 +1,6 @@
 import { Separator } from "@/components/ui/separator"
 import { BackButton } from "@/components/shared/BackButton"
-import { ConnectionStatus } from "@/components/shared/ConnectionStatus"
+import { SystemStatus } from "@/components/shared/SystemStatus"
 import { FreeModeView } from "./FreeModeView"
 import { SubModeToggle } from "./SubModeToggle"
 import type { AppScreen, PitchReading } from "@/types"
@@ -29,7 +29,7 @@ export function AutotuneScreen({ screenState, onNavigate, readings, latest, conn
         </div>
         <SubModeToggle value={subMode} onValueChange={handleSubMode} />
         <div className="flex flex-1 justify-end">
-          <ConnectionStatus connected={connected} />
+          <SystemStatus connected={connected} latest={latest} />
         </div>
       </div>
 
