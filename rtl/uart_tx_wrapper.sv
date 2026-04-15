@@ -7,7 +7,7 @@ module uart_tx_wrapper (
     input rst,
     input [9:0] ir_pitch_period,
     input ir_pitch_valid,
-    input fixed_t i_vocode_bands[32],
+    input logic [32*27-1:0] i_vocode_bands_flat,
     input mode_t i_mode,
     input i_vad_active,
     input i_vad_voiced,
@@ -53,7 +53,7 @@ always_comb begin
     payload[895:886] = ir_pitch_period;
     payload[885]     = ir_pitch_valid;
     for (int j = 0; j < 32; j++)
-        payload[884 - j*27 -: 27] = i_vocode_bands[j];
+        payload[884 - j*27 -: 27] = i_vocode_bands_flat[j*27 +: 27];
     payload[20:19]   = i_mode;
     payload[18]      = i_vad_active;
     payload[17]      = i_vad_voiced;
