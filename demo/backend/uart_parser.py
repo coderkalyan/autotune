@@ -101,17 +101,13 @@ class Parser:
         bits = decode_payload(buf)
         fields = unpack_payload(bits)
 
-        if not fields["valid"]:
-            return
-        lag = fields["lag"]
-        if lag == 0:
-            return
+        detected = None
+        corrected = None
+        if fields["valid"] and fields["lag"] != 0:
+            detected = lag_to_hz(fields["lag"])
+            corrected = nearest_note_hz(fields["lag"])
 
-        detected = lag_to_hz(lag)
-        corrected = nearest_note_hz(lag)
-
-        if detected is not None:
-            self._on_reading(detected, corrected)
+        self._on_reading(detected, corrected, fields)
 
 
 class UARTParser:
@@ -141,11 +137,19 @@ class UARTParser:
         with self._lock:
             return dict(self._latest) if self._latest else None
 
-    def _on_reading(self, detected_hz: float, corrected_hz: float | None) -> None:
+    def _on_reading(self, detected_hz: float | None, corrected_hz: float | None, fields: dict) -> None:
         with self._lock:
             self._latest = {
                 "detected_hz": detected_hz,
                 "corrected_hz": corrected_hz,
+                "mode": fields["mode"],
+                "vad_active": bool(fields["vad_active"]),
+                "vad_voiced": bool(fields["vad_voiced"]),
+                "dac_full": bool(fields["dac_full"]),
+                "adc_empty": bool(fields["adc_empty"]),
+                "config_done": bool(fields["config_done"]),
+                "config_err": bool(fields["config_err"]),
+                "vocode_bands": [v / (1 << 16) for v in fields["vocode_bands"]],
             }
 
     def _run(self) -> None:
@@ -163,12 +167,21 @@ class UARTParser:
 if __name__ == "__main__":
     results = []
 
-    def capture(detected, corrected):
+    def capture(detected, corrected, fields):
         results.append((detected, corrected))
 
-    def make_packet(valid: bool, lag: int, bands=None, mode=0,
-                    vad_active=0, vad_voiced=0, dac_full=0,
-                    adc_empty=0, config_done=0, config_err=0) -> list[int]:
+    def make_packet(
+        valid: bool,
+        lag: int,
+        bands=None,
+        mode=0,
+        vad_active=0,
+        vad_voiced=0,
+        dac_full=0,
+        adc_empty=0,
+        config_done=0,
+        config_err=0,
+    ) -> list[int]:
         """Build a 128-byte framed packet from fields."""
         bits = 0
         bits |= (lag & 0x3FF) << 886
@@ -220,9 +233,18 @@ if __name__ == "__main__":
 
     print("Test 4 — round-trip all fields")
     test_bands = [((i * 1000) & FIXED_MASK) for i in range(32)]
-    pkt = make_packet(True, 200, bands=test_bands, mode=3,
-                      vad_active=1, vad_voiced=0, dac_full=1,
-                      adc_empty=0, config_done=1, config_err=1)
+    pkt = make_packet(
+        True,
+        200,
+        bands=test_bands,
+        mode=3,
+        vad_active=1,
+        vad_voiced=0,
+        dac_full=1,
+        adc_empty=0,
+        config_done=1,
+        config_err=1,
+    )
     bits = decode_payload(pkt)
     f = unpack_payload(bits)
     assert f["lag"] == 200
