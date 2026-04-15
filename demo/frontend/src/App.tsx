@@ -46,7 +46,7 @@ export default function App() {
       {appScreen.screen === "vocoder" && (
         <div key="vocoder" className="screen-enter size-full">
           <Suspense fallback={null}>
-            <VocoderScreen onNavigate={navigate} />
+            <VocoderScreen onNavigate={navigate} latest={latest} connected={connected} />
           </Suspense>
         </div>
       )}

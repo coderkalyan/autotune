@@ -1,24 +1,35 @@
-import { Radio } from "lucide-react"
-import type { AppScreen } from "@/types"
+import { Separator } from "@/components/ui/separator"
+import { BackButton } from "@/components/shared/BackButton"
+import { SystemStatus } from "@/components/shared/SystemStatus"
+import { VocoderGraph } from "./VocoderGraph"
+import type { AppScreen, PitchReading } from "@/types"
 
 interface Props {
   onNavigate: (screen: AppScreen) => void
+  latest: PitchReading | null
+  connected: boolean
 }
 
-export function VocoderScreen({ onNavigate }: Props) {
+export function VocoderScreen({ onNavigate, latest, connected }: Props) {
   return (
-    <div className="flex size-full flex-col items-center justify-center gap-6">
-      <Radio className="size-16 text-muted-foreground" strokeWidth={1.5} />
-      <div className="flex flex-col items-center gap-2 text-center">
-        <h2 className="text-3xl font-bold">Vocoder</h2>
-        <p className="text-muted-foreground">Coming soon</p>
+    <div className="flex size-full flex-col">
+      {/* Top bar */}
+      <div className="flex shrink-0 items-center px-4 py-2">
+        <div className="flex flex-1 justify-start">
+          <BackButton onNavigate={onNavigate} />
+        </div>
+        <h1 className="text-lg font-semibold">Vocoder</h1>
+        <div className="flex flex-1 justify-end">
+          <SystemStatus connected={connected} latest={latest} />
+        </div>
       </div>
-      <button
-        onClick={() => onNavigate({ screen: "splash" })}
-        className="text-sm text-muted-foreground underline-offset-4 hover:underline"
-      >
-        Back to menu
-      </button>
+
+      <Separator />
+
+      {/* Frequency envelope graph */}
+      <div className="min-h-0 flex-1 p-4">
+        <VocoderGraph vocodeBands={latest?.vocode_bands ?? null} />
+      </div>
     </div>
   )
 }
