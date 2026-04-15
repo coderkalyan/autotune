@@ -53,7 +53,7 @@ def unpack_payload(bits: int) -> dict:
     config_done = (bits >> 14) & 1
     config_err = (bits >> 13) & 1
 
-    return {
+    to_return = {
         "lag": lag,
         "valid": valid,
         "vocode_bands": bands,
@@ -65,6 +65,10 @@ def unpack_payload(bits: int) -> dict:
         "config_done": config_done,
         "config_err": config_err,
     }
+
+    print(to_return)
+
+    return to_return
 
 
 class Parser:
@@ -137,7 +141,9 @@ class UARTParser:
         with self._lock:
             return dict(self._latest) if self._latest else None
 
-    def _on_reading(self, detected_hz: float | None, corrected_hz: float | None, fields: dict) -> None:
+    def _on_reading(
+        self, detected_hz: float | None, corrected_hz: float | None, fields: dict
+    ) -> None:
         with self._lock:
             self._latest = {
                 "detected_hz": detected_hz,

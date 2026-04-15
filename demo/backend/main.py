@@ -1,23 +1,31 @@
 import asyncio
 import json
+import os
 import time
 from contextlib import asynccontextmanager
 
 import mido
 import serial
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
+from audio_engine import AudioEngine
 from midi_bridge import MIDIBridge
+from song_manager import SongManager
 from uart_parser import UARTParser
 
 SERIAL_PORT = "/dev/cu.usbserial-FTA9O9VB"
 BAUD = 31250
 WS_INTERVAL = 0.033  # ~30 Hz
 
+SONGS_DIR = os.path.join(os.path.dirname(__file__), "..", "songs")
+
 uart_reader: UARTParser | None = None
 midi_bridge: MIDIBridge | None = None
+song_manager: SongManager = SongManager(SONGS_DIR)
+audio_engine: AudioEngine = AudioEngine()
 _connected: set[WebSocket] = set()
 
 
@@ -40,11 +48,15 @@ async def _pitch_loop() -> None:
 
         reading = uart_reader.get_latest() if uart_reader else None
 
+        position_ms = audio_engine.get_position_ms() if audio_engine.is_playing else None
+        raw_target = song_manager.get_target_hz(position_ms) if position_ms is not None else None
+        target_hz = round(raw_target, 2) if raw_target is not None else None
+
         if reading:
             msg = {
                 "detected_hz": round(reading["detected_hz"], 2) if reading["detected_hz"] is not None else None,
                 "corrected_hz": round(reading["corrected_hz"], 2) if reading["corrected_hz"] is not None else None,
-                "target_hz": None,
+                "target_hz": target_hz,
                 "timestamp_ms": int(time.monotonic() * 1000),
                 "mode": reading["mode"],
                 "vad_active": reading["vad_active"],
@@ -60,7 +72,7 @@ async def _pitch_loop() -> None:
             msg = {
                 "detected_hz": None,
                 "corrected_hz": None,
-                "target_hz": None,
+                "target_hz": target_hz,
                 "timestamp_ms": int(time.monotonic() * 1000),
                 "mode": None,
                 "vad_active": None,
@@ -122,6 +134,36 @@ def health():
         "midi": midi_bridge is not None,
         "ws_clients": len(_connected),
     }
+
+
+@app.get("/songs")
+def list_songs():
+    return song_manager.list_songs()
+
+
+@app.get("/songs/{song_id}/cover")
+def song_cover(song_id: str):
+    path = song_manager.cover_path(song_id)
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Cover not found")
+    return FileResponse(path, media_type="image/jpeg")
+
+
+@app.post("/songs/{song_id}/play")
+def play_song(song_id: str):
+    instrumental = song_manager.instrumental_path(song_id)
+    if not os.path.isfile(instrumental):
+        raise HTTPException(status_code=404, detail="Song not found")
+    song_manager.load(song_id)
+    audio_engine.play(instrumental)
+    return {"ok": True, "playing": song_id}
+
+
+@app.post("/songs/stop")
+def stop_song():
+    audio_engine.stop()
+    song_manager.unload()
+    return {"ok": True}
 
 
 class MidiCommand(BaseModel):
