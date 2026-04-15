@@ -43,37 +43,55 @@ module asym_follow #(
     y[n] = α[n] * x[n] + (1 - α[n]) * y[n-1] 
 
     */
-  fixed_t y_state[BANKS];
+  // 32-bit wide, no reset — BRAM inference.
+  logic [31:0] y_state[BANKS];
+
+  // Stage 0 → Stage 1: synchronous BRAM read + input capture
+  logic              s1_valid;
+  fixed_t            s1_data;
+  logic [BANK_W-1:0] s1_bank;
+  logic [31:0]       y_state_rd;
+
+  always_ff @(posedge clk) begin
+    y_state_rd <= y_state[i_bank];
+
+    if (rst)
+      s1_valid <= 1'b0;
+    else
+      s1_valid <= i_valid;
+    s1_data <= i_data;
+    s1_bank <= i_bank;
+  end
+
+  // Stage 1: compute (combinational from registered BRAM data)
   fixed_t y_sel;
   fixed_t alpha;
   logic signed [53:0] x;
   fixed_t y_next;
-  fixed_t y_out;
 
   always_comb begin
-    y_sel  = y_state[i_bank];
-    alpha  = (i_data > y_sel) ? FALPHA_ATTACK : FALPHA_RELEASE;
-    x      = fixed_mul_raw(alpha, i_data) + fixed_mul_raw(FONE - alpha, y_sel);
+    y_sel  = fixed_t'(y_state_rd[26:0]);
+    alpha  = (s1_data > y_sel) ? FALPHA_ATTACK : FALPHA_RELEASE;
+    x      = fixed_mul_raw(alpha, s1_data) + fixed_mul_raw(FONE - alpha, y_sel);
     y_next = fixed_t'(x[16+:27]);
   end
 
-  integer bi;
+  // Stage 1 → output: BRAM write-back + output register
+  fixed_t y_out;
   always_ff @(posedge clk) begin
-    if (rst) begin
-      for (bi = 0; bi < BANKS; bi++) begin
-        y_state[bi] <= '0;
-      end
+    if (s1_valid)
+      y_state[s1_bank] <= {5'd0, y_next};
+
+    if (rst)
       y_out <= '0;
-    end else if (i_valid) begin
-      y_state[i_bank] <= y_next;
-      y_out           <= y_next;
-    end
+    else if (s1_valid)
+      y_out <= y_next;
   end
 
   logic valid;
   always_ff @(posedge clk) begin
-    if (rst) valid <= '0;
-    else valid <= i_valid;
+    if (rst) valid <= 1'b0;
+    else valid <= s1_valid;
   end
 
   assign o_valid = valid;
