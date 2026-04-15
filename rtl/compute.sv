@@ -27,7 +27,8 @@ module compute #(
     output [6:0] HEX2,
     output [6:0] HEX3,
     output [6:0] HEX4,
-    output [6:0] HEX5
+    output [6:0] HEX5,
+    output logic [32*27-1:0] o_vocode_bands_flat
 );
 
   // ----------------------------------------------------------------
@@ -202,23 +203,37 @@ module compute #(
 
   fixed_t vocode_data;
   logic   vocode_valid;
+  fixed_t vocode_bands [32];
   vocoder vocoder (
       .clk(clk),
       .rst(rst),
       .i_valid(adc_en),
+      .i_data(lf),
       .i_notes(notes),
       .o_data(vocode_data),
-      .o_raw(),
+      .o_vocode_bands(vocode_bands),
       .o_valid(vocode_valid)
   );
 
-  // Volume control via MIDI encoder 0
-  // gain = encoders[0] / 2^VOL_SHIFT; midpoint (64) → gain 1.0, max (127) → ~2.0
+  // Flatten unpacked array to packed bus for Quartus port compatibility
+  genvar gi;
+  generate
+    for (gi = 0; gi < 32; gi++) begin : gen_flatten
+      assign o_vocode_bands_flat[gi*27+:27] = vocode_bands[gi];
+    end
+  endgenerate
+
+  // Volume control via MIDI encoder 0 (logarithmic)
+  // gain = volume / 2^VOL_SHIFT; midpoint (64) → gain 1.0, max (127) → ~2.0
   localparam int VOL_SHIFT = 6;
-  wire [6:0] volume = encoders[0];
+  wire [6:0] volume;
+  log_volume_lut iVOL_LUT (
+      .i_linear(encoders[0]),
+      .o_log(volume)
+  );
 
   fixed_t pre_lf, pre_rf;
-  logic   pre_valid;
+  logic pre_valid;
 
   always_comb begin
     case (mode)
