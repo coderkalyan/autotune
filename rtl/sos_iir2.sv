@@ -27,67 +27,73 @@ module sos_iir2 #(
     output fixed_t o_data,
     output wire    o_valid
 );
-    // Delay elements (only advance on i_valid)
-    fixed_t x_z1[BANKS], x_z2[BANKS];
-    fixed_t y_z1[BANKS], y_z2[BANKS];
+    // Delay elements — 32-bit wide, no reset, for BRAM inference.
+    logic [31:0] x_z1[BANKS], x_z2[BANKS];
+    logic [31:0] y_z1[BANKS], y_z2[BANKS];
 
-    // Wide accumulator for sum of products (Q??.32)
+    // Stage 0 → Stage 1 pipeline: synchronous BRAM read + input capture
+    logic                s1_valid;
+    fixed_t              s1_data;
+    logic [BANK_W-1:0]   s1_bank;
+    logic [31:0]         x_z1_rd, x_z2_rd, y_z1_rd, y_z2_rd;
+
+    always_ff @(posedge clk) begin
+        // Synchronous BRAM reads (always, no reset — BRAM pattern)
+        x_z1_rd <= x_z1[i_bank];
+        x_z2_rd <= x_z2[i_bank];
+        y_z1_rd <= y_z1[i_bank];
+        y_z2_rd <= y_z2[i_bank];
+
+        // Pipeline registers
+        if (rst)
+            s1_valid <= 1'b0;
+        else
+            s1_valid <= i_valid;
+        s1_data <= i_data;
+        s1_bank <= i_bank;
+    end
+
+    // Stage 1: compute (combinational from registered BRAM data)
     logic signed [53:0] p_b0, p_b1, p_b2, p_a1, p_a2;
     logic signed [63:0] acc;
     fixed_t             y_next;
 
-    fixed_t x_z1_sel, x_z2_sel;
-    fixed_t y_z1_sel, y_z2_sel;
-
     always_comb begin
-        x_z1_sel = x_z1[i_bank];
-        x_z2_sel = x_z2[i_bank];
-        y_z1_sel = y_z1[i_bank];
-        y_z2_sel = y_z2[i_bank];
+        p_b0 = fixed_mul_raw(i_b0, s1_data);
+        p_b1 = fixed_mul_raw(i_b1, fixed_t'(x_z1_rd[26:0]));
+        p_b2 = fixed_mul_raw(i_b2, fixed_t'(x_z2_rd[26:0]));
+        p_a1 = fixed_mul_raw(i_a1, fixed_t'(y_z1_rd[26:0]));
+        p_a2 = fixed_mul_raw(i_a2, fixed_t'(y_z2_rd[26:0]));
 
-
-        p_b0 = fixed_mul_raw(i_b0, i_data);
-        p_b1 = fixed_mul_raw(i_b1, x_z1_sel);
-        p_b2 = fixed_mul_raw(i_b2, x_z2_sel);
-        p_a1 = fixed_mul_raw(i_a1, y_z1_sel);
-        p_a2 = fixed_mul_raw(i_a2, y_z2_sel);
-
-        // Sign-extend each 54-bit product to 64 bits before summing.
         acc = {{10{p_b0[53]}}, p_b0}
             + {{10{p_b1[53]}}, p_b1}
             + {{10{p_b2[53]}}, p_b2}
             - {{10{p_a1[53]}}, p_a1}
             - {{10{p_a2[53]}}, p_a2};
 
-        // Convert back to Q11.16 by dropping 16 fractional bits.
         y_next = fixed_t'(acc[16+:27]);
     end
 
+    // Stage 1 → output: BRAM write-back + output register
     fixed_t y;
-    integer bi;
     always_ff @(posedge clk) begin
-        if (rst) begin
-            for (bi = 0; bi < BANKS; bi++) begin
-                x_z1[bi] <= '0;
-                x_z2[bi] <= '0;
-                y_z1[bi] <= '0;
-                y_z2[bi] <= '0;
-            end
-            y <= '0;
-        end else if (i_valid) begin
-            x_z2[i_bank] <= x_z1[i_bank];
-            x_z1[i_bank] <= i_data;
-
-            y_z2[i_bank] <= y_z1[i_bank];
-            y_z1[i_bank] <= y_next;
-            y    <= y_next;
+        if (s1_valid) begin
+            x_z2[s1_bank] <= x_z1_rd;
+            x_z1[s1_bank] <= {5'd0, s1_data};
+            y_z2[s1_bank] <= y_z1_rd;
+            y_z1[s1_bank] <= {5'd0, y_next};
         end
+
+        if (rst)
+            y <= '0;
+        else if (s1_valid)
+            y <= y_next;
     end
 
     logic valid;
     always_ff @(posedge clk) begin
         if (rst) valid <= 1'b0;
-        else valid <= i_valid;
+        else valid <= s1_valid;
     end
 
     assign o_valid = valid;
