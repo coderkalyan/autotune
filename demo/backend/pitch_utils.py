@@ -36,7 +36,6 @@ def lag_to_hz(lag: int) -> float | None:
     Returns None if lag is 0 or the resulting frequency is outside the
     vocal range [VOCAL_MIN_HZ, VOCAL_MAX_HZ].
     """
-    print(f"lag_to_hz({lag})")
     if lag <= 0:
         return None
     hz = FS / lag
