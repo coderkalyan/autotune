@@ -2,6 +2,7 @@ import { Separator } from "@/components/ui/separator"
 import { BackButton } from "@/components/shared/BackButton"
 import { SystemStatus } from "@/components/shared/SystemStatus"
 import { FreeModeView } from "./FreeModeView"
+import { SingAlongView } from "./SingAlongView"
 import { SubModeToggle } from "./SubModeToggle"
 import type { AppScreen, PitchReading } from "@/types"
 
@@ -41,9 +42,7 @@ export function AutotuneScreen({ screenState, onNavigate, readings, latest, conn
           <FreeModeView readings={readings} latest={latest} />
         )}
         {subMode === "sing-along" && (
-          <div className="flex size-full items-center justify-center text-muted-foreground">
-            Sing Along — coming in next step
-          </div>
+          <SingAlongView readings={readings} latest={latest} />
         )}
       </div>
     </div>
