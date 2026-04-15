@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(/Users/vishrutagrawal/repos/classes/spring-2026/ece554/autotune/demo/backend/venv/bin/python3 *)",
+      "Bash(/Users/vishrutagrawal/repos/classes/spring-2026/ece554/autotune/demo/backend/venv/bin/pip install *)"
+    ]
+  }
+}
