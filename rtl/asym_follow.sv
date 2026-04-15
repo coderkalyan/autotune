@@ -17,16 +17,12 @@ module asym_follow #(
     output fixed_t o_data,
     output wire    o_valid
 );
-    localparam real FS_HZ = 48000.0;
-    localparam real PI = 3.1415927;
-    // localparam real X = 2.0 * PI * real'(FC_HZ) / FS_HZ;
-    // localparam real ALPHA = X / (1.0 + X);
-    localparam real ALPHA_ATTACK = 1 -  $exp(-1 / (ATTACK_MS * 1e-3 * FS_HZ));
-    localparam real ALPHA_RELEASE = 1 -  $exp(-1 / (RELEASE_MS * 1e-3 * FS_HZ));
-
-    localparam fixed_t FONE  = `FIXED_RTOF(1.0);
-    localparam fixed_t FALPHA_ATTACK = `FIXED_RTOF(ALPHA_ATTACK);
-    localparam fixed_t FALPHA_RELEASE = `FIXED_RTOF(ALPHA_RELEASE);
+    // Pre-computed for ATTACK_MS=3, RELEASE_MS=100, FS=48000 Hz:
+    //   ALPHA_ATTACK  = 1 - exp(-1 / (ATTACK_MS  * 1e-3 * 48000)) = 0.006920387509683934
+    //   ALPHA_RELEASE = 1 - exp(-1 / (RELEASE_MS * 1e-3 * 48000)) = 0.0002083116334513635
+    localparam fixed_t FONE           = 27'h0010000;  // 1.0 in Q11.16
+    localparam fixed_t FALPHA_ATTACK  = 27'h00001c6;  // ~0.00693 in Q11.16
+    localparam fixed_t FALPHA_RELEASE = 27'h000000e;  // ~0.000214 in Q11.16
 
     /*
     Causal asymmetric envelope follower.
