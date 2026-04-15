@@ -1,0 +1,12 @@
+{
+  "name": "Closer (feat. Halsey)",
+  "artist": "The Chainsmokers",
+  "album": "Collage - EP",
+  "year": "2016",
+  "pfp": "cover.jpg",
+  "slug": "closer_feat_halsey",
+  "duration_ms": 46000,
+  "sample_rate": 48000,
+  "crop_start_ms": 29000,
+  "crop_end_ms": 75000
+}

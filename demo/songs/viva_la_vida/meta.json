@@ -1,0 +1,12 @@
+{
+  "name": "Viva La Vida",
+  "artist": "Coldplay",
+  "album": "Viva La Vida or Death and All His Friends",
+  "year": "2008",
+  "pfp": "cover.jpg",
+  "slug": "viva_la_vida",
+  "duration_ms": 72000,
+  "sample_rate": 48000,
+  "crop_start_ms": 27000,
+  "crop_end_ms": 99000
+}

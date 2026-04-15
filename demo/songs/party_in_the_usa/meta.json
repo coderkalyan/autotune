@@ -1,0 +1,12 @@
+{
+  "name": "Party In the U.S.A.",
+  "artist": "Miley Cyrus",
+  "album": "Party In the U.S.A. - Single",
+  "year": "2009",
+  "pfp": "cover.jpg",
+  "slug": "party_in_the_usa",
+  "duration_ms": 69000,
+  "sample_rate": 48000,
+  "crop_start_ms": 0,
+  "crop_end_ms": 69000
+}
