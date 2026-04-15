@@ -43,16 +43,16 @@ function getChecks(connected: boolean, latest: PitchReading | null): SystemCheck
             ? "Ready"
             : "No data",
     },
-    {
-      name: "ADC",
-      ok: latest?.adc_empty != null ? !latest.adc_empty : null,
-      detail:
-        latest?.adc_empty === true
-          ? "Buffer empty"
-          : latest?.adc_empty === false
-            ? "Ready"
-            : "No data",
-    },
+    // {
+    //   name: "ADC",
+    //   ok: latest?.adc_empty != null ? !latest.adc_empty : null,
+    //   detail:
+    //     latest?.adc_empty === true
+    //       ? "Buffer empty"
+    //       : latest?.adc_empty === false
+    //         ? "Ready"
+    //         : "No data",
+    // },
     {
       name: "Configuration",
       ok:
