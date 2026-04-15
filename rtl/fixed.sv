@@ -43,6 +43,10 @@ function automatic audio_t fixed_ftoa(input fixed_t x);
     return x[10 +: 16];
 endfunction
 
+function automatic fixed_t fixed_abs(input fixed_t x);
+  return x[26] ? -x : x;
+endfunction
+
 `define FIXED_ATOF(x) (fixed_t'(x) << 10)
 `define FIXED_FTOA(x) (x[10 +: 16])
 
