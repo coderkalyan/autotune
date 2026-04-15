@@ -95,6 +95,7 @@ audio_cntrl #(
 // ----------------------------------------------------------------
 logic vad_active, vad_voiced;
 mode_t mode;
+logic [32*27-1:0] vocode_bands_flat;
 compute #(
     .WINDOW_SIZE(WINDOW_SIZE),
     .TESTBENCH(0)   //if 1 bypasses and uses test_pitch_factor as the pf
@@ -121,7 +122,8 @@ compute #(
     .HEX2(HEX2),
     .HEX3(HEX3),
     .HEX4(HEX4),
-    .HEX5(HEX5)
+    .HEX5(HEX5),
+    .o_vocode_bands_flat(vocode_bands_flat)
 );
 
 // ----------------------------------------------------------------
@@ -133,7 +135,7 @@ uart_tx_wrapper iTX_WRAP (
     .ir_pitch_period(pitch_period),
     .ir_pitch_valid(pitch_valid),
     .i_pitch_done(pitch_done),
-    .i_vocode_bands(),
+    .i_vocode_bands_flat(vocode_bands_flat),
     .i_mode(mode),
     .i_vad_active(vad_active),
     .i_vad_voiced(vad_voiced),
