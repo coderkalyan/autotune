@@ -198,7 +198,7 @@ def causal_rms(x: np.ndarray, fs: int, window_ms: float = 50.0) -> np.ndarray:
 
 def asymmetric_follower(x: np.ndarray,
                         fs: int,
-                        attack_ms: float = 2.0,
+                        attack_ms: float = 3.0,
                         release_ms: float = 30.0) -> np.ndarray:
     """
     Causal asymmetric envelope follower.
@@ -274,8 +274,10 @@ def main(in_path: str, out_path: str) -> None:
     # C-major chord: C3 / E3 / G3.  alpha=0.03 gives a brighter timbre which
     # survives heavy bandpass filtering without sounding too muffled.
     carrier: np.ndarray = make_chord(
-        n=n, fs=FS_HZ, freqs=[130.81, 164.81, 196.00], alpha=0.03
+        n=n, fs=FS_HZ, freqs=[130.81, 164.81, 196.00], alpha=0.05
     )
+
+    print("x min max", np.max(x),np.min(x))
     
     # Comb-filter chorus/reverb on the carrier via delay taps.
     # Applied before vocoding so the spatial width is baked into every band.
@@ -291,7 +293,7 @@ def main(in_path: str, out_path: str) -> None:
     #       redundant filter design on every call; also enables parallelization.
     out: np.ndarray = np.zeros(n, dtype=np.float64)
     rms_inv:list[float] = []
-    RMS_INV = [1.0076614202676992, 0.9460489898021014, 0.8668215847220266, 0.8235411415894907, 0.8110827996524813, 0.7654611314083096, 0.7491222989739165, 0.6909487799431292, 0.6619996987762434, 0.6138620440581962, 0.5952359269385344, 0.5795490583028692, 0.540725297823205, 0.5104493499638932, 0.48358494826079707, 0.4610298837234944, 0.43212920269497995, 0.4166317055359978, 0.39564795569477507, 0.3759444465944871, 0.35433528153792926, 0.33858061230695213, 0.3236712700162232, 0.30503175526769044, 0.29184839155365466, 0.2753869660814464, 0.26012503462577274, 0.24900865742453943, 0.23557655098045793, 0.22423527150364475, 0.2139284747903463, 0.20079406918471623]
+    RMS_INV = [1.9469390037806138, 1.9377564679159567, 1.7845914685863802, 1.6728388662084763, 1.6002564143231317, 1.4909021605621064, 1.4296196380824593, 1.3588218091103241, 1.3031854537904453, 1.2774967944101394, 1.2285361281452314, 1.1434903544703194, 1.0703384873646056, 1.0336841725786916, 0.9878834974796817, 0.9333061231313134, 0.8897837026228016, 0.8313561198046957, 0.7945340475436788, 0.7474480240195407, 0.7041364802984527, 0.6763374522466448, 0.6350723351990987, 0.61188464046863, 0.5799163492037167, 0.5497358372659501, 0.5225188823362087, 0.498827709238261, 0.4737200838234444, 0.44915403713929697, 0.4290647728271138, 0.40686268602259185]
 
     # for b in range(N_BANDS):
     for i, b in enumerate(tqdm(range(N_BANDS))):
@@ -360,9 +362,11 @@ def main(in_path: str, out_path: str) -> None:
         # carrier_rms: np.ndarray = causal_rms(carrier_band, FS_HZ) + 1e-9
         # band_rms:    np.ndarray = causal_rms(band,          FS_HZ) + 1e-9
         # env_gain:    np.ndarray = band_rms / carrier_rms   # time-varying, shape (n,)
-        env_gain = 128
+        env_gain = 1
+        gain_x = 1.0
+        # gain_x = (1/31)*i + .5
         gain_x = (.5/31)*i + .7
-        # gain_x = 1
+        
         env: np.ndarray = asymmetric_follower(np.abs(band), FS_HZ)
         print("env avg std",np.mean(env),np.std(env))
 
@@ -370,23 +374,27 @@ def main(in_path: str, out_path: str) -> None:
         # out += carrier_band * np.sqrt(env) * env_gain * gain_x
         print("gain", env_gain * gain_x * RMS_INV[i])
         out += carrier_band * np.sqrt(env) * env_gain * gain_x * RMS_INV[i]
+        # out += carrier_band * env * env_gain * gain_x * RMS_INV[i]
     bp_sos: np.ndarray = butter(
-            BP_ORDER, [5_000, 10_000], btype="band", fs=FS_HZ, output="sos"
+            BP_ORDER, [4_000, 12_000], btype="band", fs=FS_HZ, output="sos"
         )
     band: np.ndarray = sosfilt(bp_sos, x)
     env: np.ndarray = asymmetric_follower(np.abs(band), FS_HZ)
     print("white noise avg std",np.mean(white_noise),np.std(white_noise))
     carrier_band: np.ndarray = sosfilt(bp_sos, white_noise)
-    out += carrier_band * np.sqrt(env)
+    out += carrier_band * env / 2**7
+    # out = sosfilt(butter(
+    #         BP_ORDER, [F_LO_HZ, F_HI_HZ], btype="band", fs=FS_HZ, output="sos"
+    #     ),out)
     
     # print("pre_noram rms_inv", rms_inv)
-    rms_inv = (np.array(rms_inv)/np.average(rms_inv)/2).tolist()
+    rms_inv = (np.array(rms_inv)/np.average(rms_inv)).tolist()
     print("post_noram rms_inv", rms_inv)
 
     # Final peak normalization + output gain.
     peak = np.max(np.abs(out))
     if peak > 0:
-        out = out / peak * OUTPUT_GAIN
+        out = out / peak
 
     write_pcm_f32(out_path, out)
 
