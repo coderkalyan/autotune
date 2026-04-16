@@ -33,6 +33,28 @@ export function SingAlongView({ readings }: Props) {
     setActiveSong(null)
   }
 
+  // Stop audio when this view unmounts (mode switch or back navigation)
+  useEffect(() => {
+    return () => {
+      if (activeSong) {
+        fetch(`${API_BASE}/songs/stop`, { method: "POST" }).catch(() => {})
+      }
+    }
+  }, [activeSong])
+
+  // Stop audio when the browser tab is closed or refreshed
+  useEffect(() => {
+    if (!activeSong) return
+    const handleUnload = () => navigator.sendBeacon(`${API_BASE}/songs/stop`)
+    const handleVisibility = () => { if (document.visibilityState === "hidden") handleUnload() }
+    window.addEventListener("pagehide", handleUnload)
+    document.addEventListener("visibilitychange", handleVisibility)
+    return () => {
+      window.removeEventListener("pagehide", handleUnload)
+      document.removeEventListener("visibilitychange", handleVisibility)
+    }
+  }, [activeSong])
+
   if (activeSong) {
     return (
       <div className="flex size-full flex-col">
