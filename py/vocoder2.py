@@ -15,11 +15,12 @@ import sys
 import numpy as np
 from scipy.signal import butter, sosfilt
 import matplotlib.pyplot as plt
-
+from tqdm import tqdm
 # ---- configurable constants ----
 FS_HZ = 48000
 N_BANDS = 32  # more bands = better spectral resolution but more CPU
-F_LO_HZ = 100.0  # below ~100 Hz vocoder effect is barely audible
+# F_LO_HZ = 100.0  # below ~100 Hz vocoder effect is barely audible
+F_LO_HZ = 300.0  # below ~100 Hz vocoder effect is barely audible
 F_HI_HZ = 8000.0  # above ~8 kHz mostly noise/sibilance; can be raised
 ENV_CUTOFF_HZ = 30.0  # envelope follower LPF cutoff; lower = smoother but slower attack
 # TODO: replace with asymmetric follower (fast attack ~3 ms, slow release ~100 ms)
@@ -45,6 +46,8 @@ _MIPMAP_SPEC = [
     (24, 1000.0),
     (12, 2000.0),  # level 3: sparsest, fallback for high pitches
 ]
+
+
 
 
 def read_pcm_f32(path: str) -> np.ndarray:
@@ -191,12 +194,12 @@ def causal_rms(x: np.ndarray, fs: int, window_ms: float = 50.0) -> np.ndarray:
         mean_sq[i] = state2
  
     return np.sqrt(mean_sq)
- 
- 
+
+
 def asymmetric_follower(x: np.ndarray,
                         fs: int,
-                        attack_ms: float = 3.0,
-                        release_ms: float = 100.0) -> np.ndarray:
+                        attack_ms: float = 2.0,
+                        release_ms: float = 30.0) -> np.ndarray:
     """
     Causal asymmetric envelope follower.
  
@@ -221,7 +224,7 @@ def asymmetric_follower(x: np.ndarray,
  
     return env
 
-    
+
 def log_band_edges(n_bands: int, f_lo: float, f_hi: float) -> np.ndarray:
     """Return logarithmically spaced band edges.
 
@@ -252,6 +255,9 @@ def main(in_path: str, out_path: str) -> None:
 
     edges: np.ndarray = log_band_edges(N_BANDS, F_LO_HZ, F_HI_HZ)
 
+    rng = np.random.default_rng()
+    white_noise = rng.uniform(low=-1, high=1, size=n)
+
     # butter(order, cutoff, btype, fs) — designs a Butterworth IIR filter.
     # A Butterworth filter has a maximally flat passband (no ripple) and rolls
     # off smoothly outside it. order controls roll-off steepness: order 2 means
@@ -270,27 +276,36 @@ def main(in_path: str, out_path: str) -> None:
     carrier: np.ndarray = make_chord(
         n=n, fs=FS_HZ, freqs=[130.81, 164.81, 196.00], alpha=0.03
     )
-
+    
     # Comb-filter chorus/reverb on the carrier via delay taps.
     # Applied before vocoding so the spatial width is baked into every band.
-    wet: np.ndarray = np.zeros(n, dtype=np.float64)
-    for delay_s, gain in FX_TAPS:
-        d: int = int(delay_s * FS_HZ)
-        if 0 < d < n:
-            wet[d:] += gain * carrier[:-d]
-    carrier = carrier + FX_WET * wet
+    # wet: np.ndarray = np.zeros(n, dtype=np.float64)
+    # for delay_s, gain in FX_TAPS:
+    #     d: int = int(delay_s * FS_HZ)
+    #     if 0 < d < n:
+    #         wet[d:] += gain * carrier[:-d]
+    # carrier = carrier + FX_WET * wet
 
     # ---- filterbank analysis / resynthesis ----
     # TODO: pre-design all BP SOS arrays here (outside the loop) to avoid
     #       redundant filter design on every call; also enables parallelization.
     out: np.ndarray = np.zeros(n, dtype=np.float64)
-    for b in range(N_BANDS):
+    rms_inv:list[float] = []
+    RMS_INV = [1.0076614202676992, 0.9460489898021014, 0.8668215847220266, 0.8235411415894907, 0.8110827996524813, 0.7654611314083096, 0.7491222989739165, 0.6909487799431292, 0.6619996987762434, 0.6138620440581962, 0.5952359269385344, 0.5795490583028692, 0.540725297823205, 0.5104493499638932, 0.48358494826079707, 0.4610298837234944, 0.43212920269497995, 0.4166317055359978, 0.39564795569477507, 0.3759444465944871, 0.35433528153792926, 0.33858061230695213, 0.3236712700162232, 0.30503175526769044, 0.29184839155365466, 0.2753869660814464, 0.26012503462577274, 0.24900865742453943, 0.23557655098045793, 0.22423527150364475, 0.2139284747903463, 0.20079406918471623]
+
+    # for b in range(N_BANDS):
+    for i, b in enumerate(tqdm(range(N_BANDS))):
         f1: float = float(edges[b])
         f2: float = float(edges[b + 1])
         if f2 >= FS_HZ / 2:
             f2 = FS_HZ / 2 - 1.0  # clamp to Nyquist
         if f1 >= f2:
             continue
+
+        print([f1,f2])
+        # continue
+        
+        
 
         # 1. Bandpass the modulator (voice) to isolate this frequency slice.
         #    btype="band" makes butter() design a bandpass filter with
@@ -304,6 +319,12 @@ def main(in_path: str, out_path: str) -> None:
         # each output sample depends only on current and past inputs, so it introduces
         # group delay. For offline use sosfiltfilt() would give zero phase instead.
         band: np.ndarray = sosfilt(bp_sos, x)
+        
+        white_noise_band: np.ndarray = sosfilt(bp_sos, white_noise)
+        rms = np.sqrt(np.mean(white_noise_band**2))
+        print("rms and inv rms",rms,1/rms)
+        rms_inv.append(1/rms)
+        
 
         # 2(old). Envelope follower: full-wave rectify then smooth with LPF.
         #    The *128 scalar compensates for energy loss from narrow bandpassing;
@@ -336,14 +357,31 @@ def main(in_path: str, out_path: str) -> None:
         #    band produces x^2 content at 200 Hz; one pole barely attenuates it, two poles
         #    largely remove it). gain is now an array not a scalar so it adjusts over time
         #    as band energy shifts, replacing the fixed *128 magic number entirely.
-        # env: np.ndarray = asymmetric_follower(np.abs(band), FS_HZ) * 128
-        carrier_rms: np.ndarray = causal_rms(carrier_band, FS_HZ) + 1e-9
-        band_rms:    np.ndarray = causal_rms(band,          FS_HZ) + 1e-9
-        env_gain:    np.ndarray = band_rms / carrier_rms   # time-varying, shape (n,)
-        env: np.ndarray = asymmetric_follower(np.abs(band), FS_HZ) * env_gain
+        # carrier_rms: np.ndarray = causal_rms(carrier_band, FS_HZ) + 1e-9
+        # band_rms:    np.ndarray = causal_rms(band,          FS_HZ) + 1e-9
+        # env_gain:    np.ndarray = band_rms / carrier_rms   # time-varying, shape (n,)
+        env_gain = 128
+        gain_x = (.5/31)*i + .7
+        # gain_x = 1
+        env: np.ndarray = asymmetric_follower(np.abs(band), FS_HZ)
+        print("env avg std",np.mean(env),np.std(env))
 
         # 4. Modulate carrier energy by the input envelope and accumulate.
-        out += carrier_band * env
+        # out += carrier_band * np.sqrt(env) * env_gain * gain_x
+        print("gain", env_gain * gain_x * RMS_INV[i])
+        out += carrier_band * np.sqrt(env) * env_gain * gain_x * RMS_INV[i]
+    bp_sos: np.ndarray = butter(
+            BP_ORDER, [5_000, 10_000], btype="band", fs=FS_HZ, output="sos"
+        )
+    band: np.ndarray = sosfilt(bp_sos, x)
+    env: np.ndarray = asymmetric_follower(np.abs(band), FS_HZ)
+    print("white noise avg std",np.mean(white_noise),np.std(white_noise))
+    carrier_band: np.ndarray = sosfilt(bp_sos, white_noise)
+    out += carrier_band * np.sqrt(env)
+    
+    # print("pre_noram rms_inv", rms_inv)
+    rms_inv = (np.array(rms_inv)/np.average(rms_inv)/2).tolist()
+    print("post_noram rms_inv", rms_inv)
 
     # Final peak normalization + output gain.
     peak = np.max(np.abs(out))
