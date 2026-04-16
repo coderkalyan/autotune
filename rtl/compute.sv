@@ -164,6 +164,7 @@ module compute #(
   // Note Selection / Shift ratio
   // ----------------------------------------------------------------
   note_selection iNS (
+      .any_note_pressed(|notes)
       .actual_lag(pitch_period),
       .target_lag(target_lag),
       .shift_ratio(pitch_factor_recip),
