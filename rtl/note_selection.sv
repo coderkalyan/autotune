@@ -2,6 +2,7 @@ import global_enums::*;
 `include "fixed.sv"
 
 module note_selection (
+    input any_note_pressed,
     input [9:0] actual_lag,
     input [9:0] target_lag,
     input mode_t mode,
@@ -66,8 +67,8 @@ assign shift_ratio = fixed_mul(target_fixed, reciprocal);
 always_comb begin
     case (mode)
         PASSTHROUGH: target_eff = actual_eff;
-        AUTOTUNE: target_eff = nearest_note;
-        VOCODE: target_eff = target_sat;
+        AUTOTUNE: target_eff = any_note_pressed ? target_sat : nearest_note;
+        // VOCODE: target_eff = target_sat;
         default: target_eff = actual_eff; // default to passthrough
     endcase
 end
