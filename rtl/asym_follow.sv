@@ -43,8 +43,12 @@ module asym_follow #(
     y[n] = α[n] * x[n] + (1 - α[n]) * y[n-1]
 
     */
-  // 32-bit wide, no reset — BRAM inference.
+  // 32-bit wide, no reset — BRAM inference. Initial zero keeps sim from
+  // starting with X (Quartus honors initial for M9K inference too).
   logic [31:0] y_state[BANKS];
+  initial begin
+    for (int i = 0; i < BANKS; i++) y_state[i] = '0;
+  end
 
   // Stage 0 → Stage 1: synchronous BRAM read + input capture
   logic              s1_valid;
