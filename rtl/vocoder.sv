@@ -68,6 +68,16 @@ module vocoder #(
 
   assign o_vocode_bands = bandpass_o_data[0:31];
 
+  logic [26:0] radical;
+  logic [13:0] sqrt_out;
+  sqrt sqrt (
+    .radical(radical),
+    .q(sqrt_out),
+    .remainder()
+    );
+
+  assign radical = bandpass_o_data[bank] << 3;
+
   state_t state;
   logic [6:0] note;
   fixed_t sample;
@@ -147,7 +157,7 @@ module vocoder #(
           end
         end
         VOCODE: begin
-          sample <= sample + fnorm_mul((bandpass_o_data[bank] << 3), bandpass_o_data[bank+BANKS]);
+          sample <= sample + fnorm_mul(fnorm_t'(sqrt_out << 12), bandpass_o_data[bank+BANKS]);
           bank <= bank + 1;
 
           if (bank == (BANKS - 1)) begin
