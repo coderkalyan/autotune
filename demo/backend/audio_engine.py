@@ -9,17 +9,27 @@ class AudioEngine:
     def __init__(self) -> None:
         self._lock = threading.Lock()
         self._stream: sd.OutputStream | None = None
-        self._data = None          # numpy array of audio samples
+        self._data = None          # numpy array (instrumental)
+        self._vocals = None        # numpy array (optional vocal stem)
+        self._vocals_volume: float = 0.3
         self._samplerate: int = 48000
         self._cursor: int = 0      # current read position in samples
         self._playing = False
-        self._start_wall: float = 0.0  # wall time when play started (for position tracking)
+        self._start_wall: float = 0.0
 
-    def play(self, wav_path: str) -> None:
+    def play(self, wav_path: str, vocals_path: str | None = None, vocals_volume: float = 0.3) -> None:
         self.stop()
         data, samplerate = sf.read(wav_path, dtype="float32", always_2d=True)
+        vocals = None
+        if vocals_path:
+            try:
+                vocals, _ = sf.read(vocals_path, dtype="float32", always_2d=True)
+            except Exception:
+                vocals = None
         with self._lock:
             self._data = data
+            self._vocals = vocals
+            self._vocals_volume = vocals_volume
             self._samplerate = samplerate
             self._cursor = 0
             self._playing = True
@@ -46,6 +56,11 @@ class AudioEngine:
                 return
             chunk = min(frames, remaining)
             outdata[:chunk] = self._data[self._cursor : self._cursor + chunk]
+            if self._vocals is not None:
+                vlen = len(self._vocals)
+                vchunk = min(chunk, max(0, vlen - self._cursor))
+                if vchunk > 0:
+                    outdata[:vchunk] += self._vocals[self._cursor : self._cursor + vchunk] * self._vocals_volume
             if chunk < frames:
                 outdata[chunk:] = 0
             self._cursor += chunk
@@ -66,6 +81,7 @@ class AudioEngine:
             self._stream = None
         with self._lock:
             self._data = None
+            self._vocals = None
             self._cursor = 0
 
     def get_position_ms(self) -> float:
@@ -73,6 +89,10 @@ class AudioEngine:
             if not self._playing or self._samplerate == 0:
                 return 0.0
             return (self._cursor / self._samplerate) * 1000.0
+
+    def set_vocals_volume(self, volume: float) -> None:
+        with self._lock:
+            self._vocals_volume = max(0.0, min(1.0, volume))
 
     @property
     def is_playing(self) -> bool:
