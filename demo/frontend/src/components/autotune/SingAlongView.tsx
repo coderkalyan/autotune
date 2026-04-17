@@ -1,19 +1,28 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { Square } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Slider } from "@/components/ui/slider"
 import { PitchGraph } from "@/components/graph/PitchGraph"
 import { API_BASE } from "@/config"
-import type { PitchReading, SongEntry } from "@/types"
+import type { LyricLine, PitchReading, SongEntry } from "@/types"
 
 interface Props {
   readings: PitchReading[]
   latest?: PitchReading | null
 }
 
-export function SingAlongView({ readings }: Props) {
+export function SingAlongView({ readings, latest }: Props) {
   const [songs, setSongs] = useState<SongEntry[]>([])
   const [activeSong, setActiveSong] = useState<SongEntry | null>(null)
   const [loading, setLoading] = useState(true)
+  const [lyrics, setLyrics] = useState<LyricLine[]>([])
+  const [vocalsVolume, setVocalsVolume] = useState(30)
+
+  const handleVolumeChange = useCallback((value: number[]) => {
+    const v = value[0]
+    setVocalsVolume(v)
+    fetch(`${API_BASE}/songs/vocals_volume?volume=${v / 100}`, { method: "POST" }).catch(() => {})
+  }, [])
 
   useEffect(() => {
     fetch(`${API_BASE}/songs`)
@@ -24,13 +33,18 @@ export function SingAlongView({ readings }: Props) {
   }, [])
 
   async function handleSelect(song: SongEntry) {
-    await fetch(`${API_BASE}/songs/${song.id}/play`, { method: "POST" })
+    const [, lyricsData] = await Promise.all([
+      fetch(`${API_BASE}/songs/${song.id}/play`, { method: "POST" }),
+      fetch(`${API_BASE}/songs/${song.id}/lyrics`).then((r) => r.json()).catch(() => []),
+    ])
+    setLyrics(lyricsData)
     setActiveSong(song)
   }
 
   async function handleStop() {
     await fetch(`${API_BASE}/songs/stop`, { method: "POST" })
     setActiveSong(null)
+    setLyrics([])
   }
 
   // Stop audio when this view unmounts (mode switch or back navigation)
@@ -69,10 +83,26 @@ export function SingAlongView({ readings }: Props) {
             <p className="truncate text-sm font-semibold leading-tight">{activeSong.title}</p>
             <p className="truncate text-xs text-muted-foreground">{activeSong.artist}</p>
           </div>
+          <div className="flex items-center gap-2 w-28">
+            <span className="text-xs text-muted-foreground shrink-0">Guide</span>
+            <Slider
+              value={[vocalsVolume]}
+              onValueChange={handleVolumeChange}
+              min={0}
+              max={100}
+              step={5}
+              className="w-full"
+            />
+          </div>
           <Button variant="ghost" size="icon" onClick={handleStop} title="Stop">
             <Square className="h-4 w-4" />
           </Button>
         </div>
+
+        {/* Lyrics */}
+        {lyrics.length > 0 && (
+          <KaraokeDisplay lyrics={lyrics} positionMs={latest?.song_position_ms ?? null} />
+        )}
 
         {/* Pitch graph */}
         <div className="min-h-0 flex-1 p-4">
@@ -115,6 +145,64 @@ export function SingAlongView({ readings }: Props) {
             ))}
           </div>
         </div>
+      )}
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+
+interface KaraokeProps {
+  lyrics: LyricLine[]
+  positionMs: number | null
+}
+
+function KaraokeDisplay({ lyrics, positionMs }: KaraokeProps) {
+  const pos = positionMs ?? 0
+
+  // Find current line index
+  const lineIdx = useMemo(() => {
+    let idx = -1
+    for (let i = 0; i < lyrics.length; i++) {
+      if (lyrics[i].timestamp_ms <= pos) idx = i
+      else break
+    }
+    return idx
+  }, [lyrics, pos])
+
+  const line = lineIdx >= 0 ? lyrics[lineIdx] : null
+
+  return (
+    <div className="shrink-0 flex items-center justify-center min-h-16 px-6 py-2">
+      {line && (
+        line.words ? (
+          <p className="text-2xl font-semibold text-center tracking-wide leading-snug">
+            {line.words.map((w, i) => {
+              const nextWord = line.words![i + 1]
+              const wordEnd = w.end_ms ?? (nextWord?.timestamp_ms ?? (line.timestamp_ms + 5000))
+              const active = pos >= w.timestamp_ms && pos < wordEnd
+              const past = pos >= wordEnd
+              return (
+                <span
+                  key={i}
+                  className={
+                    active
+                      ? "text-primary transition-colors duration-75"
+                      : past
+                      ? "text-muted-foreground transition-colors duration-150"
+                      : "text-foreground/40 transition-colors duration-150"
+                  }
+                >
+                  {w.text}{" "}
+                </span>
+              )
+            })}
+          </p>
+        ) : (
+          <p key={line.timestamp_ms} className="text-2xl font-semibold text-center tracking-wide animate-in fade-in duration-300">
+            {line.text}
+          </p>
+        )
       )}
     </div>
   )

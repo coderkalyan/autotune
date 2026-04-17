@@ -10,6 +10,8 @@ class SongManager:
         self._current_song_id: str | None = None
         self._timestamps: list[float] = []
         self._freqs: list[float] = []
+        self._lyric_times: list[float] = []
+        self._lyric_texts: list[str] = []
 
     # ------------------------------------------------------------------
     # Song catalogue
@@ -46,6 +48,9 @@ class SongManager:
     def cover_path(self, song_id: str) -> str:
         return os.path.join(self.song_dir(song_id), "cover.jpg")
 
+    def vocals_path(self, song_id: str) -> str:
+        return os.path.join(self.song_dir(song_id), "vocals.wav")
+
     # ------------------------------------------------------------------
     # Pitch track
     # ------------------------------------------------------------------
@@ -61,12 +66,26 @@ class SongManager:
                 freqs.append(float(row["frequency_hz"]))
         self._timestamps = timestamps
         self._freqs = freqs
+
+        lyric_times: list[float] = []
+        lyric_texts: list[str] = []
+        lyrics_path = os.path.join(self.song_dir(song_id), "lyrics.json")
+        if os.path.isfile(lyrics_path):
+            with open(lyrics_path) as f:
+                for entry in json.load(f):
+                    lyric_times.append(float(entry["timestamp_ms"]))
+                    lyric_texts.append(str(entry["text"]))
+        self._lyric_times = lyric_times
+        self._lyric_texts = lyric_texts
+
         self._current_song_id = song_id
 
     def unload(self) -> None:
         self._current_song_id = None
         self._timestamps = []
         self._freqs = []
+        self._lyric_times = []
+        self._lyric_texts = []
 
     def get_target_hz(self, position_ms: float) -> float | None:
         if not self._timestamps:
@@ -76,6 +95,14 @@ class SongManager:
         idx = max(0, min(idx, len(self._timestamps) - 1))
         freq = self._freqs[idx]
         return freq if freq > 0.0 else None
+
+    def get_current_lyric(self, position_ms: float) -> str | None:
+        if not self._lyric_times:
+            return None
+        idx = bisect.bisect_right(self._lyric_times, position_ms) - 1
+        if idx < 0:
+            return None
+        return self._lyric_texts[idx] or None
 
     @property
     def current_song_id(self) -> str | None:
