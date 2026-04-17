@@ -19,7 +19,7 @@ module vocoder #(
     input  fixed_t         i_data,
     input  wire    [127:0] i_notes,
     output fixed_t         o_data,
-    output fixed_t         o_vocode_bands[BANKS],
+    output fnorm_t         o_vocode_bands[BANKS],
     output logic           o_valid
 );
   audio_t rom[N];
@@ -48,7 +48,7 @@ module vocoder #(
   fixed_t bandpass_i_data;
   fixed_t bandpass_o_data [BANKS * 2];
   logic [5:0] bandpass_bank_start, bandpass_bank_end;
-  bandpass_filterbank #(
+  bandpass_sosfilt_bank #(
       .BANKS(BANKS * 2)
   ) bandpass (
       .clk(clk),
@@ -154,7 +154,7 @@ module vocoder #(
         end
         OUTPUT: begin
           state   <= IDLE;
-          o_data  <= sample;
+          o_data  <= fixed_t'(sample << 10);
           o_valid <= 1'b1;
         end
         default: state <= IDLE;
