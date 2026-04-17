@@ -147,7 +147,7 @@ module vocoder #(
           end
         end
         VOCODE: begin
-          sample <= sample + fnorm_mul((bandpass_o_data[bank] << 16), bandpass_o_data[bank+BANKS]);
+          sample <= sample + fnorm_mul((bandpass_o_data[bank] << 3), bandpass_o_data[bank+BANKS]);
           bank <= bank + 1;
 
           if (bank == (BANKS - 1)) begin
