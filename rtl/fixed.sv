@@ -7,6 +7,9 @@ typedef logic signed [26:0] fixed_t;
 // Q32.16 fixed point representation.
 typedef logic signed [47:0] fmac_t;
 
+// Q3.24 fixed point representation.
+typedef logic signed [26:0] fnorm_t;
+
 // 16 bit signed integer audio.
 typedef logic signed [15:0] audio_t;
 
@@ -18,6 +21,20 @@ endfunction
 function automatic fixed_t fixed_mul(input fixed_t a, input fixed_t b);
     logic signed [53:0] product = fixed_mul_raw(a, b);
     return fixed_t'(product[16 +: 27]);
+endfunction
+
+function automatic logic signed [53:0] fnorm_mul_raw(input fnorm_t a, input fnorm_t b);
+    logic signed [53:0] product = a * b;
+    return product;
+endfunction
+
+function automatic fnorm_t fnorm_mul_trunc(input logic signed [53:0] a);
+    return fnorm_t'(a[24 +: 27]);
+endfunction
+
+function automatic fnorm_t fnorm_mul(input fnorm_t a, input fnorm_t b);
+    logic signed [53:0] product = fnorm_mul_raw(a, b);
+    return fnorm_mul_trunc(product);
 endfunction
 
 // Quartus dislikes the existance of functions on real types, even
