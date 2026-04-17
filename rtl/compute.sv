@@ -9,10 +9,10 @@ module compute #(
     input wire clk,
     input wire rst,
     input wire adc_en,
-    input wire audio_t i_ldata,
-    input wire audio_t i_rdata,
+    input audio_t i_ldata,
+    input audio_t i_rdata,
     input wire i_rxd,
-    input wire fixed_t test_pitch_factor,   // for testing only, will be driven by SW in actual implementation
+    input fixed_t test_pitch_factor,   // for testing only, will be driven by SW in actual implementation
     output fixed_t o_lf,
     output fixed_t o_rf,
     output logic o_valid,
