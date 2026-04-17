@@ -28,13 +28,9 @@ function automatic logic signed [53:0] fnorm_mul_raw(input fnorm_t a, input fnor
     return product;
 endfunction
 
-function automatic fnorm_t fnorm_mul_trunc(input logic signed [53:0] a);
-    return fnorm_t'(a[24 +: 27]);
-endfunction
-
 function automatic fnorm_t fnorm_mul(input fnorm_t a, input fnorm_t b);
     logic signed [53:0] product = fnorm_mul_raw(a, b);
-    return fnorm_mul_trunc(product);
+    return fnorm_t'(product[24 +: 27]);
 endfunction
 
 // Quartus dislikes the existance of functions on real types, even
@@ -61,6 +57,10 @@ function automatic audio_t fixed_ftoa(input fixed_t x);
 endfunction
 
 function automatic fixed_t fixed_abs(input fixed_t x);
+  return x[26] ? -x : x;
+endfunction
+
+function automatic fnorm_t fnorm_abs(input fnorm_t x);
   return x[26] ? -x : x;
 endfunction
 

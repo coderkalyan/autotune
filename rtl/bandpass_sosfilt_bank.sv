@@ -23,7 +23,7 @@ module bandpass_sosfilt_bank #(
     input  wire                  i_asym_follow,
     input  wire    [BBITS - 1:0] i_bank_start,
     input  wire    [BBITS - 1:0] i_bank_end,
-    output fixed_t               o_data       [BANKS],
+    output fnorm_t               o_data       [BANKS],
     output wire                  o_valid
 );
   localparam int BANKW = (BANKS <= 1) ? 1 : $clog2(BANKS);
@@ -32,16 +32,16 @@ module bandpass_sosfilt_bank #(
   logic [31:0] B0[BANKS], B1[BANKS], B2[BANKS], A1[BANKS], A2[BANKS];
   logic [31:0] C0[BANKS], C1[BANKS], C2[BANKS], D1[BANKS], D2[BANKS];
   initial begin
-    $readmemh("bandpass_b0.mem", B0);
-    $readmemh("bandpass_b1.mem", B1);
-    $readmemh("bandpass_b2.mem", B2);
-    $readmemh("bandpass_a1.mem", A1);
-    $readmemh("bandpass_a2.mem", A2);
-    $readmemh("bandpass_c0.mem", C0);
-    $readmemh("bandpass_c1.mem", C1);
-    $readmemh("bandpass_c2.mem", C2);
-    $readmemh("bandpass_d1.mem", D1);
-    $readmemh("bandpass_d2.mem", D2);
+    $readmemh("vocoder_bp_s0_b0.mem", B0);
+    $readmemh("vocoder_bp_s0_b1.mem", B1);
+    $readmemh("vocoder_bp_s0_b2.mem", B2);
+    $readmemh("vocoder_bp_s0_a1.mem", A1);
+    $readmemh("vocoder_bp_s0_a2.mem", A2);
+    $readmemh("vocoder_bp_s1_b0.mem", C0);
+    $readmemh("vocoder_bp_s1_b1.mem", C1);
+    $readmemh("vocoder_bp_s1_b2.mem", C2);
+    $readmemh("vocoder_bp_s1_a1.mem", D1);
+    $readmemh("vocoder_bp_s1_a2.mem", D2);
   end
 
   // (Optional) asymmetric envelope follower(s) are applied AFTER the bandpass
@@ -57,33 +57,33 @@ module bandpass_sosfilt_bank #(
   } state_t;
   state_t             state;
 
-  fixed_t             x_hold;
+  fnorm_t             x_hold;
   logic   [BANKW-1:0] bank_idx;
   logic               inflight;
 
   // Selected coefficients for current bank
-  fixed_t i_b0, i_b1, i_b2, i_a1, i_a2;
-  fixed_t i_c0, i_c1, i_c2, i_d1, i_d2;
+  fnorm_t i_b0, i_b1, i_b2, i_a1, i_a2;
+  fnorm_t i_c0, i_c1, i_c2, i_d1, i_d2;
 
   always_comb begin
-    i_b0 = fixed_t'(B0[bank_idx][26:0]);
-    i_b1 = fixed_t'(B1[bank_idx][26:0]);
-    i_b2 = fixed_t'(B2[bank_idx][26:0]);
-    i_a1 = fixed_t'(A1[bank_idx][26:0]);
-    i_a2 = fixed_t'(A2[bank_idx][26:0]);
+    i_b0 = fnorm_t'(B0[bank_idx][26:0]);
+    i_b1 = fnorm_t'(B1[bank_idx][26:0]);
+    i_b2 = fnorm_t'(B2[bank_idx][26:0]);
+    i_a1 = fnorm_t'(A1[bank_idx][26:0]);
+    i_a2 = fnorm_t'(A2[bank_idx][26:0]);
 
-    i_c0 = fixed_t'(C0[bank_idx][26:0]);
-    i_c1 = fixed_t'(C1[bank_idx][26:0]);
-    i_c2 = fixed_t'(C2[bank_idx][26:0]);
-    i_d1 = fixed_t'(D1[bank_idx][26:0]);
-    i_d2 = fixed_t'(D2[bank_idx][26:0]);
+    i_c0 = fnorm_t'(C0[bank_idx][26:0]);
+    i_c1 = fnorm_t'(C1[bank_idx][26:0]);
+    i_c2 = fnorm_t'(C2[bank_idx][26:0]);
+    i_d1 = fnorm_t'(D1[bank_idx][26:0]);
+    i_d2 = fnorm_t'(D2[bank_idx][26:0]);
   end
 
   // ----------------------------------------------------------------
   // Single shared filter instance (internal state is banked by i_bank)
   // ----------------------------------------------------------------
   logic   filt_i_valid;
-  fixed_t filt_o_data;
+  fnorm_t filt_o_data;
   logic   filt_o_valid;
 
   bandpass_sosfilt #(
@@ -113,36 +113,11 @@ module bandpass_sosfilt_bank #(
   // Optional post-processing: time-multiplexed asymmetric follower
   // (single datapath, banked internal state selected by i_bank)
   // ----------------------------------------------------------------
-  fixed_t post_o_data;
+  fnorm_t post_o_data;
   wire    post_o_valid;
 
-  fixed_t asym_o_data;
+  fnorm_t asym_o_data;
   wire    asym_o_valid;
-
-  // generate
-  //     if (ASYM_FOLLOW) begin : gen_asym_follow
-  //         asym_follow #(
-  //             .BANKS  (BANKS),
-  //             .BANK_W (BANKW)
-  //         ) u_asym_follow (
-  //             .clk     (clk),
-  //             .rst     (rst),
-  //             .i_data  (filt_o_data),
-  //             .i_valid (filt_o_valid),
-  //             .i_bank  (bank_idx),
-  //             .o_data  (asym_o_data),
-  //             .o_valid (asym_o_valid)
-  //         );
-  //
-  //         assign post_o_data  = asym_o_data;
-  //         assign post_o_valid = asym_o_valid;
-  //     end else begin : gen_no_asym_follow
-  //         assign asym_o_data   = '0;
-  //         assign asym_o_valid  = 1'b0;
-  //         assign post_o_data   = filt_o_data;
-  //         assign post_o_valid  = filt_o_valid;
-  //     end
-  // endgenerate
 
   asym_follow #(
       .BANKS (BANKS),
@@ -150,7 +125,7 @@ module bandpass_sosfilt_bank #(
   ) u_asym_follow (
       .clk    (clk),
       .rst    (rst),
-      .i_data (fixed_abs(filt_o_data)),
+      .i_data (fnorm_abs(filt_o_data)),
       .i_valid(filt_o_valid),
       .i_bank (bank_idx),
       .o_data (asym_o_data),
@@ -195,7 +170,7 @@ module bandpass_sosfilt_bank #(
         WAITING: begin
           inflight <= 1'b0;
           if (i_valid) begin
-            x_hold   <= i_data;
+            x_hold   <= fnorm_t'(i_data >> 10);
             bank_idx <= i_bank_start;
             state    <= CALCULATING;
           end

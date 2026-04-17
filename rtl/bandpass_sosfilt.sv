@@ -13,25 +13,25 @@ module bandpass_sosfilt #(
 ) (
     input  wire    clk,
     input  wire    rst,
-    input  fixed_t i_data,
+    input  fnorm_t i_data,
     input  wire    i_valid,
     input  logic [BANK_W-1:0] i_bank,
     // Stage 0 (x -> w) coefficients
-    input  fixed_t i_b0,
-    input  fixed_t i_b1,
-    input  fixed_t i_b2,
-    input  fixed_t i_a1,
-    input  fixed_t i_a2,
+    input  fnorm_t i_b0,
+    input  fnorm_t i_b1,
+    input  fnorm_t i_b2,
+    input  fnorm_t i_a1,
+    input  fnorm_t i_a2,
     // Stage 1 (w -> y) coefficients
-    input  fixed_t i_c0,
-    input  fixed_t i_c1,
-    input  fixed_t i_c2,
-    input  fixed_t i_d1,
-    input  fixed_t i_d2,
-    output fixed_t o_data,
+    input  fnorm_t i_c0,
+    input  fnorm_t i_c1,
+    input  fnorm_t i_c2,
+    input  fnorm_t i_d1,
+    input  fnorm_t i_d2,
+    output fnorm_t o_data,
     output wire    o_valid
 );
-    fixed_t w;
+    fnorm_t w;
     logic   w_valid;
 
     sos_iir2 #(
