@@ -48,8 +48,12 @@ module vocoder #(
   fixed_t bandpass_i_data;
   fnorm_t bandpass_o_data [BANKS * 2];
   logic [5:0] bandpass_bank_start, bandpass_bank_end;
+  // 2x state banks (voice 0..31 and carrier 32..63 have independent
+  // histories) but share one set of 32 coefficient ROMs — the low 5 bits
+  // of bank_cnt select the coef set inside the filterbank.
   bandpass_filterbank #(
-      .BANKS(BANKS * 2)
+      .BANKS(BANKS * 2),
+      .COEF_BANKS(BANKS)
   ) bandpass (
       .clk(clk),
       .rst(rst),
@@ -107,7 +111,7 @@ module vocoder #(
           // Run carrier synthesis until complete.
           if (note != 7'd127) begin
             if (i_notes[note]) begin
-              sample <= sample + (fixed_atof(rom[indices[note-NOTE_OFFSET]]) >> 7);
+              sample <= sample + (fixed_atof(rom[indices[note-NOTE_OFFSET]]));
               indices[note - NOTE_OFFSET] <= (indices[note - NOTE_OFFSET] == idx_rom[note - NOTE_OFFSET + 1] - 1) ? idx_rom[note - NOTE_OFFSET] : indices[note - NOTE_OFFSET] + 1;
             end
 
@@ -122,8 +126,6 @@ module vocoder #(
           // If both bandpass and carrier synthesis are complete, continue.
           if ((note == 7'd127) && (bandpass_done)) begin
             state               <= CARRIER_BANDPASS;
-            // carrier          <= sample;
-            // carrier_valid    <= 1'b1;
 
             bandpass_i_data     <= sample;
             bandpass_i_valid    <= 1'b1;
@@ -145,7 +147,7 @@ module vocoder #(
           end
         end
         VOCODE: begin
-          sample <= sample + fixed_mul((bandpass_o_data[bank] << 7), bandpass_o_data[bank+BANKS]);
+          sample <= sample + fnorm_mul((bandpass_o_data[bank] << 16), bandpass_o_data[bank+BANKS]);
           bank <= bank + 1;
 
           if (bank == (BANKS - 1)) begin
@@ -154,7 +156,7 @@ module vocoder #(
         end
         OUTPUT: begin
           state   <= IDLE;
-          o_data  <= fixed_t'(sample << 10);
+          o_data  <= fixed_t'(sample);
           o_valid <= 1'b1;
         end
         default: state <= IDLE;
