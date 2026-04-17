@@ -48,7 +48,7 @@ module vocoder #(
   fixed_t bandpass_i_data;
   fixed_t bandpass_o_data [BANKS * 2];
   logic [5:0] bandpass_bank_start, bandpass_bank_end;
-  bandpass_sosfilt_bank #(
+  bandpass_filterbank #(
       .BANKS(BANKS * 2)
   ) bandpass (
       .clk(clk),
