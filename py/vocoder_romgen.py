@@ -60,6 +60,7 @@ def design_band_sos(
     i: int, edges: np.ndarray, fs: int = FS_HZ, order: int = BP_ORDER
 ) -> np.ndarray | None:
     f1, f2 = band_edge_pair(i, edges, fs)
+    print(f1, f2)
     if f1 >= f2:
         return None
     return butter(order, [f1, f2], btype="band", fs=fs, output="sos")

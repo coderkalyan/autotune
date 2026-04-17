@@ -6,13 +6,13 @@ module compute #(
     parameter WBITS = $clog2(WINDOW_SIZE),
     parameter TESTBENCH = 0
 ) (
-    input clk,
-    input rst,
-    input adc_en,
-    input audio_t i_ldata,
-    input audio_t i_rdata,
-    input i_rxd,
-    input fixed_t test_pitch_factor,   // for testing only, will be driven by SW in actual implementation
+    input wire clk,
+    input wire rst,
+    input wire adc_en,
+    input wire audio_t i_ldata,
+    input wire audio_t i_rdata,
+    input wire i_rxd,
+    input wire fixed_t test_pitch_factor,   // for testing only, will be driven by SW in actual implementation
     output fixed_t o_lf,
     output fixed_t o_rf,
     output logic o_valid,
@@ -22,12 +22,12 @@ module compute #(
     output logic o_vad_active,
     output logic o_vad_voiced,
     output mode_t o_mode,
-    output [6:0] HEX0,
-    output [6:0] HEX1,
-    output [6:0] HEX2,
-    output [6:0] HEX3,
-    output [6:0] HEX4,
-    output [6:0] HEX5,
+    output logic [6:0] HEX0,
+    output logic [6:0] HEX1,
+    output logic [6:0] HEX2,
+    output logic [6:0] HEX3,
+    output logic [6:0] HEX4,
+    output logic [6:0] HEX5,
     output logic [32*27-1:0] o_vocode_bands_flat
 );
 
@@ -164,7 +164,7 @@ module compute #(
   // Note Selection / Shift ratio
   // ----------------------------------------------------------------
   note_selection iNS (
-      .any_note_pressed(|notes)
+      .any_note_pressed(|notes),
       .actual_lag(pitch_period),
       .target_lag(target_lag),
       .shift_ratio(pitch_factor_recip),

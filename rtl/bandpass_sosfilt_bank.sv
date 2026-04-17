@@ -114,10 +114,10 @@ module bandpass_sosfilt_bank #(
   // (single datapath, banked internal state selected by i_bank)
   // ----------------------------------------------------------------
   fnorm_t post_o_data;
-  wire    post_o_valid;
+  logic    post_o_valid;
 
   fnorm_t asym_o_data;
-  wire    asym_o_valid;
+  logic    asym_o_valid;
 
   asym_follow #(
       .BANKS (BANKS),
