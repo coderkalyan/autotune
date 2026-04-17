@@ -204,7 +204,7 @@ module compute #(
 
   fixed_t vocode_data;
   logic   vocode_valid;
-  fixed_t vocode_bands [32];
+  fnorm_t vocode_bands [32];
   vocoder vocoder (
       .clk(clk),
       .rst(rst),
