@@ -18,14 +18,20 @@ module bandpass_filterbank #(
 ) (
     input  wire                  clk,
     input  wire                  rst,
-    input  fnorm_t               i_data,
+    input  fixed_t               i_data,
     input  wire                  i_valid,
     input  wire                  i_asym_follow,
     input  wire    [BBITS - 1:0] i_bank_start,
     input  wire    [BBITS - 1:0] i_bank_end,
-    output fixed_t               o_data       [BANKS],
+    output fnorm_t               o_data       [BANKS],
     output wire                  o_valid
 );
+    // Port interface matches bandpass_sosfilt_bank (fixed_t in, fnorm_t out);
+    // internal math is Q3.24. Reinterpret i_data bits as fnorm_t — scale is
+    // not compensated, this path is used only to test the filter + UART
+    // plumbing, not real audio amplitude.
+    fnorm_t i_data_f;
+    assign i_data_f = fnorm_t'(i_data);
   // Coefficient ROMs.
   logic [31:0] B0[BANKS], B1[BANKS], A1[BANKS], A2[BANKS];
   logic [31:0] C0[BANKS], C1[BANKS], D1[BANKS], D2[BANKS];
@@ -66,7 +72,7 @@ module bandpass_filterbank #(
 
   fnorm_t o_s0_data, o_s1_data;
   bandpass_biquad u_biquad (
-      .i_x0    (i_data),
+      .i_x0    (i_data_f),
       .i_x1    (x1_r),
       .i_x2    (x2_r),
       .i_x3    (x3_r),
@@ -96,6 +102,12 @@ module bandpass_filterbank #(
   fnorm_t o_data_r;
   logic   o_valid_r;
 
+  // Only bank 0 is currently implemented. Gate state updates on bank 0
+  // being within the requested [i_bank_start, i_bank_end] range so that
+  // runs targeting other banks (e.g. vocoder's carrier pass at banks 32..63)
+  // do not corrupt bank 0's filter state.
+  wire bank0_active = i_valid && (i_bank_start == '0);
+
   always_ff @(posedge clk) begin
     if (rst) begin
       x1_r <= '0;
@@ -111,13 +123,13 @@ module bandpass_filterbank #(
       o_valid_r <= 1'b0;
     end else begin
       o_valid_r <= i_valid;
-      if (i_valid) begin
+      if (bank0_active) begin
         // Shift x history: x[n-5] <- x[n-4] <- ... <- x[n-1] <- x[n].
         x5_r <= x4_r;
         x4_r <= x3_r;
         x3_r <= x2_r;
         x2_r <= x1_r;
-        x1_r <= i_data;
+        x1_r <= i_data_f;
 
         // Shift y history per stage.
         s0_y2_r <= s0_y1_r;
@@ -131,6 +143,15 @@ module bandpass_filterbank #(
     end
   end
 
-  assign o_valid    = o_valid_r;
-  assign o_data[0]  = fixed_t'(o_data_r);
+  assign o_valid   = o_valid_r;
+  assign o_data[0] = o_data_r;
+
+  // Zero unused bank outputs so upstream consumers don't see X in sim /
+  // floating nets in synth. Only bank 0 is driven by the live filter.
+  genvar bk;
+  generate
+    for (bk = 1; bk < BANKS; bk++) begin : gen_zero_banks
+      assign o_data[bk] = '0;
+    end
+  endgenerate
 endmodule
