@@ -17,6 +17,8 @@ export function usePitchSocket(url: string = WS_URL) {
   // Buffer accumulates between chart updates; flushed every CHART_UPDATE_EVERY messages
   const bufferRef = useRef<PitchReading[]>([])
   const msgCountRef = useRef(0)
+  const lastGoodDetectedRef = useRef<number | null>(null)
+  const lastGoodCorrectedRef = useRef<number | null>(null)
 
   const connect = useCallback(() => {
     if (unmountedRef.current) return
@@ -35,6 +37,19 @@ export function usePitchSocket(url: string = WS_URL) {
     ws.onmessage = (event: MessageEvent) => {
       try {
         const reading = JSON.parse(event.data as string) as PitchReading
+
+        const isVoiced = reading.vad_active === true && reading.vad_voiced === true
+        if (isVoiced && reading.detected_hz !== null) {
+          lastGoodDetectedRef.current = reading.detected_hz
+          lastGoodCorrectedRef.current = reading.corrected_hz
+          reading.detected_held = null
+          reading.corrected_held = null
+        } else {
+          reading.detected_held = lastGoodDetectedRef.current
+          reading.corrected_held = lastGoodCorrectedRef.current
+          reading.detected_hz = null
+          reading.corrected_hz = null
+        }
 
         // Always update tuner strip at full rate
         setLatest(reading)

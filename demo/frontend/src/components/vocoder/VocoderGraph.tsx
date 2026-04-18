@@ -1,3 +1,4 @@
+import { useRef } from "react"
 import { Area, AreaChart, XAxis, YAxis } from "recharts"
 import {
   ChartContainer,
@@ -11,8 +12,9 @@ const F_LO = 300
 const F_HI = 8000
 
 // Pre-compute log-spaced center frequencies for each band
-const BAND_FREQS: number[] = Array.from({ length: N_BANDS }, (_, i) =>
-  F_LO * (F_HI / F_LO) ** (i / (N_BANDS - 1)),
+const BAND_FREQS: number[] = Array.from(
+  { length: N_BANDS },
+  (_, i) => F_LO * (F_HI / F_LO) ** (i / (N_BANDS - 1))
 )
 
 // X-axis tick positions (band indices closest to key frequencies)
@@ -21,8 +23,8 @@ const KEY_TICKS = KEY_FREQS.map((f) =>
   BAND_FREQS.reduce(
     (best, freq, i) =>
       Math.abs(freq - f) < Math.abs(BAND_FREQS[best] - f) ? i : best,
-    0,
-  ),
+    0
+  )
 )
 
 function formatFreq(hz: number): string {
@@ -38,15 +40,24 @@ interface Props {
 }
 
 export function VocoderGraph({ vocodeBands }: Props) {
+  const maxAmplitudeRef = useRef(0)
+
   const data = BAND_FREQS.map((freq, i) => ({
     band: i,
     freq,
     amplitude: vocodeBands ? Math.max(0, vocodeBands[i]) : 0,
   }))
 
+  const currentMax = data.reduce((m, d) => Math.max(m, d.amplitude), 0)
+  if (currentMax > maxAmplitudeRef.current) maxAmplitudeRef.current = currentMax
+  const yMax = maxAmplitudeRef.current || 1
+
   return (
     <ChartContainer config={chartConfig} className="h-full w-full">
-      <AreaChart data={data} margin={{ top: 16, right: 16, bottom: 8, left: 8 }}>
+      <AreaChart
+        data={data}
+        margin={{ top: 16, right: 16, bottom: 8, left: 8 }}
+      >
         <defs>
           <linearGradient id="vocoderFill" x1="0" y1="0" x2="0" y2="1">
             <stop offset="5%" stopColor="var(--chart-3)" stopOpacity={0.6} />
@@ -62,21 +73,35 @@ export function VocoderGraph({ vocodeBands }: Props) {
           tick={{ fontSize: 11 }}
           axisLine={{ stroke: "var(--border)" }}
           tickLine={false}
-          label={{ value: "Frequency (Hz)", position: "insideBottom", offset: -4, fontSize: 11, fill: "var(--muted-foreground)" }}
+          label={{
+            value: "Frequency (Hz)",
+            position: "insideBottom",
+            offset: -4,
+            fontSize: 11,
+            fill: "var(--muted-foreground)",
+          }}
         />
         <YAxis
-          domain={[0, "auto"]}
+          domain={[0, yMax]}
           tick={{ fontSize: 11 }}
           axisLine={{ stroke: "var(--border)" }}
           tickLine={false}
           width={48}
-          label={{ value: "Amplitude", angle: -90, position: "insideLeft", fontSize: 11, fill: "var(--muted-foreground)" }}
+          label={{
+            value: "Amplitude",
+            angle: -90,
+            position: "insideLeft",
+            fontSize: 11,
+            fill: "var(--muted-foreground)",
+          }}
         />
         <ChartTooltip
           content={
             <ChartTooltipContent
               labelFormatter={(_, payload) => {
-                const item = payload?.[0]?.payload as { freq: number } | undefined
+                const item = payload?.[0]?.payload as
+                  | { freq: number }
+                  | undefined
                 return item ? `${item.freq.toFixed(0)} Hz` : ""
               }}
               formatter={(value) =>

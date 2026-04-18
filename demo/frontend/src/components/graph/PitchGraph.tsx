@@ -1,3 +1,4 @@
+import { useMemo } from "react"
 import { Line, LineChart, XAxis, YAxis } from "recharts"
 import {
   ChartContainer,
@@ -57,6 +58,16 @@ interface Props {
 export function PitchGraph({ readings, showTarget = false }: Props) {
   const config = showTarget ? withTargetConfig : baseConfig
 
+  // Last active note = most recent non-null pitch (held when unvoiced, live when voiced)
+  const lastActiveHz = useMemo(() => {
+    for (let i = readings.length - 1; i >= 0; i--) {
+      const r = readings[i]
+      const val = r.detected_held ?? r.detected_hz
+      if (val !== null && val !== undefined) return val
+    }
+    return null
+  }, [readings])
+
   const minTs = readings.length > 0 ? readings[0].timestamp_ms : 0
   const maxTs =
     readings.length > 0 ? readings[readings.length - 1].timestamp_ms : 1000
@@ -65,6 +76,17 @@ export function PitchGraph({ readings, showTarget = false }: Props) {
   const domainMax = maxTs + range * (0.15 / 0.85)
 
   return (
+    <div className="relative h-full w-full">
+    {lastActiveHz !== null && (
+      <div className="absolute top-2 z-10 flex items-baseline gap-1.5" style={{ left: 96 }}>
+        <span className="font-mono text-sm font-semibold" style={{ color: "var(--chart-1)" }}>
+          {hzToNoteName(lastActiveHz)}
+        </span>
+        <span className="font-mono text-xs text-muted-foreground">
+          {lastActiveHz.toFixed(1)} Hz
+        </span>
+      </div>
+    )}
     <ChartContainer config={config} className="h-full w-full">
       <LineChart
         data={readings}
@@ -109,12 +131,34 @@ export function PitchGraph({ readings, showTarget = false }: Props) {
           connectNulls={false}
         />
         <Line
+          dataKey="detected_held"
+          stroke="var(--color-detected_hz)"
+          strokeWidth={2}
+          strokeDasharray="4 4"
+          strokeOpacity={0.45}
+          dot={false}
+          isAnimationActive={false}
+          connectNulls={true}
+          legendType="none"
+        />
+        <Line
           dataKey="corrected_hz"
           stroke="var(--color-corrected_hz)"
           strokeWidth={2}
           dot={false}
           isAnimationActive={false}
           connectNulls={false}
+        />
+        <Line
+          dataKey="corrected_held"
+          stroke="var(--color-corrected_hz)"
+          strokeWidth={2}
+          strokeDasharray="4 4"
+          strokeOpacity={0.45}
+          dot={false}
+          isAnimationActive={false}
+          connectNulls={true}
+          legendType="none"
         />
         {showTarget && (
           <Line
@@ -129,5 +173,6 @@ export function PitchGraph({ readings, showTarget = false }: Props) {
         )}
       </LineChart>
     </ChartContainer>
+    </div>
   )
 }
