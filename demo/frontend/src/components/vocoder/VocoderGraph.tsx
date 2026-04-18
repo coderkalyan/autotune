@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/chart"
 
 const N_BANDS = 32
-const F_LO = 100
+const F_LO = 300
 const F_HI = 8000
 
 // Pre-compute log-spaced center frequencies for each band
@@ -16,7 +16,7 @@ const BAND_FREQS: number[] = Array.from({ length: N_BANDS }, (_, i) =>
 )
 
 // X-axis tick positions (band indices closest to key frequencies)
-const KEY_FREQS = [100, 200, 500, 1000, 2000, 4000, 8000]
+const KEY_FREQS = [300, 550, 800, 1000, 2000, 4000, 8000]
 const KEY_TICKS = KEY_FREQS.map((f) =>
   BAND_FREQS.reduce(
     (best, freq, i) =>

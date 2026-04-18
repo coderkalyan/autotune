@@ -10,7 +10,7 @@ PAYLOAD_BYTES = PAYLOAD_BITS // 8  # 112
 # Payload layout (896 bits, MSB first):
 #   [895:886] 10-bit lag
 #   [885]     1-bit  autocorrelation confidence
-#   [884:21]  32 × 27-bit Q11.16 fixed_t vocode bands
+#   [884:21]  32 × 27-bit Q3.24 fixed_t vocode bands
 #   [20:19]   2-bit  mode (MUTE=0, PASSTHROUGH=1, AUTOTUNE=2, VOCODE=3)
 #   [18]      vad_active
 #   [17]      vad_voiced
@@ -66,7 +66,7 @@ def unpack_payload(bits: int) -> dict:
         "config_err": config_err,
     }
 
-    print(to_return)
+    # print(to_return)
 
     return to_return
 
@@ -155,7 +155,7 @@ class UARTParser:
                 "adc_empty": bool(fields["adc_empty"]),
                 "config_done": bool(fields["config_done"]),
                 "config_err": bool(fields["config_err"]),
-                "vocode_bands": [v / (1 << 16) for v in fields["vocode_bands"]],
+                "vocode_bands": [v / (1 << 24) for v in fields["vocode_bands"]],
             }
 
     def _run(self) -> None:
