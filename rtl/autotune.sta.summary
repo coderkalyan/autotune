@@ -3,19 +3,19 @@ Timing Analyzer Summary
 ------------------------------------------------------------
 
 Type  : Slow 1100mV 85C Model Setup 'CLOCK_50'
-Slack : -0.826
-TNS   : -13.628
+Slack : -12.138
+TNS   : -35454.951
 
 Type  : Slow 1100mV 85C Model Setup 'iTOP|iAUD_CNTRL|iCLKGEN|gen_16_bit.pll|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk'
-Slack : 646.564
+Slack : 646.837
 TNS   : 0.000
 
 Type  : Slow 1100mV 85C Model Hold 'CLOCK_50'
-Slack : 0.218
+Slack : 0.217
 TNS   : 0.000
 
 Type  : Slow 1100mV 85C Model Hold 'iTOP|iAUD_CNTRL|iCLKGEN|gen_16_bit.pll|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk'
-Slack : 0.364
+Slack : 0.338
 TNS   : 0.000
 
 Type  : Slow 1100mV 85C Model Minimum Pulse Width 'iTOP|iAUD_CNTRL|iCLKGEN|gen_16_bit.pll|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]'
@@ -23,7 +23,7 @@ Slack : 1.233
 TNS   : 0.000
 
 Type  : Slow 1100mV 85C Model Minimum Pulse Width 'CLOCK_50'
-Slack : 8.866
+Slack : 8.870
 TNS   : 0.000
 
 Type  : Slow 1100mV 85C Model Minimum Pulse Width 'iTOP|iAUD_CNTRL|iCLKGEN|gen_16_bit.pll|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk'
@@ -31,23 +31,23 @@ Slack : 40.512
 TNS   : 0.000
 
 Type  : Slow 1100mV 85C Model Minimum Pulse Width 'iTOP|iAUD_CNTRL|iCLKGEN|gen_16_bit.pll|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk'
-Slack : 324.328
+Slack : 324.331
 TNS   : 0.000
 
 Type  : Slow 1100mV 0C Model Setup 'CLOCK_50'
-Slack : -0.637
-TNS   : -10.458
+Slack : -12.744
+TNS   : -36893.549
 
 Type  : Slow 1100mV 0C Model Setup 'iTOP|iAUD_CNTRL|iCLKGEN|gen_16_bit.pll|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk'
-Slack : 646.667
+Slack : 646.995
 TNS   : 0.000
 
 Type  : Slow 1100mV 0C Model Hold 'CLOCK_50'
-Slack : 0.133
+Slack : 0.099
 TNS   : 0.000
 
 Type  : Slow 1100mV 0C Model Hold 'iTOP|iAUD_CNTRL|iCLKGEN|gen_16_bit.pll|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk'
-Slack : 0.273
+Slack : 0.321
 TNS   : 0.000
 
 Type  : Slow 1100mV 0C Model Minimum Pulse Width 'iTOP|iAUD_CNTRL|iCLKGEN|gen_16_bit.pll|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]'
@@ -55,7 +55,7 @@ Slack : 1.233
 TNS   : 0.000
 
 Type  : Slow 1100mV 0C Model Minimum Pulse Width 'CLOCK_50'
-Slack : 8.898
+Slack : 8.904
 TNS   : 0.000
 
 Type  : Slow 1100mV 0C Model Minimum Pulse Width 'iTOP|iAUD_CNTRL|iCLKGEN|gen_16_bit.pll|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk'
@@ -63,23 +63,23 @@ Slack : 40.484
 TNS   : 0.000
 
 Type  : Slow 1100mV 0C Model Minimum Pulse Width 'iTOP|iAUD_CNTRL|iCLKGEN|gen_16_bit.pll|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk'
-Slack : 324.315
+Slack : 324.312
 TNS   : 0.000
 
 Type  : Fast 1100mV 85C Model Setup 'CLOCK_50'
-Slack : 8.347
+Slack : 2.138
 TNS   : 0.000
 
 Type  : Fast 1100mV 85C Model Setup 'iTOP|iAUD_CNTRL|iCLKGEN|gen_16_bit.pll|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk'
-Slack : 648.374
+Slack : 648.430
 TNS   : 0.000
 
 Type  : Fast 1100mV 85C Model Hold 'CLOCK_50'
-Slack : 0.127
+Slack : 0.129
 TNS   : 0.000
 
 Type  : Fast 1100mV 85C Model Hold 'iTOP|iAUD_CNTRL|iCLKGEN|gen_16_bit.pll|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk'
-Slack : 0.178
+Slack : 0.179
 TNS   : 0.000
 
 Type  : Fast 1100mV 85C Model Minimum Pulse Width 'iTOP|iAUD_CNTRL|iCLKGEN|gen_16_bit.pll|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]'
@@ -95,23 +95,23 @@ Slack : 40.591
 TNS   : 0.000
 
 Type  : Fast 1100mV 85C Model Minimum Pulse Width 'iTOP|iAUD_CNTRL|iCLKGEN|gen_16_bit.pll|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk'
-Slack : 324.441
+Slack : 324.442
 TNS   : 0.000
 
 Type  : Fast 1100mV 0C Model Setup 'CLOCK_50'
-Slack : 9.249
+Slack : 3.324
 TNS   : 0.000
 
 Type  : Fast 1100mV 0C Model Setup 'iTOP|iAUD_CNTRL|iCLKGEN|gen_16_bit.pll|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk'
-Slack : 648.603
+Slack : 648.696
 TNS   : 0.000
 
 Type  : Fast 1100mV 0C Model Hold 'CLOCK_50'
-Slack : 0.095
+Slack : 0.106
 TNS   : 0.000
 
 Type  : Fast 1100mV 0C Model Hold 'iTOP|iAUD_CNTRL|iCLKGEN|gen_16_bit.pll|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk'
-Slack : 0.159
+Slack : 0.170
 TNS   : 0.000
 
 Type  : Fast 1100mV 0C Model Minimum Pulse Width 'iTOP|iAUD_CNTRL|iCLKGEN|gen_16_bit.pll|altera_pll_i|general[0].gpll~FRACTIONAL_PLL|vcoph[0]'
@@ -119,7 +119,7 @@ Slack : 1.233
 TNS   : 0.000
 
 Type  : Fast 1100mV 0C Model Minimum Pulse Width 'CLOCK_50'
-Slack : 8.428
+Slack : 8.430
 TNS   : 0.000
 
 Type  : Fast 1100mV 0C Model Minimum Pulse Width 'iTOP|iAUD_CNTRL|iCLKGEN|gen_16_bit.pll|altera_pll_i|general[0].gpll~PLL_OUTPUT_COUNTER|divclk'
@@ -127,7 +127,7 @@ Slack : 40.584
 TNS   : 0.000
 
 Type  : Fast 1100mV 0C Model Minimum Pulse Width 'iTOP|iAUD_CNTRL|iCLKGEN|gen_16_bit.pll|altera_pll_i|general[1].gpll~PLL_OUTPUT_COUNTER|divclk'
-Slack : 324.436
+Slack : 324.438
 TNS   : 0.000
 
 ------------------------------------------------------------
