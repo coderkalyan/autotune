@@ -22,6 +22,7 @@ module compute #(
     output logic o_vad_active,
     output logic o_vad_voiced,
     output mode_t o_mode,
+    output logic [9:0] o_target_lag,
     output logic [6:0] HEX0,
     output logic [6:0] HEX1,
     output logic [6:0] HEX2,
@@ -168,7 +169,8 @@ module compute #(
       .actual_lag(pitch_period),
       .target_lag(target_lag),
       .shift_ratio(pitch_factor_recip),
-      .mode(mode)
+      .mode(mode),
+      .o_target_lag(o_target_lag)
   );
 
   // ----------------------------------------------------------------
