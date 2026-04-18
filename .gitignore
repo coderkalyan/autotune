@@ -8,7 +8,8 @@ node_modules
 
 db/
 incremental_db/
-*.rpt
+*.rpt*
+*.summary
 
 greybox_tmp/
 simulation/
