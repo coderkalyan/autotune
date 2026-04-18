@@ -16,7 +16,7 @@ from midi_bridge import MIDIBridge
 from song_manager import SongManager
 from uart_parser import UARTParser
 
-SERIAL_PORT = "/dev/cu.usbserial-FTA9O9VB"
+SERIAL_PORT = "/dev/ttyUSB0"
 BAUD = 31250
 WS_INTERVAL = 0.033  # ~30 Hz
 
@@ -48,14 +48,22 @@ async def _pitch_loop() -> None:
 
         reading = uart_reader.get_latest() if uart_reader else None
 
-        position_ms = audio_engine.get_position_ms() if audio_engine.is_playing else None
-        raw_target = song_manager.get_target_hz(position_ms) if position_ms is not None else None
+        position_ms = (
+            audio_engine.get_position_ms() if audio_engine.is_playing else None
+        )
+        raw_target = (
+            song_manager.get_target_hz(position_ms) if position_ms is not None else None
+        )
         target_hz = round(raw_target, 2) if raw_target is not None else None
 
         if reading:
             msg = {
-                "detected_hz": round(reading["detected_hz"], 2) if reading["detected_hz"] is not None else None,
-                "corrected_hz": round(reading["corrected_hz"], 2) if reading["corrected_hz"] is not None else None,
+                "detected_hz": round(reading["detected_hz"], 2)
+                if reading["detected_hz"] is not None
+                else None,
+                "corrected_hz": round(reading["corrected_hz"], 2)
+                if reading["corrected_hz"] is not None
+                else None,
                 "target_hz": target_hz,
                 "timestamp_ms": int(time.monotonic() * 1000),
                 "mode": reading["mode"],
