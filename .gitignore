@@ -5,3 +5,10 @@ work/
 *.out
 venv
 node_modules
+
+db/
+incremental_db/
+*.rpt
+
+greybox_tmp/
+simulation/
