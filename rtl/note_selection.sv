@@ -6,7 +6,8 @@ module note_selection (
     input [9:0] actual_lag,
     input [9:0] target_lag,
     input mode_t mode,
-    output fixed_t shift_ratio
+    output fixed_t shift_ratio,
+    output logic [9:0] o_target_lag
 );
 
 /*
@@ -63,6 +64,10 @@ fixed_t target_fixed;
 
 assign target_fixed = fixed_t'({1'b0,target_eff,16'd0});
 assign shift_ratio = fixed_mul(target_fixed, reciprocal);
+
+// Pre-saturation target lag for telemetry: keyboard when pressed, else
+// nearest detected note. Independent of mode.
+assign o_target_lag = any_note_pressed ? target_lag : nearest_note;
 
 always_comb begin
     case (mode)

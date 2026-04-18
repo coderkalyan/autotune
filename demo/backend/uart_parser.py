@@ -18,7 +18,8 @@ PAYLOAD_BYTES = PAYLOAD_BITS // 8  # 112
 #   [15]      adc_empty
 #   [14]      config_done
 #   [13]      config_err
-#   [12:0]    padding
+#   [12:3]    10-bit target_lag
+#   [2:0]     padding
 
 FIXED_MASK = (1 << 27) - 1
 FIXED_SIGN = 1 << 26
@@ -52,6 +53,7 @@ def unpack_payload(bits: int) -> dict:
     adc_empty = (bits >> 15) & 1
     config_done = (bits >> 14) & 1
     config_err = (bits >> 13) & 1
+    target_lag = (bits >> 3) & 0x3FF
 
     to_return = {
         "lag": lag,
@@ -64,6 +66,7 @@ def unpack_payload(bits: int) -> dict:
         "adc_empty": adc_empty,
         "config_done": config_done,
         "config_err": config_err,
+        "target_lag": target_lag,
     }
 
     # print(to_return)
@@ -155,6 +158,7 @@ class UARTParser:
                 "adc_empty": bool(fields["adc_empty"]),
                 "config_done": bool(fields["config_done"]),
                 "config_err": bool(fields["config_err"]),
+                "target_lag": fields["target_lag"],
                 "vocode_bands": [v / (1 << 24) for v in fields["vocode_bands"]],
             }
 

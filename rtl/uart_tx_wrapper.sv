@@ -16,6 +16,7 @@ module uart_tx_wrapper (
     input i_config_done,
     input i_config_err,
     input i_pitch_done,
+    input [9:0] i_target_lag,
     output reg o_transmission_done,
     output o_tx
 );
@@ -35,7 +36,8 @@ localparam int PAYLOAD_BITS = NUM_BYTES * 7;  // 896
 //   [15]      adc_empty
 //   [14]      config_done
 //   [13]      config_err
-//   [12:0]    padding
+//   [12:3]    10-bit target_lag
+//   [2:0]     padding
 
 typedef enum reg [1:0] {IDLE, INIT, SENDING} state_t;
 state_t state, next_state;
@@ -61,7 +63,8 @@ always_comb begin
     payload[15]      = i_adc_empty;
     payload[14]      = i_config_done;
     payload[13]      = i_config_err;
-    payload[12:0]    = 13'd0;
+    payload[12:3]    = i_target_lag;
+    payload[2:0]     = 3'd0;
 end
 
 UART_tx iTX (
