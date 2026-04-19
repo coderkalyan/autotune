@@ -5,7 +5,7 @@
 // a_att: float = 1.0 - np.exp(-1.0 / (attack_ms  * 1e-3 * fs))
 // a_rel: float = 1.0 - np.exp(-1.0 / (release_ms * 1e-3 * fs))
 module vocoder #(
-    parameter int N = 14839,  // PERIOD_MULT=2 in py/carrier_romgen.py
+    parameter int N = 59359,  // PERIOD_MULT=8 in py/carrier_romgen.py
     // parameter int B = $clog2(N),
     parameter int IDX_N = 41,  // 89,
     // parameter int IDX_B = $clog2(IDX_N),
@@ -25,7 +25,8 @@ module vocoder #(
     output fnorm_t         o_vocode_bands[BANKS],
     output logic           o_valid
 );
-  audio_t idx_rom[IDX_N];
+  // Start-of-note offsets into rom_mem. 17 bits to cover N up to ~128K.
+  logic [16:0] idx_rom[IDX_N];
   //first note is A0 MIDI 21
   //A4 is MIDI 69
 
@@ -41,7 +42,8 @@ module vocoder #(
 
   // Inferred synchronous ROM. 1-cycle registered read matches the IP's
   // latency, so the surrounding pipeline doesn't need to change.
-  logic [14:0] audio_addr;
+  // 16 bits covers N up to 65535, enough for PERIOD_MULT=8.
+  logic [15:0] audio_addr;
   audio_t rom_mem[N];
   audio_t rom;
   initial $readmemh("/home/kalyan/Documents/school/ece554/autotune/rtl/carriers.mem", rom_mem);
@@ -122,8 +124,8 @@ module vocoder #(
   // Guard the indices read so out-of-range `note` values don't index past
   // the end of the (now smaller) indices array.
   assign audio_addr = ((note >= 8'(NOTE_OFFSET)) && (note <= 8'(NOTE_LAST)))
-                      ? indices[note - NOTE_OFFSET][14:0]
-                      : 15'd0;
+                      ? indices[note - NOTE_OFFSET][15:0]
+                      : 16'd0;
   // fixed_t voice_banks[BANKS], carrier_banks[BANKS];
   always_ff @(posedge clk) begin
     if (rst) begin

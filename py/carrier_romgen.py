@@ -25,9 +25,17 @@ NOTE_BIT = 16
 # the summed carrier is exactly periodic over PERIOD_MULT=8 periods of
 # the root f0 -> ROM loops cleanly. Pure sines (no drawbar stack, no
 # detune) so every component is a true harmonic of the ROM fundamental.
+# Maj3 triad tones (root 1.0, major 3rd 1.25, 5th 1.5) heavily boosted to
+# dominate the voicing; the remaining Maj9 chord tones stay at their
+# organ.py amps as colouring.
 CHORD_RATIOS = [0.125, 0.25, 0.375, 0.5, 0.75, 1.0, 1.125, 1.25, 1.5, 2.0]
-CHORD_AMPS   = [0.6,   0.8,  0.5,   0.9, 0.6,  1.0, 0.4,   0.5,  0.6, 0.35]
+CHORD_AMPS   = [0.6,   0.8,  0.5,   0.9, 0.6,  2.5, 0.4,   2.0, 2.2, 0.35]
 PERIOD_MULT  = 8
+
+# Sawtooth (at f0) overlaid on the organ chord. Sawtooth is a sum of
+# 1/n * sin(2π n f0 t) — every harmonic is an integer multiple of f0, so
+# it stays periodic over the same ROM length.
+SAW_AMP = 0.8  # relative to the normalized organ chord (pre-final-normalize)
 
 
 def midi_to_freq(midi_note):
@@ -40,15 +48,33 @@ def midi_to_note_name(midi_note):
     return f"{note}{octave}"
 
 
+def make_sawtooth(n, fs, f0):
+    """Band-limited sawtooth at f0 via additive synthesis."""
+    t = np.arange(n) / fs
+    sig = np.zeros_like(t)
+    n_max = int((fs / 2) / f0)  # highest integer harmonic below Nyquist
+    for k in range(1, n_max + 1):
+        sig += (1.0 / k) * np.sin(2 * np.pi * (k * f0) * t)
+    peak = np.max(np.abs(sig))
+    if peak > 0:
+        sig = sig / peak
+    return sig
+
+
 def make_chord_carrier(n, fs, f0):
-    """n-sample pure-sine Maj9 chord carrier rooted at f0."""
+    """n-sample pure-sine Maj9 chord carrier rooted at f0, with a low-level
+    sawtooth overlay at f0 for added harmonic bite."""
     t = np.arange(n) / fs
     sig = np.zeros_like(t)
     for r, a in zip(CHORD_RATIOS, CHORD_AMPS):
         sig += a * np.sin(2 * np.pi * (f0 * r) * t)
     peak = np.max(np.abs(sig))
     if peak > 0:
-        sig = sig / peak
+        sig = sig / peak  # organ chord normalized to unit peak
+    sig += SAW_AMP * make_sawtooth(n, fs, f0)
+    peak = np.max(np.abs(sig))
+    if peak > 0:
+        sig = sig / peak  # final normalize so the sample fits int16
     return sig
 
 
