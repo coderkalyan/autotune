@@ -91,15 +91,25 @@ module bandpass_filterbank #(
     assign i_s1_a1 = fnorm_t'(D1[coef_idx][26:0]);
     assign i_s1_a2 = fnorm_t'(D2[coef_idx][26:0]);
 
-    // Current-bank state reads (array-indexed into module port).
+    // Per-bank state read with 1-cycle synchronous latency. Read address
+    // leads bank_cnt by 1 cycle so the registered result is ready on the
+    // cycle the biquad consumes it — no valid pipeline needed.
+    logic [BBITS - 1:0] rd_addr;
+    always_comb begin
+        if (!busy && i_valid) rd_addr = i_bank_start;
+        else                  rd_addr = bank_cnt + 1'b1;
+    end
+
     fnorm_t cur_x1, cur_x2;
     fnorm_t cur_s0_y1, cur_s0_y2, cur_s1_y1, cur_s1_y2;
-    assign cur_x1    = x1_r[bank_cnt];
-    assign cur_x2    = x2_r[bank_cnt];
-    assign cur_s0_y1 = s0_y1_r[bank_cnt];
-    assign cur_s0_y2 = s0_y2_r[bank_cnt];
-    assign cur_s1_y1 = s1_y1_r[bank_cnt];
-    assign cur_s1_y2 = s1_y2_r[bank_cnt];
+    always_ff @(posedge clk) begin
+        cur_x1    <= x1_r[rd_addr];
+        cur_x2    <= x2_r[rd_addr];
+        cur_s0_y1 <= s0_y1_r[rd_addr];
+        cur_s0_y2 <= s0_y2_r[rd_addr];
+        cur_s1_y1 <= s1_y1_r[rd_addr];
+        cur_s1_y2 <= s1_y2_r[rd_addr];
+    end
 
     fnorm_t o_s0_data, o_s1_data;
     bandpass_biquad u_biquad (
