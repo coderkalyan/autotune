@@ -15,17 +15,19 @@ NOTE_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 
 A4_MIDI = 69
 A4_FREQ = 440.0
-A0_FREQ = 27.5
-C8_FREQ = 4186 + 1
+F_LO = 100.0
+F_HI = 1000.0
 
 FS = 48000
 NOTE_BIT = 16
 
-# Mellow drawbar organ voicing (from organ.py)
-DRAWBARS = [8, 5, 8, 4, 6, 5, 3, 5, 4]
-RATIOS = [0.5, 1.5, 1, 2, 3, 4, 5, 6, 8]
-# DETUNES_CENTS = [-7, -3, 0, 3, 7]
-DETUNES_CENTS = [0]
+# Maj9 chord voicing from organ.py. All ratios are multiples of 1/8, so
+# the summed carrier is exactly periodic over PERIOD_MULT=8 periods of the
+# root f0 -> ROM loops cleanly. Kept as pure sines (no drawbar stack, no
+# detune) so every component is a true harmonic of the ROM fundamental.
+CHORD_RATIOS = [0.125, 0.25, 0.375, 0.5, 0.75, 1.0, 1.125, 1.25, 1.5, 2.0]
+CHORD_AMPS   = [0.6,   0.8,  0.5,   0.9, 0.6,  1.0, 0.4,   0.5,  0.6, 0.35]
+PERIOD_MULT  = 8  # ROM spans this many periods of f0
 
 
 def midi_to_freq(midi_note):
@@ -38,16 +40,12 @@ def midi_to_note_name(midi_note):
     return f"{note}{octave}"
 
 
-def make_organ_carrier(n, fs, f0):
-    """n-sample mellow organ carrier at fundamental f0."""
+def make_chord_carrier(n, fs, f0):
+    """n-sample pure-sine Maj9 chord carrier rooted at f0."""
     t = np.arange(n) / fs
     sig = np.zeros_like(t)
-    for dc in DETUNES_CENTS:
-        fd = f0 * (2 ** (dc / 1200))
-        voice = sum(
-            (d / 8) * np.sin(2 * np.pi * fd * r * t) for d, r in zip(DRAWBARS, RATIOS)
-        )
-        sig += voice / len(DETUNES_CENTS)
+    for r, a in zip(CHORD_RATIOS, CHORD_AMPS):
+        sig += a * np.sin(2 * np.pi * (f0 * r) * t)
     peak = np.max(np.abs(sig))
     if peak > 0:
         sig = sig / peak
@@ -59,7 +57,7 @@ def main():
     midi_start = -1
     for midi in range(0, 128):
         freq = midi_to_freq(midi)
-        if A0_FREQ <= freq <= C8_FREQ:
+        if F_LO <= freq <= F_HI:
             notes_in_range.append((midi_to_note_name(midi), freq))
             if midi_start == -1:
                 midi_start = midi
@@ -72,11 +70,14 @@ def main():
 
     for note, freq in notes_in_range:
         discrete_period = FS / freq
-        n = int(discrete_period) + 1
-        cost = discrete_period * NOTE_BIT
+        # Round to the nearest whole-sample approximation of PERIOD_MULT
+        # periods so every chord harmonic (all multiples of f0/PERIOD_MULT)
+        # completes an integer number of cycles over the ROM.
+        n = int(round(PERIOD_MULT * discrete_period))
+        cost = n * NOTE_BIT
         total_cost += cost
 
-        x = make_organ_carrier(n, FS, freq)
+        x = make_chord_carrier(n, FS, freq)
         x = x * (2**15)
         x = x.astype(int)
         x = np.clip(x, a_max=upper, a_min=lower)
