@@ -25,21 +25,30 @@ module vocoder #(
     output fnorm_t         o_vocode_bands[BANKS],
     output logic           o_valid
 );
-  // audio_t rom[N];
   audio_t idx_rom[IDX_N];
-  // initial $readmemh("sawtooth440.mem", rom);
   //first note is A0 MIDI 21
   //A4 is MIDI 69
-  // initial $readmemh("sawtooth_total.mem", rom);
-  // initial $readmemh("sawtooth_start_idx.mem", idx_rom);
-  // initial $readmemh("/home/kalyan/Documents/school/ece554/autotune/rtl/sawtooth_total.mem", rom);
+
+  // BRAM-IP version (disabled — debugging whether pipeline or IP is at
+  // fault). Kept for easy restore.
+  // logic [14:0] audio_addr_ip;
+  // audio_t rom_ip;
+  // rom_16_32768 audio_rom (
+  //     .address(audio_addr_ip),
+  //     .clock  (clk),
+  //     .q      (rom_ip)
+  // );
+
+  // Inferred synchronous ROM. 1-cycle registered read matches the IP's
+  // latency, so the surrounding pipeline doesn't need to change.
   logic [14:0] audio_addr;
+  audio_t rom_mem [N];
   audio_t rom;
-  rom_16_32768 audio_rom (
-      .address(audio_addr),
-      .clock(clk),
-      .q(rom)
-  );
+  initial
+    $readmemh("/home/kalyan/Documents/school/ece554/autotune/rtl/sawtooth_total.mem", rom_mem);
+  always_ff @(posedge clk) begin
+    rom <= rom_mem[audio_addr];
+  end
 
   initial
     $readmemh("/home/kalyan/Documents/school/ece554/autotune/rtl/sawtooth_start_idx.mem", idx_rom);
