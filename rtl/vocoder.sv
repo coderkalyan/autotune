@@ -22,14 +22,22 @@ module vocoder #(
     output fnorm_t         o_vocode_bands[BANKS],
     output logic           o_valid
 );
-  audio_t rom[N];
+  // audio_t rom[N];
   audio_t idx_rom[IDX_N];
   // initial $readmemh("sawtooth440.mem", rom);
   //first note is A0 MIDI 21
   //A4 is MIDI 69
   // initial $readmemh("sawtooth_total.mem", rom);
   // initial $readmemh("sawtooth_start_idx.mem", idx_rom);
-  initial $readmemh("/home/kalyan/Documents/school/ece554/autotune/rtl/sawtooth_total.mem", rom);
+  // initial $readmemh("/home/kalyan/Documents/school/ece554/autotune/rtl/sawtooth_total.mem", rom);
+  logic [14:0] audio_addr;
+  audio_t rom;
+  rom_16_32768 audio_rom (
+      .address(audio_addr),
+      .clock(clk),
+      .q(rom)
+  );
+
   initial
     $readmemh("/home/kalyan/Documents/school/ece554/autotune/rtl/sawtooth_start_idx.mem", idx_rom);
 
@@ -71,15 +79,17 @@ module vocoder #(
   logic [26:0] radical;
   logic [13:0] sqrt_out;
   sqrt sqrt (
-    .radical(radical),
-    .q(sqrt_out),
-    .remainder()
-    );
+      .radical(radical),
+      .q(sqrt_out),
+      .remainder()
+  );
 
   assign radical = bandpass_o_data[bank] << 3;
 
   state_t state;
-  logic [6:0] note;
+  // 8-bit so `note` can sit at 128 for one extra "drain" cycle after all
+  // addresses have been issued but the last ROM read is still in flight.
+  logic [7:0] note;
   fixed_t sample;
   int i;
   logic [16:0] indices[IDX_N];
@@ -87,6 +97,11 @@ module vocoder #(
   // logic carrier_valid;
   logic bandpass_done;
   logic [5:0] bank;
+
+  // Combinational address to the ROM IP. Registered `rom` lags by 1 cycle,
+  // so the read we consume on cycle k corresponds to the address issued on
+  // cycle k-1 (i.e. for note-1).
+  assign audio_addr = indices[note - NOTE_OFFSET][14:0];
   // fixed_t voice_banks[BANKS], carrier_banks[BANKS];
   always_ff @(posedge clk) begin
     if (rst) begin
@@ -103,7 +118,7 @@ module vocoder #(
 
           if (i_valid) begin
             state               <= CARRIER_SYNTH_VOICE_BANDPASS;
-            note                <= 0;
+            note                <= 8'd0;
             sample              <= 0;
 
             bandpass_i_data     <= i_data;
@@ -118,23 +133,31 @@ module vocoder #(
           // Do not re-initiate bandpass filtering on the voice input.
           bandpass_i_valid <= 1'b0;
 
-          // Run carrier synthesis until complete.
-          if (note != 7'd127) begin
-            if (i_notes[note]) begin
-              sample <= sample + (fixed_atof(rom[indices[note-NOTE_OFFSET]]));
+          // Accumulate rom from the address issued last cycle (for note-1).
+          // Skip on entry cycle (note==0) and after the last drain (note==128).
+          if ((note > 8'd0) && (note < 8'd128) && i_notes[note[6:0] - 7'd1]) begin
+            sample <= sample + fixed_atof(rom);
+          end
+
+          // Issue the next note's address via comb `audio_addr` and advance
+          // its per-note indices pointer. Stop issuing once all 127 notes
+          // have been issued (note==127 is the drain cycle).
+          if (note < 8'd127) begin
+            if (i_notes[note[6:0]]) begin
               indices[note - NOTE_OFFSET] <= (indices[note - NOTE_OFFSET] == idx_rom[note - NOTE_OFFSET + 1] - 1) ? idx_rom[note - NOTE_OFFSET] : indices[note - NOTE_OFFSET] + 1;
             end
-
-            note <= note + 7'd1;
           end
+
+          if (note < 8'd128) note <= note + 8'd1;
 
           // Latch bandpass when done.
           if (bandpass_o_valid) begin
             bandpass_done <= 1'b1;
           end
 
-          // If both bandpass and carrier synthesis are complete, continue.
-          if ((note == 7'd127) && (bandpass_done)) begin
+          // Transition once the last ROM read has been drained (note==128)
+          // and the voice bandpass has finished.
+          if ((note == 8'd128) && bandpass_done) begin
             state               <= CARRIER_BANDPASS;
 
             bandpass_i_data     <= sample;
@@ -158,10 +181,10 @@ module vocoder #(
         end
         VOCODE: begin
           sample <= sample + fnorm_mul(fnorm_t'(sqrt_out << 12), bandpass_o_data[bank+BANKS]);
-          bank <= bank + 1;
+          bank   <= bank + 1;
 
           if (bank == (BANKS - 1)) begin
-            state   <= OUTPUT;
+            state <= OUTPUT;
           end
         end
         OUTPUT: begin
