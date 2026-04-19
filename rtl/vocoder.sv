@@ -18,6 +18,9 @@ module vocoder #(
     input  wire            i_valid,
     input  fixed_t         i_data,
     input  wire    [127:0] i_notes,
+    // When asserted, emit the raw synth sum (sum of active-note ROM
+    // samples) on o_data and skip the bandpass + modulation pipeline.
+    input  wire            i_synth_bypass,
     output fixed_t         o_data,
     output fnorm_t         o_vocode_bands[BANKS],
     output logic           o_valid
@@ -97,6 +100,8 @@ module vocoder #(
   // logic carrier_valid;
   logic bandpass_done;
   logic [5:0] bank;
+  // Latched synth-bypass flag captured at sample start.
+  logic bypass_r;
 
   // Combinational address to the ROM IP. Registered `rom` lags by 1 cycle,
   // so the read we consume on cycle k corresponds to the address issued on
@@ -120,9 +125,12 @@ module vocoder #(
             state               <= CARRIER_SYNTH_VOICE_BANDPASS;
             note                <= 8'd0;
             sample              <= 0;
+            bypass_r            <= i_synth_bypass;
 
+            // Only kick off the voice bandpass in full vocoder mode. In
+            // synth-bypass mode the bandpass is skipped entirely.
             bandpass_i_data     <= i_data;
-            bandpass_i_valid    <= 1'b1;
+            bandpass_i_valid    <= ~i_synth_bypass;
             asym_follow         <= 1'b1;
             bandpass_bank_start <= 0;
             bandpass_bank_end   <= (BANKS - 1);
@@ -155,17 +163,22 @@ module vocoder #(
             bandpass_done <= 1'b1;
           end
 
-          // Transition once the last ROM read has been drained (note==128)
-          // and the voice bandpass has finished.
-          if ((note == 8'd128) && bandpass_done) begin
-            state               <= CARRIER_BANDPASS;
-
-            bandpass_i_data     <= sample;
-            bandpass_i_valid    <= 1'b1;
-            asym_follow         <= 1'b0;
-            bandpass_bank_start <= BANKS;
-            bandpass_bank_end   <= (2 * BANKS) - 1;
-            bandpass_done       <= 1'b0;
+          // Transition once the last ROM read has been drained (note==128).
+          // In bypass mode we skip straight to OUTPUT with the raw synth
+          // sum. In full vocoder mode, wait for the voice bandpass to
+          // finish and then feed the synth sum into the carrier bandpass.
+          if ((note == 8'd128) && (bypass_r || bandpass_done)) begin
+            if (bypass_r) begin
+              state <= OUTPUT;
+            end else begin
+              state               <= CARRIER_BANDPASS;
+              bandpass_i_data     <= sample;
+              bandpass_i_valid    <= 1'b1;
+              asym_follow         <= 1'b0;
+              bandpass_bank_start <= BANKS;
+              bandpass_bank_end   <= (2 * BANKS) - 1;
+              bandpass_done       <= 1'b0;
+            end
           end
         end
         CARRIER_BANDPASS: begin

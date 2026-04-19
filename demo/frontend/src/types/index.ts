@@ -1,4 +1,4 @@
-export type UARTMode = 0 | 1 | 2 | 3 // MUTE | PASSTHROUGH | AUTOTUNE | VOCODE
+export type UARTMode = 0 | 1 | 2 | 3 | 4 // MUTE | PASSTHROUGH | AUTOTUNE | VOCODE | SYNTH
 
 export interface PitchReading {
   detected_hz: number | null

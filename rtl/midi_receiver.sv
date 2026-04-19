@@ -105,6 +105,7 @@ module midi_receiver (
                 7'h29: o_mode <= PASSTHROUGH;
                 7'h2a: o_mode <= AUTOTUNE;
                 7'h2b: o_mode <= VOCODE;
+                7'h2c: o_mode <= SYNTH;
                 default: begin
                   // Unsupported pad, ignore.
                 end

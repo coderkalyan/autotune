@@ -213,6 +213,7 @@ module compute #(
       .i_valid(adc_en),
       .i_data(lf),
       .i_notes(notes),
+      .i_synth_bypass(mode == SYNTH),
       .o_data(vocode_data),
       .o_vocode_bands(vocode_bands),
       .o_valid(vocode_valid)
@@ -256,6 +257,11 @@ module compute #(
         pre_valid = psola_valid;
       end
       VOCODE: begin
+        pre_lf = vocode_data;
+        pre_rf = vocode_data;
+        pre_valid = vocode_valid;
+      end
+      SYNTH: begin
         pre_lf = vocode_data;
         pre_rf = vocode_data;
         pre_valid = vocode_valid;
