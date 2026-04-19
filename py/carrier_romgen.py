@@ -21,13 +21,12 @@ F_HI = 1000.0
 FS = 48000
 NOTE_BIT = 16
 
-# Maj9 chord voicing from organ.py. All ratios are multiples of 1/8, so
-# the summed carrier is exactly periodic over PERIOD_MULT=8 periods of the
-# root f0 -> ROM loops cleanly. Kept as pure sines (no drawbar stack, no
-# detune) so every component is a true harmonic of the ROM fundamental.
-CHORD_RATIOS = [0.125, 0.25, 0.375, 0.5, 0.75, 1.0, 1.125, 1.25, 1.5, 2.0]
-CHORD_AMPS   = [0.6,   0.8,  0.5,   0.9, 0.6,  1.0, 0.4,   0.5,  0.6, 0.35]
-PERIOD_MULT  = 8  # ROM spans this many periods of f0
+# PERIOD_MULT=1 for debugging: ROM spans a single period of f0. Only chord
+# tones that are integer multiples of f0 stay pure harmonics, so the Maj9
+# voicing collapses to root + octave (amps from organ.py's Maj9 voicing).
+CHORD_RATIOS = [1.0, 2.0]
+CHORD_AMPS   = [1.0, 0.35]
+PERIOD_MULT  = 1
 
 
 def midi_to_freq(midi_note):

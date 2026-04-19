@@ -5,9 +5,9 @@
 // a_att: float = 1.0 - np.exp(-1.0 / (attack_ms  * 1e-3 * fs))
 // a_rel: float = 1.0 - np.exp(-1.0 / (release_ms * 1e-3 * fs))
 module vocoder #(
-    parameter int N = 30946,
+    parameter int N = 7419,  // 59359,
     // parameter int B = $clog2(N),
-    parameter int IDX_N = 89,
+    parameter int IDX_N = 41,  // 89,
     // parameter int IDX_B = $clog2(IDX_N),
     parameter int attack_ms = 3,  //alpha attack
     parameter int release_ms = 100,  //alpha attack
@@ -52,7 +52,12 @@ module vocoder #(
   initial
     $readmemh("/home/kalyan/Documents/school/ece554/autotune/rtl/carrier_indices.mem", idx_rom);
 
-  localparam int NOTE_OFFSET = 21;
+  // First MIDI note represented in carrier_indices.mem. Must match the
+  // lower bound used by py/carrier_romgen.py.
+  localparam int NOTE_OFFSET = 44;
+  // Last MIDI note represented in carrier_indices.mem (inclusive).
+  // IDX_N-1 notes starting at NOTE_OFFSET.
+  localparam int NOTE_LAST = NOTE_OFFSET + IDX_N - 2;
 
   typedef enum logic [2:0] {
     IDLE,
@@ -114,7 +119,11 @@ module vocoder #(
   // Combinational address to the ROM IP. Registered `rom` lags by 1 cycle,
   // so the read we consume on cycle k corresponds to the address issued on
   // cycle k-1 (i.e. for note-1).
-  assign audio_addr = indices[note-NOTE_OFFSET][14:0];
+  // Guard the indices read so out-of-range `note` values don't index past
+  // the end of the (now smaller) indices array.
+  assign audio_addr = ((note >= 8'(NOTE_OFFSET)) && (note <= 8'(NOTE_LAST)))
+                      ? indices[note - NOTE_OFFSET][14:0]
+                      : 15'd0;
   // fixed_t voice_banks[BANKS], carrier_banks[BANKS];
   always_ff @(posedge clk) begin
     if (rst) begin
@@ -150,15 +159,17 @@ module vocoder #(
           bandpass_i_valid <= 1'b0;
 
           // Accumulate rom from the address issued last cycle (for note-1).
-          // Skip on entry cycle (note==0) and after the last drain (note==128).
-          if ((note > 8'd0) && (note < 8'd128) && i_notes[note[6:0]-7'd1]) begin
+          // Only consume when the previous MIDI note is in the synthesized
+          // range [NOTE_OFFSET, NOTE_LAST].
+          if ((note > 8'(NOTE_OFFSET)) && (note <= 8'(NOTE_LAST + 1)) && i_notes[note[6:0]-7'd1]) begin
             sample <= sample + (27'(rom));
           end
 
           // Issue the next note's address via comb `audio_addr` and advance
-          // its per-note indices pointer. Stop issuing once all 127 notes
-          // have been issued (note==127 is the drain cycle).
-          if (note < 8'd127) begin
+          // its per-note indices pointer — only for MIDI notes in
+          // [NOTE_OFFSET, NOTE_LAST], which is all we have ROM entries for.
+          // Notes outside the range are silently skipped.
+          if ((note >= 8'(NOTE_OFFSET)) && (note <= 8'(NOTE_LAST))) begin
             if (i_notes[note[6:0]]) begin
               indices[note - NOTE_OFFSET] <= (indices[note - NOTE_OFFSET] == idx_rom[note - NOTE_OFFSET + 1] - 1) ? idx_rom[note - NOTE_OFFSET] : indices[note - NOTE_OFFSET] + 1;
             end
