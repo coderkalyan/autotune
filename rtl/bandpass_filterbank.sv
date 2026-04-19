@@ -59,13 +59,16 @@ module bandpass_filterbank #(
     // ------------------------------------------------------------------
     // Per-bank state
     // ------------------------------------------------------------------
-    fnorm_t x1_r    [BANKS];
-    fnorm_t x2_r    [BANKS];
-    fnorm_t s0_y1_r [BANKS];
-    fnorm_t s0_y2_r [BANKS];
-    fnorm_t s1_y1_r [BANKS];
-    fnorm_t s1_y2_r [BANKS];
-    fnorm_t o_data_r[BANKS];
+    // Sync-read banks padded to 32 bits so the tools infer BRAM. Only the
+    // low 27 bits carry fnorm_t data; upper 5 bits are don't-care on write
+    // and discarded on read.
+    logic [31:0] x1_r    [BANKS];
+    logic [31:0] x2_r    [BANKS];
+    logic [31:0] s0_y1_r [BANKS];
+    logic [31:0] s0_y2_r [BANKS];
+    logic [31:0] s1_y1_r [BANKS];
+    logic [31:0] s1_y2_r [BANKS];
+    fnorm_t      o_data_r[BANKS];
 
     // ------------------------------------------------------------------
     // Time-mux controller
@@ -103,12 +106,12 @@ module bandpass_filterbank #(
     fnorm_t cur_x1, cur_x2;
     fnorm_t cur_s0_y1, cur_s0_y2, cur_s1_y1, cur_s1_y2;
     always_ff @(posedge clk) begin
-        cur_x1    <= x1_r[rd_addr];
-        cur_x2    <= x2_r[rd_addr];
-        cur_s0_y1 <= s0_y1_r[rd_addr];
-        cur_s0_y2 <= s0_y2_r[rd_addr];
-        cur_s1_y1 <= s1_y1_r[rd_addr];
-        cur_s1_y2 <= s1_y2_r[rd_addr];
+        cur_x1    <= fnorm_t'(x1_r   [rd_addr][26:0]);
+        cur_x2    <= fnorm_t'(x2_r   [rd_addr][26:0]);
+        cur_s0_y1 <= fnorm_t'(s0_y1_r[rd_addr][26:0]);
+        cur_s0_y2 <= fnorm_t'(s0_y2_r[rd_addr][26:0]);
+        cur_s1_y1 <= fnorm_t'(s1_y1_r[rd_addr][26:0]);
+        cur_s1_y2 <= fnorm_t'(s1_y2_r[rd_addr][26:0]);
     end
 
     fnorm_t o_s0_data, o_s1_data;
@@ -185,13 +188,10 @@ module bandpass_filterbank #(
             asym_en_reg <= 1'b0;
             x_latched   <= '0;
             o_valid_r   <= 1'b0;
+            // Per-bank biquad state arrays intentionally not reset so the
+            // tools can infer BRAM for them. Stale values wash out after
+            // one filter pass.
             for (int i = 0; i < BANKS; i++) begin
-                x1_r[i]     <= '0;
-                x2_r[i]     <= '0;
-                s0_y1_r[i]  <= '0;
-                s0_y2_r[i]  <= '0;
-                s1_y1_r[i]  <= '0;
-                s1_y2_r[i]  <= '0;
                 o_data_r[i] <= '0;
             end
         end else begin
@@ -205,12 +205,12 @@ module bandpass_filterbank #(
                 busy        <= 1'b1;
             end else if (busy) begin
                 // Advance biquad state for the current bank.
-                x1_r[bank_cnt]     <= x_latched;
-                x2_r[bank_cnt]     <= cur_x1;
-                s0_y1_r[bank_cnt]  <= o_s0_data;
-                s0_y2_r[bank_cnt]  <= cur_s0_y1;
-                s1_y1_r[bank_cnt]  <= o_s1_data;
-                s1_y2_r[bank_cnt]  <= cur_s1_y1;
+                x1_r[bank_cnt]     <= {5'b0, x_latched};
+                x2_r[bank_cnt]     <= {5'b0, cur_x1};
+                s0_y1_r[bank_cnt]  <= {5'b0, o_s0_data};
+                s0_y2_r[bank_cnt]  <= {5'b0, cur_s0_y1};
+                s1_y1_r[bank_cnt]  <= {5'b0, o_s1_data};
+                s1_y2_r[bank_cnt]  <= {5'b0, cur_s1_y1};
 
                 // If asym disabled, commit raw filter output directly and
                 // raise o_valid the cycle after the last bank.
