@@ -80,27 +80,30 @@ module bandpass_filterbank #(
     fnorm_t              x_latched;
     logic                o_valid_r;
 
-    wire [CBITS - 1:0] coef_idx = bank_cnt[CBITS - 1:0];
-
-    // Coefficient muxes for this bank.
-    fnorm_t i_s0_b0, i_s0_b1, i_s0_a1, i_s0_a2;
-    fnorm_t i_s1_b0, i_s1_b1, i_s1_a1, i_s1_a2;
-    assign i_s0_b0 = fnorm_t'(B0[coef_idx][26:0]);
-    assign i_s0_b1 = fnorm_t'(B1[coef_idx][26:0]);
-    assign i_s0_a1 = fnorm_t'(A1[coef_idx][26:0]);
-    assign i_s0_a2 = fnorm_t'(A2[coef_idx][26:0]);
-    assign i_s1_b0 = fnorm_t'(C0[coef_idx][26:0]);
-    assign i_s1_b1 = fnorm_t'(C1[coef_idx][26:0]);
-    assign i_s1_a1 = fnorm_t'(D1[coef_idx][26:0]);
-    assign i_s1_a2 = fnorm_t'(D2[coef_idx][26:0]);
-
     // Per-bank state read with 1-cycle synchronous latency. Read address
     // leads bank_cnt by 1 cycle so the registered result is ready on the
-    // cycle the biquad consumes it — no valid pipeline needed.
+    // cycle the biquad consumes it — no valid pipeline needed. Same
+    // address feeds the coefficient BRAMs below so coefs align with state.
     logic [BBITS - 1:0] rd_addr;
     always_comb begin
         if (!busy && i_valid) rd_addr = i_bank_start;
         else                  rd_addr = bank_cnt + 1'b1;
+    end
+
+    wire [CBITS - 1:0] rd_coef_idx = rd_addr[CBITS - 1:0];
+
+    // Coefficient BRAMs, sync read aligned with state reads.
+    fnorm_t i_s0_b0, i_s0_b1, i_s0_a1, i_s0_a2;
+    fnorm_t i_s1_b0, i_s1_b1, i_s1_a1, i_s1_a2;
+    always_ff @(posedge clk) begin
+        i_s0_b0 <= fnorm_t'(B0[rd_coef_idx][26:0]);
+        i_s0_b1 <= fnorm_t'(B1[rd_coef_idx][26:0]);
+        i_s0_a1 <= fnorm_t'(A1[rd_coef_idx][26:0]);
+        i_s0_a2 <= fnorm_t'(A2[rd_coef_idx][26:0]);
+        i_s1_b0 <= fnorm_t'(C0[rd_coef_idx][26:0]);
+        i_s1_b1 <= fnorm_t'(C1[rd_coef_idx][26:0]);
+        i_s1_a1 <= fnorm_t'(D1[rd_coef_idx][26:0]);
+        i_s1_a2 <= fnorm_t'(D2[rd_coef_idx][26:0]);
     end
 
     fnorm_t cur_x1, cur_x2;
