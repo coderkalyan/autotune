@@ -42,16 +42,15 @@ module vocoder #(
   // Inferred synchronous ROM. 1-cycle registered read matches the IP's
   // latency, so the surrounding pipeline doesn't need to change.
   logic [14:0] audio_addr;
-  audio_t rom_mem [N];
+  audio_t rom_mem[N];
   audio_t rom;
-  initial
-    $readmemh("/home/kalyan/Documents/school/ece554/autotune/rtl/sawtooth_total.mem", rom_mem);
+  initial $readmemh("/home/kalyan/Documents/school/ece554/autotune/rtl/carriers.mem", rom_mem);
   always_ff @(posedge clk) begin
     rom <= rom_mem[audio_addr];
   end
 
   initial
-    $readmemh("/home/kalyan/Documents/school/ece554/autotune/rtl/sawtooth_start_idx.mem", idx_rom);
+    $readmemh("/home/kalyan/Documents/school/ece554/autotune/rtl/carrier_indices.mem", idx_rom);
 
   localparam int NOTE_OFFSET = 21;
 
@@ -115,7 +114,7 @@ module vocoder #(
   // Combinational address to the ROM IP. Registered `rom` lags by 1 cycle,
   // so the read we consume on cycle k corresponds to the address issued on
   // cycle k-1 (i.e. for note-1).
-  assign audio_addr = indices[note - NOTE_OFFSET][14:0];
+  assign audio_addr = indices[note-NOTE_OFFSET][14:0];
   // fixed_t voice_banks[BANKS], carrier_banks[BANKS];
   always_ff @(posedge clk) begin
     if (rst) begin
@@ -152,8 +151,8 @@ module vocoder #(
 
           // Accumulate rom from the address issued last cycle (for note-1).
           // Skip on entry cycle (note==0) and after the last drain (note==128).
-          if ((note > 8'd0) && (note < 8'd128) && i_notes[note[6:0] - 7'd1]) begin
-            sample <= sample + fixed_atof(rom);
+          if ((note > 8'd0) && (note < 8'd128) && i_notes[note[6:0]-7'd1]) begin
+            sample <= sample + (27'(rom));
           end
 
           // Issue the next note's address via comb `audio_addr` and advance
@@ -178,10 +177,11 @@ module vocoder #(
           // finish and then feed the synth sum into the carrier bandpass.
           if ((note == 8'd128) && (bypass_r || bandpass_done)) begin
             if (bypass_r) begin
-              state <= OUTPUT;
+              sample <= (sample << 8);
+              state  <= OUTPUT;
             end else begin
               state               <= CARRIER_BANDPASS;
-              bandpass_i_data     <= sample;
+              bandpass_i_data     <= (sample << 8);
               bandpass_i_valid    <= 1'b1;
               asym_follow         <= 1'b0;
               bandpass_bank_start <= BANKS;
