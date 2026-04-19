@@ -27,11 +27,12 @@ typedef enum logic [4:0] {
       P     = 5'h14
   } hex_t;
 
-typedef enum logic [1:0] {
-  MUTE = 2'b00,
-  PASSTHROUGH = 2'b01,
-  AUTOTUNE = 2'b10,
-  VOCODE = 2'b11
+typedef enum logic [2:0] {
+  MUTE = 3'b000,
+  PASSTHROUGH = 3'b001,
+  AUTOTUNE = 3'b010,
+  VOCODE = 3'b011,
+  SYNTH = 3'b100
 } mode_t;
 
 endpackage

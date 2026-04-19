@@ -55,6 +55,7 @@ module vocoder_band0_tb;
         .i_valid       (i_valid),
         .i_data        (i_data),
         .i_notes       (i_notes),
+        .i_synth_bypass(1'b0),
         .o_data        (vocoder_o_data),
         .o_vocode_bands(vocode_bands),
         .o_valid       (vocoder_o_valid)

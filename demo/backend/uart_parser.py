@@ -11,15 +11,15 @@ PAYLOAD_BYTES = PAYLOAD_BITS // 8  # 112
 #   [895:886] 10-bit lag
 #   [885]     1-bit  autocorrelation confidence
 #   [884:21]  32 × 27-bit Q3.24 fixed_t vocode bands
-#   [20:19]   2-bit  mode (MUTE=0, PASSTHROUGH=1, AUTOTUNE=2, VOCODE=3)
-#   [18]      vad_active
-#   [17]      vad_voiced
-#   [16]      dac_full
-#   [15]      adc_empty
-#   [14]      config_done
-#   [13]      config_err
-#   [12:3]    10-bit target_lag
-#   [2:0]     padding
+#   [20:18]   3-bit  mode (MUTE=0, PASSTHROUGH=1, AUTOTUNE=2, VOCODE=3, SYNTH=4)
+#   [17]      vad_active
+#   [16]      vad_voiced
+#   [15]      dac_full
+#   [14]      adc_empty
+#   [13]      config_done
+#   [12]      config_err
+#   [11:2]    10-bit target_lag
+#   [1:0]     padding
 
 FIXED_MASK = (1 << 27) - 1
 FIXED_SIGN = 1 << 26
@@ -46,14 +46,14 @@ def unpack_payload(bits: int) -> dict:
             raw -= 1 << 27
         bands.append(raw)
 
-    mode = (bits >> 19) & 0x3
-    vad_active = (bits >> 18) & 1
-    vad_voiced = (bits >> 17) & 1
-    dac_full = (bits >> 16) & 1
-    adc_empty = (bits >> 15) & 1
-    config_done = (bits >> 14) & 1
-    config_err = (bits >> 13) & 1
-    target_lag = (bits >> 3) & 0x3FF
+    mode = (bits >> 18) & 0x7
+    vad_active = (bits >> 17) & 1
+    vad_voiced = (bits >> 16) & 1
+    dac_full = (bits >> 15) & 1
+    adc_empty = (bits >> 14) & 1
+    config_done = (bits >> 13) & 1
+    config_err = (bits >> 12) & 1
+    target_lag = (bits >> 2) & 0x3FF
 
     to_return = {
         "lag": lag,
@@ -200,13 +200,13 @@ if __name__ == "__main__":
             for j, b in enumerate(bands):
                 shift = 884 - j * 27 - 26
                 bits |= (b & FIXED_MASK) << shift
-        bits |= (mode & 0x3) << 19
-        bits |= (vad_active & 1) << 18
-        bits |= (vad_voiced & 1) << 17
-        bits |= (dac_full & 1) << 16
-        bits |= (adc_empty & 1) << 15
-        bits |= (config_done & 1) << 14
-        bits |= (config_err & 1) << 13
+        bits |= (mode & 0x7) << 18
+        bits |= (vad_active & 1) << 17
+        bits |= (vad_voiced & 1) << 16
+        bits |= (dac_full & 1) << 15
+        bits |= (adc_empty & 1) << 14
+        bits |= (config_done & 1) << 13
+        bits |= (config_err & 1) << 12
         # Split into 128 groups of 7 bits, MSB-first
         packet = []
         for i in range(NUM_BYTES):

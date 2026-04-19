@@ -13,7 +13,7 @@ PAYLOAD_BITS = NUM_BYTES * 7  # 896
 FIXED_MASK = (1 << 27) - 1
 FIXED_SIGN = 1 << 26
 
-MODE_NAMES = {0: "MUTE", 1: "PASSTHROUGH", 2: "AUTOTUNE", 3: "VOCODE"}
+MODE_NAMES = {0: "MUTE", 1: "PASSTHROUGH", 2: "AUTOTUNE", 3: "VOCODE", 4: "SYNTH"}
 
 # -----------------------------
 # LUT
@@ -111,13 +111,13 @@ def unpack_payload(bits: int) -> dict:
             raw -= 1 << 27
         bands.append(raw)
 
-    mode = (bits >> 19) & 0x3
-    vad_active = (bits >> 18) & 1
-    vad_voiced = (bits >> 17) & 1
-    dac_full = (bits >> 16) & 1
-    adc_empty = (bits >> 15) & 1
-    config_done = (bits >> 14) & 1
-    config_err = (bits >> 13) & 1
+    mode = (bits >> 18) & 0x7
+    vad_active = (bits >> 17) & 1
+    vad_voiced = (bits >> 16) & 1
+    dac_full = (bits >> 15) & 1
+    adc_empty = (bits >> 14) & 1
+    config_done = (bits >> 13) & 1
+    config_err = (bits >> 12) & 1
 
     return {
         "lag": lag,
