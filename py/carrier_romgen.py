@@ -21,12 +21,13 @@ F_HI = 1000.0
 FS = 48000
 NOTE_BIT = 16
 
-# Chord on a 1/2 grid — root + 5th + octave. The 5th (1.5 = 3/2) is the
-# one tone that needs PERIOD_MULT>=2 to be a pure harmonic of the ROM
-# fundamental; root and octave alone would fit in PERIOD_MULT=1.
-CHORD_RATIOS = [1.0, 1.5, 2.0]
-CHORD_AMPS   = [1.0, 0.6, 0.35]
-PERIOD_MULT  = 2
+# Full Maj9 voicing from organ.py. Every ratio is a multiple of 1/8 so
+# the summed carrier is exactly periodic over PERIOD_MULT=8 periods of
+# the root f0 -> ROM loops cleanly. Pure sines (no drawbar stack, no
+# detune) so every component is a true harmonic of the ROM fundamental.
+CHORD_RATIOS = [0.125, 0.25, 0.375, 0.5, 0.75, 1.0, 1.125, 1.25, 1.5, 2.0]
+CHORD_AMPS   = [0.6,   0.8,  0.5,   0.9, 0.6,  1.0, 0.4,   0.5,  0.6, 0.35]
+PERIOD_MULT  = 8
 
 
 def midi_to_freq(midi_note):
@@ -90,7 +91,8 @@ def main():
     print("carriers[-1]:", carriers_list[-1], "carriers num:", len(carriers_list))
     print("start_index:", start_index[-2:], "num idx", len(start_index))
     np.savetxt("carriers.mem", carriers_list, fmt="%04x")
-    np.savetxt("carrier_indices.mem", start_index, fmt="%04x")
+    # %05x (20 bits) — start indices now overflow 16-bit hex at PERIOD_MULT=8.
+    np.savetxt("carrier_indices.mem", start_index, fmt="%05x")
     print("midi_start:", midi_start)
     print(f"{total_cost / 1_000_000} total_cost")
 
