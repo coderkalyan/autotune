@@ -5,7 +5,7 @@
 // a_att: float = 1.0 - np.exp(-1.0 / (attack_ms  * 1e-3 * fs))
 // a_rel: float = 1.0 - np.exp(-1.0 / (release_ms * 1e-3 * fs))
 module vocoder #(
-    parameter int N = 7419,  // 59359,
+    parameter int N = 14839,  // PERIOD_MULT=2 in py/carrier_romgen.py
     // parameter int B = $clog2(N),
     parameter int IDX_N = 41,  // 89,
     // parameter int IDX_B = $clog2(IDX_N),

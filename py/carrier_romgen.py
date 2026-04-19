@@ -21,12 +21,12 @@ F_HI = 1000.0
 FS = 48000
 NOTE_BIT = 16
 
-# PERIOD_MULT=1 for debugging: ROM spans a single period of f0. Only chord
-# tones that are integer multiples of f0 stay pure harmonics, so the Maj9
-# voicing collapses to root + octave (amps from organ.py's Maj9 voicing).
-CHORD_RATIOS = [1.0, 2.0]
-CHORD_AMPS   = [1.0, 0.35]
-PERIOD_MULT  = 1
+# Chord on a 1/2 grid — root + 5th + octave. The 5th (1.5 = 3/2) is the
+# one tone that needs PERIOD_MULT>=2 to be a pure harmonic of the ROM
+# fundamental; root and octave alone would fit in PERIOD_MULT=1.
+CHORD_RATIOS = [1.0, 1.5, 2.0]
+CHORD_AMPS   = [1.0, 0.6, 0.35]
+PERIOD_MULT  = 2
 
 
 def midi_to_freq(midi_note):
