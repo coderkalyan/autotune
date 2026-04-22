@@ -46,13 +46,13 @@ module vocoder #(
   logic [15:0] audio_addr;
   audio_t rom_mem[N];
   audio_t rom;
-  initial $readmemh("/home/kalyan/Documents/school/ece554/autotune/rtl/carriers.mem", rom_mem);
+  initial $readmemh("carriers.mem", rom_mem);
   always_ff @(posedge clk) begin
     rom <= rom_mem[audio_addr];
   end
 
   initial
-    $readmemh("/home/kalyan/Documents/school/ece554/autotune/rtl/carrier_indices.mem", idx_rom);
+    $readmemh("carrier_indices.mem", idx_rom);
 
   // First MIDI note represented in carrier_indices.mem. Must match the
   // lower bound used by py/carrier_romgen.py.
@@ -95,7 +95,7 @@ module vocoder #(
   assign o_vocode_bands = bandpass_o_data[0:31];
 
   logic [26:0] radical;
-  logic [13:0] sqrt_out;
+  logic [13:0] sqrt_out, sqrt_out_r;
   sqrt sqrt (
       .radical(radical),
       .q(sqrt_out),
@@ -103,6 +103,11 @@ module vocoder #(
   );
 
   assign radical = bandpass_o_data[bank] << 3;
+
+  // Register sqrt output to break the combinational path
+  // bank -> sqrt -> fnorm_mul -> sample. Relieves placement pressure
+  // introduced by additional sqrt/div IPs elsewhere in the design.
+  always_ff @(posedge clk) sqrt_out_r <= sqrt_out;
 
   state_t state;
   // 8-bit so `note` can sit at 128 for one extra "drain" cycle after all
@@ -215,10 +220,17 @@ module vocoder #(
           end
         end
         VOCODE: begin
-          sample <= sample + fnorm_mul(fnorm_t'(sqrt_out << 12), bandpass_o_data[bank+BANKS]);
-          bank   <= bank + 1;
+          // sqrt_out_r lags bank by 1 cycle. Skip cycle 0 (priming), and on
+          // subsequent cycles pair sqrt of voice band (bank-1) with the
+          // corresponding carrier band. Extend the loop by one cycle so all
+          // 32 bands are accumulated.
+          if (bank != 6'd0) begin
+            sample <= sample + fnorm_mul(fnorm_t'(sqrt_out_r << 12),
+                                         bandpass_o_data[(bank - 6'd1) + BANKS]);
+          end
+          bank <= bank + 1;
 
-          if (bank == (BANKS - 1)) begin
+          if (bank == BANKS) begin
             state <= OUTPUT;
           end
         end

@@ -204,6 +204,9 @@ module compute #(
       .o_valid()
   );
 
+  // ----------------------------------------------------------------
+  // Vocoding
+  // ----------------------------------------------------------------
   fixed_t vocode_data;
   logic   vocode_valid;
   fnorm_t vocode_bands [32];
@@ -227,6 +230,10 @@ module compute #(
     end
   endgenerate
 
+
+  // ----------------------------------------------------------------
+  // Volume/Normalization
+  // ----------------------------------------------------------------
   // Volume control via MIDI encoder 0 (logarithmic)
   // gain = volume / 2^VOL_SHIFT; midpoint (64) → gain 1.0, max (127) → ~2.0
   localparam int VOL_SHIFT = 6;
@@ -274,11 +281,38 @@ module compute #(
     endcase
   end
 
+  fixed_t post_lf, post_rf;
+  logic post_valid;
+
+  normalization_2 iNORM1 (
+    .clk(clk),
+    .rst(rst),
+    .i_data(pre_lf),
+    .i_mode(mode),
+    .i_valid(pre_valid),
+    .o_data(post_lf),
+    .o_valid(post_valid)
+  );
+
+  normalization_2 iNORM2 (
+    .clk(clk),
+    .rst(rst),
+    .i_data(pre_rf),
+    .i_mode(mode),
+    .i_valid(pre_valid),
+    .o_data(post_rf),
+    .o_valid()
+  );
+
   fixed_t vol_gain;
   assign vol_gain = fixed_t'({1'b0, volume}) << (16 - VOL_SHIFT);
-  assign o_lf    = fixed_mul(pre_lf, vol_gain);
-  assign o_rf    = fixed_mul(pre_rf, vol_gain);
-  assign o_valid = pre_valid;
+  // assign o_lf    = fixed_mul(pre_lf, vol_gain);
+  // assign o_rf    = fixed_mul(pre_rf, vol_gain);
+  // assign o_valid = pre_valid;
+  assign o_lf    = fixed_mul(post_lf, vol_gain);
+  assign o_rf    = fixed_mul(post_rf, vol_gain);
+  assign o_valid = post_valid;
+  
 
   // ----------------------------------------------------------------
   // Display Control
