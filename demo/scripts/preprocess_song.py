@@ -21,6 +21,9 @@ import json
 import re
 import sys
 import tempfile
+import urllib.error
+import urllib.parse
+import urllib.request
 from pathlib import Path
 
 import librosa
@@ -36,6 +39,43 @@ VOCAL_MAX_HZ = 1100.0
 # pyin frame parameters
 FRAME_LENGTH = 2048
 HOP_LENGTH = 512
+
+
+def parse_lrc(lrc_text: str) -> list[dict]:
+    """Parse LRC format ([mm:ss.xx] text) to list of {timestamp_ms, text}."""
+    pattern = re.compile(r"\[(\d+):(\d+\.\d+)\](.*)")
+    lines = []
+    for line in lrc_text.splitlines():
+        m = pattern.match(line.strip())
+        if not m:
+            continue
+        ts_ms = (int(m.group(1)) * 60 + float(m.group(2))) * 1000
+        text = m.group(3).strip()
+        lines.append({"timestamp_ms": round(ts_ms, 3), "text": text})
+    return lines
+
+
+def fetch_lyrics(artist: str, title: str, album: str = "") -> list[dict] | None:
+    """Fetch synced lyrics from lrclib.net. Returns list of {timestamp_ms, text} or None."""
+    params = urllib.parse.urlencode({"artist_name": artist, "track_name": title, "album_name": album})
+    url = f"https://lrclib.net/api/get?{params}"
+    try:
+        with urllib.request.urlopen(url, timeout=10) as resp:
+            data = json.loads(resp.read())
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            print(f"    WARNING: lrclib returned 404 (no match for {artist!r} / {title!r})")
+        else:
+            print(f"    WARNING: lrclib fetch failed: {e}")
+        return None
+    except Exception as e:
+        print(f"    WARNING: lrclib fetch failed: {e}")
+        return None
+    synced = data.get("syncedLyrics")
+    if not synced:
+        print(f"    WARNING: lrclib has no synced lyrics for {artist!r} / {title!r}")
+        return None
+    return parse_lrc(synced)
 
 
 def slugify(name: str) -> str:
@@ -193,6 +233,7 @@ def write_outputs(
     cover_bytes: bytes | None = None,
     crop_start_ms: int | None = None,
     crop_end_ms: int | None = None,
+    lyrics: list[dict] | None = None,
 ) -> None:
     """Write all output files to song_dir."""
     print(f"[3/3] Writing outputs to {song_dir} ...")
@@ -238,6 +279,15 @@ def write_outputs(
     }
     (song_dir / "meta.json").write_text(json.dumps(meta, indent=2) + "\n")
 
+    # Lyrics
+    lyrics_path = song_dir / "lyrics.json"
+    lyrics_data = lyrics if lyrics is not None else []
+    lyrics_path.write_text(json.dumps(lyrics_data, indent=2) + "\n")
+    if lyrics_data:
+        print(f"    lyrics.json written ({len(lyrics_data)} lines).")
+    else:
+        print(f"    lyrics.json written (empty — no synced lyrics found).")
+
     print(f"    instrumental.wav, vocals.wav, pitch_track.csv, meta.json written.")
 
 
@@ -257,6 +307,11 @@ def main() -> None:
     parser.add_argument(
         "--slug",
         help="Override filesystem slug (default: derived from --name)",
+    )
+    parser.add_argument(
+        "--skip-lyrics",
+        action="store_true",
+        help="Skip fetching lyrics from lrclib.net",
     )
     args = parser.parse_args()
 
@@ -284,6 +339,11 @@ def main() -> None:
     if song_dir.exists():
         print(f"Warning: {song_dir} already exists. Files will be overwritten.")
 
+    lyrics: list[dict] | None = None
+    if not args.skip_lyrics:
+        print("[+] Fetching synced lyrics from lrclib.net ...")
+        lyrics = fetch_lyrics(artist, name, album)
+
     with tempfile.TemporaryDirectory(prefix="autotune_demucs_") as tmp:
         tmp_path = Path(tmp)
 
@@ -304,6 +364,7 @@ def main() -> None:
             cover_bytes=id3["cover_bytes"],
             crop_start_ms=id3["crop_start_ms"],
             crop_end_ms=id3["crop_end_ms"],
+            lyrics=lyrics,
         )
 
     print(f"\nDone! Song '{name}' saved to: {song_dir}")
