@@ -18,6 +18,7 @@ module vocoder_tb;
     logic   clk;
     logic   rst;
     logic   i_valid;
+    logic   i_synth_bypass = 1'b0;
 
     fixed_t o_data;
     audio_t o_raw;

@@ -43,6 +43,7 @@ always_comb begin
         PASSTHROUGH: eff_mode = P;
         AUTOTUNE: eff_mode = A;
         VOCODE: eff_mode = V;
+        SYNTH: eff_mode = S;
         default: eff_mode = NONE;
     endcase
 end
