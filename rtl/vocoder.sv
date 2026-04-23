@@ -177,7 +177,7 @@ module vocoder #(
           // [NOTE_OFFSET, NOTE_LAST], which is all we have ROM entries for.
           // Notes outside the range are silently skipped.
           if ((note >= 8'(NOTE_OFFSET)) && (note <= 8'(NOTE_LAST))) begin
-            if (i_notes[note[6:0]]) begin
+            if (i_notes[note[6:0]]) begin //TODO: remove if statement to prevent carrier phase problems (idk if needed)
               indices[note - NOTE_OFFSET] <= (indices[note - NOTE_OFFSET] == idx_rom[note - NOTE_OFFSET + 1] - 1) ? idx_rom[note - NOTE_OFFSET] : indices[note - NOTE_OFFSET] + 1;
             end
           end
