@@ -1,142 +1,109 @@
 `include "fixed.sv"
 import global_enums::*;
 
+/*
+Streaming RMS normalization.
+
+power[n] = power[n-1] - (power[n-1] >> K) + (x_scaled[n]^2 >> K)
+   where x_scaled = i_data >>> 4  (prevents squaring overflow in Q11.16)
+
+rms_q = sqrt(power_raw)  =>  rms_Q11 = rms_q << 12  (back to Q11.16 RMS of i_data)
+
+gain = TARGET / rms_Q11   (combinational div, updates every cycle)
+o_data = gain * i_data    (registered output)
+
+Latency: 1 cycle (registered output).
+*/
+
 module normalization #(
     parameter SIM = 0
 )(
-    input clk,
-    input rst,
-    input fixed_t i_data,
-    input mode_t i_mode,
-    input logic i_valid,
+    input  clk,
+    input  rst,
+    input  fixed_t i_data,
+    input  mode_t  i_mode,
+    input          i_valid,
     output fixed_t o_data,
-    output logic o_valid
+    output logic   o_valid
 );
 
-// TODO: mode is currently not working, change so that everything resets when mode changes
+localparam int     K       = 8;
+localparam fixed_t TARGET  = `FIXED_RTOF(91.0);
+localparam fixed_t MIN_RMS = 27'h40_0000; // 64.0 in Q11.16 — caps max gain at TARGET/MIN_RMS ≈ 1.42
 
-/*
-Calculate the RMS of the incoming signal
+// Squaring Logic
+fixed_t x_scaled, x_sq;
+assign x_scaled = i_data >>> 4;
+assign x_sq     = fixed_mul(x_scaled, x_scaled);
 
-alpha = sets the time constant (how fast the RMS responds to level changes)
-      = in (0,1)
-      = since alpha is small, express as a right shift k 
-
-k = log2(1/alpha)
-
-power[n] = power[n-1] - (power[n-1] >> k) + (x[n]^2 >> k)
-
-RMS[n] = sqrt( power[n] )
-
-gain = target / RMS[n]
-
-y[n] = gain * x[n]
-
-*/
-
-localparam K = 12; //gives a constant time of ~4096 samples (85ms)
-//localparam fixed_t target = 27'h40_0000; //~18% of full scale sine RMS
-localparam fixed_t target = 27'h5B_2800; 
-//localparam fixed_t target = 27'hB5_B000; 
-localparam MIN_RMS = 27'h40_0000; // small but non-zero Q11.16 value; overflow protection
-
-// Module signals 
-logic signed [28:0] y;
-logic signed [28:0] y_prev;
-fixed_t x_2;
-logic [13:0] rms;
-fixed_t gain;
-
-// Square root Logic
-always_ff @(posedge clk) begin 
-    if (rst) 
-        x_2 <= '0;
-    else if (i_valid)
-        x_2 <= fixed_mul(i_data, i_data);
+// Mode reset and power calculation
+logic signed [28:0] power;
+mode_t mode_prev;
+always_ff @(posedge clk) begin
+    if (rst) begin
+        power     <= '0;
+        mode_prev <= i_mode;
+    end else begin
+        mode_prev <= i_mode;
+        if (i_mode != mode_prev)
+            power <= '0;
+        else if (i_valid)
+            power <= power - (power >>> K) + (29'(signed'(x_sq)) >>> K);
+    end
 end
 
-// State Logic 
-always_ff @(posedge clk) begin 
-    if (rst)
-        y_prev <= '0;
-    else if (i_valid)
-        y_prev <= y;
-end
+// sqrt and div logic 
+logic [26:0] sqrt_radical;
+logic [13:0] rms_q;
+logic [13:0] rms_qr;
+fixed_t      rms_Q11, rms_guarded, gain;
+logic [42:0] gain_raw;
 
-// Averaging Logic
-logic signed [28:0] y_eff;
-logic signed [28:0] x_eff;
-assign y_eff = (y_prev >> K);
-assign x_eff = (x_2 >> K);
-assign y = y_prev - y_eff + x_eff;
+assign sqrt_radical = power[26:0];
+assign rms_Q11      = fixed_t'(27'(rms_qr) <<< 12);
+assign rms_guarded  = (rms_Q11 < MIN_RMS) ? MIN_RMS : rms_Q11; //clamp so there is overflow protection
 
 generate
-    if (SIM) begin
-        real rms_guarded;
-        always_comb begin
-            rms  = $sqrt(real'(y) / 2.0**16) * 2.0**7;  // compute sqrt, convert Q11.16 input to real, result back to Q6.7
-            rms_guarded = (real'(rms << 9) / 2.0**16 < real'(target) / 2.0**16) ?
-                          (real'(target) / 2.0**16) :
-                          (real'(rms << 9) / 2.0**16);
-            gain = ((real'(target) / 2.0**16) / rms_guarded) * 2.0**16;
-        end
-    end else begin
-        // RMS Logic
-        sqrt irsm(
-            .radical(y),
-            .q(rms),
+    if (SIM) begin : g_sim
+        always_comb rms_q = 14'($sqrt(real'(sqrt_radical)));
+        always_comb gain  = fixed_t'(real'({TARGET, 16'd0}) / real'(rms_guarded));
+    end else begin : g_synth
+        sqrt iSQRT (
+            .radical(sqrt_radical),
+            .q(rms_q),
             .remainder()
         );
 
-        // Gain Logic 
-        div_2 idiv(
-            .denom((rms << 9) < MIN_RMS ? MIN_RMS : (rms << 9)), // convert rms result Q6.7 to Q11.16
-            .numer({target, 16'd0}),
-            .quotient(gain),
+        always_ff @(posedge clk) begin
+            if (rst)
+                rms_qr <= '0;
+            else
+                rms_qr <= rms_q;
+        end
+
+        div_2 iDIV (
+            .numer({TARGET, 16'd0}),
+            .denom(rms_guarded),
+            .quotient(gain_raw),
             .remain()
         );
+        assign gain = fixed_t'(gain_raw[26:0]);
     end
 endgenerate
 
-// `ifdef SIM
-//         real rms_guarded;
-//         always_comb begin
-//             rms  = $sqrt(real'(y) / 2.0**16) * 2.0**7;  // compute sqrt, convert Q11.16 input to real, result back to Q6.7
-//             rms_guarded = (real'(rms << 9) / 2.0**16 < real'(MIN_RMS) / 2.0**16) ?
-//                           (real'(MIN_RMS) / 2.0**16) :
-//                           (real'(rms << 9) / 2.0**16);
-//             gain = ((real'(target) / 2.0**16) / rms_guarded) * 2.0**16;
-//         end
-// `else
-//         // RMS Logic
-//         sqrt irsm(
-//             .radical(y),
-//             .q(rms),
-//             .remainder()
-//         );
-
-//         // Gain Logic 
-//         div_2 idiv(
-//             .denom((rms << 9) < MIN_RMS ? MIN_RMS : (rms << 9)), // convert rms result Q6.7 to Q11.16
-//             .numer({target, 16'd0}),
-//             .quotient(gain),
-//             .remain()
-//         );
-// `endif
-
-// Output logic 
-assign o_data = fixed_mul(gain, i_data);
-
-logic valid_r, valid_r2;
-always_ff @(posedge clk) begin 
+// Output pipeline
+logic valid_d1, valid_d2;
+always_ff @(posedge clk) begin
     if (rst) begin
-        valid_r <= 0;
-        valid_r2 <= 0;
-        o_valid <= 0;
-    end else begin 
-        valid_r <= i_valid;
-        valid_r2 <= valid_r;
-        o_valid <= valid_r2;
+        valid_d1 <= '0;
+        valid_d2 <= '0;
+        o_data   <= '0;
+        o_valid  <= '0;
+    end else begin
+        valid_d1 <= i_valid;
+        valid_d2 <= valid_d1;
+        o_data   <= (i_mode == VOCODE) ? i_data   : fixed_mul(gain, i_data);
+        o_valid  <= (i_mode == VOCODE) ? i_valid  : valid_d2;
     end
 end
 

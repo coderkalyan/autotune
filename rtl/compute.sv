@@ -284,7 +284,7 @@ module compute #(
   fixed_t post_lf, post_rf;
   logic post_valid;
 
-  normalization_2 iNORM1 (
+  normalization iNORM1 (
     .clk(clk),
     .rst(rst),
     .i_data(pre_lf),
@@ -294,7 +294,7 @@ module compute #(
     .o_valid(post_valid)
   );
 
-  normalization_2 iNORM2 (
+  normalization iNORM2 (
     .clk(clk),
     .rst(rst),
     .i_data(pre_rf),
