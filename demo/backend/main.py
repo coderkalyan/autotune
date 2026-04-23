@@ -1,7 +1,9 @@
 import asyncio
 import json
 import os
+import statistics
 import time
+from collections import deque
 from contextlib import asynccontextmanager
 
 import mido
@@ -16,7 +18,7 @@ from midi_bridge import MIDIBridge
 from song_manager import SongManager
 from uart_parser import UARTParser
 
-SERIAL_PORT = "/dev/ttyUSB0"
+SERIAL_PORT = "/dev/cu.usbserial-FTA9O9VB"
 BAUD = 31250
 WS_INTERVAL = 0.033  # ~30 Hz
 
@@ -41,6 +43,9 @@ async def _broadcast(message: dict) -> None:
 
 
 async def _pitch_loop() -> None:
+    detected_window: deque[float] = deque(maxlen=5)
+    corrected_window: deque[float] = deque(maxlen=5)
+
     while True:
         await asyncio.sleep(WS_INTERVAL)
         if not _connected:
@@ -55,16 +60,31 @@ async def _pitch_loop() -> None:
             song_manager.get_target_hz(position_ms) if position_ms is not None else None
         )
         target_hz = round(raw_target, 2) if raw_target is not None else None
+        lyric = (
+            song_manager.get_current_lyric(position_ms)
+            if position_ms is not None
+            else None
+        )
+        song_position_ms = round(position_ms) if position_ms is not None else None
 
         if reading:
+            if reading.get("vad_active") and reading.get("vad_voiced"):
+                if reading["detected_hz"] is not None:
+                    detected_window.append(reading["detected_hz"])
+                if reading["corrected_hz"] is not None:
+                    corrected_window.append(reading["corrected_hz"])
+            else:
+                detected_window.clear()
+                corrected_window.clear()
+            filtered_detected = round(statistics.median(detected_window), 2) if detected_window else None
+            filtered_corrected = round(statistics.median(corrected_window), 2) if corrected_window else None
+
             msg = {
-                "detected_hz": round(reading["detected_hz"], 2)
-                if reading["detected_hz"] is not None
-                else None,
-                "corrected_hz": round(reading["corrected_hz"], 2)
-                if reading["corrected_hz"] is not None
-                else None,
+                "detected_hz": filtered_detected,
+                "corrected_hz": filtered_corrected,
                 "target_hz": target_hz,
+                "lyric": lyric,
+                "song_position_ms": song_position_ms,
                 "timestamp_ms": int(time.monotonic() * 1000),
                 "mode": reading["mode"],
                 "vad_active": reading["vad_active"],
@@ -81,6 +101,8 @@ async def _pitch_loop() -> None:
                 "detected_hz": None,
                 "corrected_hz": None,
                 "target_hz": target_hz,
+                "lyric": lyric,
+                "song_position_ms": song_position_ms,
                 "timestamp_ms": int(time.monotonic() * 1000),
                 "mode": None,
                 "vad_active": None,
@@ -157,14 +179,34 @@ def song_cover(song_id: str):
     return FileResponse(path, media_type="image/jpeg")
 
 
+@app.get("/songs/{song_id}/lyrics")
+def song_lyrics(song_id: str):
+    path = os.path.join(song_manager.song_dir(song_id), "lyrics.json")
+    if not os.path.isfile(path):
+        return []
+    with open(path) as f:
+        return json.load(f)
+
+
 @app.post("/songs/{song_id}/play")
-def play_song(song_id: str):
+def play_song(song_id: str, vocals_volume: float = 0.3):
     instrumental = song_manager.instrumental_path(song_id)
     if not os.path.isfile(instrumental):
         raise HTTPException(status_code=404, detail="Song not found")
+    vocals = song_manager.vocals_path(song_id)
     song_manager.load(song_id)
-    audio_engine.play(instrumental)
+    audio_engine.play(
+        instrumental,
+        vocals_path=vocals if os.path.isfile(vocals) else None,
+        vocals_volume=vocals_volume,
+    )
     return {"ok": True, "playing": song_id}
+
+
+@app.post("/songs/vocals_volume")
+def set_vocals_volume(volume: float):
+    audio_engine.set_vocals_volume(volume)
+    return {"ok": True, "vocals_volume": volume}
 
 
 @app.post("/songs/stop")
