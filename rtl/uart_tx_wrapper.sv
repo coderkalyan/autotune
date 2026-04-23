@@ -16,6 +16,7 @@ module uart_tx_wrapper (
     input i_config_done,
     input i_config_err,
     input i_pitch_done,
+    input [9:0] i_target_lag,
     output reg o_transmission_done,
     output o_tx
 );
@@ -28,14 +29,15 @@ localparam int PAYLOAD_BITS = NUM_BYTES * 7;  // 896
 //   [895:886] 10-bit lag
 //   [885]     1-bit  autocorrelation confidence
 //   [884:21]  32 × 27-bit fixed_t vocode bands
-//   [20:19]   2-bit  mode
-//   [18]      vad_active
-//   [17]      vad_voiced
-//   [16]      dac_full
-//   [15]      adc_empty
-//   [14]      config_done
-//   [13]      config_err
-//   [12:0]    padding
+//   [20:18]   3-bit  mode
+//   [17]      vad_active
+//   [16]      vad_voiced
+//   [15]      dac_full
+//   [14]      adc_empty
+//   [13]      config_done
+//   [12]      config_err
+//   [11:2]    10-bit target_lag
+//   [1:0]     padding
 
 typedef enum reg [1:0] {IDLE, INIT, SENDING} state_t;
 state_t state, next_state;
@@ -54,14 +56,15 @@ always_comb begin
     payload[885]     = ir_pitch_valid;
     for (int j = 0; j < 32; j++)
         payload[884 - j*27 -: 27] = i_vocode_bands_flat[j*27 +: 27];
-    payload[20:19]   = i_mode;
-    payload[18]      = i_vad_active;
-    payload[17]      = i_vad_voiced;
-    payload[16]      = i_dac_full;
-    payload[15]      = i_adc_empty;
-    payload[14]      = i_config_done;
-    payload[13]      = i_config_err;
-    payload[12:0]    = 13'd0;
+    payload[20:18]   = i_mode;
+    payload[17]      = i_vad_active;
+    payload[16]      = i_vad_voiced;
+    payload[15]      = i_dac_full;
+    payload[14]      = i_adc_empty;
+    payload[13]      = i_config_done;
+    payload[12]      = i_config_err;
+    payload[11:2]    = i_target_lag;
+    payload[1:0]     = 2'd0;
 end
 
 UART_tx iTX (

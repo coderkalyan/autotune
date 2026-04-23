@@ -22,6 +22,7 @@ module compute #(
     output logic o_vad_active,
     output logic o_vad_voiced,
     output mode_t o_mode,
+    output logic [9:0] o_target_lag,
     output logic [6:0] HEX0,
     output logic [6:0] HEX1,
     output logic [6:0] HEX2,
@@ -168,7 +169,8 @@ module compute #(
       .actual_lag(pitch_period),
       .target_lag(target_lag),
       .shift_ratio(pitch_factor_recip),
-      .mode(mode)
+      .mode(mode),
+      .o_target_lag(o_target_lag)
   );
 
   // ----------------------------------------------------------------
@@ -202,6 +204,9 @@ module compute #(
       .o_valid()
   );
 
+  // ----------------------------------------------------------------
+  // Vocoding
+  // ----------------------------------------------------------------
   fixed_t vocode_data;
   logic   vocode_valid;
   fnorm_t vocode_bands [32];
@@ -211,6 +216,7 @@ module compute #(
       .i_valid(adc_en),
       .i_data(lf),
       .i_notes(notes),
+      .i_synth_bypass(mode == SYNTH),
       .o_data(vocode_data),
       .o_vocode_bands(vocode_bands),
       .o_valid(vocode_valid)
@@ -224,6 +230,10 @@ module compute #(
     end
   endgenerate
 
+
+  // ----------------------------------------------------------------
+  // Volume/Normalization
+  // ----------------------------------------------------------------
   // Volume control via MIDI encoder 0 (logarithmic)
   // gain = volume / 2^VOL_SHIFT; midpoint (64) → gain 1.0, max (127) → ~2.0
   localparam int VOL_SHIFT = 6;
@@ -258,6 +268,11 @@ module compute #(
         pre_rf = vocode_data;
         pre_valid = vocode_valid;
       end
+      SYNTH: begin
+        pre_lf = vocode_data;
+        pre_rf = vocode_data;
+        pre_valid = vocode_valid;
+      end
       default: begin
         pre_lf = 0;
         pre_rf = 0;
@@ -266,11 +281,38 @@ module compute #(
     endcase
   end
 
+  fixed_t post_lf, post_rf;
+  logic post_valid;
+
+  normalization iNORM1 (
+    .clk(clk),
+    .rst(rst),
+    .i_data(pre_lf),
+    .i_mode(mode),
+    .i_valid(pre_valid),
+    .o_data(post_lf),
+    .o_valid(post_valid)
+  );
+
+  normalization iNORM2 (
+    .clk(clk),
+    .rst(rst),
+    .i_data(pre_rf),
+    .i_mode(mode),
+    .i_valid(pre_valid),
+    .o_data(post_rf),
+    .o_valid()
+  );
+
   fixed_t vol_gain;
   assign vol_gain = fixed_t'({1'b0, volume}) << (16 - VOL_SHIFT);
-  assign o_lf    = fixed_mul(pre_lf, vol_gain);
-  assign o_rf    = fixed_mul(pre_rf, vol_gain);
-  assign o_valid = pre_valid;
+  // assign o_lf    = fixed_mul(pre_lf, vol_gain);
+  // assign o_rf    = fixed_mul(pre_rf, vol_gain);
+  // assign o_valid = pre_valid;
+  assign o_lf    = fixed_mul(post_lf, vol_gain);
+  assign o_rf    = fixed_mul(post_rf, vol_gain);
+  assign o_valid = post_valid;
+  
 
   // ----------------------------------------------------------------
   // Display Control
