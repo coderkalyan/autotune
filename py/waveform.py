@@ -3,20 +3,51 @@ import subprocess
 import numpy as np
 
 
+POSTER_FONT = 22
+CARD_BG = "#e8e8ec"
+
+
+def _apply_poster_rc() -> None:
+    import matplotlib.pyplot as plt
+
+    plt.rcParams.update(
+        {
+            "font.size": POSTER_FONT,
+            "axes.titlesize": POSTER_FONT + 4,
+            "axes.labelsize": POSTER_FONT,
+            "xtick.labelsize": POSTER_FONT - 2,
+            "ytick.labelsize": POSTER_FONT - 2,
+            "figure.titlesize": POSTER_FONT + 6,
+            "axes.titlepad": 6,
+        }
+    )
+
+
+def _style_card(ax) -> None:
+    ax.set_facecolor(CARD_BG)
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+    ax.tick_params(left=False, labelleft=False, bottom=False, labelbottom=False)
+
+
 def _stem(ax, n, y, title: str, xlabel: str, ylabel: str) -> None:
-    """Small helper to make discrete-time style plots."""
+    """Classic stem plot (vertical line from x-axis to each point)."""
     markerline, stemlines, baseline = ax.stem(n, y)
     ax.set_title(title)
-    ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel)
-    ax.grid(True, alpha=0.3)
-    # Make it a bit cleaner looking
     try:
-        markerline.set_markersize(4)
-        stemlines.set_linewidth(1)
-        baseline.set_linewidth(1)
+        markerline.set_markersize(5)
+        stemlines.set_linewidth(1.5)
+        baseline.set_linewidth(1.2)
     except Exception:
         pass
+    _style_card(ax)
+
+
+def _dots_line(ax, n, y, title: str) -> None:
+    """Dots connected by line."""
+    ax.plot(n, y, linestyle="-", marker="o", markersize=5, linewidth=1.5)
+    ax.set_title(title)
+    _style_card(ax)
 
 
 def discrete_time_sinusoid(
@@ -200,7 +231,9 @@ def main_mp4_audio_autocorr() -> None:
     mp4_path = r"/home/laptop4070/ece554/10 Minutes of A Piano A4 440 Hz - Music in Space.mp3"  # TODO: hard-code your file path here
 
     # Keep this modest: r_of_n is O(N * max_lag) in your current implementation.
-    x, fs_hz = mp4_audio_to_signal(mp4_path=mp4_path, target_fs_hz=16_000, max_samples=65_536)
+    x, fs_hz = mp4_audio_to_signal(
+        mp4_path=mp4_path, target_fs_hz=16_000, max_samples=65_536
+    )
     r = r_of_n(x)
 
     max_lag = min(128, x.shape[0])
@@ -209,19 +242,19 @@ def main_mp4_audio_autocorr() -> None:
 
     import matplotlib.pyplot as plt
 
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6), constrained_layout=True)
-    ax1.plot(t_sec, x, linewidth=0.8)
-    ax1.set_title("MP4 Audio (time domain)")
-    ax1.set_xlabel("time (s)")
-    ax1.set_ylabel("x[n] (normalized)")
-    ax1.grid(True, alpha=0.3)
+    _apply_poster_rc()
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(18, 7), constrained_layout=True)
+    ax1.scatter(t_sec, x, s=6)
+    ax1.set_title("MP4 Audio")
+    _style_card(ax1)
 
-    ax2.stem(lag_sec, r[:max_lag])
-    ax2.set_title("Autocorrelation r[n] (first lags)")
-    ax2.set_xlabel("lag (s)")
-    ax2.set_ylabel("r[n]")
-    ax2.grid(True, alpha=0.3)
+    ax2.plot(
+        lag_sec, r[:max_lag], linestyle="-", marker="o", markersize=5, linewidth=1.5
+    )
+    ax2.set_title("Autocorrelation")
+    _style_card(ax2)
 
+    fig.set_constrained_layout_pads(w_pad=0.15, wspace=0.08)
     plt.show()
 
 
@@ -230,11 +263,12 @@ def r_of_n(x: np.ndarray) -> np.ndarray:
     x = np.asarray(x)
     N = x.shape[0]
     r = np.zeros(N, dtype=np.result_type(x, np.float64))
-    for n in range(128):
-    # for n in range(N):
+    # for n in range(128):
+    for n in range(N):
         # sum_{k=0}^{N-n-1} x[k]*x[k+n]
         r[n] = np.dot(x[: N - n], x[n:]) / N
     return r
+
 
 def simple_auto_correlation_demo() -> None:
     # --- Example usage ---
@@ -243,7 +277,7 @@ def simple_auto_correlation_demo() -> None:
     rng = np.random.default_rng(0)
 
     x = discrete_time_sinusoid(
-        N, amplitude=amplitude, f0_hz=5.0, fs_hz=128.0*4, phase_rad=np.pi, kind="sin"
+        N, amplitude=amplitude, f0_hz=5.0, fs_hz=128.0 * 4, phase_rad=np.pi, kind="sin"
     )
 
     # Add harmonics to the clean signal, then add noise.
@@ -269,22 +303,23 @@ def simple_auto_correlation_demo() -> None:
     # If you don't have matplotlib installed: pip install matplotlib
     import matplotlib.pyplot as plt
 
+    _apply_poster_rc()
     n = np.arange(N)
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6), constrained_layout=True)
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(18, 7), constrained_layout=True)
     _stem(
         ax1,
         n,
         x,
-        title="Discrete-time sinusoid x[n]",
+        title="Input signal x[n]",
         xlabel="n (sample)",
         ylabel="x[n]",
     )
     _stem(ax2, n, r, title="Autocorrelation r[n]", xlabel="n (lag)", ylabel="r[n]")
+    fig.set_constrained_layout_pads(w_pad=0.15, wspace=0.08)
+    plt.savefig("waveform_poster.png", dpi=600, bbox_inches="tight")
     plt.show()
 
 
 if __name__ == "__main__":
-    # simple_auto_correlation_demo()
-    main_mp4_audio_autocorr()
-
-    
+    simple_auto_correlation_demo()
+    # main_mp4_audio_autocorr()
