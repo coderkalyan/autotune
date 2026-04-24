@@ -24,10 +24,41 @@ def _apply_poster_rc() -> None:
 
 
 def _style_card(ax) -> None:
-    ax.set_facecolor(CARD_BG)
-    for spine in ax.spines.values():
-        spine.set_visible(False)
-    ax.tick_params(left=False, labelleft=False, bottom=False, labelbottom=False)
+    for side, spine in ax.spines.items():
+        if side in ("left", "bottom"):
+            spine.set_visible(True)
+            spine.set_linewidth(2)
+            spine.set_color("black")
+        else:
+            spine.set_visible(False)
+    ax.spines["bottom"].set_position("zero")
+    ax.tick_params(
+        left=False,
+        labelleft=False,
+        bottom=False,
+        labelbottom=False,
+        right=False,
+        top=False,
+    )
+    # Arrow heads at axis ends.
+    ax.plot(
+        1,
+        0,
+        marker=">",
+        color="black",
+        markersize=14,
+        transform=ax.get_yaxis_transform(),
+        clip_on=False,
+    )
+    ax.plot(
+        0,
+        1,
+        marker="^",
+        color="black",
+        markersize=14,
+        transform=ax.transAxes,
+        clip_on=False,
+    )
 
 
 def _stem(ax, n, y, title: str, xlabel: str, ylabel: str) -> None:

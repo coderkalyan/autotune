@@ -68,8 +68,6 @@ _MIPMAP_SPEC = [
 ]
 
 
-
-
 def read_pcm_f32(path: str) -> np.ndarray:
     with open(path, "rb") as f:
         return np.frombuffer(f.read(), dtype=np.float32)
@@ -144,8 +142,8 @@ def make_carrier(
     t = np.arange(n, dtype=np.float64) / fs
 
     # Phase is kept in [0,1) so it wraps correctly inside the table reader.
-    phase_lo:np.ndarray = (f0 / detune_ratio * t) % 1.0
-    phase_hi:np.ndarray = (f0 * detune_ratio * t) % 1.0
+    phase_lo: np.ndarray = (f0 / detune_ratio * t) % 1.0
+    phase_hi: np.ndarray = (f0 * detune_ratio * t) % 1.0
     # print("phase_hi", phase_hi)
 
     out = 0.5 * _read_table_lerp(table, phase_lo) + 0.5 * _read_table_lerp(
@@ -181,64 +179,63 @@ def make_chord(
 def causal_rms(x: np.ndarray, fs: int, window_ms: float = 50.0) -> np.ndarray:
     """
     Causal running RMS via a 2-pole IIR smoother on x^2.
- 
+
     Two cascaded single-pole sections are used instead of one:
       - pole 1 smooths x^2, producing a running mean-square estimate
       - pole 2 smooths that estimate again, steepening the rolloff to
         -40 dB/decade so double-frequency ripple (which lives at 2*f_band
         in the squared signal) is more strongly suppressed on low bands
         where 2*f_band is close to the smoothing cutoff.
- 
+
     Both poles share the same alpha (same time constant). The impulse
     response shape changes from pure exponential (1 pole) to n*(1-a)^n
     (2 poles) — a soft onset that ramps up briefly before decaying, which
     means the estimate reacts slightly more gradually to sudden onsets but
     has a cleaner steady-state estimate.
- 
+
     window_ms is the RC time constant for each pole. 50 ms balances
     stability against responsiveness for vocoder band gain tracking.
     """
     alpha: float = 1.0 - np.exp(-1.0 / (window_ms * 1e-3 * fs))
- 
+
     mean_sq: np.ndarray = np.zeros(len(x), dtype=np.float64)
-    state1: float = 0.0   # first pole state  — smooths x^2
-    state2: float = 0.0   # second pole state — smooths state1
- 
+    state1: float = 0.0  # first pole state  — smooths x^2
+    state2: float = 0.0  # second pole state — smooths state1
+
     for i, sample in enumerate(x):
         sq: float = float(sample) ** 2
-        state1 = (1.0 - alpha) * state1 + alpha * sq       # pole 1
-        state2 = (1.0 - alpha) * state2 + alpha * state1   # pole 2
+        state1 = (1.0 - alpha) * state1 + alpha * sq  # pole 1
+        state2 = (1.0 - alpha) * state2 + alpha * state1  # pole 2
         mean_sq[i] = state2
- 
+
     return np.sqrt(mean_sq)
 
 
-def asymmetric_follower(x: np.ndarray,
-                        fs: int,
-                        attack_ms: float = 3.0,
-                        release_ms: float = 30.0) -> np.ndarray:
+def asymmetric_follower(
+    x: np.ndarray, fs: int, attack_ms: float = 3.0, release_ms: float = 30.0
+) -> np.ndarray:
     """
     Causal asymmetric envelope follower.
- 
+
     Uses a fast alpha on rising edges (attack) and a slow alpha on falling
     edges (release). Input x should already be rectified (abs of band signal).
- 
+
       alpha = 1 - exp(-1 / (t_ms * 1e-3 * fs))   [exact bilinear form]
- 
+
     This is the same single-pole IIR as an RC lowpass, but the coefficient
     switches each sample depending on whether the signal is rising or falling.
     """
-    a_att: float = 1.0 - np.exp(-1.0 / (attack_ms  * 1e-3 * fs))
+    a_att: float = 1.0 - np.exp(-1.0 / (attack_ms * 1e-3 * fs))
     a_rel: float = 1.0 - np.exp(-1.0 / (release_ms * 1e-3 * fs))
- 
+
     env: np.ndarray = np.zeros(len(x), dtype=np.float64)
     state: float = 0.0
- 
+
     for i, sample in enumerate(x):
         alpha: float = a_att if float(sample) > state else a_rel
         state = (1.0 - alpha) * state + alpha * float(sample)
         env[i] = state
- 
+
     return env
 
 
@@ -270,7 +267,9 @@ def _design_bandpass_sos(edges: np.ndarray, fs: int, order: int) -> list[np.ndar
         if f1 >= f2:
             sos_list.append(np.zeros((0, 6), dtype=np.float64))
             continue
-        sos = cast(np.ndarray, butter(order, [f1, f2], btype="band", fs=fs, output="sos"))
+        sos = cast(
+            np.ndarray, butter(order, [f1, f2], btype="band", fs=fs, output="sos")
+        )
         sos_list.append(np.asarray(sos, dtype=np.float64))
     return sos_list
 
@@ -299,7 +298,9 @@ def vocode(
 
     y = np.zeros_like(x)
     env_matrix = (
-        np.zeros((len(bp_sos_list), len(x)), dtype=np.float64) if collect_envelopes else None
+        np.zeros((len(bp_sos_list), len(x)), dtype=np.float64)
+        if collect_envelopes
+        else None
     )
 
     for b, bp_sos in enumerate(bp_sos_list):
@@ -408,19 +409,43 @@ def plot_vocoder_visualization(
     band_centers_hz: np.ndarray,
 ) -> None:
     """Three-panel educational visualization (exactly 3 vertically stacked plots)."""
+    POSTER_FONT = 22
+    CARD_BG = "#e8e8ec"
+
+    plt.rcParams.update(
+        {
+            "font.size": POSTER_FONT,
+            "axes.titlesize": POSTER_FONT + 4,
+            "axes.labelsize": POSTER_FONT,
+            "xtick.labelsize": POSTER_FONT - 2,
+            "ytick.labelsize": POSTER_FONT - 2,
+            "figure.titlesize": POSTER_FONT + 6,
+            "axes.titlepad": 6,
+        }
+    )
+
     fig, axes = plt.subplots(
         3,
         1,
         sharex=True,
-        figsize=(10, 7),
+        figsize=(14, 11),
         constrained_layout=True,
     )
 
     ax0, ax1, ax2 = axes
 
-    ax0.plot(t, speech, lw=1.0)
-    ax0.set_title("Input speech waveform (time domain)")
-    ax0.set_ylabel("Amplitude")
+    for ax in axes:
+        ax.set_facecolor(CARD_BG)
+        for spine in ax.spines.values():
+            spine.set_visible(False)
+        ax.tick_params(left=False, labelleft=False, bottom=False, labelbottom=False)
+        ax.title.set_position((0.5, 1.0))
+        ax.margins(y=0.05)
+
+    fig.set_constrained_layout_pads(h_pad=0.15, hspace=0.08)
+
+    ax0.plot(t, speech, lw=1.5)
+    ax0.set_title("Speech")
 
     env_db = _normalize_envelopes_for_heatmap(envelopes)
 
@@ -433,12 +458,13 @@ def plot_vocoder_visualization(
         vmin=ENV_FLOOR_DB,
         vmax=0.0,
     )
-    ax1.set_title("Per-band envelopes used to modulate carrier bands")
-    ax1.set_ylabel("Band (low → high)")
+    # ax1.set_title("Per-band envelopes used to modulate carrier bands")
+    # ax1.set_ylabel("Band (low → high)")
+    ax1.set_title("Vocal envelope")
 
     # Heatmap key (colorbar). This is a legend for the middle plot, not an extra subplot.
     cbar = fig.colorbar(im, ax=ax1, pad=0.01, fraction=0.035)
-    cbar.set_label("Envelope level (dB, per-band reference)")
+    # cbar.set_label("Envelope level (dB, per-band reference)")
     cbar.set_ticks([ENV_FLOOR_DB, ENV_FLOOR_DB / 2.0, 0.0])
 
     # Keep labels clean: show only the lowest and highest band frequencies.
@@ -446,20 +472,22 @@ def plot_vocoder_visualization(
         lo_i = 0
         hi_i = int(env_db.shape[0] - 1)
         ax1.set_yticks([lo_i + 0.5, hi_i + 0.5])
-        ax1.set_yticklabels([f"{band_centers_hz[lo_i]:.0f} Hz", f"{band_centers_hz[hi_i]:.0f} Hz"])
+        ax1.set_yticklabels(
+            [f"{band_centers_hz[lo_i]:.0f} Hz", f"{band_centers_hz[hi_i]:.0f} Hz"]
+        )
 
-    ax2.plot(t, output, lw=1.0)
-    ax2.set_title("Output waveform: sum of (envelope × carrier band)")
-    ax2.set_ylabel("Amplitude")
+    ax2.plot(t, output, lw=1.5)
+    # ax2.set_title("Output waveform: sum of (envelope × carrier band)")
+    # ax2.set_ylabel("Amplitude")
+    ax2.set_title("Vocoded Output")
 
     # One shared x-axis label keeps the layout clean.
-    fig.supxlabel("Time (s)")
+    # fig.supxlabel("Time (s)")
+    fig.supxlabel("Time →")
 
     # Consistent x-limits across all three panels.
     for ax in axes:
         ax.set_xlim(float(t[0]), float(t[-1]))
-
-
 
 
 def main(
@@ -529,7 +557,7 @@ def main(
         )
 
         if viz_out:
-            plt.savefig(viz_out, dpi=150)
+            plt.savefig(viz_out, dpi=600, bbox_inches="tight")
         else:
             plt.show()
 
