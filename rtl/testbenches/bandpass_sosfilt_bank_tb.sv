@@ -133,6 +133,7 @@ module bandpass_sosfilt_bank_tb;
     int unsigned sample_count;
     int unsigned sim_cycles;
     int unsigned trace_lines;
+    integer dump_b;
 
     logic [31:0] phase;
     audio_t      saw_audio;
@@ -203,7 +204,7 @@ module bandpass_sosfilt_bank_tb;
             end
         end
     end
-    
+
 
     // // -------------------------
     // // Waveform dump + lightweight console trace
@@ -215,14 +216,10 @@ module bandpass_sosfilt_bank_tb;
         $dumpvars(0, i_valid);
         $dumpvars(0, i_data);
         $dumpvars(0, o_valid);
-        for (int b = 0; b < BANKS; b++) begin
-            $dumpvars(0, o_data[b]);
+        for (dump_b = 0; dump_b < BANKS; dump_b = dump_b + 1) begin
+            $dumpvars(0, o_data[dump_b]);
         end
-        // Helpful internal visibility
-        $dumpvars(0, dut.state);
-        $dumpvars(0, dut.bank_idx);
-        $dumpvars(0, dut.filt_i_valid);
-        $dumpvars(0, dut.filt_o_valid);
+        // Internal DUT signal names can vary; keep dump list to stable I/O here.
     end
 
     // Print one line per output sample (one o_valid per input sample)
@@ -231,7 +228,8 @@ module bandpass_sosfilt_bank_tb;
         if (!rst && o_valid && (trace_lines < MaxTraceLines)) begin
             $write("t=%0t ns  in=%7.4f", $time, `FIXED_FTOR(i_data));
             for (int b = 0; b < BANKS; b++) begin
-                real o_val = real'(o_data[b]) / real'(1 << 24);
+                real o_val;
+                o_val = real'(o_data[b]) / real'(1 << 24);
                 $write("  y[%0d]=%7.4f", b, o_val);
             end
             $write("\n");
