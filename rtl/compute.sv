@@ -288,29 +288,29 @@ module compute #(
   fixed_t post_lf, post_rf;
   logic post_valid;
 
-  assign post_valid = pre_valid;
-  assign post_lf = pre_lf;
-  assign post_rf = pre_rf;
+  // assign post_valid = pre_valid;
+  // assign post_lf = pre_lf;
+  // assign post_rf = pre_rf;
 
-  // normalization iNORM1 (
-  //     .clk(clk),
-  //     .rst(rst),
-  //     .i_data(pre_lf),
-  //     .i_mode(mode),
-  //     .i_valid(pre_valid),
-  //     .o_data(post_lf),
-  //     .o_valid(post_valid)
-  // );
-  //
-  // normalization iNORM2 (
-  //     .clk(clk),
-  //     .rst(rst),
-  //     .i_data(pre_rf),
-  //     .i_mode(mode),
-  //     .i_valid(pre_valid),
-  //     .o_data(post_rf),
-  //     .o_valid()
-  // );
+  normalization iNORM1 (
+      .clk(clk),
+      .rst(rst),
+      .i_data(pre_lf),
+      .i_mode(mode),
+      .i_valid(pre_valid),
+      .o_data(post_lf),
+      .o_valid(post_valid)
+  );
+
+  normalization iNORM2 (
+      .clk(clk),
+      .rst(rst),
+      .i_data(pre_rf),
+      .i_mode(mode),
+      .i_valid(pre_valid),
+      .o_data(post_rf),
+      .o_valid()
+  );
 
   fixed_t vol_gain;
   assign vol_gain = fixed_t'({1'b0, volume}) << (16 - VOL_SHIFT);
