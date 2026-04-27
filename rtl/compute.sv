@@ -23,6 +23,7 @@ module compute #(
     output logic o_vad_voiced,
     output mode_t o_mode,
     output logic [9:0] o_target_lag,
+    input logic i_btn,
     output logic [6:0] HEX0,
     output logic [6:0] HEX1,
     output logic [6:0] HEX2,
@@ -326,10 +327,13 @@ module compute #(
   // Display Control
   // ----------------------------------------------------------------
   hex_display iHEX (
+      .clk(clk),
+      .rst(rst),
       .pitch_period(r_pitch_period),
       .target_lag(target_lag),
       .mode(mode),
       .i_encoders(encoders),
+      .i_btn(i_btn),
       .HEX0(HEX0),
       .HEX1(HEX1),
       .HEX2(HEX2),

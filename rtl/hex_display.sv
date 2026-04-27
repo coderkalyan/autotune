@@ -1,10 +1,13 @@
 import global_enums::*;
 
 module hex_display (
+    input logic clk,
+    input logic rst,
     input logic [9:0] pitch_period,
     input logic [9:0] target_lag,
     input mode_t mode,
     input logic [6:0] i_encoders [0:7],
+    input logic i_btn,
     output logic [6:0] HEX0,
     output logic [6:0] HEX1,
     output logic [6:0] HEX2,
@@ -14,6 +17,19 @@ module hex_display (
 );
 
 hex_t note0, note1, note2, note3, note4;
+
+logic display_state;
+logic btn_prev;
+always_ff @(posedge clk or posedge rst) begin
+    if (rst) begin
+        display_state <= 1'b0;
+        btn_prev      <= 1'b0;
+    end else begin
+        btn_prev <= i_btn;
+        if (i_btn & ~btn_prev)
+            display_state <= ~display_state;
+    end
+end
 
 logic [9:0] lag_out;
 nearest_note_lut nearest_note_lut (
@@ -49,33 +65,34 @@ always_comb begin
 end
 
 always_comb begin
-    // HEX0 = hex7(pitch_period[3:0]);
-    // HEX1 = hex7(pitch_period[7:4]);
-    // HEX2 = hex7(pitch_period[9:8]);
+    HEX0 = hex7_notes(NONE);
+    HEX1 = hex7_notes(NONE);
+    HEX2 = hex7_notes(NONE);
+    HEX3 = hex7_notes(NONE);
+    HEX4 = hex7_notes(NONE);
+    HEX5 = hex7_notes(NONE);
 
-    // HEX0 = hex7(lag_out[3:0]);
-    // HEX1 = hex7(lag_out[7:4]);
-    // HEX2 = hex7(lag_out[9:8]);
+    case(display_state)
+        1'd0: begin
+            // display mode, encoders
+            HEX0 = hex7_notes(hex_t'(i_encoders[0][3:0]));
+            HEX1 = hex7_notes(hex_t'(i_encoders[0][6:4]));
+            HEX2 = hex7_notes(hex_t'(i_encoders[1][6:4]));
+    
+            HEX5 = hex7_notes(eff_mode);
+        end
+        1'b1: begin 
+            // displays mode, detected pitch_period, target_note
+            HEX0 = hex7_notes(note0);
+            HEX1 = hex7_notes(note1);
+            HEX2 = hex7_notes(note2);
 
+            HEX3 = hex7_notes(note3);
+            HEX4 = hex7_notes(note4);
 
-    // HEX0 = hex7_notes(note0);
-    // HEX1 = hex7_notes(note1);
-    // HEX2 = hex7_notes(note2);
-    HEX3 = hex7_notes(note3);
-    HEX4 = hex7_notes(note4);
-
-    HEX0 = hex7_notes(hex_t'(i_encoders[0][3:0]));
-    HEX1 = hex7_notes(hex_t'(i_encoders[0][6:4]));
-    HEX2 = hex7_notes(hex_t'(i_encoders[1][6:4]));
-
-    HEX5 = hex7_notes(eff_mode);
-
-    // HEX0 = hex7(bcd_freq[3:0]);    // hundredths Hz
-    // HEX1 = hex7(bcd_freq[7:4]);    // tenths Hz^M
-    // HEX2 = hex7(bcd_freq[11:8]);   // ones Hz^M
-    // HEX3 = hex7(bcd_freq[15:12]);  // tens Hz^M
-    // HEX4 = hex7(bcd_freq[19:16]);  // hundreds Hz^M
-    // HEX5 = hex7(bcd_freq[23:20]);  // thousands Hz^M
+            HEX5 = hex7_notes(eff_mode);
+        end 
+    endcase 
 end
 
 function automatic logic [6:0] hex7_notes(input hex_t val);
