@@ -119,6 +119,7 @@ module bandpass_filterbank #(
 
     fnorm_t o_s0_data, o_s1_data;
     bandpass_biquad u_biquad (
+        .clk      (clk),
         .i_x0     (x_latched),
         .i_x1     (cur_x1),
         .i_x2     (cur_x2),
@@ -161,23 +162,48 @@ module bandpass_filterbank #(
         .clk    (clk),
         .rst    (rst),
         .i_data (abs_filter_out),
-        .i_valid(busy),
-        .i_bank (bank_cnt),
+        .i_valid(busy_d2),
+        .i_bank (bank_d2),
         .o_data (asym_o_data),
         .o_valid(asym_o_valid)
     );
 
-    // Pipeline bank index to align with asym_follow's 2-cycle latency so
-    // the envelope write lands in the right bank slot.
-    logic [BBITS - 1:0] bank_d1, bank_d2;
+    // Pipeline alignment chains.
+    //
+    // Total per-bank latency from BRAM read result (cur_*) to writeback:
+    //   - Biquad pipeline (s0 reg + output reg) : 2 cycles
+    //   - asym_follow internal pipeline         : 2 cycles
+    //
+    // bank_d2 + cur_*_d2 / busy_d2 align with biquad outputs (state writeback
+    // and asym input).
+    // bank_d4 aligns with asym_follow output (envelope writeback).
+    logic [BBITS - 1:0] bank_d1, bank_d2, bank_d3, bank_d4;
+    logic               busy_d1, busy_d2;
+    fnorm_t             cur_x1_d1, cur_x1_d2;
+    fnorm_t             cur_s0_y1_d1, cur_s0_y1_d2;
+    fnorm_t             cur_s1_y1_d1, cur_s1_y1_d2;
     always_ff @(posedge clk) begin
         if (rst) begin
             bank_d1 <= '0;
             bank_d2 <= '0;
+            bank_d3 <= '0;
+            bank_d4 <= '0;
+            busy_d1 <= 1'b0;
+            busy_d2 <= 1'b0;
         end else begin
             bank_d1 <= bank_cnt;
             bank_d2 <= bank_d1;
+            bank_d3 <= bank_d2;
+            bank_d4 <= bank_d3;
+            busy_d1 <= busy;
+            busy_d2 <= busy_d1;
         end
+        cur_x1_d1    <= cur_x1;
+        cur_x1_d2    <= cur_x1_d1;
+        cur_s0_y1_d1 <= cur_s0_y1;
+        cur_s0_y1_d2 <= cur_s0_y1_d1;
+        cur_s1_y1_d1 <= cur_s1_y1;
+        cur_s1_y1_d2 <= cur_s1_y1_d1;
     end
 
     // ------------------------------------------------------------------
@@ -207,35 +233,40 @@ module bandpass_filterbank #(
                 asym_en_reg <= i_asym_follow;
                 busy        <= 1'b1;
             end else if (busy) begin
-                // Advance biquad state for the current bank.
-                x1_r[bank_cnt]     <= {5'b0, x_latched};
-                x2_r[bank_cnt]     <= {5'b0, cur_x1};
-                s0_y1_r[bank_cnt]  <= {5'b0, o_s0_data};
-                s0_y2_r[bank_cnt]  <= {5'b0, cur_s0_y1};
-                s1_y1_r[bank_cnt]  <= {5'b0, o_s1_data};
-                s1_y2_r[bank_cnt]  <= {5'b0, cur_s1_y1};
-
-                // If asym disabled, commit raw filter output directly and
-                // raise o_valid the cycle after the last bank.
-                if (!asym_en_reg) begin
-                    o_data_r[bank_cnt] <= o_s1_data;
-                end
-
+                // Advance read pointer through requested bank range.
                 if (bank_cnt == end_reg) begin
                     busy <= 1'b0;
-                    if (!asym_en_reg) o_valid_r <= 1'b1;
                 end else begin
                     bank_cnt <= bank_cnt + 1'b1;
                 end
             end
 
-            // Envelope writeback (2 cycles behind biquad pipeline). Runs
-            // unconditionally — when asym_en_reg is 0 the value is
-            // ignored, but we gate the visible o_data_r update to avoid
-            // overwriting the raw filter output path.
+            // State writeback runs 2 cycles behind bank_cnt, aligned with
+            // biquad's pipelined output. busy_d2 / bank_d2 / cur_*_d2 are the
+            // delayed counterparts of busy / bank_cnt / cur_*.
+            if (busy_d2) begin
+                x1_r[bank_d2]    <= {5'b0, x_latched};
+                x2_r[bank_d2]    <= {5'b0, cur_x1_d2};
+                s0_y1_r[bank_d2] <= {5'b0, o_s0_data};
+                s0_y2_r[bank_d2] <= {5'b0, cur_s0_y1_d2};
+                s1_y1_r[bank_d2] <= {5'b0, o_s1_data};
+                s1_y2_r[bank_d2] <= {5'b0, cur_s1_y1_d2};
+
+                // If asym disabled, commit raw filter output directly and
+                // raise o_valid the cycle after the last bank lands.
+                if (!asym_en_reg) begin
+                    o_data_r[bank_d2] <= o_s1_data;
+                    if (bank_d2 == end_reg) o_valid_r <= 1'b1;
+                end
+            end
+
+            // Envelope writeback runs 4 cycles behind bank_cnt
+            // (biquad 2 + asym_follow 2). Asym always runs internally; gate
+            // the visible o_data_r update so it doesn't clobber the raw
+            // filter output path.
             if (asym_en_reg && asym_o_valid) begin
-                o_data_r[bank_d2] <= asym_o_data;
-                if (bank_d2 == end_reg) o_valid_r <= 1'b1;
+                o_data_r[bank_d4] <= asym_o_data;
+                if (bank_d4 == end_reg) o_valid_r <= 1'b1;
             end
         end
     end

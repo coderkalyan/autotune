@@ -35,9 +35,17 @@ module psola (
   fixed_t frac;
   assign frac = fixed_t'({11'h0, grain_counter[15:0]});
 
-  fixed_t frac_lag, out_lag;
+  fixed_t frac_lag;
   assign frac_lag = fixed_mul(frac, fixed_t'({1'b0, i_lag, 16'h0}));
-  assign out_lag  = fixed_mul(i_advance, fixed_t'({1'b0, i_lag, 16'h0}));
+
+  // Register out_lag to split the second 27x27 mult off the
+  // compare-and-mux feeding output_counter. Threshold lags by 1 cycle but
+  // i_advance / i_lag change at MIDI / pitch-detection rate (sub-audio), so
+  // the 1-cycle lag has no audible effect.
+  fixed_t out_lag_comb;
+  fixed_t out_lag;
+  assign out_lag_comb = fixed_mul(i_advance, fixed_t'({1'b0, i_lag, 16'h0}));
+  always_ff @(posedge clk) out_lag <= out_lag_comb;
 
   localparam int NUM_CHANNELS = 16;
   localparam int CBITS = $clog2(NUM_CHANNELS);

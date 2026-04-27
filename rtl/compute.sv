@@ -50,8 +50,12 @@ module compute #(
   fixed_t lpf_rf;
   logic lpf_done;
 
-  // Reciprocal of the pitch factor
+  // Reciprocal of the pitch factor. Registered output of note_selection
+  // (splits the two cascaded 27x27 mults on the o_notes -> output_counter
+  // critical path). MIDI updates at kHz, so 1-cycle latency is inaudible.
+  fixed_t pitch_factor_recip_w;
   fixed_t pitch_factor_recip;
+  always_ff @(posedge clk) pitch_factor_recip <= pitch_factor_recip_w;
 
   // PSOLA output 
   fixed_t psola_lf_real;
@@ -168,7 +172,7 @@ module compute #(
       .any_note_pressed(|notes),
       .actual_lag(pitch_period),
       .target_lag(target_lag),
-      .shift_ratio(pitch_factor_recip),
+      .shift_ratio(pitch_factor_recip_w),
       .mode(mode),
       .o_target_lag(o_target_lag)
   );
@@ -284,25 +288,29 @@ module compute #(
   fixed_t post_lf, post_rf;
   logic post_valid;
 
-  normalization iNORM1 (
-    .clk(clk),
-    .rst(rst),
-    .i_data(pre_lf),
-    .i_mode(mode),
-    .i_valid(pre_valid),
-    .o_data(post_lf),
-    .o_valid(post_valid)
-  );
+  assign post_valid = pre_valid;
+  assign post_lf = pre_lf;
+  assign post_rf = pre_rf;
 
-  normalization iNORM2 (
-    .clk(clk),
-    .rst(rst),
-    .i_data(pre_rf),
-    .i_mode(mode),
-    .i_valid(pre_valid),
-    .o_data(post_rf),
-    .o_valid()
-  );
+  // normalization iNORM1 (
+  //     .clk(clk),
+  //     .rst(rst),
+  //     .i_data(pre_lf),
+  //     .i_mode(mode),
+  //     .i_valid(pre_valid),
+  //     .o_data(post_lf),
+  //     .o_valid(post_valid)
+  // );
+  //
+  // normalization iNORM2 (
+  //     .clk(clk),
+  //     .rst(rst),
+  //     .i_data(pre_rf),
+  //     .i_mode(mode),
+  //     .i_valid(pre_valid),
+  //     .o_data(post_rf),
+  //     .o_valid()
+  // );
 
   fixed_t vol_gain;
   assign vol_gain = fixed_t'({1'b0, volume}) << (16 - VOL_SHIFT);
@@ -312,7 +320,7 @@ module compute #(
   assign o_lf    = fixed_mul(post_lf, vol_gain);
   assign o_rf    = fixed_mul(post_rf, vol_gain);
   assign o_valid = post_valid;
-  
+
 
   // ----------------------------------------------------------------
   // Display Control
