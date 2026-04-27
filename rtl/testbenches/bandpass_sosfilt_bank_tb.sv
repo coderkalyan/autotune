@@ -1,17 +1,19 @@
 `timescale 1ns / 1ps
 `include "../fixed.sv"
 
-// Visual smoke-test for bandpass_sosfilt_bank.
+// Visual smoke-test for bandpass_filterbank.
 //
 // - Drives 50 MHz clk
 // - Generates 48 kHz i_valid strobes (1 cycle wide) with BASE/BASE+1 dithering
 //   so the long-term average is exact.
 // - Feeds a sawtooth waveform using a phase accumulator.
+// - Forces coefficient ROM signals instead of loading from .mem files.
 // - Dumps a VCD so you can inspect i_data, o_data[*], and o_valid in GTKWave.
 //
 // Notes:
 // - The DUT expects i_valid only when idle; this TB leaves lots of slack
 //   between strobes, so that assumption holds.
+// - Coefficient ROMs are forced with constant values for each bank.
 module bandpass_sosfilt_bank_tb;
     // -------------------------
     // Clocking / sample timing
@@ -39,56 +41,64 @@ module bandpass_sosfilt_bank_tb;
     logic   rst;
     fixed_t i_data;
     logic   i_valid;
+    logic   i_asym_follow;
+    logic   [$clog2(BANKS) - 1:0] i_bank_start;
+    logic   [$clog2(BANKS) - 1:0] i_bank_end;
 
-    fixed_t o_data[BANKS];
+    fnorm_t o_data[BANKS];
     logic   o_valid;
-    audio_t audio_out_0;
-    audio_t audio_out_1;
-    audio_t audio_out_2;
-    audio_t audio_out_3;
-    audio_t audio_in;
-
-    assign audio_out_0 = fixed_ftoa(o_data[0]);
-    assign audio_out_1 = fixed_ftoa(o_data[1]);
-    assign audio_out_2 = fixed_ftoa(o_data[2]);
-    assign audio_out_3 = fixed_ftoa(o_data[3]);
-    assign audio_in = fixed_ftoa(i_data);
 
     // -------------------------
-    // Coefficients
+    // Coefficients (forced in testbench instead of loaded from .mem)
     // -------------------------
     // Stage 0 implements a 1st-order IIR in biquad form:
     //   y[n] = (1-a)*x[n] + a*y[n-1]
     // achieved by setting a1 = -a and b0 = 1-a (others 0).
     // Different banks use different 'a' so the responses are visibly different.
-    localparam real B0Table[BANKS] = '{0.10, 0.25, 0.50, 0.75};
-    localparam real A1Table[BANKS] = '{-0.90, -0.75, -0.50, -0.25};
+    localparam real B0_VAL[BANKS] = '{0.10, 0.25, 0.50, 0.75};
+    localparam real A1_VAL[BANKS] = '{-0.90, -0.75, -0.50, -0.25};
 
-    // Stage 1 is pass-through (y=w)
-    localparam real C0Table[BANKS] = '{default: 1.0};
-
-    bandpass_sosfilt_bank #(
-        .BANKS  (BANKS),
-        .UNITS  (1),
-        .ASYM_FOLLOW (1), //may have to go into bandpass_soft_bank.sv to toggle
-        .B0Table(B0Table),
-        .B1Table('{default: 0.0}),
-        .B2Table('{default: 0.0}),
-        .A1Table(A1Table),
-        .A2Table('{default: 0.0}),
-        .C0Table(C0Table),
-        .C1Table('{default: 0.0}),
-        .C2Table('{default: 0.0}),
-        .D1Table('{default: 0.0}),
-        .D2Table('{default: 0.0})
+    bandpass_filterbank #(
+        .BANKS      (BANKS),
+        .COEF_BANKS (BANKS)
     ) dut (
-        .clk    (clk),
-        .rst    (rst),
-        .i_data (i_data),
-        .i_valid(i_valid),
-        .o_data (o_data),
-        .o_valid(o_valid)
+        .clk           (clk),
+        .rst           (rst),
+        .i_data        (i_data),
+        .i_valid       (i_valid),
+        .i_asym_follow (i_asym_follow),
+        .i_bank_start  (i_bank_start),
+        .i_bank_end    (i_bank_end),
+        .o_data        (o_data),
+        .o_valid       (o_valid)
     );
+
+    // -------------------------
+    // Force coefficient ROMs with test values
+    // -------------------------
+    // Convert real coefficient values to fnorm_t (Q3.24) and force into ROM signals.
+    // Stage 0: b0 coefficient (input)
+    // Stage 0: b1 coefficient (always 0 for 1st-order IIR)
+    // Stage 0: a1 coefficient (feedback)
+    // Stage 0: a2 coefficient (always 0 for 1st-order IIR)
+    // Stage 1: b0 coefficient (pass-through = 1.0)
+    // Stage 1: b1 coefficient (always 0)
+    // Stage 1: a1 coefficient (always 0)
+    // Stage 1: a2 coefficient (always 0)
+    initial begin
+        for (int b = 0; b < BANKS; b++) begin
+            // Convert real to fnorm_t (Q3.24 = 24 fractional bits)
+            dut.B0[b] = {5'b0, fnorm_t'(B0_VAL[b] * real'(1 << 24))};
+            dut.B1[b] = {5'b0, fnorm_t'(0)};
+            dut.A1[b] = {5'b0, fnorm_t'(A1_VAL[b] * real'(1 << 24))};
+            dut.A2[b] = {5'b0, fnorm_t'(0)};
+            // Stage 1 is pass-through: b0=1.0, others=0
+            dut.C0[b] = {5'b0, fnorm_t'(1.0 * real'(1 << 24))};
+            dut.C1[b] = {5'b0, fnorm_t'(0)};
+            dut.D1[b] = {5'b0, fnorm_t'(0)};
+            dut.D2[b] = {5'b0, fnorm_t'(0)};
+        end
+    end
 
     // -------------------------
     // 50 MHz clock
@@ -105,9 +115,12 @@ module bandpass_sosfilt_bank_tb;
         if (PhaseStep == 0) begin
             $fatal(1, "PhaseStep computed as 0; check SawHz/SampleHz math");
         end
-        rst     = 1'b1;
-        i_data  = '0;
-        i_valid = 1'b0;
+        rst          = 1'b1;
+        i_data       = '0;
+        i_valid      = 1'b0;
+        i_asym_follow = 1'b0;
+        i_bank_start = 0;
+        i_bank_end   = BANKS - 1;
         repeat (10) @(posedge clk);
         rst <= 1'b0;
     end
@@ -120,6 +133,7 @@ module bandpass_sosfilt_bank_tb;
     int unsigned sample_count;
     int unsigned sim_cycles;
     int unsigned trace_lines;
+    integer dump_b;
 
     logic [31:0] phase;
     audio_t      saw_audio;
@@ -190,34 +204,33 @@ module bandpass_sosfilt_bank_tb;
             end
         end
     end
-    
+
 
     // // -------------------------
     // // Waveform dump + lightweight console trace
     // // -------------------------
-    // initial begin
-    //     $dumpfile("bandpass_sosfilt_bank_tb.vcd");
-    //     // Dump slow signals (skip clk to keep VCD small)
-    //     $dumpvars(0, rst);
-    //     $dumpvars(0, i_valid);
-    //     $dumpvars(0, i_data);
-    //     $dumpvars(0, o_valid);
-    //     for (int b = 0; b < BANKS; b++) begin
-    //         $dumpvars(0, o_data[b]);
-    //     end
-    //     // Helpful internal visibility
-    //     $dumpvars(0, dut.state);
-    //     $dumpvars(0, dut.bank_idx);
-    //     $dumpvars(0, dut.filt_i_valid);
-    //     $dumpvars(0, dut.filt_o_valid);
-    // end
+    initial begin
+        $dumpfile("bandpass_sosfilt_bank_tb.vcd");
+        // Dump slow signals (skip clk to keep VCD small)
+        $dumpvars(0, rst);
+        $dumpvars(0, i_valid);
+        $dumpvars(0, i_data);
+        $dumpvars(0, o_valid);
+        for (dump_b = 0; dump_b < BANKS; dump_b = dump_b + 1) begin
+            $dumpvars(0, o_data[dump_b]);
+        end
+        // Internal DUT signal names can vary; keep dump list to stable I/O here.
+    end
 
     // Print one line per output sample (one o_valid per input sample)
+    // fnorm_t is Q3.24, so divide by 2^24 to convert to real
     always @(posedge clk) begin
         if (!rst && o_valid && (trace_lines < MaxTraceLines)) begin
             $write("t=%0t ns  in=%7.4f", $time, `FIXED_FTOR(i_data));
             for (int b = 0; b < BANKS; b++) begin
-                $write("  y[%0d]=%7.4f", b, `FIXED_FTOR(o_data[b]));
+                real o_val;
+                o_val = real'(o_data[b]) / real'(1 << 24);
+                $write("  y[%0d]=%7.4f", b, o_val);
             end
             $write("\n");
             trace_lines <= trace_lines + 1;
