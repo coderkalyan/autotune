@@ -527,6 +527,8 @@ set_global_assignment -name SYSTEMVERILOG_FILE vad.sv
 set_global_assignment -name SDC_FILE autotune.sdc
 set_global_assignment -name SYSTEMVERILOG_FILE midi_receiver.sv
 set_global_assignment -name SYSTEMVERILOG_FILE midi_freq_lut.sv
+set_global_assignment -name SYSTEMVERILOG_FILE harmony_gen.sv
+set_global_assignment -name SYSTEMVERILOG_FILE lag_to_midi_lut.sv
 set_global_assignment -name VERILOG_FILE ip/pll_mult_24_bit.v
 set_global_assignment -name QIP_FILE ip/pll_mult_24_bit.qip
 set_global_assignment -name VERILOG_FILE ip/pll_mult_16_bit.v

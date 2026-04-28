@@ -11,6 +11,7 @@ module hysteresis (
   localparam real LARGE_LTHRESHOLD = 0.9715319411536059;  // 2.0 ** (-50 / 1200);
   localparam int MEDIUM_CONFIRM = 1;
   localparam int LARGE_CONFIRM = 2;
+  localparam int OCTAVE_CONFIRM = 5;
 
   fixed_t small_uthreshold, small_lthreshold;
   fixed_t large_uthreshold, large_lthreshold;
@@ -35,7 +36,8 @@ module hysteresis (
   //   P1 = accepted  * small_l   P4 = candidate * large_u
   //   P2 = accepted  * large_u   P5 = candidate * large_l
   //
-  // is_octave_up reuses P2/P3 by comparing against (cur << 1).
+  // is_octave_up/down reuse P2/P3: same large-tolerance window on
+  // accepted, compared against (cur << 1) and (cur >> 1) respectively.
   fixed_t accepted, candidate, cur_snap;
   fixed_t p0, p1, p2, p3, p4, p5;
 
@@ -61,12 +63,16 @@ module hysteresis (
 
   // Comparisons computed on registered snapshots — valid at step 6.
   wire [26:0] cur_snap_dbl     = {cur_snap[25:0], 1'b0};
+  wire [26:0] cur_snap_half    = {1'b0, cur_snap[26:1]};
   wire        small_accept     = (cur_snap < p0) && (cur_snap > p1);
   wire        large_accept     = (cur_snap < p2) && (cur_snap > p3);
   wire        candidate_accept = (cur_snap < p4) && (cur_snap > p5);
-  // Reused P2/P3: octave-up check is the same large-tolerance window
-  // anchored on accepted, just compared against 2*cur instead of cur.
-  wire        is_octave_up     = (cur_snap_dbl > p3) && (cur_snap_dbl < p2);
+  // Reused P2/P3: octave-up tests 2*cur vs the large-tolerance window on
+  // accepted (cur ≈ accepted/2). octave-down tests cur/2 against the same
+  // window (cur ≈ 2*accepted, sub-harmonic). Both are pure shifts — no DSP.
+  wire        is_octave_up     = (cur_snap_dbl  > p3) && (cur_snap_dbl  < p2);
+  wire        is_octave_down   = (cur_snap_half > p3) && (cur_snap_half < p2);
+  wire        is_octave        = is_octave_up || is_octave_down;
 
   logic [3:0] frames;
   always_ff @(posedge clk) begin
@@ -96,8 +102,6 @@ module hysteresis (
       endcase
 
       if (step == 3'd6) begin
-        // Same hysteresis decision logic as the original — operates on
-        // cur_snap and the precomputed P0..P5 instead of inline mults.
         if (small_accept) begin
           accepted <= cur_snap;
           frames   <= 4'd0;
@@ -108,17 +112,34 @@ module hysteresis (
           end else begin
             frames <= frames + 4'd1;
           end
-        end else begin
+        end else if (is_octave) begin
+          // Known harmonic pattern (octave up/down). Demand more confirms
+          // before committing — brief harmonic glitches don't flip accepted.
           if (candidate_accept) begin
-            frames <= frames + 4'd1;
+            if (frames >= OCTAVE_CONFIRM) begin
+              accepted <= cur_snap;
+              frames   <= 4'd0;
+            end else begin
+              frames <= frames + 4'd1;
+            end
           end else begin
             candidate <= cur_snap;
             frames    <= 4'd1;
           end
-
-          if (frames >= LARGE_CONFIRM) begin
-            accepted <= cur_snap;
-            frames   <= 4'd0;
+        end else begin
+          // Generic large jump. LARGE_CONFIRM gated on candidate_accept so
+          // a stray frame after a stable run can't slip through on the
+          // last-write-wins tail of the old combined assignment.
+          if (candidate_accept) begin
+            if (frames >= LARGE_CONFIRM) begin
+              accepted <= cur_snap;
+              frames   <= 4'd0;
+            end else begin
+              frames <= frames + 4'd1;
+            end
+          end else begin
+            candidate <= cur_snap;
+            frames    <= 4'd1;
           end
         end
 
