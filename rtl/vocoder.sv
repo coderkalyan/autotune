@@ -94,20 +94,25 @@ module vocoder #(
 
   assign o_vocode_bands = bandpass_o_data[0:31];
 
+  // Sequential sqrt IP — 2-cycle pipeline latency from radical to q. No
+  // valid/ready handshake on this IP, latency is fixed by the pipeline=2
+  // defparam. Output q is already registered, so no external sqrt_out_r reg.
   logic [26:0] radical;
-  logic [13:0] sqrt_out, sqrt_out_r;
-  sqrt sqrt (
+  logic [13:0] sqrt_q;
+  sqrt_seq u_sqrt (
+      .clk(clk),
       .radical(radical),
-      .q(sqrt_out),
+      .q(sqrt_q),
       .remainder()
   );
 
   assign radical = bandpass_o_data[bank] << 3;
 
-  // Register sqrt output to break the combinational path
-  // bank -> sqrt -> fnorm_mul -> sample. Relieves placement pressure
-  // introduced by additional sqrt/div IPs elsewhere in the design.
-  always_ff @(posedge clk) sqrt_out_r <= sqrt_out;
+  // Modulation pipeline (per band, indexed by `bank`):
+  //   bank=k       : sqrt_seq sees radical=bp[k]<<3
+  //   bank=k+2     : sqrt_q valid for band k; compute mul_r = sqrt × carrier
+  //   bank=k+3     : accumulate mul_r into sample
+  fnorm_t mul_r;
 
   state_t state;
   // 8-bit so `note` can sit at 128 for one extra "drain" cycle after all
@@ -220,17 +225,23 @@ module vocoder #(
           end
         end
         VOCODE: begin
-          // sqrt_out_r lags bank by 1 cycle. Skip cycle 0 (priming), and on
-          // subsequent cycles pair sqrt of voice band (bank-1) with the
-          // corresponding carrier band. Extend the loop by one cycle so all
-          // 32 bands are accumulated.
-          if (bank != 6'd0) begin
-            sample <= sample + fnorm_mul(fnorm_t'(sqrt_out_r << 12),
-                                         bandpass_o_data[(bank - 6'd1) + BANKS]);
+          // Pipeline stages indexed by `bank` (sqrt_seq is 2-cycle latency):
+          //   bank in [2 .. BANKS+1] : sqrt_q holds sqrt of band bank-2;
+          //                            compute mul_r = sqrt_q × carrier(bank-2).
+          //   bank in [3 .. BANKS+2] : accumulate mul_r (lagging by 1 cycle).
+          // Bank advances for BANKS+3 cycles total to flush all stages.
+          if ((bank >= 6'd2) && (bank <= 6'(BANKS + 1))) begin
+            mul_r <= fnorm_mul(fnorm_t'(sqrt_q << 12),
+                               bandpass_o_data[(bank - 6'd2) + BANKS]);
           end
+
+          if ((bank >= 6'd3) && (bank <= 6'(BANKS + 2))) begin
+            sample <= sample + mul_r;
+          end
+
           bank <= bank + 1;
 
-          if (bank == BANKS) begin
+          if (bank == 6'(BANKS + 2)) begin
             state <= OUTPUT;
           end
         end
