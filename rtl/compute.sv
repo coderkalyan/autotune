@@ -313,8 +313,14 @@ module compute #(
       .o_valid()
   );
 
-  fixed_t vol_gain;
-  assign vol_gain = fixed_t'({1'b0, volume}) << (16 - VOL_SHIFT);
+  fixed_t vol_gain, vol_gain_base;
+  // In VOCODE mode, normalization is bypassed (see normalization.sv) so the
+  // vocoded signal sits below the level of the other modes. Apply an extra
+  // left-shift to boost it — no DSP needed.
+  localparam int VOCODE_BOOST_SHIFT = 2;  // 2x boost
+  assign vol_gain_base = fixed_t'({1'b0, volume}) << (16 - VOL_SHIFT);
+  assign vol_gain      = (mode == VOCODE) ? (vol_gain_base << VOCODE_BOOST_SHIFT)
+                                          : vol_gain_base;
   // assign o_lf    = fixed_mul(pre_lf, vol_gain);
   // assign o_rf    = fixed_mul(pre_rf, vol_gain);
   // assign o_valid = pre_valid;
