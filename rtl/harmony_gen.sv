@@ -20,6 +20,7 @@ module harmony_gen (
     input  logic        rst,
 
     input  logic [3:0]  tonic,        // 0=C..11=B (12..15 clamped to 0)
+    input  logic        mode,         // 0 = major, 1 = minor (selects ROM bank)
     input  logic [6:0]  midi_in,
     input  logic        note_valid,   // single-cycle strobe when midi_in updates
 
@@ -33,9 +34,12 @@ module harmony_gen (
   // ----------------------------------------------------------------
   // ROMs
   // ----------------------------------------------------------------
-  logic [3:0] scale_rom    [12];
-  logic [7:0] trans_rom    [64];
-  logic [15:0] voic_rom    [64];
+  // Banked: bank 0 = major, bank 1 = minor.
+  // scale_rom is 16 entries/bank (12 used + 4 padded) so {mode, pc[3:0]}
+  // addresses cleanly. trans_rom & voic_rom are 64 entries/bank (full).
+  logic [3:0]  scale_rom   [32];
+  logic [7:0]  trans_rom   [128];
+  logic [15:0] voic_rom    [128];
   logic [31:0] ratio_rom   [33];
 
   initial begin
@@ -76,7 +80,8 @@ module harmony_gen (
   logic [3:0] scale_word;
   logic [2:0] scale_degree;
   logic       in_scale;
-  assign scale_word   = scale_rom[pitch_class];
+  // Bank-select: major bank at 0..11, minor bank at 12..23.
+  assign scale_word   = scale_rom[{mode, pitch_class}];
   assign scale_degree = scale_word[2:0];
   assign in_scale     = scale_word[3];
   assign o_in_scale   = in_scale;
@@ -113,7 +118,7 @@ module harmony_gen (
   logic [7:0] cdf [7];
   always_comb begin
     for (int i = 0; i < 7; i++) begin
-      cdf[i] = trans_rom[{chord_state, 3'(i)}];
+      cdf[i] = trans_rom[{mode, chord_state, 3'(i)}];
     end
   end
 
@@ -138,7 +143,7 @@ module harmony_gen (
   // Voicing ROM lookup (combinational, current chord & scale_degree)
   // ----------------------------------------------------------------
   logic [15:0] voic_word;
-  assign voic_word = voic_rom[{chord_state, scale_degree}];
+  assign voic_word = voic_rom[{mode, chord_state, scale_degree}];
   logic signed [7:0] harm1_semi;
   logic signed [7:0] harm2_semi;
   assign harm1_semi = $signed(voic_word[15:8]);
