@@ -11,8 +11,7 @@ module hysteresis (
   localparam real LARGE_LTHRESHOLD = 0.9715319411536059;  // 2.0 ** (-50 / 1200);
   localparam int MEDIUM_CONFIRM = 1;
   localparam int LARGE_CONFIRM = 2;
-  localparam int OCTAVE_CONFIRM = 10;
-  localparam int APPROX = 10;
+  localparam int OCTAVE_CONFIRM = 5;
 
   fixed_t small_uthreshold, small_lthreshold;
   fixed_t large_uthreshold, large_lthreshold;
@@ -21,33 +20,59 @@ module hysteresis (
   assign large_uthreshold = `FIXED_RTOF(LARGE_UTHRESHOLD);
   assign large_lthreshold = `FIXED_RTOF(LARGE_LTHRESHOLD);
 
-
-  fixed_t cur, accepted, candidate;
+  fixed_t cur;
   assign cur = fixed_t'({9'h0, i_period, 8'h0});
 
-  wire small_accept = (cur < fixed_mul(
-      accepted, small_uthreshold
-  )) && (cur > fixed_mul(
-      accepted, small_lthreshold
-  ));
+  // ---------------------------------------------------------------------
+  // Time-multiplexed multiplier
+  // ---------------------------------------------------------------------
+  // Hysteresis fires once per pitch-detect window (sub-kHz). Between
+  // events there are tens of thousands of idle clocks, so the 6 distinct
+  // products needed for the comparisons can share one DSP. The FSM walks
+  // step 0..5 driving the shared multiplier, latches each product, then
+  // commits the hysteresis decision on step 6 using the registered P0..P5.
+  //
+  //   P0 = accepted  * small_u   P3 = accepted  * large_l
+  //   P1 = accepted  * small_l   P4 = candidate * large_u
+  //   P2 = accepted  * large_u   P5 = candidate * large_l
+  //
+  // is_octave_up/down reuse P2/P3: same large-tolerance window on
+  // accepted, compared against (cur << 1) and (cur >> 1) respectively.
+  fixed_t accepted, candidate, cur_snap;
+  fixed_t p0, p1, p2, p3, p4, p5;
 
-  wire large_accept = (cur < fixed_mul(
-      accepted, large_uthreshold
-  )) && (cur > fixed_mul(
-      accepted, large_lthreshold
-  ));
+  logic [2:0] step;
+  logic       busy;
 
-  wire candidate_accept = (cur < fixed_mul(
-      candidate, large_uthreshold
-  )) && (cur > fixed_mul(
-      candidate, large_lthreshold
-  ));
+  fixed_t op_a, op_b;
+  always_comb begin
+    op_a = accepted;
+    op_b = small_uthreshold;
+    case (step)
+      3'd0: begin op_a = accepted;  op_b = small_uthreshold; end
+      3'd1: begin op_a = accepted;  op_b = small_lthreshold; end
+      3'd2: begin op_a = accepted;  op_b = large_uthreshold; end
+      3'd3: begin op_a = accepted;  op_b = large_lthreshold; end
+      3'd4: begin op_a = candidate; op_b = large_uthreshold; end
+      3'd5: begin op_a = candidate; op_b = large_lthreshold; end
+      default: ; // step 6/7: don't-care, products already latched
+    endcase
+  end
+  fixed_t prod;
+  assign prod = fixed_mul(op_a, op_b);
 
-  fixed_t cur_dbl;
-  assign cur_dbl = {cur[25:0], 1'b0};
-
-  wire is_octave_up = (cur_dbl > fixed_mul(accepted, large_lthreshold))
-                   && (cur_dbl < fixed_mul(accepted, large_uthreshold));
+  // Comparisons computed on registered snapshots — valid at step 6.
+  wire [26:0] cur_snap_dbl     = {cur_snap[25:0], 1'b0};
+  wire [26:0] cur_snap_half    = {1'b0, cur_snap[26:1]};
+  wire        small_accept     = (cur_snap < p0) && (cur_snap > p1);
+  wire        large_accept     = (cur_snap < p2) && (cur_snap > p3);
+  wire        candidate_accept = (cur_snap < p4) && (cur_snap > p5);
+  // Reused P2/P3: octave-up tests 2*cur vs the large-tolerance window on
+  // accepted (cur ≈ accepted/2). octave-down tests cur/2 against the same
+  // window (cur ≈ 2*accepted, sub-harmonic). Both are pure shifts — no DSP.
+  wire        is_octave_up     = (cur_snap_dbl  > p3) && (cur_snap_dbl  < p2);
+  wire        is_octave_down   = (cur_snap_half > p3) && (cur_snap_half < p2);
+  wire        is_octave        = is_octave_up || is_octave_down;
 
   logic [3:0] frames;
   always_ff @(posedge clk) begin
@@ -55,29 +80,72 @@ module hysteresis (
       accepted  <= '0;
       candidate <= '0;
       frames    <= '0;
-    end else if (i_en) begin
-      if (small_accept) begin
-        accepted <= cur;
-        frames   <= 4'd0;
-      end else if (large_accept) begin
-        if (frames >= MEDIUM_CONFIRM) begin
-          accepted <= cur;
+      step      <= 3'd0;
+      busy      <= 1'b0;
+    end else if (!busy) begin
+      // Idle: wait for an enable pulse, snapshot inputs, kick off pass.
+      if (i_en) begin
+        busy     <= 1'b1;
+        step     <= 3'd0;
+        cur_snap <= cur;
+      end
+    end else begin
+      // Walk steps 0..5 latching one product per cycle, then commit on 6.
+      case (step)
+        3'd0: p0 <= prod;
+        3'd1: p1 <= prod;
+        3'd2: p2 <= prod;
+        3'd3: p3 <= prod;
+        3'd4: p4 <= prod;
+        3'd5: p5 <= prod;
+        default: ;
+      endcase
+
+      if (step == 3'd6) begin
+        if (small_accept) begin
+          accepted <= cur_snap;
           frames   <= 4'd0;
+        end else if (large_accept) begin
+          if (frames >= MEDIUM_CONFIRM) begin
+            accepted <= cur_snap;
+            frames   <= 4'd0;
+          end else begin
+            frames <= frames + 4'd1;
+          end
+        end else if (is_octave) begin
+          // Known harmonic pattern (octave up/down). Demand more confirms
+          // before committing — brief harmonic glitches don't flip accepted.
+          if (candidate_accept) begin
+            if (frames >= OCTAVE_CONFIRM) begin
+              accepted <= cur_snap;
+              frames   <= 4'd0;
+            end else begin
+              frames <= frames + 4'd1;
+            end
+          end else begin
+            candidate <= cur_snap;
+            frames    <= 4'd1;
+          end
         end else begin
-          frames <= frames + 4'd1;
-        end
-      end else begin
-        if (candidate_accept) begin
-          frames <= frames + 4'd1;
-        end else begin
-          candidate <= cur;
-          frames <= 4'd1;
+          // Generic large jump. LARGE_CONFIRM gated on candidate_accept so
+          // a stray frame after a stable run can't slip through on the
+          // last-write-wins tail of the old combined assignment.
+          if (candidate_accept) begin
+            if (frames >= LARGE_CONFIRM) begin
+              accepted <= cur_snap;
+              frames   <= 4'd0;
+            end else begin
+              frames <= frames + 4'd1;
+            end
+          end else begin
+            candidate <= cur_snap;
+            frames    <= 4'd1;
+          end
         end
 
-        if (frames >= LARGE_CONFIRM) begin
-          accepted <= cur;
-          frames   <= 4'd0;
-        end
+        busy <= 1'b0;
+      end else begin
+        step <= step + 3'd1;
       end
     end
   end

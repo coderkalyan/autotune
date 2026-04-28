@@ -149,6 +149,7 @@ module autotune (
       .i_rxd(GPIO[5]),
       .o_txd(GPIO[4]),
       .i_mech(SW[0]),
+      .i_btn(~KEY[1]),
       .SW(SW),
       .LEDR(LEDR),
       .HEX0(HEX0),

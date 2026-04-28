@@ -23,6 +23,7 @@ module compute #(
     output logic o_vad_voiced,
     output mode_t o_mode,
     output logic [9:0] o_target_lag,
+    input logic i_btn,
     output logic [6:0] HEX0,
     output logic [6:0] HEX1,
     output logic [6:0] HEX2,
@@ -75,20 +76,10 @@ module compute #(
   // ----------------------------------------------------------------
   // Preprocessing
   // ----------------------------------------------------------------
-  preprocessing #(
-      .CHANNELS(0),  // default: 0 lpf left and right data; 1 lpf left channel only 
-      .L_FC(10000),
-      .R_FC(400)
-  ) iPP (
-      .clk(clk),
-      .rst(rst),
-      .i_lf(lf),
-      .i_rf(rf),
-      .i_en(adc_en),
-      .o_lpf_lf(lpf_lf),
-      .o_lpf_rf(lpf_rf),
-      .o_lpf_valid(lpf_done)
-  );
+  // preprocessing disabled — pass through
+  assign lpf_lf   = lf;
+  assign lpf_rf   = rf;
+  assign lpf_done = adc_en;
 
   // Voice activation detection.
   logic vad_active, vad_voiced;
@@ -209,6 +200,98 @@ module compute #(
   );
 
   // ----------------------------------------------------------------
+  // Vocal stacking — Markov harmony generator + two harmony PSOLA voices
+  // ----------------------------------------------------------------
+  // melody_midi: held key if any pressed, else nearest MIDI from detected lag.
+  // The held-key branch mirrors note_selection's `any_note_pressed` gate. The
+  // detected branch rides on `pitch_period`, which is already hysteresis-stable
+  // inside pitch_detection, so a downstream change-detect doesn't chatter.
+  wire [6:0] detected_midi;
+  lag_to_midi_lut iL2M (
+      .i_lag(pitch_period),
+      .o_midi(detected_midi)
+  );
+
+  wire [6:0] melody_midi;
+  assign melody_midi = (|notes) ? note_number : detected_midi;
+
+  // harm{1,2}_ratio are Q11.16 reciprocals; multiply with eff_pitch_factor to
+  // get each harmony's PSOLA i_advance.
+  fixed_t harm1_ratio, harm2_ratio;
+  harmony_gen iHARM (
+      .clk(clk),
+      .rst(rst),
+      .tonic(encoders[2][3:0]),
+      .midi_in(melody_midi),
+      .note_valid(1'b1),  // free-running; harmony_gen edge-detects internally
+      .harm1_ratio(harm1_ratio),
+      .harm2_ratio(harm2_ratio),
+      .ratios_valid(),
+      .o_chord_state(),
+      .o_in_scale()
+  );
+
+  fixed_t harm_h1_advance, harm_h2_advance;
+  assign harm_h1_advance = fixed_mul(eff_pitch_factor, harm1_ratio);
+  assign harm_h2_advance = fixed_mul(eff_pitch_factor, harm2_ratio);
+
+  fixed_t psola_lf_h1, psola_rf_h1;
+  fixed_t psola_lf_h2, psola_rf_h2;
+
+  psola iPSOLA_L_H1 (
+      .clk(clk),
+      .rst(rst),
+      .i_lag(r_pitch_period),
+      .i_lag_valid(r_pitch_valid & vad_voiced),
+      .i_advance(harm_h1_advance),
+      .i_data(lf),
+      .i_valid(adc_en),
+      .o_data(psola_lf_h1),
+      .o_valid()
+  );
+
+  psola iPSOLA_R_H1 (
+      .clk(clk),
+      .rst(rst),
+      .i_lag(r_pitch_period),
+      .i_lag_valid(r_pitch_valid & vad_voiced),
+      .i_advance(harm_h1_advance),
+      .i_data(rf),
+      .i_valid(adc_en),
+      .o_data(psola_rf_h1),
+      .o_valid()
+  );
+
+  psola iPSOLA_L_H2 (
+      .clk(clk),
+      .rst(rst),
+      .i_lag(r_pitch_period),
+      .i_lag_valid(r_pitch_valid & vad_voiced),
+      .i_advance(harm_h2_advance),
+      .i_data(lf),
+      .i_valid(adc_en),
+      .o_data(psola_lf_h2),
+      .o_valid()
+  );
+
+  psola iPSOLA_R_H2 (
+      .clk(clk),
+      .rst(rst),
+      .i_lag(r_pitch_period),
+      .i_lag_valid(r_pitch_valid & vad_voiced),
+      .i_advance(harm_h2_advance),
+      .i_data(rf),
+      .i_valid(adc_en),
+      .o_data(psola_rf_h2),
+      .o_valid()
+  );
+
+  // Stacked mix: root unity, harmonies at 1/2. May exceed full-scale; OK.
+  fixed_t stack_lf, stack_rf;
+  assign stack_lf = psola_lf + (psola_lf_h1 >>> 1) + (psola_lf_h2 >>> 1);
+  assign stack_rf = psola_rf + (psola_rf_h1 >>> 1) + (psola_rf_h2 >>> 1);
+
+  // ----------------------------------------------------------------
   // Vocoding
   // ----------------------------------------------------------------
   fixed_t vocode_data;
@@ -263,8 +346,8 @@ module compute #(
         pre_valid = adc_en;
       end
       AUTOTUNE: begin
-        pre_lf = psola_lf;
-        pre_rf = psola_rf;
+        pre_lf = stack_lf;
+        pre_rf = stack_rf;
         pre_valid = psola_valid;
       end
       VOCODE: begin
@@ -326,10 +409,13 @@ module compute #(
   // Display Control
   // ----------------------------------------------------------------
   hex_display iHEX (
+      .clk(clk),
+      .rst(rst),
       .pitch_period(r_pitch_period),
       .target_lag(target_lag),
       .mode(mode),
       .i_encoders(encoders),
+      .i_btn(i_btn),
       .HEX0(HEX0),
       .HEX1(HEX1),
       .HEX2(HEX2),
