@@ -1,0 +1,20 @@
+# Python 3.10–3.13 only (whisperx is incompatible with 3.14+).
+#
+# Install:
+#   python3.13 -m venv venv
+#   source venv/bin/activate
+#   pip install -r requirements.txt
+
+# Stem separation
+demucs>=4.0
+
+# Pitch detection + audio I/O
+librosa>=0.10
+soundfile>=0.12
+numpy>=1.26
+
+# ID3 tag reading
+mutagen>=1.47
+
+# Word-level lyric transcription
+whisperx @ git+https://github.com/m-bain/whisperX.git

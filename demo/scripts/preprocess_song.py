@@ -16,20 +16,21 @@ Example:
 """
 
 import argparse
+import bisect
 import csv
 import json
 import re
+import statistics
 import sys
 import tempfile
-import urllib.error
-import urllib.parse
-import urllib.request
 from pathlib import Path
 
 import librosa
 import numpy as np
 import soundfile as sf
 from mutagen.id3 import ID3, ID3NoHeaderError
+
+from whisperx_lyrics import transcribe_lyrics
 
 # Sample rate used by the FPGA / backend
 TARGET_SR = 48000
@@ -39,43 +40,6 @@ VOCAL_MAX_HZ = 1100.0
 # pyin frame parameters
 FRAME_LENGTH = 2048
 HOP_LENGTH = 512
-
-
-def parse_lrc(lrc_text: str) -> list[dict]:
-    """Parse LRC format ([mm:ss.xx] text) to list of {timestamp_ms, text}."""
-    pattern = re.compile(r"\[(\d+):(\d+\.\d+)\](.*)")
-    lines = []
-    for line in lrc_text.splitlines():
-        m = pattern.match(line.strip())
-        if not m:
-            continue
-        ts_ms = (int(m.group(1)) * 60 + float(m.group(2))) * 1000
-        text = m.group(3).strip()
-        lines.append({"timestamp_ms": round(ts_ms, 3), "text": text})
-    return lines
-
-
-def fetch_lyrics(artist: str, title: str, album: str = "") -> list[dict] | None:
-    """Fetch synced lyrics from lrclib.net. Returns list of {timestamp_ms, text} or None."""
-    params = urllib.parse.urlencode({"artist_name": artist, "track_name": title, "album_name": album})
-    url = f"https://lrclib.net/api/get?{params}"
-    try:
-        with urllib.request.urlopen(url, timeout=10) as resp:
-            data = json.loads(resp.read())
-    except urllib.error.HTTPError as e:
-        if e.code == 404:
-            print(f"    WARNING: lrclib returned 404 (no match for {artist!r} / {title!r})")
-        else:
-            print(f"    WARNING: lrclib fetch failed: {e}")
-        return None
-    except Exception as e:
-        print(f"    WARNING: lrclib fetch failed: {e}")
-        return None
-    synced = data.get("syncedLyrics")
-    if not synced:
-        print(f"    WARNING: lrclib has no synced lyrics for {artist!r} / {title!r}")
-        return None
-    return parse_lrc(synced)
 
 
 def slugify(name: str) -> str:
@@ -288,7 +252,54 @@ def write_outputs(
     else:
         print(f"    lyrics.json written (empty — no synced lyrics found).")
 
+    # Notes (per-word target chart for karaoke scoring)
+    notes = derive_notes_from_lyrics(
+        lyrics_data,
+        timestamps_ms.tolist(),
+        frequencies_hz.tolist(),
+    )
+    notes_path = song_dir / "notes.json"
+    notes_path.write_text(json.dumps(notes, indent=2) + "\n")
+    if notes:
+        print(f"    notes.json written ({len(notes)} notes).")
+    else:
+        print(f"    notes.json written (empty — no lyrics or no voiced pitch).")
+
     print(f"    instrumental.wav, vocals.wav, pitch_track.csv, meta.json written.")
+
+
+def derive_notes_from_lyrics(
+    lyrics: list[dict],
+    pitch_timestamps: list[float],
+    pitch_freqs: list[float],
+) -> list[dict]:
+    """One note per lyric word; pitch = median of voiced pitch_track samples
+    falling inside the word's [start, end). Mirrors backend/song_manager.py.
+    """
+    notes: list[dict] = []
+    for line in lyrics:
+        words = line.get("words") or []
+        for w in words:
+            start = float(w["timestamp_ms"])
+            end_raw = w.get("end_ms")
+            end = float(end_raw) if end_raw is not None else start + 200.0
+            if end <= start:
+                continue
+            lo = bisect.bisect_left(pitch_timestamps, start)
+            hi = bisect.bisect_left(pitch_timestamps, end)
+            voiced = [f for f in pitch_freqs[lo:hi] if f > 0.0]
+            if not voiced:
+                continue
+            notes.append(
+                {
+                    "start_ms": start,
+                    "duration_ms": end - start,
+                    "pitch_hz": float(statistics.median(voiced)),
+                    "lyric": str(w.get("text", "")),
+                }
+            )
+    notes.sort(key=lambda n: n["start_ms"])
+    return notes
 
 
 def main() -> None:
@@ -311,7 +322,17 @@ def main() -> None:
     parser.add_argument(
         "--skip-lyrics",
         action="store_true",
-        help="Skip fetching lyrics from lrclib.net",
+        help="Skip lyric transcription (WhisperX)",
+    )
+    parser.add_argument(
+        "--whisper-model",
+        default="base",
+        help="Whisper model size for WhisperX (default: base)",
+    )
+    parser.add_argument(
+        "--whisper-device",
+        default="cpu",
+        help="Device for WhisperX: cpu or cuda (default: cpu)",
     )
     args = parser.parse_args()
 
@@ -339,16 +360,21 @@ def main() -> None:
     if song_dir.exists():
         print(f"Warning: {song_dir} already exists. Files will be overwritten.")
 
-    lyrics: list[dict] | None = None
-    if not args.skip_lyrics:
-        print("[+] Fetching synced lyrics from lrclib.net ...")
-        lyrics = fetch_lyrics(artist, name, album)
-
     with tempfile.TemporaryDirectory(prefix="autotune_demucs_") as tmp:
         tmp_path = Path(tmp)
 
         vocals_path, no_vocals_path = run_demucs(input_path, tmp_path)
         timestamps_ms, frequencies_hz, duration_ms = detect_pitch(vocals_path)
+
+        lyrics: list[dict] | None = None
+        if not args.skip_lyrics:
+            print("[+] Transcribing word-level lyrics with WhisperX ...")
+            try:
+                lyrics = transcribe_lyrics(vocals_path, args.whisper_model, args.whisper_device)
+            except Exception as e:
+                print(f"    WARNING: WhisperX transcription failed: {e}")
+                lyrics = None
+
         write_outputs(
             song_dir=song_dir,
             vocals_path=vocals_path,

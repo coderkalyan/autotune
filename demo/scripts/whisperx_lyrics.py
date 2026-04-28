@@ -20,16 +20,12 @@ import sys
 from pathlib import Path
 
 
-def run(song_dir: Path, model_name: str, device: str, overwrite: bool) -> None:
+def transcribe_lyrics(vocals_path: Path, model_name: str = "base", device: str = "cpu") -> list[dict]:
+    """Transcribe vocals.wav with WhisperX, return list of segments with word-level timing.
+
+    Each segment: {timestamp_ms, text, words: [{timestamp_ms, end_ms, text}, ...]}.
+    """
     import whisperx
-
-    vocals_path = song_dir / "vocals.wav"
-    if not vocals_path.exists():
-        sys.exit(f"Error: vocals.wav not found in {song_dir}")
-
-    lyrics_path = song_dir / "lyrics.json"
-    if lyrics_path.exists() and not overwrite:
-        sys.exit(f"lyrics.json already exists — use --overwrite to replace")
 
     print(f"Loading Whisper model '{model_name}' on {device} ...")
     model = whisperx.load_model(model_name, device=device, compute_type="int8")
@@ -68,6 +64,20 @@ def run(song_dir: Path, model_name: str, device: str, overwrite: bool) -> None:
             "text": seg_text,
             "words": words,
         })
+
+    return segments
+
+
+def run(song_dir: Path, model_name: str, device: str, overwrite: bool) -> None:
+    vocals_path = song_dir / "vocals.wav"
+    if not vocals_path.exists():
+        sys.exit(f"Error: vocals.wav not found in {song_dir}")
+
+    lyrics_path = song_dir / "lyrics.json"
+    if lyrics_path.exists() and not overwrite:
+        sys.exit(f"lyrics.json already exists — use --overwrite to replace")
+
+    segments = transcribe_lyrics(vocals_path, model_name, device)
 
     lyrics_path.write_text(json.dumps(segments, indent=2) + "\n")
     total_words = sum(len(s["words"]) for s in segments)
