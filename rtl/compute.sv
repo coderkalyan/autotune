@@ -215,13 +215,33 @@ module compute #(
   wire [6:0] melody_midi;
   assign melody_midi = (|notes) ? note_number : detected_midi;
 
+  // Encoder 2 picks the harmony key:
+  //   0..11  -> C..B major
+  //   12..23 -> C..B minor
+  //   24+    -> clamp to C major
+  logic [3:0] harm_tonic;
+  logic       harm_mode;
+  always_comb begin
+    if (encoders[2] < 7'd12) begin
+      harm_tonic = encoders[2][3:0];
+      harm_mode  = 1'b0;
+    end else if (encoders[2] < 7'd24) begin
+      harm_tonic = 4'(encoders[2] - 7'd12);
+      harm_mode  = 1'b1;
+    end else begin
+      harm_tonic = 4'd0;
+      harm_mode  = 1'b0;
+    end
+  end
+
   // harm{1,2}_ratio are Q11.16 reciprocals; multiply with eff_pitch_factor to
   // get each harmony's PSOLA i_advance.
   fixed_t harm1_ratio, harm2_ratio;
   harmony_gen iHARM (
       .clk(clk),
       .rst(rst),
-      .tonic(encoders[2][3:0]),
+      .tonic(harm_tonic),
+      .mode(harm_mode),
       .midi_in(melody_midi),
       .note_valid(1'b1),  // free-running; harmony_gen edge-detects internally
       .harm1_ratio(harm1_ratio),
