@@ -36,21 +36,44 @@ module f0_detect #(
   //       may want to refactor to use those block more efficiently
 
   logic [WBITS:0] cur_overlap, best_overlap;
-  logic signed [63:0] cur_score, best_score;
+  logic signed [63:0] best_score;
   localparam NORM_BIAS = 256;
 
   assign cur_overlap  = WINDOW_SIZE - counter;
   assign best_overlap = WINDOW_SIZE - argmax;
 
-  assign cur_score  = $signed(i_sample) * $signed({1'b0, best_overlap + NORM_BIAS});
-  assign best_score = $signed(max)  * $signed({1'b0, cur_overlap + NORM_BIAS});
+  // ---------------------------------------------------------------------
+  // Shared-DSP multiplier (M1 + M4)
+  // ---------------------------------------------------------------------
+  // M1 (cur_score) only fires in BUSY; M4 (rhs) only fires in POST. Mux
+  // operands by state and reuse one DSP. cur_score / rhs are aliases of
+  // shared_prod — the comparison against them is state-gated, so each
+  // alias is only meaningful in its own state.
+  fmac_t              shared_a;
+  logic [WBITS+1:0]   shared_b;      // 12-bit, always non-negative
+  logic signed [63:0] shared_prod;
+  always_comb begin
+    if (state == POST) begin
+      shared_a = $signed(r0) >>> 2;
+      shared_b = {1'b0, best_overlap};
+    end else begin
+      shared_a = i_sample;
+      shared_b = {1'b0, best_overlap} + (WBITS+2)'(NORM_BIAS);
+    end
+  end
+  assign shared_prod = $signed(shared_a) * $signed({1'b0, shared_b});
+  wire signed [63:0] cur_score = shared_prod;
+  wire signed [63:0] rhs       = shared_prod;
 
-  // Threshold comparison logic to use normalized values
+  // M2 stays separate — runs concurrently with M1 in BUSY.
+  assign best_score = $signed(max) * $signed({1'b0, cur_overlap + NORM_BIAS});
+
+  // M3: max * WINDOW_SIZE collapses to a shift since WINDOW_SIZE is a
+  // power-of-two parameter. No DSP.
   // max / (1024-lag) >= (r0 / 1024) * alpha
   // <=> max * 1024 >= (r0 * alpha) * (1024-lag)
-  logic signed [63:0] lhs, rhs;
-  assign lhs = $signed(max) * WINDOW_SIZE;
-  assign rhs = ($signed(r0) >>> 2) * $signed(best_overlap);
+  logic signed [63:0] lhs;
+  assign lhs = 64'(signed'(max)) <<< $clog2(WINDOW_SIZE);
 
 
   wire lt = i_sample < fmac_t'(0);
@@ -87,26 +110,15 @@ module f0_detect #(
 
         BUSY: begin
           if (i_valid) begin
-            // if (counter == '0) r0 <= i_sample;
-
-            // Only look for peaks within LAG_MIN/LAG_MAX.
-            // if (counter >= LAG_MIN && counter <= LAG_MAX) begin
-            //   if (i_sample > max) begin
-            //     max       <= i_sample;
-            //     argmax    <= counter;
-            //     candidate <= 1'b1;
-            //   end
-            // end
-
-            // Use normalized values to account for lesser overlapping samples 
+            // Use normalized values to account for lesser overlapping samples.
             if (counter >= LAG_MIN && counter <= LAG_MAX) begin
               if (!candidate) begin
-                max   <= i_sample;
+                max       <= i_sample;
                 argmax    <= counter;
                 candidate <= 1'b1;
               end else if (cur_score > best_score) begin
-                max   <= i_sample;
-                argmax    <= counter;
+                max    <= i_sample;
+                argmax <= counter;
               end
             end
 
