@@ -7,11 +7,12 @@ interface Props {
 }
 
 const GAP_GRACE_MS = 600
-const COUNTDOWN_MIN_GAP_MS = 3000
-const DOTS_COUNT = 3
-const DOT_WINDOW_FRAC = 0.55
-const BREATH_PERIOD_S = 4.6
-const BREATH_AMP = 0.06
+const COUNTDOWN_MIN_GAP_MS = 3000    // gap >3s => 3/2/1 countdown
+const GET_READY_MIN_GAP_MS = 5000    // gap >5s => Get Ready before countdown
+const COUNTDOWN_LEAD_MS = 3000       // ms before lyric where digits 3/2/1 take over
+const DIGIT_FILL_MS = 1000           // each digit fills over this much time
+const COUNTDOWN_DIGITS = ["3", "2", "1"] as const
+const GET_READY_LABEL = "Get Ready"
 
 const ANIM_DURATION = 300
 const ANIM_IN: React.CSSProperties = {
@@ -21,14 +22,18 @@ const ANIM_OUT: React.CSSProperties = {
   animation: `lyric-line-out ${ANIM_DURATION}ms ease both`,
 }
 
-type SlotContent =
+type Slot =
   | { kind: "line"; line: LyricLine; positionMs: number }
-  | { kind: "countdown"; gapProgress: number; positionMs: number }
+  | { kind: "getReady"; fillPct: number }
+  | { kind: "countdown"; msUntilLyric: number }
+  | { kind: "preview"; line: LyricLine }
   | null
 
-function slotKey(s: SlotContent): string {
+function slotKey(s: Slot): string {
   if (!s) return "empty"
+  if (s.kind === "getReady") return "getReady"
   if (s.kind === "countdown") return "countdown"
+  if (s.kind === "preview") return `preview:${s.line.timestamp_ms}`
   return `line:${s.line.timestamp_ms}`
 }
 
@@ -53,32 +58,78 @@ export function KaraokeLyrics({ lines, positionMs }: Props) {
   const fullGapMs = upcoming ? upcomingStart - gapStartMs : 0
   const msUntilLyric = upcoming ? upcomingStart - pos : Infinity
   const inGap = !current || pos > currentEnd + GAP_GRACE_MS
-  const gapProgress =
-    fullGapMs > 0
-      ? Math.max(0, Math.min(1, (pos - gapStartMs) / fullGapMs))
-      : 0
 
+  // Gap >5s: "Get Ready" fills left→right then swaps to "3 2 1" digits in the
+  // final COUNTDOWN_LEAD_MS. Gap 3-5s: only the digits, no Get Ready.
+  const inGapWithUpcoming = upcoming != null && inGap && msUntilLyric > 0
   const showCountdown =
-    upcoming != null &&
-    inGap &&
+    inGapWithUpcoming &&
     fullGapMs > COUNTDOWN_MIN_GAP_MS &&
-    msUntilLyric > 0
+    msUntilLyric <= COUNTDOWN_LEAD_MS
+  const showGetReady =
+    inGapWithUpcoming &&
+    fullGapMs > GET_READY_MIN_GAP_MS &&
+    msUntilLyric > COUNTDOWN_LEAD_MS
 
-  const bigLine = current ?? upcoming
+  // Get Ready fill window: from gap start (msUntilLyric=fullGapMs) to the
+  // moment the digits take over (msUntilLyric=COUNTDOWN_LEAD_MS).
+  const getReadyFillPct = showGetReady
+    ? Math.max(
+        0,
+        Math.min(
+          100,
+          ((fullGapMs - msUntilLyric) /
+            Math.max(1, fullGapMs - COUNTDOWN_LEAD_MS)) *
+            100,
+        ),
+      )
+    : 0
 
-  const slot: SlotContent = showCountdown
-    ? { kind: "countdown", gapProgress, positionMs: pos }
-    : bigLine
-      ? { kind: "line", line: bigLine, positionMs: pos }
+  // Big slot: countdown digits > Get Ready > current line > upcoming line.
+  const bigSlot: Slot = showCountdown
+    ? { kind: "countdown", msUntilLyric }
+    : showGetReady
+      ? { kind: "getReady", fillPct: getReadyFillPct }
+      : current
+        ? { kind: "line", line: current, positionMs: pos }
+        : upcoming
+          ? { kind: "line", line: upcoming, positionMs: pos }
+          : null
+
+  // Preview always shows next lyric when present (including during Get Ready
+  // / countdown), unless the big slot itself is already that upcoming line.
+  const bigShowsUpcoming =
+    !showCountdown &&
+    !showGetReady &&
+    current == null &&
+    upcoming != null
+  const previewSlot: Slot =
+    upcoming && !bigShowsUpcoming
+      ? { kind: "preview", line: upcoming }
       : null
 
+  return (
+    <div className="relative z-10 flex flex-1 flex-col items-center justify-center gap-6 px-8 text-center">
+      <AnimatedSlot slot={bigSlot} minHClass="min-h-[9rem]" />
+      <AnimatedSlot slot={previewSlot} minHClass="min-h-[4rem]" />
+    </div>
+  )
+}
+
+function AnimatedSlot({
+  slot,
+  minHClass,
+}: {
+  slot: Slot
+  minHClass: string
+}) {
   const key = slotKey(slot)
-  const slotRef = useRef<SlotContent>(slot)
+  const slotRef = useRef<Slot>(slot)
   slotRef.current = slot
-  const prevSlotRef = useRef<SlotContent>(slot)
+  const prevSlotRef = useRef<Slot>(slot)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const [exiting, setExiting] = useState<SlotContent>(null)
+  const [exiting, setExiting] = useState<Slot>(null)
   const [transitioning, setTransitioning] = useState(false)
 
   useEffect(() => {
@@ -96,38 +147,68 @@ export function KaraokeLyrics({ lines, positionMs }: Props) {
   }, [key])
 
   return (
-    <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-8 text-center">
-      <div className="relative w-full overflow-hidden min-h-[9rem] flex items-center justify-center">
-        <div
-          className="w-full flex items-center justify-center"
-          style={transitioning ? ANIM_IN : undefined}
-        >
-          <SlotView slot={slot} />
-        </div>
-        {exiting && (
-          <div
-            className="absolute inset-0 flex items-center justify-center"
-            style={ANIM_OUT}
-          >
-            <SlotView slot={exiting} />
-          </div>
-        )}
+    <div
+      className={`relative w-full overflow-hidden ${minHClass} flex items-center justify-center`}
+    >
+      <div
+        className="w-full flex items-center justify-center"
+        style={transitioning ? ANIM_IN : undefined}
+      >
+        <SlotView slot={slot} />
       </div>
+      {exiting && (
+        <div
+          className="absolute inset-0 flex items-center justify-center"
+          style={ANIM_OUT}
+        >
+          <SlotView slot={exiting} />
+        </div>
+      )}
     </div>
   )
 }
 
-function SlotView({ slot }: { slot: SlotContent }) {
+function SlotView({ slot }: { slot: Slot }) {
   if (!slot) return null
   if (slot.kind === "countdown") {
-    return (
-      <CountdownDots
-        gapProgress={slot.gapProgress}
-        positionMs={slot.positionMs}
-      />
-    )
+    return <CountdownDigits msUntilLyric={slot.msUntilLyric} />
+  }
+  if (slot.kind === "getReady") {
+    return <GetReadyLabel fillPct={slot.fillPct} />
+  }
+  if (slot.kind === "preview") {
+    return <PreviewLine line={slot.line} />
   }
   return <ActiveLine line={slot.line} positionMs={slot.positionMs} />
+}
+
+function GetReadyLabel({ fillPct }: { fillPct: number }) {
+  return (
+    <p
+      className="max-w-5xl text-5xl font-bold leading-tight tracking-tight"
+      role="status"
+      aria-label={GET_READY_LABEL}
+    >
+      <span className="relative inline-block">
+        <span className="text-foreground/35">{GET_READY_LABEL}</span>
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 text-primary"
+          style={{ clipPath: `inset(0 ${100 - fillPct}% 0 0)` }}
+        >
+          {GET_READY_LABEL}
+        </span>
+      </span>
+    </p>
+  )
+}
+
+function PreviewLine({ line }: { line: LyricLine }) {
+  return (
+    <p className="max-w-4xl text-2xl font-medium leading-snug text-muted-foreground/55">
+      {line.text}
+    </p>
+  )
 }
 
 function lastWordEnd(line: LyricLine): number {
@@ -139,61 +220,38 @@ function lastWordEnd(line: LyricLine): number {
   return line.timestamp_ms + 5000
 }
 
-function CountdownDots({
-  gapProgress,
-  positionMs,
-}: {
-  gapProgress: number
-  positionMs: number
-}) {
-  const stagger = (1 - DOT_WINDOW_FRAC) / (DOTS_COUNT - 1)
-  const breathT = positionMs / 1000
-  const omega = (2 * Math.PI) / BREATH_PERIOD_S
-
+function CountdownDigits({ msUntilLyric }: { msUntilLyric: number }) {
+  // Each digit fills over its own DIGIT_FILL_MS window:
+  //   "3" fills from msUntilLyric=3000→2000
+  //   "2" fills from 2000→1000
+  //   "1" fills from 1000→0  (hits 100% exactly at lyric start)
   return (
-    <div
-      className="flex items-center justify-center gap-6"
+    <p
+      className="flex max-w-5xl items-baseline justify-center gap-x-8 text-5xl font-bold leading-tight tracking-tight tabular-nums"
       role="status"
       aria-label="Instrumental break"
     >
-      {Array.from({ length: DOTS_COUNT }).map((_, i) => {
-        const windowStart = i * stagger
-        const local = (gapProgress - windowStart) / DOT_WINDOW_FRAC
-        const t = Math.max(0, Math.min(1, local))
-        const eased = springRiseToPeak(t)
-
-        const breath = Math.sin(breathT * omega + i * 2.05)
-        const breathFactor = 0.4 + 0.6 * eased
-        const breathDamp =
-          1 - Math.max(0, Math.min(1, (gapProgress - 0.92) / 0.08))
-        const scale =
-          0.5 + 0.7 * eased + BREATH_AMP * breathFactor * breath * breathDamp
-        const opacity =
-          0.25 +
-          0.75 * Math.max(0, Math.min(1, eased + 0.04 * breath * breathDamp))
-
+      {COUNTDOWN_DIGITS.map((label, i) => {
+        const startMs = (COUNTDOWN_DIGITS.length - i) * DIGIT_FILL_MS
+        const fillPct = Math.max(
+          0,
+          Math.min(100, ((startMs - msUntilLyric) / DIGIT_FILL_MS) * 100),
+        )
         return (
-          <span
-            key={i}
-            className="block h-5 w-5 rounded-full bg-primary"
-            style={{
-              transform: `scale(${scale})`,
-              opacity,
-              transition: "transform 90ms linear, opacity 90ms linear",
-            }}
-          />
+          <span key={i} className="relative inline-block">
+            <span className="text-foreground/35">{label}</span>
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 text-primary"
+              style={{ clipPath: `inset(0 ${100 - fillPct}% 0 0)` }}
+            >
+              {label}
+            </span>
+          </span>
         )
       })}
-    </div>
+    </p>
   )
-}
-
-function springRiseToPeak(t: number): number {
-  if (t <= 0) return 0
-  const c1 = 1.70158
-  const c3 = c1 + 1
-  const u = t * 0.58
-  return 1 + c3 * Math.pow(u - 1, 3) + c1 * Math.pow(u - 1, 2)
 }
 
 function ActiveLine({ line, positionMs }: { line: LyricLine; positionMs: number }) {
