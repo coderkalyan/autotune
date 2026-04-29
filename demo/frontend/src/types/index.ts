@@ -27,8 +27,9 @@ export interface PitchReading {
   combo?: number | null
   best_combo?: number | null
   note_completed?: NoteCompleted | null
-  stars?: number | null            // 0..5; final once song_complete=true
+  stars?: number | null            // 0..5; updates live, final at song_complete
   song_complete?: boolean | null
+  frame_quality?: number | null    // 0..1 EMA of per-frame pitch quality; null = silence
 }
 
 export interface NoteCompleted {

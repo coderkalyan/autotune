@@ -12,15 +12,24 @@ from dataclasses import dataclass
 from typing import Literal
 
 # ---------- tunables ----------
-PITCH_PERFECT_CENTS = 20.0
-PITCH_TOLERANCE_CENTS = 80.0
+PITCH_PERFECT_CENTS = 50.0
+PITCH_TOLERANCE_CENTS = 200.0
 TIMING_PERFECT_MS = 100.0
 TIMING_TOLERANCE_MS = 300.0
-W_PITCH = 0.75
-W_TIMING = 0.25
+W_PITCH = 0.85
+W_TIMING = 0.15
 DURATION_WEIGHT_POWER = 0.5
-STAR_THRESHOLDS = (0.40, 0.55, 0.70, 0.82, 0.92)
-COMBO_HIT_THRESHOLD = 0.60
+STAR_THRESHOLDS = (0.25, 0.40, 0.55, 0.70, 0.85)
+COMBO_HIT_THRESHOLD = 0.40
+
+# Smoothed pitch quality used by the pulsing border. Tau is the EMA time
+# constant; alpha is derived once at module load. Per-tick decay during
+# silence pulls the EMA toward zero, then clears to None below the floor.
+TICK_S = 0.033
+QUALITY_EMA_TAU_S = 0.5
+QUALITY_EMA_ALPHA = 1.0 - math.exp(-TICK_S / QUALITY_EMA_TAU_S)
+QUALITY_DECAY_FACTOR = 0.95
+QUALITY_NULL_THRESHOLD = 0.05
 
 # Octave detection: lock after either bound is reached.
 OCTAVE_DETECT_MAX_PAIRS = 64
@@ -61,6 +70,7 @@ class ScoreState:
     note_completed: NoteResult | None
     stars: int
     complete: bool
+    frame_quality: float | None
 
 
 def hz_to_midi(hz: float) -> float:
@@ -145,7 +155,6 @@ class ScoringSession:
         self._weight_sum = 0.0
         self._combo = 0
         self._best_combo = 0
-        self._stars = 0
         self._complete = False
 
         self._octave_pairs_det: list[float] = []
@@ -153,6 +162,8 @@ class ScoringSession:
         self._octave_first_ms: float | None = None
         self._octave_locked = False
         self._octave_shift = 0
+
+        self._quality_ema: float | None = None
 
     @property
     def notes(self) -> list[Note]:
@@ -171,9 +182,6 @@ class ScoringSession:
         target_hz: float | None,
         vad_voiced: bool,
     ) -> ScoreState:
-        if self._complete:
-            return self._build_state(target_hz, None, None)
-
         # --- octave detection ---
         if (
             not self._octave_locked
@@ -248,10 +256,21 @@ class ScoringSession:
         if vad_voiced and detected_hz is not None and target_hz is not None:
             bucket = bucket_for(cents_off(detected_hz, target_hz))
 
+        # --- frame quality EMA (powers the pulsing border on the frontend) ---
+        if vad_voiced and detected_hz is not None and target_hz is not None:
+            fps = frame_pitch_score(cents_off(detected_hz, target_hz))
+            if self._quality_ema is None:
+                self._quality_ema = fps
+            else:
+                self._quality_ema += QUALITY_EMA_ALPHA * (fps - self._quality_ema)
+        elif self._quality_ema is not None:
+            self._quality_ema *= QUALITY_DECAY_FACTOR
+            if self._quality_ema < QUALITY_NULL_THRESHOLD:
+                self._quality_ema = None
+
         # --- finalize song if all notes consumed ---
         if self._cursor >= len(self._notes) and not self._complete:
             self._complete = True
-            self._stars = stars_for(self.score)
 
         return self._build_state(target_hz, bucket, completed)
 
@@ -267,7 +286,6 @@ class ScoringSession:
                 self._finalize_active_note(note)
                 self._cursor = len(self._notes)
             self._complete = True
-            self._stars = stars_for(self.score)
         return self._build_state(None, None, None)
 
     def _finalize_active_note(self, note: Note) -> NoteResult:
@@ -317,8 +335,9 @@ class ScoringSession:
             target_hz_display=target_display,
             detected_bucket=bucket,
             note_completed=completed,
-            stars=self._stars,
+            stars=stars_for(self.score),
             complete=self._complete,
+            frame_quality=self._quality_ema,
         )
 
 
@@ -346,20 +365,22 @@ if __name__ == "__main__":
         f"{cents_off(440.0, 466.16):.2f}",
     )
 
-    print("frame_pitch_score:")
+    print("frame_pitch_score (PERFECT=50, TOL=200):")
     check("0c -> 1.0", frame_pitch_score(0.0) == 1.0)
-    check("80c -> 0.0", frame_pitch_score(80.0) == 0.0)
-    check("50c -> ~0.5", abs(frame_pitch_score(50.0) - 0.5) < 0.01)
+    check("50c -> 1.0", frame_pitch_score(50.0) == 1.0)
+    check("125c -> ~0.5", abs(frame_pitch_score(125.0) - 0.5) < 0.01)
+    check("200c -> 0.0", frame_pitch_score(200.0) == 0.0)
 
     print("timing_score:")
     check("0ms -> 1.0", timing_score(0.0) == 1.0)
     check("300ms -> 0.0", timing_score(300.0) == 0.0)
 
-    print("stars_for:")
-    check("0.39 -> 0", stars_for(0.39) == 0)
-    check("0.40 -> 1", stars_for(0.40) == 1)
-    check("0.91 -> 4", stars_for(0.91) == 4)
-    check("0.92 -> 5", stars_for(0.92) == 5)
+    print("stars_for (thresholds 0.25, 0.40, 0.55, 0.70, 0.85):")
+    check("0.24 -> 0", stars_for(0.24) == 0)
+    check("0.25 -> 1", stars_for(0.25) == 1)
+    check("0.55 -> 3", stars_for(0.55) == 3)
+    check("0.84 -> 4", stars_for(0.84) == 4)
+    check("0.85 -> 5", stars_for(0.85) == 5)
 
     print("octave_shift_for:")
     check(
@@ -414,5 +435,31 @@ if __name__ == "__main__":
     final2 = sess2.finish()
     check("silence score == 0.0", final2.score == 0.0)
     check("silence stars == 0", final2.stars == 0)
+    check("silence frame_quality is None", final2.frame_quality is None)
+
+    print("ScoringSession (voiced phrase then silence -> frame_quality decays to None):")
+    sess3 = ScoringSession([Note(start_ms=0, duration_ms=1000, pitch_hz=440.0, lyric="x")])
+    t = 0.0
+    # 1 s voiced
+    while t < 1000:
+        sess3.update(t, 440.0, 440.0, vad_voiced=True)
+        t += 33.0
+    mid = sess3.update(1000.0, 440.0, 440.0, vad_voiced=True)
+    check(
+        "frame_quality high after voiced phrase",
+        mid.frame_quality is not None and mid.frame_quality >= 0.99,
+        f"frame_quality={mid.frame_quality}",
+    )
+    # 2 s silence
+    last_silence: ScoreState | None = None
+    while t < 3000:
+        last_silence = sess3.update(t, None, None, vad_voiced=False)
+        t += 33.0
+    assert last_silence is not None
+    check(
+        "frame_quality decays to None after 2 s silence",
+        last_silence.frame_quality is None,
+        f"frame_quality={last_silence.frame_quality}",
+    )
 
     sys.exit(0 if failures == 0 else 1)

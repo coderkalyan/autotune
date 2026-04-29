@@ -40,36 +40,20 @@ function formatYTick(hz: number): string {
   }
 }
 
-const baseConfig = {
+const chartConfig = {
   detected_hz: { label: "Detected", color: "var(--chart-1)" },
   corrected_hz: { label: "Corrected", color: "var(--chart-2)" },
 } satisfies ChartConfig
 
-const singAlongConfig = {
-  detected_hit: { label: "Hit", color: "var(--chart-hit)" },
-  detected_near: { label: "Near", color: "var(--chart-near)" },
-  detected_miss: { label: "Miss", color: "var(--chart-miss)" },
-  corrected_hz: { label: "Corrected", color: "var(--chart-2)" },
-  target_hz_display: { label: "Target Vocal", color: "var(--chart-4)" },
-} satisfies ChartConfig
-
 interface Props {
   readings: PitchReading[]
-  showTarget?: boolean
 }
 
-export function PitchGraph({ readings, showTarget = false }: Props) {
-  const config = showTarget ? singAlongConfig : baseConfig
-
+export function PitchGraph({ readings }: Props) {
   const lastActiveHz = useMemo(() => {
     for (let i = readings.length - 1; i >= 0; i--) {
       const r = readings[i]
-      const val =
-        r.detected_held ??
-        r.detected_hz ??
-        r.detected_hit ??
-        r.detected_near ??
-        r.detected_miss
+      const val = r.detected_held ?? r.detected_hz
       if (val !== null && val !== undefined) return val
     }
     return null
@@ -84,80 +68,58 @@ export function PitchGraph({ readings, showTarget = false }: Props) {
 
   return (
     <div className="relative h-full w-full">
-    {lastActiveHz !== null && (
-      <div className="absolute top-2 z-10 flex items-baseline gap-1.5" style={{ left: 96 }}>
-        <span className="font-mono text-sm font-semibold" style={{ color: "var(--chart-1)" }}>
-          {hzToNoteName(lastActiveHz)}
-        </span>
-        <span className="font-mono text-xs text-muted-foreground">
-          {lastActiveHz.toFixed(1)} Hz
-        </span>
-      </div>
-    )}
-    <ChartContainer config={config} className="h-full w-full">
-      <LineChart
-        data={readings}
-        margin={{ top: 8, right: 16, bottom: 8, left: 8 }}
-      >
-        <XAxis
-          dataKey="timestamp_ms"
-          type="number"
-          domain={[minTs, domainMax]}
-          scale="time"
-          hide={false}
-          tick={false}
-          tickLine={false}
-          axisLine={{ stroke: "var(--border)" }}
-        />
-        <YAxis
-          scale="log"
-          domain={[PITCH_MIN_HZ, PITCH_MAX_HZ]}
-          allowDataOverflow={true}
-          tickFormatter={formatYTick}
-          tick={{ fontSize: 11 }}
-          axisLine={{ stroke: "var(--border)" }}
-          tickLine={false}
-          width={88}
-        />
-        <ChartTooltip
-          content={
-            <ChartTooltipContent
-              formatter={(value) =>
-                value !== null ? `${(value as number).toFixed(1)} Hz` : "—"
-              }
-            />
-          }
-        />
-        <ChartLegend content={<ChartLegendContent />} />
+      {lastActiveHz !== null && (
+        <div
+          className="absolute top-2 z-10 flex items-baseline gap-1.5"
+          style={{ left: 96 }}
+        >
+          <span
+            className="font-mono text-sm font-semibold"
+            style={{ color: "var(--chart-1)" }}
+          >
+            {hzToNoteName(lastActiveHz)}
+          </span>
+          <span className="font-mono text-xs text-muted-foreground">
+            {lastActiveHz.toFixed(1)} Hz
+          </span>
+        </div>
+      )}
+      <ChartContainer config={chartConfig} className="h-full w-full">
+        <LineChart
+          data={readings}
+          margin={{ top: 8, right: 16, bottom: 8, left: 8 }}
+        >
+          <XAxis
+            dataKey="timestamp_ms"
+            type="number"
+            domain={[minTs, domainMax]}
+            scale="time"
+            hide={false}
+            tick={false}
+            tickLine={false}
+            axisLine={{ stroke: "var(--border)" }}
+          />
+          <YAxis
+            scale="log"
+            domain={[PITCH_MIN_HZ, PITCH_MAX_HZ]}
+            allowDataOverflow={true}
+            tickFormatter={formatYTick}
+            tick={{ fontSize: 11 }}
+            axisLine={{ stroke: "var(--border)" }}
+            tickLine={false}
+            width={88}
+          />
+          <ChartTooltip
+            content={
+              <ChartTooltipContent
+                formatter={(value) =>
+                  value !== null ? `${(value as number).toFixed(1)} Hz` : "—"
+                }
+              />
+            }
+          />
+          <ChartLegend content={<ChartLegendContent />} />
 
-        {showTarget ? (
-          <>
-            <Line
-              dataKey="detected_hit"
-              stroke="var(--color-detected_hit)"
-              strokeWidth={2.5}
-              dot={false}
-              isAnimationActive={false}
-              connectNulls={false}
-            />
-            <Line
-              dataKey="detected_near"
-              stroke="var(--color-detected_near)"
-              strokeWidth={2.5}
-              dot={false}
-              isAnimationActive={false}
-              connectNulls={false}
-            />
-            <Line
-              dataKey="detected_miss"
-              stroke="var(--color-detected_miss)"
-              strokeWidth={2.5}
-              dot={false}
-              isAnimationActive={false}
-              connectNulls={false}
-            />
-          </>
-        ) : (
           <Line
             dataKey="detected_hz"
             stroke="var(--color-detected_hz)"
@@ -166,50 +128,38 @@ export function PitchGraph({ readings, showTarget = false }: Props) {
             isAnimationActive={false}
             connectNulls={false}
           />
-        )}
-        <Line
-          dataKey="detected_held"
-          stroke="var(--chart-1)"
-          strokeWidth={2}
-          strokeDasharray="4 4"
-          strokeOpacity={0.45}
-          dot={false}
-          isAnimationActive={false}
-          connectNulls={true}
-          legendType="none"
-        />
-        <Line
-          dataKey="corrected_hz"
-          stroke="var(--color-corrected_hz)"
-          strokeWidth={2}
-          dot={false}
-          isAnimationActive={false}
-          connectNulls={false}
-        />
-        <Line
-          dataKey="corrected_held"
-          stroke="var(--color-corrected_hz)"
-          strokeWidth={2}
-          strokeDasharray="4 4"
-          strokeOpacity={0.45}
-          dot={false}
-          isAnimationActive={false}
-          connectNulls={true}
-          legendType="none"
-        />
-        {showTarget && (
           <Line
-            dataKey="target_hz_display"
-            stroke="var(--color-target_hz_display)"
+            dataKey="detected_held"
+            stroke="var(--chart-1)"
             strokeWidth={2}
-            strokeDasharray="6 3"
+            strokeDasharray="4 4"
+            strokeOpacity={0.45}
+            dot={false}
+            isAnimationActive={false}
+            connectNulls={true}
+            legendType="none"
+          />
+          <Line
+            dataKey="corrected_hz"
+            stroke="var(--color-corrected_hz)"
+            strokeWidth={2}
             dot={false}
             isAnimationActive={false}
             connectNulls={false}
           />
-        )}
-      </LineChart>
-    </ChartContainer>
+          <Line
+            dataKey="corrected_held"
+            stroke="var(--color-corrected_hz)"
+            strokeWidth={2}
+            strokeDasharray="4 4"
+            strokeOpacity={0.45}
+            dot={false}
+            isAnimationActive={false}
+            connectNulls={true}
+            legendType="none"
+          />
+        </LineChart>
+      </ChartContainer>
     </div>
   )
 }

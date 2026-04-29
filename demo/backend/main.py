@@ -131,6 +131,7 @@ async def _pitch_loop() -> None:
             "stars": None,
             "song_complete": None,
             "note_completed": None,
+            "frame_quality": None,
         }
         if scoring_session is not None and position_ms is not None:
             state = scoring_session.update(
@@ -149,6 +150,11 @@ async def _pitch_loop() -> None:
             score_fields["best_combo"] = state.best_combo
             score_fields["stars"] = state.stars
             score_fields["song_complete"] = state.complete
+            score_fields["frame_quality"] = (
+                round(state.frame_quality, 4)
+                if state.frame_quality is not None
+                else None
+            )
             if state.note_completed is not None:
                 nr = state.note_completed
                 score_fields["note_completed"] = {

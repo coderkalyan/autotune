@@ -49,7 +49,7 @@ export function FreeModeView({ readings, latest }: Props) {
 
       {/* Graph */}
       <div className="min-h-0 flex-1">
-        <PitchGraph readings={readings} showTarget={false} />
+        <PitchGraph readings={readings} />
       </div>
     </div>
   )

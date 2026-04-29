@@ -181,6 +181,11 @@ def derive_notes_from_lyrics(
     """Each lyric word becomes one note. Pitch is the median of voiced
     pitch_track.csv samples falling inside the word's [start, end) window.
     Words with no voiced samples are dropped (rests don't score).
+
+    Note: `pitch_hz` here is metadata only. The scoring engine does
+    per-frame comparison against the live `target_hz` from `pitch_track.csv`,
+    so multi-pitch (melisma) words are graded against the actual contour, not
+    this single median.
     """
     notes: list[Note] = []
     for line in lyrics:

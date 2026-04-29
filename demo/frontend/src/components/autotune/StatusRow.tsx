@@ -1,22 +1,21 @@
 import { useEffect, useRef, useState } from "react"
+import { Star } from "lucide-react"
 
 interface Props {
   score: number | null      // 0..1
   combo: number | null
-  bestCombo: number | null
+  stars: number | null      // 0..5
 }
 
-const COMBO_BAR_MAX = 25
 const COMBO_MILESTONES = [10, 25, 50, 100]
 const SCORE_TWEEN_RATE = 6.0  // higher = snappier; per-second exponential ease
 
-export function ScoreDisplay({ score, combo, bestCombo }: Props) {
+export function StatusRow({ score, combo, stars }: Props) {
   const target = score ?? 0
   const [displayScore, setDisplayScore] = useState(0)
   const rafRef = useRef<number | null>(null)
   const lastTsRef = useRef<number | null>(null)
 
-  // Smooth score tween toward target.
   useEffect(() => {
     function step(ts: number) {
       const last = lastTsRef.current ?? ts
@@ -37,7 +36,6 @@ export function ScoreDisplay({ score, combo, bestCombo }: Props) {
     }
   }, [target])
 
-  // Combo milestone flash.
   const prevComboRef = useRef(0)
   const [flash, setFlash] = useState(false)
   useEffect(() => {
@@ -53,32 +51,33 @@ export function ScoreDisplay({ score, combo, bestCombo }: Props) {
   }, [combo])
 
   const pct = Math.round(displayScore * 100)
-  const comboFill = Math.min((combo ?? 0) / COMBO_BAR_MAX, 1)
+  const filledStars = Math.max(0, Math.min(stars ?? 0, 5))
 
   return (
-    <div className="shrink-0 flex items-center gap-3 px-4 py-1.5 border-b border-border/60">
-      {/* Combo bar */}
+    <div className="relative z-10 flex shrink-0 items-center justify-between gap-4 border-t border-border/60 px-6 py-3">
+      <div className="font-mono text-2xl font-semibold tabular-nums w-20">
+        {pct}%
+      </div>
+      <div className="flex items-center gap-1.5">
+        {[0, 1, 2, 3, 4].map((i) => (
+          <Star
+            key={i}
+            className={
+              "h-6 w-6 transition-colors " +
+              (i < filledStars
+                ? "fill-primary stroke-primary"
+                : "stroke-muted-foreground/30")
+            }
+          />
+        ))}
+      </div>
       <div
         className={
-          "relative h-1.5 flex-1 overflow-hidden rounded-full bg-muted " +
-          (flash ? "ring-2 ring-primary/60 transition-all" : "")
+          "w-20 text-right font-mono text-base tabular-nums transition-transform " +
+          (flash ? "scale-125 text-primary" : "text-muted-foreground")
         }
       >
-        <div
-          className="absolute inset-y-0 left-0 rounded-full bg-primary transition-[width] duration-150 ease-out"
-          style={{ width: `${comboFill * 100}%` }}
-        />
-      </div>
-
-      {/* Combo counter */}
-      <div className="font-mono text-xs text-muted-foreground tabular-nums w-16 text-right">
-        {(combo ?? 0) > 0 ? `${combo}× combo` : ""}
-        {bestCombo !== null && bestCombo > 0 && (combo ?? 0) === 0 ? `best ${bestCombo}` : ""}
-      </div>
-
-      {/* Score */}
-      <div className="font-mono text-base font-semibold tabular-nums w-14 text-right">
-        {pct}%
+        {(combo ?? 0) > 0 ? `×${combo}` : ""}
       </div>
     </div>
   )
