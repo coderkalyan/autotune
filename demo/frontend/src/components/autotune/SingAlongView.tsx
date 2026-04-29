@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
-import { Pause, Play, Square } from "lucide-react"
+import { Pause, Play, RotateCcw, Square } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
 import { KaraokeLyrics } from "@/components/autotune/KaraokeLyrics"
@@ -146,23 +146,36 @@ export function SingAlongView({ latest, playback }: Props) {
     setScrubValue(v[0])
   }, [])
 
-  const handleScrubCommit = useCallback(
-    async (v: number[]) => {
-      const ms = v[0]
+  const seekTo = useCallback(
+    async (ms: number) => {
+      const clamped = Math.max(0, ms)
       try {
         await fetch(
-          `${API_BASE}/songs/seek?position_ms=${encodeURIComponent(ms)}`,
+          `${API_BASE}/songs/seek?position_ms=${encodeURIComponent(clamped)}`,
           { method: "POST" },
         )
       } catch (err) {
         console.warn("[SingAlongView] /songs/seek failed", err)
       }
-      playback.seek(ms)
-      setPositionMs(ms)
-      setScrubValue(null)
+      playback.seek(clamped)
+      setPositionMs(clamped)
     },
     [playback],
   )
+
+  const handleScrubCommit = useCallback(
+    async (v: number[]) => {
+      await seekTo(v[0])
+      setScrubValue(null)
+    },
+    [seekTo],
+  )
+
+  const handleBack10 = useCallback(() => {
+    const snap = playback.getPlayback()
+    const cur = snap?.position_ms ?? positionMs
+    seekTo(cur - 10_000)
+  }, [playback, positionMs, seekTo])
 
   if (activeSong) {
     return (
@@ -202,6 +215,14 @@ export function SingAlongView({ latest, playback }: Props) {
               {formatTime(durationMs)}
             </span>
           </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleBack10}
+            title="Back 10s"
+          >
+            <RotateCcw className="h-4 w-4" />
+          </Button>
           <Button
             variant="ghost"
             size="icon"
