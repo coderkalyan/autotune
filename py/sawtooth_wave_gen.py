@@ -53,7 +53,7 @@ def main():
         #     int(discrete_period) + 1, 48000, freq, alpha=0, detune_cents=0
         # )
         x = vocoder.make_carrier(
-            int(discrete_period) + 1, 48000, freq, alpha=0, detune_cents=5
+            int(discrete_period) + 1, 48000, freq, alpha=.03, detune_cents=0
         )
 
         upper = (1 << 15) - 1

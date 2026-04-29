@@ -79,6 +79,14 @@ def compute_rms_inv_gains(
     rng = np.random.default_rng(seed)
     white = rng.uniform(low=-1.0, high=1.0, size=noise_len)
 
+    # Filter white noise through [4_000, 12_000] Hz bandpass and write to file
+    bp_sos: np.ndarray = butter(
+        order, [4_000, 12_000], btype="band", fs=fs, output="sos"
+    )
+    carrier_band: np.ndarray = sosfilt(bp_sos, white)[: 2**7] / 2**7
+    write_rom("white_noise_filtered.mem", carrier_band.tolist())
+    print(f"wrote {len(carrier_band)} entries -> white_noise_filtered.mem")
+
     gains: list[float] = []
     for i in tqdm(range(n_bands)):
         bp_sos = design_band_sos(i, edges, fs, order)
@@ -113,8 +121,13 @@ def compute_bp_coeffs(
         (s, k): [] for s in range(BP_N_STAGES) for k in BP_COEFF_NAMES
     }
 
-    for i in range(n_bands):
-        bp_sos = design_band_sos(i, edges, fs, order)
+    for i in range(n_bands + 1):
+
+        if i < n_bands:
+            bp_sos = design_band_sos(i, edges, fs, order)
+        else: #add white noise filter
+            bp_sos = butter(order, [4_000, 12_000], btype="band", fs=fs, output="sos")
+        # print(bp_sos)
         for s in range(BP_N_STAGES):
             for k in BP_COEFF_NAMES:
                 if bp_sos is None:

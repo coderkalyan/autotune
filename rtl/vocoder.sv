@@ -51,8 +51,10 @@ module vocoder #(
     rom <= rom_mem[audio_addr];
   end
 
-  initial
-    $readmemh("carrier_indices.mem", idx_rom);
+  // Per-band inverse RMS normalization factors (Q3.24).
+  fnorm_t rms_inv[BANKS];
+  initial $readmemh("carrier_indices.mem", idx_rom);
+  initial $readmemh("vocoder_rms_inv.mem", rms_inv);
 
   // First MIDI note represented in carrier_indices.mem. Must match the
   // lower bound used by py/carrier_romgen.py.
@@ -110,8 +112,10 @@ module vocoder #(
 
   // Modulation pipeline (per band, indexed by `bank`):
   //   bank=k       : sqrt_seq sees radical=bp[k]<<3
-  //   bank=k+2     : sqrt_q valid for band k; compute mul_r = sqrt × carrier
-  //   bank=k+3     : accumulate mul_r into sample
+  //   bank=k+2     : sqrt_q valid for band k; compute mul_r0 = sqrt × carrier
+  //   bank=k+3     : mul_r = mul_r0 × rms_inv[k]
+  //   bank=k+4     : accumulate mul_r into sample
+  fnorm_t mul_r0;
   fnorm_t mul_r;
 
   state_t state;
@@ -182,9 +186,9 @@ module vocoder #(
           // [NOTE_OFFSET, NOTE_LAST], which is all we have ROM entries for.
           // Notes outside the range are silently skipped.
           if ((note >= 8'(NOTE_OFFSET)) && (note <= 8'(NOTE_LAST))) begin
-            if (i_notes[note[6:0]]) begin //TODO: remove if statement to prevent carrier phase problems (idk if needed)
+            // if (i_notes[note[6:0]]) begin //TODO: remove if statement to prevent carrier phase problems (idk if needed)
               indices[note - NOTE_OFFSET] <= (indices[note - NOTE_OFFSET] == idx_rom[note - NOTE_OFFSET + 1] - 1) ? idx_rom[note - NOTE_OFFSET] : indices[note - NOTE_OFFSET] + 1;
-            end
+            // end
           end
 
           if (note < 8'd128) note <= note + 8'd1;
@@ -222,26 +226,32 @@ module vocoder #(
             state  <= VOCODE;
             bank   <= '0;
             sample <= 0;
+            mul_r0 <= '0;
+            mul_r  <= '0;
           end
         end
         VOCODE: begin
           // Pipeline stages indexed by `bank` (sqrt_seq is 2-cycle latency):
           //   bank in [2 .. BANKS+1] : sqrt_q holds sqrt of band bank-2;
-          //                            compute mul_r = sqrt_q × carrier(bank-2).
-          //   bank in [3 .. BANKS+2] : accumulate mul_r (lagging by 1 cycle).
-          // Bank advances for BANKS+3 cycles total to flush all stages.
+          //                            compute mul_r0 = sqrt_q × carrier(bank-2).
+          //   bank in [3 .. BANKS+2] : mul_r = mul_r0 × rms_inv[bank-3].
+          //   bank in [4 .. BANKS+3] : accumulate mul_r (lagging by 1 cycle).
+          // Bank advances for BANKS+4 cycles total to flush all stages.
           if ((bank >= 6'd2) && (bank <= 6'(BANKS + 1))) begin
-            mul_r <= fnorm_mul(fnorm_t'(sqrt_q << 12),
-                               bandpass_o_data[(bank - 6'd2) + BANKS]);
+            mul_r0 <= fnorm_mul(fnorm_t'(sqrt_q << 12), bandpass_o_data[(bank-6'd2)+BANKS]);
           end
 
           if ((bank >= 6'd3) && (bank <= 6'(BANKS + 2))) begin
+            mul_r <= fnorm_mul(mul_r0, rms_inv[bank-6'd3]);
+          end
+
+          if ((bank >= 6'd4) && (bank <= 6'(BANKS + 3))) begin
             sample <= sample + mul_r;
           end
 
           bank <= bank + 1;
 
-          if (bank == 6'(BANKS + 2)) begin
+          if (bank == 6'(BANKS + 3)) begin
             state <= OUTPUT;
           end
         end

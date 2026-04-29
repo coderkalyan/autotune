@@ -105,7 +105,7 @@ module compute #(
   // ----------------------------------------------------------------
   pitch_detection #(
       .WINDOW_SIZE(WINDOW_SIZE),
-      .STAMPS(32)
+      .STAMPS(16)
   ) iPD (
       .clk(clk),
       .rst(rst),
