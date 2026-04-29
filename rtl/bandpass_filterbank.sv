@@ -90,7 +90,16 @@ module bandpass_filterbank #(
         else                  rd_addr = bank_cnt + 1'b1;
     end
 
-    wire [CBITS - 1:0] rd_coef_idx = rd_addr[CBITS - 1:0];
+    // wire [CBITS - 1:0] rd_coef_idx = rd_addr[CBITS - 1:0];
+    // Bank layout with the inserted white-noise slot is:
+    //   0..31  = voice bands
+    //   32     = white-noise band
+    //   33..64 = carrier bands, sharing coef sets 0..31 again
+    wire [CBITS - 1:0] rd_coef_idx = (rd_addr < (BANKS / 2))
+        ? rd_addr
+        : (rd_addr == (BANKS / 2))
+            ? (BANKS / 2)
+            : (rd_addr - (BANKS / 2) - 1);
 
     // Coefficient BRAMs, sync read aligned with state reads.
     fnorm_t i_s0_b0, i_s0_b1, i_s0_a1, i_s0_a2;

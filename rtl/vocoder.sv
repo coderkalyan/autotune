@@ -11,7 +11,8 @@ module vocoder #(
     // parameter int IDX_B = $clog2(IDX_N),
     parameter int attack_ms = 3,  //alpha attack
     parameter int release_ms = 100,  //alpha attack
-    parameter int BANKS = 32
+    parameter int BANKS = 32,
+    parameter int WHITENOISE_N = 128
 ) (
     input  wire            clk,
     input  wire            rst,
@@ -53,8 +54,10 @@ module vocoder #(
 
   // Per-band inverse RMS normalization factors (Q3.24).
   fnorm_t rms_inv[BANKS];
+  fnorm_t whitenoise[WHITENOISE_N];
   initial $readmemh("carrier_indices.mem", idx_rom);
   initial $readmemh("vocoder_rms_inv.mem", rms_inv);
+  initial $readmemh("white_noise_filtered.mem", whitenoise);
 
   // First MIDI note represented in carrier_indices.mem. Must match the
   // lower bound used by py/carrier_romgen.py.
@@ -74,14 +77,14 @@ module vocoder #(
   logic asym_follow;
   logic bandpass_i_valid, bandpass_o_valid;
   fixed_t bandpass_i_data;
-  fnorm_t bandpass_o_data [BANKS * 2];
-  logic [5:0] bandpass_bank_start, bandpass_bank_end;
+  fnorm_t bandpass_o_data [BANKS * 2 + 1];
+  logic [$clog2(BANKS * 2 + 1)-1:0] bandpass_bank_start, bandpass_bank_end;
   // 2x state banks (voice 0..31 and carrier 32..63 have independent
   // histories) but share one set of 32 coefficient ROMs — the low 5 bits
   // of bank_cnt select the coef set inside the filterbank.
   bandpass_filterbank #(
-      .BANKS(BANKS * 2),
-      .COEF_BANKS(BANKS)
+      .BANKS(BANKS * 2 + 1),
+      .COEF_BANKS(BANKS + 1)
   ) bandpass (
       .clk(clk),
       .rst(rst),
@@ -122,13 +125,13 @@ module vocoder #(
   // 8-bit so `note` can sit at 128 for one extra "drain" cycle after all
   // addresses have been issued but the last ROM read is still in flight.
   logic [7:0] note;
+  logic [$clog2(WHITENOISE_N)-1:0] whitenoise_idx;
   fixed_t sample;
   int i;
   logic [16:0] indices[IDX_N];
   fixed_t carrier;
-  // logic carrier_valid;
   logic bandpass_done;
-  logic [5:0] bank;
+  logic [$clog2(BANKS * 2 + 1)-1:0] bank;
   // Latched synth-bypass flag captured at sample start.
   logic bypass_r;
 
@@ -146,7 +149,7 @@ module vocoder #(
       state            <= IDLE;
       o_valid          <= 1'b0;
       bandpass_i_valid <= 1'b0;
-      // carrier_valid <= 1'b0;
+      whitenoise_idx   <= 7'd0;
 
       for (i = 0; i < IDX_N; i = i + 1) indices[i] <= idx_rom[i];
     end else begin
@@ -166,7 +169,7 @@ module vocoder #(
             bandpass_i_valid    <= ~i_synth_bypass;
             asym_follow         <= 1'b1;
             bandpass_bank_start <= 0;
-            bandpass_bank_end   <= (BANKS - 1);
+            bandpass_bank_end   <= (BANKS);
             bandpass_done       <= 1'b0;
           end
         end
@@ -187,7 +190,7 @@ module vocoder #(
           // Notes outside the range are silently skipped.
           if ((note >= 8'(NOTE_OFFSET)) && (note <= 8'(NOTE_LAST))) begin
             // if (i_notes[note[6:0]]) begin //TODO: remove if statement to prevent carrier phase problems (idk if needed)
-              indices[note - NOTE_OFFSET] <= (indices[note - NOTE_OFFSET] == idx_rom[note - NOTE_OFFSET + 1] - 1) ? idx_rom[note - NOTE_OFFSET] : indices[note - NOTE_OFFSET] + 1;
+            indices[note - NOTE_OFFSET] <= (indices[note - NOTE_OFFSET] == idx_rom[note - NOTE_OFFSET + 1] - 1) ? idx_rom[note - NOTE_OFFSET] : indices[note - NOTE_OFFSET] + 1;
             // end
           end
 
@@ -211,8 +214,8 @@ module vocoder #(
               bandpass_i_data     <= (sample << 8);
               bandpass_i_valid    <= 1'b1;
               asym_follow         <= 1'b0;
-              bandpass_bank_start <= BANKS;
-              bandpass_bank_end   <= (2 * BANKS) - 1;
+              bandpass_bank_start <= BANKS + 1;
+              bandpass_bank_end   <= (2 * BANKS);
               bandpass_done       <= 1'b0;
             end
           end
@@ -238,7 +241,7 @@ module vocoder #(
           //   bank in [4 .. BANKS+3] : accumulate mul_r (lagging by 1 cycle).
           // Bank advances for BANKS+4 cycles total to flush all stages.
           if ((bank >= 6'd2) && (bank <= 6'(BANKS + 1))) begin
-            mul_r0 <= fnorm_mul(fnorm_t'(sqrt_q << 12), bandpass_o_data[(bank-6'd2)+BANKS]);
+            mul_r0 <= fnorm_mul(fnorm_t'(sqrt_q << 12), bandpass_o_data[(bank-6'd2)+BANKS+1]);
           end
 
           if ((bank >= 6'd3) && (bank <= 6'(BANKS + 2))) begin
@@ -256,8 +259,11 @@ module vocoder #(
           end
         end
         OUTPUT: begin
-          state   <= IDLE;
-          o_data  <= fixed_t'(sample);
+          state <= IDLE;
+          o_data <= (i_notes == 0) ? 27'd0 : (fixed_t'(sample) + fnorm_mul(
+              bandpass_o_data[BANKS], whitenoise[whitenoise_idx]
+          ));
+          whitenoise_idx <= whitenoise_idx + 1;
           o_valid <= 1'b1;
         end
         default: state <= IDLE;
