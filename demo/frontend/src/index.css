@@ -179,3 +179,13 @@ body,
   animation: breathe 1.5s ease-in-out infinite;
   transition: box-shadow 200ms ease-out;
 }
+
+@keyframes lyric-line-in {
+  from { transform: translateY(35%); opacity: 0; }
+  to   { transform: translateY(0);   opacity: 1; }
+}
+
+@keyframes lyric-line-out {
+  from { transform: translateY(0);    opacity: 1; }
+  to   { transform: translateY(-35%); opacity: 0; }
+}

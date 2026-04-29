@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import type { LyricLine, LyricWord } from "@/types"
 
 interface Props {
@@ -6,17 +6,31 @@ interface Props {
   positionMs: number | null
 }
 
-// Dots replace the big-lyric slot during instrumental gaps. Tuned so short
-// gaps between phrases keep the just-finished lyric visible (no flicker),
-// while real instrumental breaks pace 3 dots across the full gap. Windows
-// overlap so dots sequence smoothly (always one dot in motion), and a
-// per-dot phase-offset breathing layer keeps them from feeling static.
-const GAP_GRACE_MS = 600           // wait this long after current line ends before considering it a gap
-const COUNTDOWN_MIN_GAP_MS = 3000  // only enter countdown mode when full gap is at least this long
+const GAP_GRACE_MS = 600
+const COUNTDOWN_MIN_GAP_MS = 3000
 const DOTS_COUNT = 3
-const DOT_WINDOW_FRAC = 0.55       // each dot's grow span as a fraction of the full gap; >1/N → overlap
-const BREATH_PERIOD_S = 4.6        // ambient breathing period (low freq = calm)
-const BREATH_AMP = 0.06            // peak scale wobble from breathing
+const DOT_WINDOW_FRAC = 0.55
+const BREATH_PERIOD_S = 4.6
+const BREATH_AMP = 0.06
+
+const ANIM_DURATION = 300
+const ANIM_IN: React.CSSProperties = {
+  animation: `lyric-line-in ${ANIM_DURATION}ms ease both`,
+}
+const ANIM_OUT: React.CSSProperties = {
+  animation: `lyric-line-out ${ANIM_DURATION}ms ease both`,
+}
+
+type SlotContent =
+  | { kind: "line"; line: LyricLine; positionMs: number }
+  | { kind: "countdown"; gapProgress: number; positionMs: number }
+  | null
+
+function slotKey(s: SlotContent): string {
+  if (!s) return "empty"
+  if (s.kind === "countdown") return "countdown"
+  return `line:${s.line.timestamp_ms}`
+}
 
 export function KaraokeLyrics({ lines, positionMs }: Props) {
   const pos = positionMs ?? 0
@@ -35,8 +49,6 @@ export function KaraokeLyrics({ lines, positionMs }: Props) {
 
   const currentEnd = current ? lastWordEnd(current) : 0
   const upcomingStart = upcoming ? upcoming.timestamp_ms : Infinity
-  // Gap pacing starts from the current line's end (or t=0 for pre-song) so
-  // the first dot is already easing in by the time dots become visible.
   const gapStartMs = current ? currentEnd : 0
   const fullGapMs = upcoming ? upcomingStart - gapStartMs : 0
   const msUntilLyric = upcoming ? upcomingStart - pos : Infinity
@@ -46,33 +58,76 @@ export function KaraokeLyrics({ lines, positionMs }: Props) {
       ? Math.max(0, Math.min(1, (pos - gapStartMs) / fullGapMs))
       : 0
 
-  // Long instrumental break: dots take over the big slot and grow toward the
-  // next lyric. Stays visible until the lyric actually starts.
   const showCountdown =
     upcoming != null &&
     inGap &&
     fullGapMs > COUNTDOWN_MIN_GAP_MS &&
     msUntilLyric > 0
 
-  // Pre-song (no current yet), use upcoming as the big preview so the screen
-  // isn't blank between dots and the first line.
   const bigLine = current ?? upcoming
-  const previewLine = current && upcoming ? upcoming : null
+
+  const slot: SlotContent = showCountdown
+    ? { kind: "countdown", gapProgress, positionMs: pos }
+    : bigLine
+      ? { kind: "line", line: bigLine, positionMs: pos }
+      : null
+
+  const key = slotKey(slot)
+  const slotRef = useRef<SlotContent>(slot)
+  slotRef.current = slot
+  const prevSlotRef = useRef<SlotContent>(slot)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const [exiting, setExiting] = useState<SlotContent>(null)
+  const [transitioning, setTransitioning] = useState(false)
+
+  useEffect(() => {
+    const prev = prevSlotRef.current
+    const next = slotRef.current
+    if (slotKey(prev) === slotKey(next)) return
+    prevSlotRef.current = next
+    if (timerRef.current) clearTimeout(timerRef.current)
+    setExiting(prev)
+    setTransitioning(true)
+    timerRef.current = setTimeout(() => {
+      setExiting(null)
+      setTransitioning(false)
+    }, ANIM_DURATION)
+  }, [key])
 
   return (
-    <div className="relative z-10 flex flex-1 flex-col items-center justify-center gap-6 px-8 text-center">
-      {showCountdown ? (
-        <CountdownDots gapProgress={gapProgress} positionMs={pos} />
-      ) : (
-        bigLine && <ActiveLine line={bigLine} positionMs={pos} />
-      )}
-      {!showCountdown && previewLine && (
-        <p className="max-w-4xl text-2xl font-medium leading-snug text-muted-foreground/55">
-          {previewLine.text}
-        </p>
-      )}
+    <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-8 text-center">
+      <div className="relative w-full overflow-hidden min-h-[9rem] flex items-center justify-center">
+        <div
+          className="w-full flex items-center justify-center"
+          style={transitioning ? ANIM_IN : undefined}
+        >
+          <SlotView slot={slot} />
+        </div>
+        {exiting && (
+          <div
+            className="absolute inset-0 flex items-center justify-center"
+            style={ANIM_OUT}
+          >
+            <SlotView slot={exiting} />
+          </div>
+        )}
+      </div>
     </div>
   )
+}
+
+function SlotView({ slot }: { slot: SlotContent }) {
+  if (!slot) return null
+  if (slot.kind === "countdown") {
+    return (
+      <CountdownDots
+        gapProgress={slot.gapProgress}
+        positionMs={slot.positionMs}
+      />
+    )
+  }
+  return <ActiveLine line={slot.line} positionMs={slot.positionMs} />
 }
 
 function lastWordEnd(line: LyricLine): number {
@@ -91,11 +146,7 @@ function CountdownDots({
   gapProgress: number
   positionMs: number
 }) {
-  // Stagger overlapping grow-windows so the visual is always advancing
-  // (no robotic plateau between dots). Final dot lands at gapProgress=1.
   const stagger = (1 - DOT_WINDOW_FRAC) / (DOTS_COUNT - 1)
-  // Time-driven breathing — uses the song clock so dots stay aligned with
-  // the music, with a phase offset per dot for a natural out-of-sync wobble.
   const breathT = positionMs / 1000
   const omega = (2 * Math.PI) / BREATH_PERIOD_S
 
@@ -111,10 +162,6 @@ function CountdownDots({
         const t = Math.max(0, Math.min(1, local))
         const eased = springRiseToPeak(t)
 
-        // Ambient breathing: subtle pre-grow shimmer (40% amp), full amp once
-        // the dot has bloomed. Phase-offset by 2.05 rad per dot. Damped to
-        // zero in the last sliver so dots land cleanly at peak as the lyric
-        // takes over (no late-arriving wobble fighting the handoff).
         const breath = Math.sin(breathT * omega + i * 2.05)
         const breathFactor = 0.4 + 0.6 * eased
         const breathDamp =
@@ -141,9 +188,6 @@ function CountdownDots({
   )
 }
 
-// easeOutBack stretched so its overshoot peak lands at t=1 (instead of t≈0.58
-// for the raw curve). Monotonic rise → dot keeps growing right up to handoff,
-// no perceived "settled" plateau between dot fully grown and lyric starting.
 function springRiseToPeak(t: number): number {
   if (t <= 0) return 0
   const c1 = 1.70158
