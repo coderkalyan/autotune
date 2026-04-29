@@ -1,24 +1,32 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { PITCH_WINDOW_SIZE, WS_URL } from "@/config"
 import type { PitchReading } from "@/types"
+import type { PlaybackSnapshot } from "./useSongPlayback"
 
 // Chart updates at 10Hz — every 3rd message from the 30Hz stream.
 // `latest` still updates at full rate for the tuner strip.
 const CHART_UPDATE_EVERY = 3
+const PLAYBACK_SEND_INTERVAL_MS = 33
 
-export function usePitchSocket(url: string = WS_URL) {
+export function usePitchSocket(
+  url: string = WS_URL,
+  getPlayback?: () => PlaybackSnapshot | null,
+) {
   const [readings, setReadings] = useState<PitchReading[]>([])
   const [latest, setLatest] = useState<PitchReading | null>(null)
   const [connected, setConnected] = useState(false)
 
   const wsRef = useRef<WebSocket | null>(null)
   const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const playbackTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const unmountedRef = useRef(false)
   // Buffer accumulates between chart updates; flushed every CHART_UPDATE_EVERY messages
   const bufferRef = useRef<PitchReading[]>([])
   const msgCountRef = useRef(0)
   const lastGoodDetectedRef = useRef<number | null>(null)
   const lastGoodCorrectedRef = useRef<number | null>(null)
+  const getPlaybackRef = useRef(getPlayback)
+  getPlaybackRef.current = getPlayback
 
   const connect = useCallback(() => {
     if (unmountedRef.current) return
@@ -32,6 +40,15 @@ export function usePitchSocket(url: string = WS_URL) {
         return
       }
       setConnected(true)
+      if (playbackTimerRef.current === null) {
+        playbackTimerRef.current = setInterval(() => {
+          const sock = wsRef.current
+          if (!sock || sock.readyState !== WebSocket.OPEN) return
+          const snap = getPlaybackRef.current?.()
+          if (!snap) return
+          sock.send(JSON.stringify({ type: "playback", ...snap }))
+        }, PLAYBACK_SEND_INTERVAL_MS)
+      }
     }
 
     ws.onmessage = (event: MessageEvent) => {
@@ -77,6 +94,10 @@ export function usePitchSocket(url: string = WS_URL) {
 
     ws.onclose = () => {
       setConnected(false)
+      if (playbackTimerRef.current !== null) {
+        clearInterval(playbackTimerRef.current)
+        playbackTimerRef.current = null
+      }
       if (!unmountedRef.current) {
         reconnectTimerRef.current = setTimeout(connect, 2000)
       }
@@ -95,6 +116,10 @@ export function usePitchSocket(url: string = WS_URL) {
       unmountedRef.current = true
       if (reconnectTimerRef.current !== null) {
         clearTimeout(reconnectTimerRef.current)
+      }
+      if (playbackTimerRef.current !== null) {
+        clearInterval(playbackTimerRef.current)
+        playbackTimerRef.current = null
       }
       wsRef.current?.close()
     }
