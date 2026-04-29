@@ -1,0 +1,14 @@
+{
+  "name": "Life is a Highway",
+  "artist": "VARIOUS ARTISTS;Rascal Flatts",
+  "album": "Cars (Original Motion Picture Soundtrack)",
+  "year": "2006-06-06",
+  "pfp": "cover.jpg",
+  "slug": "life_is_a_highway",
+  "duration_ms": 34000,
+  "sample_rate": 48000,
+  "crop_start_ms": 76000,
+  "crop_end_ms": 110000,
+  "grade_start_ms": 9000,
+  "grade_end_ms": 25000
+}

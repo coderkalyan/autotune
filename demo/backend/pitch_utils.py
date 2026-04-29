@@ -1,6 +1,6 @@
 FS = 48000
-VOCAL_MIN_HZ = 80.0 # FIXME Update these values
-VOCAL_MAX_HZ = 1100.0 
+VOCAL_MIN_HZ = 80.0
+VOCAL_MAX_HZ = 900.0
 
 # Valid lag values and their note names, ported from py/mock_uart_rx.py.
 # Keys are autocorrelation lag counts at Fs=48000; values are note Hz (= FS / lag).
@@ -48,18 +48,23 @@ def nearest_note_hz(lag: int) -> float | None:
     """Snap a raw lag to the nearest equal-temperament note frequency.
 
     Uses the same set of valid note lags as the FPGA's nearest_note_lut.sv.
-    Returns None if lag is <= 0.
+    Returns None if lag is <= 0 or the snapped frequency is outside the
+    vocal range.
     """
     if lag <= 0:
         return None
     best = min(_VALID_LAGS, key=lambda k: abs(k - lag))
-    return LAG_TO_HZ[best]
+    hz = LAG_TO_HZ[best]
+    if hz < VOCAL_MIN_HZ or hz > VOCAL_MAX_HZ:
+        return None
+    return hz
 
 
 if __name__ == "__main__":
     tests = [
         (109, "lag_to_hz(109)     ", 440.4, None),
         (40,  "lag_to_hz(40)      ", None,  None),   # 1200 Hz > VOCAL_MAX
+        (48,  "lag_to_hz(48)      ", None,  None),   # 1000 Hz > VOCAL_MAX
         (0,   "lag_to_hz(0)       ", None,  None),
         (111, "nearest_note_hz(111)", None, 440.37),  # snaps to lag=109 (A4)
         (183, "nearest_note_hz(183)", None, 262.30),  # C4

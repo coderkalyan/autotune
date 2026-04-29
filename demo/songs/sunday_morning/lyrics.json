@@ -1,0 +1,350 @@
+[
+  {
+    "timestamp_ms": 2067,
+    "text": "I called you and asked your board with me.",
+    "words": [
+      {
+        "timestamp_ms": 2067,
+        "end_ms": 2207,
+        "text": "I"
+      },
+      {
+        "timestamp_ms": 2267,
+        "end_ms": 3308,
+        "text": "called"
+      },
+      {
+        "timestamp_ms": 3608,
+        "end_ms": 4029,
+        "text": "you"
+      },
+      {
+        "timestamp_ms": 4109,
+        "end_ms": 4169,
+        "text": "and"
+      },
+      {
+        "timestamp_ms": 4389,
+        "end_ms": 4629,
+        "text": "asked"
+      },
+      {
+        "timestamp_ms": 4669,
+        "end_ms": 4929,
+        "text": "your"
+      },
+      {
+        "timestamp_ms": 5009,
+        "end_ms": 6330,
+        "text": "board"
+      },
+      {
+        "timestamp_ms": 6390,
+        "end_ms": 7651,
+        "text": "with"
+      },
+      {
+        "timestamp_ms": 7732,
+        "end_ms": 8032,
+        "text": "me."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 8052,
+    "text": "I died in slow Sunday morning and I never want to leave.",
+    "words": [
+      {
+        "timestamp_ms": 8052,
+        "end_ms": 8072,
+        "text": "I"
+      },
+      {
+        "timestamp_ms": 8592,
+        "end_ms": 8832,
+        "text": "died"
+      },
+      {
+        "timestamp_ms": 8912,
+        "end_ms": 9013,
+        "text": "in"
+      },
+      {
+        "timestamp_ms": 9053,
+        "end_ms": 9693,
+        "text": "slow"
+      },
+      {
+        "timestamp_ms": 9793,
+        "end_ms": 10394,
+        "text": "Sunday"
+      },
+      {
+        "timestamp_ms": 10474,
+        "end_ms": 11214,
+        "text": "morning"
+      },
+      {
+        "timestamp_ms": 11234,
+        "end_ms": 11294,
+        "text": "and"
+      },
+      {
+        "timestamp_ms": 11314,
+        "end_ms": 11334,
+        "text": "I"
+      },
+      {
+        "timestamp_ms": 11975,
+        "end_ms": 12435,
+        "text": "never"
+      },
+      {
+        "timestamp_ms": 12515,
+        "end_ms": 13356,
+        "text": "want"
+      },
+      {
+        "timestamp_ms": 13396,
+        "end_ms": 13536,
+        "text": "to"
+      },
+      {
+        "timestamp_ms": 13616,
+        "end_ms": 14157,
+        "text": "leave."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 15795,
+    "text": "Yeah.",
+    "words": [
+      {
+        "timestamp_ms": 15795,
+        "end_ms": 15975,
+        "text": "Yeah."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 16776,
+    "text": "Yeah.",
+    "words": [
+      {
+        "timestamp_ms": 16776,
+        "end_ms": 17036,
+        "text": "Yeah."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 17076,
+    "text": "Yeah.",
+    "words": [
+      {
+        "timestamp_ms": 17076,
+        "end_ms": 17276,
+        "text": "Yeah."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 17416,
+    "text": "Yeah.",
+    "words": [
+      {
+        "timestamp_ms": 17416,
+        "end_ms": 17776,
+        "text": "Yeah."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 17796,
+    "text": "Yeah.",
+    "words": [
+      {
+        "timestamp_ms": 17796,
+        "end_ms": 18036,
+        "text": "Yeah."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 18056,
+    "text": "Yeah.",
+    "words": [
+      {
+        "timestamp_ms": 18056,
+        "end_ms": 18357,
+        "text": "Yeah."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 18457,
+    "text": "Yeah.",
+    "words": [
+      {
+        "timestamp_ms": 18457,
+        "end_ms": 18597,
+        "text": "Yeah."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 18637,
+    "text": "Yeah.",
+    "words": [
+      {
+        "timestamp_ms": 18637,
+        "end_ms": 18937,
+        "text": "Yeah."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 19197,
+    "text": "Yeah.",
+    "words": [
+      {
+        "timestamp_ms": 19197,
+        "end_ms": 19397,
+        "text": "Yeah."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 19677,
+    "text": "Yeah.",
+    "words": [
+      {
+        "timestamp_ms": 19677,
+        "end_ms": 19938,
+        "text": "Yeah."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 19998,
+    "text": "Yeah.",
+    "words": [
+      {
+        "timestamp_ms": 19998,
+        "end_ms": 20618,
+        "text": "Yeah."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 20658,
+    "text": "Yeah.",
+    "words": [
+      {
+        "timestamp_ms": 20658,
+        "end_ms": 21479,
+        "text": "Yeah."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 21659,
+    "text": "Yeah.",
+    "words": [
+      {
+        "timestamp_ms": 21659,
+        "end_ms": 22039,
+        "text": "Yeah."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 22379,
+    "text": "Yeah.",
+    "words": [
+      {
+        "timestamp_ms": 22379,
+        "end_ms": 22840,
+        "text": "Yeah."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 22860,
+    "text": "Yeah.",
+    "words": [
+      {
+        "timestamp_ms": 22860,
+        "end_ms": 23200,
+        "text": "Yeah."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 23280,
+    "text": "Yeah.",
+    "words": [
+      {
+        "timestamp_ms": 23280,
+        "end_ms": 23520,
+        "text": "Yeah."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 23560,
+    "text": "Yeah.",
+    "words": [
+      {
+        "timestamp_ms": 23560,
+        "end_ms": 23740,
+        "text": "Yeah."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 23920,
+    "text": "Yeah.",
+    "words": [
+      {
+        "timestamp_ms": 23920,
+        "end_ms": 24240,
+        "text": "Yeah."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 24260,
+    "text": "Yeah.",
+    "words": [
+      {
+        "timestamp_ms": 24260,
+        "end_ms": 25101,
+        "text": "Yeah."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 25381,
+    "text": "Yeah.",
+    "words": [
+      {
+        "timestamp_ms": 25381,
+        "end_ms": 26142,
+        "text": "Yeah."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 26182,
+    "text": "Yeah.",
+    "words": [
+      {
+        "timestamp_ms": 26182,
+        "end_ms": 26822,
+        "text": "Yeah."
+      }
+    ]
+  }
+]

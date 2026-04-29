@@ -35,8 +35,18 @@ class AudioEngine:
             self._playing = True
             self._start_wall = time.monotonic()
 
+        sd._terminate()
+        sd._initialize()
+        device = sd.default.device[1]
+        try:
+            info = sd.query_devices(device)
+            print(f"[audio_engine] output device: {info['name']} (index {device})")
+        except Exception as e:
+            print(f"[audio_engine] could not query default output device: {e}")
+
         stream = sd.OutputStream(
             samplerate=samplerate,
+            device=device,
             channels=data.shape[1],
             dtype="float32",
             callback=self._callback,

@@ -1,0 +1,14 @@
+{
+  "name": "Sunday Morning",
+  "artist": "Maroon 5",
+  "album": "Songs About Jane",
+  "year": "2002-06-25",
+  "pfp": "cover.jpg",
+  "slug": "sunday_morning",
+  "duration_ms": 44000,
+  "sample_rate": 48000,
+  "crop_start_ms": 66000,
+  "crop_end_ms": 110000,
+  "grade_start_ms": 12000,
+  "grade_end_ms": 39000
+}

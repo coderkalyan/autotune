@@ -1,0 +1,14 @@
+{
+  "name": "Mr. Blue Sky",
+  "artist": "Electric Light Orchestra",
+  "album": "Out of the Blue",
+  "year": "1977-10-01",
+  "pfp": "cover.jpg",
+  "slug": "mr_blue_sky",
+  "duration_ms": 47000,
+  "sample_rate": 48000,
+  "crop_start_ms": 50000,
+  "crop_end_ms": 97000,
+  "grade_start_ms": 16000,
+  "grade_end_ms": 37000
+}

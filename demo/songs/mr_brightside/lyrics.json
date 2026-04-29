@@ -1,0 +1,290 @@
+[
+  {
+    "timestamp_ms": 1155,
+    "text": "that say you can't control",
+    "words": [
+      {
+        "timestamp_ms": 1155,
+        "end_ms": 2820,
+        "text": "that"
+      },
+      {
+        "timestamp_ms": 2860,
+        "end_ms": 3202,
+        "text": "say"
+      },
+      {
+        "timestamp_ms": 3262,
+        "end_ms": 3442,
+        "text": "you"
+      },
+      {
+        "timestamp_ms": 3483,
+        "end_ms": 3984,
+        "text": "can't"
+      },
+      {
+        "timestamp_ms": 4024,
+        "end_ms": 5449,
+        "text": "control"
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 9342,
+    "text": "Chelsea, tennis, ain't sent to the scene Sweating for sick love, a bite Joking on your allies But it's just a price I paid Destiny, it's telling me Open up my eager eyes Because I missed her bright side",
+    "words": [
+      {
+        "timestamp_ms": 9342,
+        "end_ms": 10623,
+        "text": "Chelsea,"
+      },
+      {
+        "timestamp_ms": 11004,
+        "end_ms": 11744,
+        "text": "tennis,"
+      },
+      {
+        "timestamp_ms": 11924,
+        "end_ms": 12145,
+        "text": "ain't"
+      },
+      {
+        "timestamp_ms": 12185,
+        "end_ms": 12585,
+        "text": "sent"
+      },
+      {
+        "timestamp_ms": 12605,
+        "end_ms": 13186,
+        "text": "to"
+      },
+      {
+        "timestamp_ms": 13226,
+        "end_ms": 13366,
+        "text": "the"
+      },
+      {
+        "timestamp_ms": 13406,
+        "end_ms": 14166,
+        "text": "scene"
+      },
+      {
+        "timestamp_ms": 14186,
+        "end_ms": 14987,
+        "text": "Sweating"
+      },
+      {
+        "timestamp_ms": 15027,
+        "end_ms": 15368,
+        "text": "for"
+      },
+      {
+        "timestamp_ms": 15408,
+        "end_ms": 15708,
+        "text": "sick"
+      },
+      {
+        "timestamp_ms": 15788,
+        "end_ms": 16428,
+        "text": "love,"
+      },
+      {
+        "timestamp_ms": 16529,
+        "end_ms": 16589,
+        "text": "a"
+      },
+      {
+        "timestamp_ms": 16649,
+        "end_ms": 17109,
+        "text": "bite"
+      },
+      {
+        "timestamp_ms": 17469,
+        "end_ms": 18350,
+        "text": "Joking"
+      },
+      {
+        "timestamp_ms": 18510,
+        "end_ms": 18650,
+        "text": "on"
+      },
+      {
+        "timestamp_ms": 18731,
+        "end_ms": 19091,
+        "text": "your"
+      },
+      {
+        "timestamp_ms": 19511,
+        "end_ms": 20452,
+        "text": "allies"
+      },
+      {
+        "timestamp_ms": 20732,
+        "end_ms": 21093,
+        "text": "But"
+      },
+      {
+        "timestamp_ms": 21113,
+        "end_ms": 21433,
+        "text": "it's"
+      },
+      {
+        "timestamp_ms": 21513,
+        "end_ms": 21833,
+        "text": "just"
+      },
+      {
+        "timestamp_ms": 22054,
+        "end_ms": 22234,
+        "text": "a"
+      },
+      {
+        "timestamp_ms": 22294,
+        "end_ms": 22814,
+        "text": "price"
+      },
+      {
+        "timestamp_ms": 23034,
+        "end_ms": 23155,
+        "text": "I"
+      },
+      {
+        "timestamp_ms": 23195,
+        "end_ms": 23575,
+        "text": "paid"
+      },
+      {
+        "timestamp_ms": 23955,
+        "end_ms": 25216,
+        "text": "Destiny,"
+      },
+      {
+        "timestamp_ms": 25317,
+        "end_ms": 25497,
+        "text": "it's"
+      },
+      {
+        "timestamp_ms": 25557,
+        "end_ms": 26377,
+        "text": "telling"
+      },
+      {
+        "timestamp_ms": 26438,
+        "end_ms": 26798,
+        "text": "me"
+      },
+      {
+        "timestamp_ms": 27298,
+        "end_ms": 28019,
+        "text": "Open"
+      },
+      {
+        "timestamp_ms": 28139,
+        "end_ms": 28319,
+        "text": "up"
+      },
+      {
+        "timestamp_ms": 28399,
+        "end_ms": 28760,
+        "text": "my"
+      },
+      {
+        "timestamp_ms": 29180,
+        "end_ms": 29420,
+        "text": "eager"
+      },
+      {
+        "timestamp_ms": 31062,
+        "end_ms": 31442,
+        "text": "eyes"
+      },
+      {
+        "timestamp_ms": 32303,
+        "end_ms": 32803,
+        "text": "Because"
+      },
+      {
+        "timestamp_ms": 32823,
+        "end_ms": 32843,
+        "text": "I"
+      },
+      {
+        "timestamp_ms": 32863,
+        "end_ms": 33204,
+        "text": "missed"
+      },
+      {
+        "timestamp_ms": 33304,
+        "end_ms": 33584,
+        "text": "her"
+      },
+      {
+        "timestamp_ms": 33664,
+        "end_ms": 34325,
+        "text": "bright"
+      },
+      {
+        "timestamp_ms": 34465,
+        "end_ms": 35105,
+        "text": "side"
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 48567,
+    "text": "I'm coming out of my cage and I've been doing",
+    "words": [
+      {
+        "timestamp_ms": 48567,
+        "end_ms": 48687,
+        "text": "I'm"
+      },
+      {
+        "timestamp_ms": 48707,
+        "end_ms": 49149,
+        "text": "coming"
+      },
+      {
+        "timestamp_ms": 49250,
+        "end_ms": 49350,
+        "text": "out"
+      },
+      {
+        "timestamp_ms": 49390,
+        "end_ms": 49471,
+        "text": "of"
+      },
+      {
+        "timestamp_ms": 49531,
+        "end_ms": 49651,
+        "text": "my"
+      },
+      {
+        "timestamp_ms": 49692,
+        "end_ms": 50113,
+        "text": "cage"
+      },
+      {
+        "timestamp_ms": 50194,
+        "end_ms": 50374,
+        "text": "and"
+      },
+      {
+        "timestamp_ms": 50435,
+        "end_ms": 50535,
+        "text": "I've"
+      },
+      {
+        "timestamp_ms": 50555,
+        "end_ms": 50696,
+        "text": "been"
+      },
+      {
+        "timestamp_ms": 50716,
+        "end_ms": 50937,
+        "text": "doing"
+      }
+    ]
+  }
+]

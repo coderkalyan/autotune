@@ -1,0 +1,14 @@
+{
+  "name": "Mr. Brightside",
+  "artist": "The Killers",
+  "album": "Hot Fuss",
+  "year": "2004-06-07",
+  "pfp": "cover.jpg",
+  "slug": "mr_brightside",
+  "duration_ms": 51000,
+  "sample_rate": 48000,
+  "crop_start_ms": 49000,
+  "crop_end_ms": 100000,
+  "grade_start_ms": 12000,
+  "grade_end_ms": 39000
+}

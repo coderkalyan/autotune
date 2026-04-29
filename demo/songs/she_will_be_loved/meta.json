@@ -1,0 +1,14 @@
+{
+  "name": "She Will Be Loved",
+  "artist": "Maroon 5",
+  "album": "Songs About Jane",
+  "year": "2002-06-25",
+  "pfp": "cover.jpg",
+  "slug": "she_will_be_loved",
+  "duration_ms": 48000,
+  "sample_rate": 48000,
+  "crop_start_ms": 49000,
+  "crop_end_ms": 97000,
+  "grade_start_ms": 9000,
+  "grade_end_ms": 39000
+}

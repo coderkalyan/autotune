@@ -1,27 +1,30 @@
 #!/usr/bin/env python3
 """
-Crop an MP3 and save the result to a sibling 'cropped/' folder,
-leaving the original untouched. All ID3 metadata is preserved.
+Lossless crop: stream-copy the audio between [start, end] into a sibling
+'cropped/' folder, leaving the original untouched. No fade in/out (apply
+those later if needed). Output keeps the source extension (mp3 → mp3,
+flac → flac, …).
 
-Fades are applied automatically:
-  - Fade IN  if start > 0 (cutting into the middle of the song)
-  - Fade OUT if end < total song duration (cutting before the natural end)
+Optionally tag a sing-along grading window. Grade times are given in
+ORIGINAL-song time (must lie inside [start, end]); they are stored as
+clip-relative ms in the output's tag block (ID3 TXXX for MP3, Vorbis
+comments for FLAC).
 
 Usage:
-    python3 crop_song.py <file.mp3> <start> <end> [fade_duration]
+    python3 crop_song.py <file> <start> <end> [-gs TIME] [-ge TIME]
 
 Times: seconds (90), MM:SS (1:30), or HH:MM:SS (0:01:30).
-fade_duration: seconds for each fade (default: 2)
-Output: <parent_dir>/cropped/<filename>.mp3
+Output: <parent_dir>/cropped/<filename>
 """
 
-import sys
+import argparse
 import os
 import subprocess
+import sys
 import tempfile
-from mutagen.id3 import ID3, ID3NoHeaderError, TXXX
 
-FADE_DURATION = 2  # seconds, used when a fade is needed
+from mutagen.id3 import ID3, ID3NoHeaderError, TXXX
+from mutagen.flac import FLAC, Picture as FLACPicture
 
 
 def parse_seconds(t: str) -> float:
@@ -49,71 +52,178 @@ def get_duration(path: str) -> float:
     return float(result.stdout.strip())
 
 
+def write_tags_mp3(
+    dest: str,
+    crop_start_ms: int,
+    crop_end_ms: int,
+    grade_start_clip_ms: int | None,
+    grade_end_clip_ms: int | None,
+) -> None:
+    try:
+        tags = ID3(dest)
+    except ID3NoHeaderError:
+        tags = ID3()
+
+    tags.delall("TXXX:CROP_START_MS")
+    tags.delall("TXXX:CROP_END_MS")
+    tags.add(TXXX(encoding=3, desc="CROP_START_MS", text=str(crop_start_ms)))
+    tags.add(TXXX(encoding=3, desc="CROP_END_MS", text=str(crop_end_ms)))
+
+    tags.delall("TXXX:GRADE_START_MS")
+    tags.delall("TXXX:GRADE_END_MS")
+    if grade_start_clip_ms is not None:
+        tags.add(TXXX(encoding=3, desc="GRADE_START_MS", text=str(grade_start_clip_ms)))
+        tags.add(TXXX(encoding=3, desc="GRADE_END_MS", text=str(grade_end_clip_ms)))
+
+    tags.save(dest, v2_version=3)
+
+
+def write_tags_flac(
+    src: str,
+    dest: str,
+    crop_start_ms: int,
+    crop_end_ms: int,
+    grade_start_clip_ms: int | None,
+    grade_end_clip_ms: int | None,
+) -> None:
+    flac = FLAC(dest)
+    # Vorbis comment field names are conventionally case-insensitive.
+    flac["CROP_START_MS"] = str(crop_start_ms)
+    flac["CROP_END_MS"] = str(crop_end_ms)
+    if grade_start_clip_ms is not None:
+        flac["GRADE_START_MS"] = str(grade_start_clip_ms)
+        flac["GRADE_END_MS"] = str(grade_end_clip_ms)
+    else:
+        for k in ("GRADE_START_MS", "GRADE_END_MS"):
+            if k in flac:
+                del flac[k]
+
+    # ffmpeg's FLAC re-encode drops native PICTURE blocks; re-attach from source.
+    if not flac.pictures:
+        try:
+            src_flac = FLAC(src)
+            for pic in src_flac.pictures:
+                new_pic = FLACPicture()
+                new_pic.type = pic.type
+                new_pic.mime = pic.mime
+                new_pic.desc = pic.desc
+                new_pic.width = pic.width
+                new_pic.height = pic.height
+                new_pic.depth = pic.depth
+                new_pic.colors = pic.colors
+                new_pic.data = pic.data
+                flac.add_picture(new_pic)
+        except Exception as e:
+            print(f"Warning: could not reattach FLAC cover art ({e}).")
+
+    flac.save()
+
+
 def main():
-    if len(sys.argv) not in (4, 5):
-        print("Usage: crop_song.py <file.mp3> <start> <end> [fade_duration]")
-        print("  Times: seconds (90) or MM:SS (1:30) or HH:MM:SS (0:01:30)")
-        sys.exit(1)
+    parser = argparse.ArgumentParser(
+        description="Lossless crop (stream-copy) with optional grading-window tags.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=(
+            "Times accept seconds (90), MM:SS (1:30), or HH:MM:SS (0:01:30).\n"
+            "Grade times are ORIGINAL-song time and must lie inside [start, end]."
+        ),
+    )
+    parser.add_argument("file", help="Source audio file (mp3, flac, ...)")
+    parser.add_argument("start", help="Crop start time")
+    parser.add_argument("end", help="Crop end time")
+    parser.add_argument(
+        "-gs", "--grade-start", default=None,
+        help="Grading window start in ORIGINAL-song time (optional).",
+    )
+    parser.add_argument(
+        "-ge", "--grade-end", default=None,
+        help="Grading window end in ORIGINAL-song time (optional).",
+    )
+    args = parser.parse_args()
 
-    src = sys.argv[1]
-    start_str = sys.argv[2]
-    end_str = sys.argv[3]
-    fade_dur = float(sys.argv[4]) if len(sys.argv) == 5 else FADE_DURATION
-
+    src = args.file
     if not os.path.isfile(src):
-        print(f"Error: file not found: {src}")
-        sys.exit(1)
+        sys.exit(f"Error: file not found: {src}")
 
     src_abs = os.path.abspath(src)
     src_dir = os.path.dirname(src_abs)
     filename = os.path.basename(src_abs)
+    ext = os.path.splitext(filename)[1].lower()
 
-    start_sec = parse_seconds(start_str)
-    end_sec   = parse_seconds(end_str)
+    if ext not in (".mp3", ".flac"):
+        sys.exit(
+            f"Error: unsupported source extension {ext!r}. "
+            "Only .mp3 and .flac are tagged; add a writer for other formats."
+        )
+
+    start_sec = parse_seconds(args.start)
+    end_sec = parse_seconds(args.end)
     total_dur = get_duration(src_abs)
 
-    need_fade_in  = start_sec > 0
-    need_fade_out = (total_dur - end_sec) > 0.5  # 0.5s tolerance for rounding
+    if end_sec <= start_sec:
+        sys.exit(f"Error: end ({end_sec}) must be > start ({start_sec}).")
+    if start_sec < 0:
+        sys.exit("Error: start must be non-negative.")
+    if end_sec > total_dur + 0.5:
+        sys.exit(
+            f"Error: end ({end_sec}s) past source duration ({total_dur:.3f}s)."
+        )
 
     clip_dur = end_sec - start_sec
+
+    # Grade window: user gives ORIGINAL-song time; we store it clip-relative.
+    grade_start_orig: float | None = (
+        parse_seconds(args.grade_start) if args.grade_start is not None else None
+    )
+    grade_end_orig: float | None = (
+        parse_seconds(args.grade_end) if args.grade_end is not None else None
+    )
+    if (grade_start_orig is None) != (grade_end_orig is None):
+        sys.exit("Error: --grade-start and --grade-end must be set together.")
+    grade_start_clip: float | None = None
+    grade_end_clip: float | None = None
+    if grade_start_orig is not None:
+        if grade_end_orig <= grade_start_orig:
+            sys.exit("Error: --grade-end must be greater than --grade-start.")
+        if grade_start_orig < start_sec - 1e-3 or grade_end_orig > end_sec + 1e-3:
+            sys.exit(
+                f"Error: grade window [{grade_start_orig}, {grade_end_orig}] "
+                f"outside crop [{start_sec}, {end_sec}]."
+            )
+        grade_start_clip = max(0.0, grade_start_orig - start_sec)
+        grade_end_clip = min(clip_dur, grade_end_orig - start_sec)
 
     cropped_dir = os.path.join(src_dir, "cropped")
     os.makedirs(cropped_dir, exist_ok=True)
     dest = os.path.join(cropped_dir, filename)
 
-    tmp_fd, tmp_path = tempfile.mkstemp(suffix=".mp3", dir=cropped_dir)
+    tmp_fd, tmp_path = tempfile.mkstemp(suffix=ext, dir=cropped_dir)
     os.close(tmp_fd)
 
     try:
-        if need_fade_in or need_fade_out:
-            # Build afade filter chain
-            filters = []
-            if need_fade_in:
-                filters.append(f"afade=t=in:st=0:d={fade_dur}")
-            if need_fade_out:
-                fade_out_start = clip_dur - fade_dur
-                filters.append(f"afade=t=out:st={fade_out_start:.3f}:d={fade_dur}")
-
-            af = ",".join(filters)
-
+        # MP3: stream-copy (lossless, frame-aligned).
+        # FLAC: re-encode to FLAC. Stream-copy on FLAC leaves the source's
+        #   STREAMINFO total_samples intact, so players show the wrong
+        #   length and run past the cropped audio. FLAC re-encode is
+        #   bit-exact on the decoded PCM, so it's still lossless.
+        if ext == ".mp3":
             cmd = [
                 "ffmpeg", "-y",
+                "-ss", args.start,
+                "-to", args.end,
                 "-i", src_abs,
-                "-ss", start_str,
-                "-to", end_str,
-                "-af", af,
-                "-c:a", "libmp3lame", "-q:a", "0",  # highest quality VBR re-encode
+                "-c", "copy",
                 "-map_metadata", "0",
                 tmp_path,
             ]
-        else:
-            # No fades — stream-copy, no re-encode
+        else:  # .flac
             cmd = [
                 "ffmpeg", "-y",
                 "-i", src_abs,
-                "-ss", start_str,
-                "-to", end_str,
-                "-c", "copy",
+                "-ss", args.start,
+                "-to", args.end,
+                "-c:a", "flac",
+                "-compression_level", "5",
                 "-map_metadata", "0",
                 tmp_path,
             ]
@@ -127,42 +237,33 @@ def main():
 
         os.replace(tmp_path, dest)
 
-        # ffmpeg drops APIC (album art) during re-encode — copy it from source.
-        # Also embed crop timestamps for future lyric sync.
+        crop_start_ms = int(start_sec * 1000)
+        crop_end_ms = int(end_sec * 1000)
+        gs_clip_ms = int(grade_start_clip * 1000) if grade_start_clip is not None else None
+        ge_clip_ms = int(grade_end_clip * 1000) if grade_end_clip is not None else None
+
         try:
-            src_tags = ID3(src_abs)
-            dest_tags = ID3(dest)
+            if ext == ".mp3":
+                write_tags_mp3(dest, crop_start_ms, crop_end_ms, gs_clip_ms, ge_clip_ms)
+            elif ext == ".flac":
+                write_tags_flac(src_abs, dest, crop_start_ms, crop_end_ms, gs_clip_ms, ge_clip_ms)
+        except Exception as e:
+            print(f"Warning: tag write failed ({e}); audio still saved.")
 
-            # Restore album art if re-encoded (ffmpeg drops APIC)
-            if need_fade_in or need_fade_out:
-                apic_frames = src_tags.getall("APIC")
-                if apic_frames:
-                    dest_tags.delall("APIC")
-                    for frame in apic_frames:
-                        dest_tags.add(frame)
-
-            # Store crop window as milliseconds for lyric sync
-            dest_tags.add(TXXX(encoding=3, desc="CROP_START_MS", text=str(int(start_sec * 1000))))
-            dest_tags.add(TXXX(encoding=3, desc="CROP_END_MS",   text=str(int(end_sec   * 1000))))
-
-            dest_tags.save(dest, v2_version=3)
-        except ID3NoHeaderError:
-            pass
-
-        fade_notes = []
-        if need_fade_in:
-            fade_notes.append(f"fade in {fade_dur}s")
-        if need_fade_out:
-            fade_notes.append(f"fade out {fade_dur}s")
-        fade_str = f" ({', '.join(fade_notes)})" if fade_notes else ""
-
-        print(f"Cropped {filename} [{start_str} → {end_str}]{fade_str}")
+        notes = ["mp3 stream-copy" if ext == ".mp3" else "flac re-encode (lossless)"]
+        if grade_start_orig is not None:
+            notes.append(
+                f"grade orig {grade_start_orig:.2f}–{grade_end_orig:.2f}s "
+                f"(clip {grade_start_clip:.2f}–{grade_end_clip:.2f}s)"
+            )
+        suffix = f" ({', '.join(notes)})"
+        print(f"Cropped {filename} [{args.start} → {args.end}]{suffix}")
         print(f"  Saved to: {dest}")
 
-    except Exception as e:
+    except Exception:
         if os.path.exists(tmp_path):
             os.unlink(tmp_path)
-        raise e
+        raise
 
 
 if __name__ == "__main__":

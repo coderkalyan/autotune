@@ -45,9 +45,12 @@ const baseConfig = {
   corrected_hz: { label: "Corrected", color: "var(--chart-2)" },
 } satisfies ChartConfig
 
-const withTargetConfig = {
-  ...baseConfig,
-  target_hz: { label: "Target Vocal", color: "var(--chart-4)" },
+const singAlongConfig = {
+  detected_hit: { label: "Hit", color: "var(--chart-hit)" },
+  detected_near: { label: "Near", color: "var(--chart-near)" },
+  detected_miss: { label: "Miss", color: "var(--chart-miss)" },
+  corrected_hz: { label: "Corrected", color: "var(--chart-2)" },
+  target_hz_display: { label: "Target Vocal", color: "var(--chart-4)" },
 } satisfies ChartConfig
 
 interface Props {
@@ -56,13 +59,17 @@ interface Props {
 }
 
 export function PitchGraph({ readings, showTarget = false }: Props) {
-  const config = showTarget ? withTargetConfig : baseConfig
+  const config = showTarget ? singAlongConfig : baseConfig
 
-  // Last active note = most recent non-null pitch (held when unvoiced, live when voiced)
   const lastActiveHz = useMemo(() => {
     for (let i = readings.length - 1; i >= 0; i--) {
       const r = readings[i]
-      const val = r.detected_held ?? r.detected_hz
+      const val =
+        r.detected_held ??
+        r.detected_hz ??
+        r.detected_hit ??
+        r.detected_near ??
+        r.detected_miss
       if (val !== null && val !== undefined) return val
     }
     return null
@@ -122,17 +129,47 @@ export function PitchGraph({ readings, showTarget = false }: Props) {
           }
         />
         <ChartLegend content={<ChartLegendContent />} />
-        <Line
-          dataKey="detected_hz"
-          stroke="var(--color-detected_hz)"
-          strokeWidth={2}
-          dot={false}
-          isAnimationActive={false}
-          connectNulls={false}
-        />
+
+        {showTarget ? (
+          <>
+            <Line
+              dataKey="detected_hit"
+              stroke="var(--color-detected_hit)"
+              strokeWidth={2.5}
+              dot={false}
+              isAnimationActive={false}
+              connectNulls={false}
+            />
+            <Line
+              dataKey="detected_near"
+              stroke="var(--color-detected_near)"
+              strokeWidth={2.5}
+              dot={false}
+              isAnimationActive={false}
+              connectNulls={false}
+            />
+            <Line
+              dataKey="detected_miss"
+              stroke="var(--color-detected_miss)"
+              strokeWidth={2.5}
+              dot={false}
+              isAnimationActive={false}
+              connectNulls={false}
+            />
+          </>
+        ) : (
+          <Line
+            dataKey="detected_hz"
+            stroke="var(--color-detected_hz)"
+            strokeWidth={2}
+            dot={false}
+            isAnimationActive={false}
+            connectNulls={false}
+          />
+        )}
         <Line
           dataKey="detected_held"
-          stroke="var(--color-detected_hz)"
+          stroke="var(--chart-1)"
           strokeWidth={2}
           strokeDasharray="4 4"
           strokeOpacity={0.45}
@@ -162,8 +199,8 @@ export function PitchGraph({ readings, showTarget = false }: Props) {
         />
         {showTarget && (
           <Line
-            dataKey="target_hz"
-            stroke="var(--color-target_hz)"
+            dataKey="target_hz_display"
+            stroke="var(--color-target_hz_display)"
             strokeWidth={2}
             strokeDasharray="6 3"
             dot={false}

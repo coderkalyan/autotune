@@ -2,6 +2,9 @@ import bisect
 import csv
 import json
 import os
+import statistics
+
+from scoring import Note
 
 
 class SongManager:
@@ -12,6 +15,7 @@ class SongManager:
         self._freqs: list[float] = []
         self._lyric_times: list[float] = []
         self._lyric_texts: list[str] = []
+        self._notes: list[Note] = []
 
     # ------------------------------------------------------------------
     # Song catalogue
@@ -42,14 +46,23 @@ class SongManager:
     def song_dir(self, song_id: str) -> str:
         return os.path.join(self._songs_dir, song_id)
 
+    def _stem_path(self, song_id: str, base: str) -> str:
+        """Find <base>.{mp3,wav} in the song dir; default to .mp3 if neither exists."""
+        d = self.song_dir(song_id)
+        for ext in (".mp3", ".wav"):
+            p = os.path.join(d, base + ext)
+            if os.path.isfile(p):
+                return p
+        return os.path.join(d, base + ".mp3")
+
     def instrumental_path(self, song_id: str) -> str:
-        return os.path.join(self.song_dir(song_id), "instrumental.wav")
+        return self._stem_path(song_id, "instrumental")
 
     def cover_path(self, song_id: str) -> str:
         return os.path.join(self.song_dir(song_id), "cover.jpg")
 
     def vocals_path(self, song_id: str) -> str:
-        return os.path.join(self.song_dir(song_id), "vocals.wav")
+        return self._stem_path(song_id, "vocals")
 
     # ------------------------------------------------------------------
     # Pitch track
@@ -69,14 +82,57 @@ class SongManager:
 
         lyric_times: list[float] = []
         lyric_texts: list[str] = []
+        lyrics_raw: list[dict] = []
         lyrics_path = os.path.join(self.song_dir(song_id), "lyrics.json")
         if os.path.isfile(lyrics_path):
             with open(lyrics_path) as f:
-                for entry in json.load(f):
-                    lyric_times.append(float(entry["timestamp_ms"]))
-                    lyric_texts.append(str(entry["text"]))
+                lyrics_raw = json.load(f)
+            for entry in lyrics_raw:
+                lyric_times.append(float(entry["timestamp_ms"]))
+                lyric_texts.append(str(entry["text"]))
         self._lyric_times = lyric_times
         self._lyric_texts = lyric_texts
+
+        # Notes: prefer notes.json, otherwise derive from lyrics + pitch track and cache.
+        notes_path = os.path.join(self.song_dir(song_id), "notes.json")
+        notes: list[Note] = []
+        if os.path.isfile(notes_path):
+            try:
+                with open(notes_path) as f:
+                    for entry in json.load(f):
+                        notes.append(
+                            Note(
+                                start_ms=float(entry["start_ms"]),
+                                duration_ms=float(entry["duration_ms"]),
+                                pitch_hz=float(entry["pitch_hz"]),
+                                lyric=str(entry.get("lyric", "")),
+                            )
+                        )
+            except Exception as e:
+                print(f"[song_manager] failed to read notes.json ({e}); deriving instead")
+                notes = []
+        if not notes and lyrics_raw and timestamps:
+            notes = derive_notes_from_lyrics(lyrics_raw, timestamps, freqs)
+            if notes:
+                try:
+                    with open(notes_path, "w") as f:
+                        json.dump(
+                            [
+                                {
+                                    "start_ms": n.start_ms,
+                                    "duration_ms": n.duration_ms,
+                                    "pitch_hz": n.pitch_hz,
+                                    "lyric": n.lyric,
+                                }
+                                for n in notes
+                            ],
+                            f,
+                            indent=2,
+                        )
+                    print(f"[song_manager] wrote {len(notes)} notes to {notes_path}")
+                except Exception as e:
+                    print(f"[song_manager] failed to write notes.json ({e})")
+        self._notes = notes
 
         self._current_song_id = song_id
 
@@ -86,6 +142,7 @@ class SongManager:
         self._freqs = []
         self._lyric_times = []
         self._lyric_texts = []
+        self._notes = []
 
     def get_target_hz(self, position_ms: float) -> float | None:
         if not self._timestamps:
@@ -104,6 +161,51 @@ class SongManager:
             return None
         return self._lyric_texts[idx] or None
 
+    def get_notes(self) -> list[Note]:
+        return self._notes
+
     @property
     def current_song_id(self) -> str | None:
         return self._current_song_id
+
+
+# ---------------------------------------------------------------------------
+# Note derivation from lyrics word timings + pitch track
+# ---------------------------------------------------------------------------
+
+def derive_notes_from_lyrics(
+    lyrics: list[dict],
+    pitch_timestamps: list[float],
+    pitch_freqs: list[float],
+) -> list[Note]:
+    """Each lyric word becomes one note. Pitch is the median of voiced
+    pitch_track.csv samples falling inside the word's [start, end) window.
+    Words with no voiced samples are dropped (rests don't score).
+    """
+    notes: list[Note] = []
+    for line in lyrics:
+        words = line.get("words") or []
+        for w in words:
+            start = float(w["timestamp_ms"])
+            end_raw = w.get("end_ms")
+            end = float(end_raw) if end_raw is not None else start + 200.0
+            if end <= start:
+                continue
+            lo = bisect.bisect_left(pitch_timestamps, start)
+            hi = bisect.bisect_left(pitch_timestamps, end)
+            voiced = [
+                f for f in pitch_freqs[lo:hi] if f > 0.0
+            ]
+            if not voiced:
+                continue
+            pitch_hz = statistics.median(voiced)
+            notes.append(
+                Note(
+                    start_ms=start,
+                    duration_ms=end - start,
+                    pitch_hz=pitch_hz,
+                    lyric=str(w.get("text", "")),
+                )
+            )
+    notes.sort(key=lambda n: n.start_ms)
+    return notes

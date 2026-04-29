@@ -17,6 +17,24 @@ export interface PitchReading {
   config_done: boolean | null
   config_err: boolean | null
   vocode_bands: number[] | null  // 32 Q11.16 values converted to float
+
+  // Karaoke scoring (sing-along mode)
+  detected_hit?: number | null
+  detected_near?: number | null
+  detected_miss?: number | null
+  target_hz_display?: number | null
+  score?: number | null            // 0..1
+  combo?: number | null
+  best_combo?: number | null
+  note_completed?: NoteCompleted | null
+  stars?: number | null            // 0..5; final once song_complete=true
+  song_complete?: boolean | null
+}
+
+export interface NoteCompleted {
+  lyric: string
+  pitch_hz: number
+  score: number
 }
 
 export interface LyricWord {

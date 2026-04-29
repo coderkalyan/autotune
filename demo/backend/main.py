@@ -15,6 +15,7 @@ from pydantic import BaseModel
 
 from audio_engine import AudioEngine
 from midi_bridge import MIDIBridge
+from scoring import ScoringSession
 from song_manager import SongManager
 from uart_parser import UARTParser
 
@@ -28,6 +29,7 @@ uart_reader: UARTParser | None = None
 midi_bridge: MIDIBridge | None = None
 song_manager: SongManager = SongManager(SONGS_DIR)
 audio_engine: AudioEngine = AudioEngine()
+scoring_session: ScoringSession | None = None
 _connected: set[WebSocket] = set()
 
 
@@ -43,8 +45,11 @@ async def _broadcast(message: dict) -> None:
 
 
 async def _pitch_loop() -> None:
+    global scoring_session
+
     detected_window: deque[float] = deque(maxlen=5)
     corrected_window: deque[float] = deque(maxlen=5)
+    was_playing = False
 
     while True:
         await asyncio.sleep(WS_INTERVAL)
@@ -53,9 +58,8 @@ async def _pitch_loop() -> None:
 
         reading = uart_reader.get_latest() if uart_reader else None
 
-        position_ms = (
-            audio_engine.get_position_ms() if audio_engine.is_playing else None
-        )
+        playing = audio_engine.is_playing
+        position_ms = audio_engine.get_position_ms() if playing else None
         raw_target = (
             song_manager.get_target_hz(position_ms) if position_ms is not None else None
         )
@@ -67,18 +71,103 @@ async def _pitch_loop() -> None:
         )
         song_position_ms = round(position_ms) if position_ms is not None else None
 
+        filtered_detected: float | None = None
+        filtered_corrected: float | None = None
+        vad_voiced_flag = False
+
         if reading:
-            if reading.get("vad_active") and reading.get("vad_voiced"):
-                if reading["detected_hz"] is not None:
-                    detected_window.append(reading["detected_hz"])
-                if reading["corrected_hz"] is not None:
-                    corrected_window.append(reading["corrected_hz"])
+            octave_outlier = False
+            vad_voiced_flag = bool(reading.get("vad_voiced"))
+            if reading.get("vad_active") and vad_voiced_flag:
+                detected_hz = reading["detected_hz"]
+                corrected_hz = reading["corrected_hz"]
+                if detected_hz is not None and detected_window:
+                    ref = statistics.median(detected_window)
+                    if ref > 0:
+                        r = detected_hz / ref
+                        # Reject ~2x and ~0.5x glitches. Corrected is downstream
+                        # of the same lag, so drop both to keep gaps aligned.
+                        if 1.7 <= r <= 2.3 or 0.43 <= r <= 0.59:
+                            octave_outlier = True
+                if not octave_outlier:
+                    if detected_hz is not None:
+                        detected_window.append(detected_hz)
+                    if corrected_hz is not None:
+                        corrected_window.append(corrected_hz)
             else:
                 detected_window.clear()
                 corrected_window.clear()
-            filtered_detected = round(statistics.median(detected_window), 2) if detected_window else None
-            filtered_corrected = round(statistics.median(corrected_window), 2) if corrected_window else None
+            if octave_outlier:
+                filtered_detected = None
+                filtered_corrected = None
+            else:
+                filtered_detected = (
+                    round(statistics.median(detected_window), 2)
+                    if detected_window
+                    else None
+                )
+                filtered_corrected = (
+                    round(statistics.median(corrected_window), 2)
+                    if corrected_window
+                    else None
+                )
 
+        # --- scoring ---
+        score_fields = {
+            "detected_hit": None,
+            "detected_near": None,
+            "detected_miss": None,
+            "target_hz_display": None,
+            "score": None,
+            "combo": None,
+            "best_combo": None,
+            "stars": None,
+            "song_complete": None,
+            "note_completed": None,
+        }
+        if scoring_session is not None and position_ms is not None:
+            state = scoring_session.update(
+                position_ms=position_ms,
+                detected_hz=filtered_detected,
+                target_hz=raw_target,
+                vad_voiced=vad_voiced_flag,
+            )
+            score_fields["target_hz_display"] = (
+                round(state.target_hz_display, 2)
+                if state.target_hz_display is not None
+                else None
+            )
+            score_fields["score"] = round(state.score, 4)
+            score_fields["combo"] = state.combo
+            score_fields["best_combo"] = state.best_combo
+            score_fields["stars"] = state.stars
+            score_fields["song_complete"] = state.complete
+            if state.note_completed is not None:
+                nr = state.note_completed
+                score_fields["note_completed"] = {
+                    "lyric": nr.lyric,
+                    "pitch_hz": round(nr.pitch_hz, 2),
+                    "score": round(nr.score, 4),
+                }
+            if state.detected_bucket == "hit":
+                score_fields["detected_hit"] = filtered_detected
+            elif state.detected_bucket == "near":
+                score_fields["detected_near"] = filtered_detected
+            elif state.detected_bucket == "miss":
+                score_fields["detected_miss"] = filtered_detected
+
+        # --- song-complete on stop / natural end ---
+        if was_playing and not playing and scoring_session is not None:
+            final = scoring_session.finish()
+            score_fields["score"] = round(final.score, 4)
+            score_fields["combo"] = final.combo
+            score_fields["best_combo"] = final.best_combo
+            score_fields["stars"] = final.stars
+            score_fields["song_complete"] = True
+            scoring_session = None
+        was_playing = playing
+
+        if reading:
             msg = {
                 "detected_hz": filtered_detected,
                 "corrected_hz": filtered_corrected,
@@ -114,6 +203,7 @@ async def _pitch_loop() -> None:
                 "vocode_bands": None,
             }
 
+        msg.update(score_fields)
         await _broadcast(msg)
 
 
@@ -190,6 +280,7 @@ def song_lyrics(song_id: str):
 
 @app.post("/songs/{song_id}/play")
 def play_song(song_id: str, vocals_volume: float = 0.3):
+    global scoring_session
     instrumental = song_manager.instrumental_path(song_id)
     if not os.path.isfile(instrumental):
         raise HTTPException(status_code=404, detail="Song not found")
@@ -200,7 +291,9 @@ def play_song(song_id: str, vocals_volume: float = 0.3):
         vocals_path=vocals if os.path.isfile(vocals) else None,
         vocals_volume=vocals_volume,
     )
-    return {"ok": True, "playing": song_id}
+    notes = song_manager.get_notes()
+    scoring_session = ScoringSession(notes) if notes else None
+    return {"ok": True, "playing": song_id, "note_count": len(notes)}
 
 
 @app.post("/songs/vocals_volume")

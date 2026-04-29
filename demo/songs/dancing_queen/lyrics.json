@@ -1,0 +1,322 @@
+[
+  {
+    "timestamp_ms": 973,
+    "text": "Everything's fine, doing them all for dance.",
+    "words": [
+      {
+        "timestamp_ms": 973,
+        "end_ms": 1714,
+        "text": "Everything's"
+      },
+      {
+        "timestamp_ms": 1854,
+        "end_ms": 2435,
+        "text": "fine,"
+      },
+      {
+        "timestamp_ms": 2695,
+        "end_ms": 3156,
+        "text": "doing"
+      },
+      {
+        "timestamp_ms": 3196,
+        "end_ms": 3396,
+        "text": "them"
+      },
+      {
+        "timestamp_ms": 3537,
+        "end_ms": 3717,
+        "text": "all"
+      },
+      {
+        "timestamp_ms": 3757,
+        "end_ms": 4138,
+        "text": "for"
+      },
+      {
+        "timestamp_ms": 4198,
+        "end_ms": 4719,
+        "text": "dance."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 7022,
+    "text": "And when you get the chance, you are the dancing queen, young and sweet, only 17.",
+    "words": [
+      {
+        "timestamp_ms": 7022,
+        "end_ms": 7222,
+        "text": "And"
+      },
+      {
+        "timestamp_ms": 7362,
+        "end_ms": 7682,
+        "text": "when"
+      },
+      {
+        "timestamp_ms": 7782,
+        "end_ms": 8002,
+        "text": "you"
+      },
+      {
+        "timestamp_ms": 8082,
+        "end_ms": 8543,
+        "text": "get"
+      },
+      {
+        "timestamp_ms": 8603,
+        "end_ms": 8923,
+        "text": "the"
+      },
+      {
+        "timestamp_ms": 9043,
+        "end_ms": 10924,
+        "text": "chance,"
+      },
+      {
+        "timestamp_ms": 11664,
+        "end_ms": 12064,
+        "text": "you"
+      },
+      {
+        "timestamp_ms": 12444,
+        "end_ms": 12644,
+        "text": "are"
+      },
+      {
+        "timestamp_ms": 12664,
+        "end_ms": 12824,
+        "text": "the"
+      },
+      {
+        "timestamp_ms": 12884,
+        "end_ms": 13665,
+        "text": "dancing"
+      },
+      {
+        "timestamp_ms": 13765,
+        "end_ms": 14845,
+        "text": "queen,"
+      },
+      {
+        "timestamp_ms": 15265,
+        "end_ms": 15746,
+        "text": "young"
+      },
+      {
+        "timestamp_ms": 15866,
+        "end_ms": 16026,
+        "text": "and"
+      },
+      {
+        "timestamp_ms": 16126,
+        "end_ms": 17586,
+        "text": "sweet,"
+      },
+      {
+        "timestamp_ms": 18287,
+        "end_ms": 18467,
+        "text": "only"
+      },
+      {
+        "timestamp_ms": 18527,
+        "end_ms": 21808,
+        "text": "17."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 22448,
+    "text": "Dancing queen, be the bee from the tethery, oh yeah.",
+    "words": [
+      {
+        "timestamp_ms": 22448,
+        "end_ms": 23189,
+        "text": "Dancing"
+      },
+      {
+        "timestamp_ms": 23329,
+        "end_ms": 24289,
+        "text": "queen,"
+      },
+      {
+        "timestamp_ms": 24829,
+        "end_ms": 25370,
+        "text": "be"
+      },
+      {
+        "timestamp_ms": 25390,
+        "end_ms": 25630,
+        "text": "the"
+      },
+      {
+        "timestamp_ms": 25710,
+        "end_ms": 26150,
+        "text": "bee"
+      },
+      {
+        "timestamp_ms": 26290,
+        "end_ms": 26870,
+        "text": "from"
+      },
+      {
+        "timestamp_ms": 26930,
+        "end_ms": 27170,
+        "text": "the"
+      },
+      {
+        "timestamp_ms": 27230,
+        "end_ms": 29051,
+        "text": "tethery,"
+      },
+      {
+        "timestamp_ms": 29311,
+        "end_ms": 29491,
+        "text": "oh"
+      },
+      {
+        "timestamp_ms": 29551,
+        "end_ms": 29971,
+        "text": "yeah."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 31952,
+    "text": "You can dance, you can die and leave the tunnel of your love.",
+    "words": [
+      {
+        "timestamp_ms": 31952,
+        "end_ms": 32592,
+        "text": "You"
+      },
+      {
+        "timestamp_ms": 32632,
+        "end_ms": 32893,
+        "text": "can"
+      },
+      {
+        "timestamp_ms": 32953,
+        "end_ms": 34013,
+        "text": "dance,"
+      },
+      {
+        "timestamp_ms": 34393,
+        "end_ms": 34993,
+        "text": "you"
+      },
+      {
+        "timestamp_ms": 35033,
+        "end_ms": 35273,
+        "text": "can"
+      },
+      {
+        "timestamp_ms": 35333,
+        "end_ms": 36734,
+        "text": "die"
+      },
+      {
+        "timestamp_ms": 37114,
+        "end_ms": 37214,
+        "text": "and"
+      },
+      {
+        "timestamp_ms": 37274,
+        "end_ms": 37574,
+        "text": "leave"
+      },
+      {
+        "timestamp_ms": 37654,
+        "end_ms": 37914,
+        "text": "the"
+      },
+      {
+        "timestamp_ms": 37994,
+        "end_ms": 38555,
+        "text": "tunnel"
+      },
+      {
+        "timestamp_ms": 38635,
+        "end_ms": 38755,
+        "text": "of"
+      },
+      {
+        "timestamp_ms": 38855,
+        "end_ms": 39175,
+        "text": "your"
+      },
+      {
+        "timestamp_ms": 39215,
+        "end_ms": 40215,
+        "text": "love."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 40435,
+    "text": "You will see that girl watch that sea till the dancing Queen.",
+    "words": [
+      {
+        "timestamp_ms": 40435,
+        "end_ms": 40695,
+        "text": "You"
+      },
+      {
+        "timestamp_ms": 40835,
+        "end_ms": 41496,
+        "text": "will"
+      },
+      {
+        "timestamp_ms": 41516,
+        "end_ms": 41996,
+        "text": "see"
+      },
+      {
+        "timestamp_ms": 42036,
+        "end_ms": 42296,
+        "text": "that"
+      },
+      {
+        "timestamp_ms": 42436,
+        "end_ms": 43436,
+        "text": "girl"
+      },
+      {
+        "timestamp_ms": 43937,
+        "end_ms": 44377,
+        "text": "watch"
+      },
+      {
+        "timestamp_ms": 44417,
+        "end_ms": 44737,
+        "text": "that"
+      },
+      {
+        "timestamp_ms": 44837,
+        "end_ms": 45437,
+        "text": "sea"
+      },
+      {
+        "timestamp_ms": 45717,
+        "end_ms": 46177,
+        "text": "till"
+      },
+      {
+        "timestamp_ms": 46218,
+        "end_ms": 46298,
+        "text": "the"
+      },
+      {
+        "timestamp_ms": 46358,
+        "end_ms": 47118,
+        "text": "dancing"
+      },
+      {
+        "timestamp_ms": 47198,
+        "end_ms": 48198,
+        "text": "Queen."
+      }
+    ]
+  }
+]

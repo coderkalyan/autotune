@@ -39,6 +39,9 @@ export function usePitchSocket(url: string = WS_URL) {
         const reading = JSON.parse(event.data as string) as PitchReading
 
         const isVoiced = reading.vad_active === true && reading.vad_voiced === true
+        // Backend may null detected_hz on octave outliers even while VAD is
+        // voiced; the null-check below routes those frames into the held
+        // (dashed-bridge) branch automatically.
         if (isVoiced && reading.detected_hz !== null) {
           lastGoodDetectedRef.current = reading.detected_hz
           lastGoodCorrectedRef.current = reading.corrected_hz

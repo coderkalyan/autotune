@@ -1,0 +1,329 @@
+[
+  {
+    "timestamp_ms": 31,
+    "text": "Standing every day On your corner in the pouring rain Look for the girl with the broken smile Ask her if she wants to stay Oh, I think she will be loved And she will be loved",
+    "words": [
+      {
+        "timestamp_ms": 31,
+        "end_ms": 691,
+        "text": "Standing"
+      },
+      {
+        "timestamp_ms": 912,
+        "end_ms": 1512,
+        "text": "every"
+      },
+      {
+        "timestamp_ms": 1572,
+        "end_ms": 2232,
+        "text": "day"
+      },
+      {
+        "timestamp_ms": 2252,
+        "end_ms": 2292,
+        "text": "On"
+      },
+      {
+        "timestamp_ms": 2312,
+        "end_ms": 4134,
+        "text": "your"
+      },
+      {
+        "timestamp_ms": 4194,
+        "end_ms": 4814,
+        "text": "corner"
+      },
+      {
+        "timestamp_ms": 4954,
+        "end_ms": 5134,
+        "text": "in"
+      },
+      {
+        "timestamp_ms": 5194,
+        "end_ms": 5294,
+        "text": "the"
+      },
+      {
+        "timestamp_ms": 5354,
+        "end_ms": 7235,
+        "text": "pouring"
+      },
+      {
+        "timestamp_ms": 7255,
+        "end_ms": 7336,
+        "text": "rain"
+      },
+      {
+        "timestamp_ms": 8016,
+        "end_ms": 8256,
+        "text": "Look"
+      },
+      {
+        "timestamp_ms": 8316,
+        "end_ms": 8576,
+        "text": "for"
+      },
+      {
+        "timestamp_ms": 8616,
+        "end_ms": 8816,
+        "text": "the"
+      },
+      {
+        "timestamp_ms": 8917,
+        "end_ms": 9457,
+        "text": "girl"
+      },
+      {
+        "timestamp_ms": 9537,
+        "end_ms": 9797,
+        "text": "with"
+      },
+      {
+        "timestamp_ms": 9837,
+        "end_ms": 10017,
+        "text": "the"
+      },
+      {
+        "timestamp_ms": 10077,
+        "end_ms": 10758,
+        "text": "broken"
+      },
+      {
+        "timestamp_ms": 10878,
+        "end_ms": 11818,
+        "text": "smile"
+      },
+      {
+        "timestamp_ms": 13119,
+        "end_ms": 13319,
+        "text": "Ask"
+      },
+      {
+        "timestamp_ms": 13379,
+        "end_ms": 13639,
+        "text": "her"
+      },
+      {
+        "timestamp_ms": 13719,
+        "end_ms": 13800,
+        "text": "if"
+      },
+      {
+        "timestamp_ms": 13880,
+        "end_ms": 14160,
+        "text": "she"
+      },
+      {
+        "timestamp_ms": 14200,
+        "end_ms": 14480,
+        "text": "wants"
+      },
+      {
+        "timestamp_ms": 14500,
+        "end_ms": 14640,
+        "text": "to"
+      },
+      {
+        "timestamp_ms": 14740,
+        "end_ms": 15280,
+        "text": "stay"
+      },
+      {
+        "timestamp_ms": 15641,
+        "end_ms": 15961,
+        "text": "Oh,"
+      },
+      {
+        "timestamp_ms": 15981,
+        "end_ms": 16001,
+        "text": "I"
+      },
+      {
+        "timestamp_ms": 16281,
+        "end_ms": 16481,
+        "text": "think"
+      },
+      {
+        "timestamp_ms": 16541,
+        "end_ms": 16801,
+        "text": "she"
+      },
+      {
+        "timestamp_ms": 16861,
+        "end_ms": 18863,
+        "text": "will"
+      },
+      {
+        "timestamp_ms": 18943,
+        "end_ms": 19083,
+        "text": "be"
+      },
+      {
+        "timestamp_ms": 19183,
+        "end_ms": 20624,
+        "text": "loved"
+      },
+      {
+        "timestamp_ms": 21064,
+        "end_ms": 21164,
+        "text": "And"
+      },
+      {
+        "timestamp_ms": 21244,
+        "end_ms": 21504,
+        "text": "she"
+      },
+      {
+        "timestamp_ms": 21564,
+        "end_ms": 23325,
+        "text": "will"
+      },
+      {
+        "timestamp_ms": 23626,
+        "end_ms": 23846,
+        "text": "be"
+      },
+      {
+        "timestamp_ms": 23926,
+        "end_ms": 25607,
+        "text": "loved"
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 29187,
+    "text": "Top on my window, knock on my door I want to make you feel beautiful I know I tend to get so insecure Doesn't matter anymore",
+    "words": [
+      {
+        "timestamp_ms": 29187,
+        "end_ms": 29487,
+        "text": "Top"
+      },
+      {
+        "timestamp_ms": 29627,
+        "end_ms": 29727,
+        "text": "on"
+      },
+      {
+        "timestamp_ms": 29807,
+        "end_ms": 30047,
+        "text": "my"
+      },
+      {
+        "timestamp_ms": 30107,
+        "end_ms": 30848,
+        "text": "window,"
+      },
+      {
+        "timestamp_ms": 30988,
+        "end_ms": 31368,
+        "text": "knock"
+      },
+      {
+        "timestamp_ms": 31768,
+        "end_ms": 31968,
+        "text": "on"
+      },
+      {
+        "timestamp_ms": 32148,
+        "end_ms": 32588,
+        "text": "my"
+      },
+      {
+        "timestamp_ms": 32708,
+        "end_ms": 33269,
+        "text": "door"
+      },
+      {
+        "timestamp_ms": 33529,
+        "end_ms": 33609,
+        "text": "I"
+      },
+      {
+        "timestamp_ms": 34169,
+        "end_ms": 34489,
+        "text": "want"
+      },
+      {
+        "timestamp_ms": 34529,
+        "end_ms": 34749,
+        "text": "to"
+      },
+      {
+        "timestamp_ms": 34829,
+        "end_ms": 35089,
+        "text": "make"
+      },
+      {
+        "timestamp_ms": 35129,
+        "end_ms": 35289,
+        "text": "you"
+      },
+      {
+        "timestamp_ms": 35370,
+        "end_ms": 35630,
+        "text": "feel"
+      },
+      {
+        "timestamp_ms": 35670,
+        "end_ms": 36910,
+        "text": "beautiful"
+      },
+      {
+        "timestamp_ms": 38731,
+        "end_ms": 38811,
+        "text": "I"
+      },
+      {
+        "timestamp_ms": 38891,
+        "end_ms": 39211,
+        "text": "know"
+      },
+      {
+        "timestamp_ms": 39311,
+        "end_ms": 39411,
+        "text": "I"
+      },
+      {
+        "timestamp_ms": 39491,
+        "end_ms": 39771,
+        "text": "tend"
+      },
+      {
+        "timestamp_ms": 39811,
+        "end_ms": 40111,
+        "text": "to"
+      },
+      {
+        "timestamp_ms": 40372,
+        "end_ms": 40792,
+        "text": "get"
+      },
+      {
+        "timestamp_ms": 40932,
+        "end_ms": 41332,
+        "text": "so"
+      },
+      {
+        "timestamp_ms": 41792,
+        "end_ms": 43213,
+        "text": "insecure"
+      },
+      {
+        "timestamp_ms": 43633,
+        "end_ms": 44173,
+        "text": "Doesn't"
+      },
+      {
+        "timestamp_ms": 44233,
+        "end_ms": 44653,
+        "text": "matter"
+      },
+      {
+        "timestamp_ms": 45193,
+        "end_ms": 45974,
+        "text": "anymore"
+      }
+    ]
+  }
+]

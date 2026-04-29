@@ -1,0 +1,248 @@
+[
+  {
+    "start_ms": 71.0,
+    "duration_ms": 400.0,
+    "pitch_hz": 144.2096965358845,
+    "lyric": "Please"
+  },
+  {
+    "start_ms": 511.0,
+    "duration_ms": 261.0,
+    "pitch_hz": 179.59392772949968,
+    "lyric": "tell"
+  },
+  {
+    "start_ms": 872.0,
+    "duration_ms": 100.0,
+    "pitch_hz": 197.55366189778854,
+    "lyric": "us"
+  },
+  {
+    "start_ms": 1052.0,
+    "duration_ms": 420.0,
+    "pitch_hz": 219.83258359329426,
+    "lyric": "why"
+  },
+  {
+    "start_ms": 1592.0,
+    "duration_ms": 241.0,
+    "pitch_hz": 296.85091742121904,
+    "lyric": "you"
+  },
+  {
+    "start_ms": 1893.0,
+    "duration_ms": 180.0,
+    "pitch_hz": 357.1190856416714,
+    "lyric": "had"
+  },
+  {
+    "start_ms": 2113.0,
+    "duration_ms": 200.0,
+    "pitch_hz": 395.10732379557703,
+    "lyric": "to"
+  },
+  {
+    "start_ms": 2473.0,
+    "duration_ms": 480.0,
+    "pitch_hz": 437.1328821614066,
+    "lyric": "hide"
+  },
+  {
+    "start_ms": 3034.0,
+    "duration_ms": 360.0,
+    "pitch_hz": 396.2484353207809,
+    "lyric": "away"
+  },
+  {
+    "start_ms": 3454.0,
+    "duration_ms": 320.0,
+    "pitch_hz": 355.06223106171035,
+    "lyric": "for"
+  },
+  {
+    "start_ms": 3894.0,
+    "duration_ms": 721.0,
+    "pitch_hz": 348.9624744528825,
+    "lyric": "so"
+  },
+  {
+    "start_ms": 4655.0,
+    "duration_ms": 600.0,
+    "pitch_hz": 289.2354905662305,
+    "lyric": "long."
+  },
+  {
+    "start_ms": 5836.0,
+    "duration_ms": 460.0,
+    "pitch_hz": 439.6651671865886,
+    "lyric": "Why"
+  },
+  {
+    "start_ms": 6697.0,
+    "duration_ms": 240.0,
+    "pitch_hz": 98.4915530675933,
+    "lyric": "we"
+  },
+  {
+    "start_ms": 7237.0,
+    "duration_ms": 541.0,
+    "pitch_hz": 195.84856692874484,
+    "lyric": "wrong?"
+  },
+  {
+    "start_ms": 7798.0,
+    "duration_ms": 60.0,
+    "pitch_hz": 198.12421766039049,
+    "lyric": "Mr."
+  },
+  {
+    "start_ms": 9739.0,
+    "duration_ms": 781.0,
+    "pitch_hz": 98.4915530675933,
+    "lyric": "Blue"
+  },
+  {
+    "start_ms": 10560.0,
+    "duration_ms": 460.0,
+    "pitch_hz": 106.78718833360276,
+    "lyric": "Sky,"
+  },
+  {
+    "start_ms": 11040.0,
+    "duration_ms": 341.0,
+    "pitch_hz": 145.87559816931469,
+    "lyric": "please"
+  },
+  {
+    "start_ms": 11421.0,
+    "duration_ms": 260.0,
+    "pitch_hz": 175.49199675114014,
+    "lyric": "tell"
+  },
+  {
+    "start_ms": 11761.0,
+    "duration_ms": 100.0,
+    "pitch_hz": 196.9831061351866,
+    "lyric": "us"
+  },
+  {
+    "start_ms": 11921.0,
+    "duration_ms": 380.0,
+    "pitch_hz": 217.3075910123714,
+    "lyric": "why"
+  },
+  {
+    "start_ms": 12442.0,
+    "duration_ms": 260.0,
+    "pitch_hz": 288.4001480354657,
+    "lyric": "you"
+  },
+  {
+    "start_ms": 12782.0,
+    "duration_ms": 180.0,
+    "pitch_hz": 353.01722309239886,
+    "lyric": "had"
+  },
+  {
+    "start_ms": 12982.0,
+    "duration_ms": 220.0,
+    "pitch_hz": 400.852620359721,
+    "lyric": "to"
+  },
+  {
+    "start_ms": 13362.0,
+    "duration_ms": 481.0,
+    "pitch_hz": 434.61518202474286,
+    "lyric": "hide"
+  },
+  {
+    "start_ms": 13923.0,
+    "duration_ms": 340.0,
+    "pitch_hz": 393.96621227037315,
+    "lyric": "away"
+  },
+  {
+    "start_ms": 14343.0,
+    "duration_ms": 300.0,
+    "pitch_hz": 173.9787682373341,
+    "lyric": "for"
+  },
+  {
+    "start_ms": 14744.0,
+    "duration_ms": 700.0,
+    "pitch_hz": 174.48123722644124,
+    "lyric": "so"
+  },
+  {
+    "start_ms": 15504.0,
+    "duration_ms": 601.0,
+    "pitch_hz": 251.06691132696022,
+    "lyric": "long."
+  },
+  {
+    "start_ms": 16665.0,
+    "duration_ms": 481.0,
+    "pitch_hz": 449.94185331915185,
+    "lyric": "Why"
+  },
+  {
+    "start_ms": 39474.0,
+    "duration_ms": 241.0,
+    "pitch_hz": 272.2134915042738,
+    "lyric": "Hey"
+  },
+  {
+    "start_ms": 39795.0,
+    "duration_ms": 281.0,
+    "pitch_hz": 115.78153899523025,
+    "lyric": "you"
+  },
+  {
+    "start_ms": 40136.0,
+    "duration_ms": 221.0,
+    "pitch_hz": 90.57875335508035,
+    "lyric": "with"
+  },
+  {
+    "start_ms": 41801.0,
+    "duration_ms": 662.0,
+    "pitch_hz": 87.74599837557007,
+    "lyric": "Welcome"
+  },
+  {
+    "start_ms": 42523.0,
+    "duration_ms": 301.0,
+    "pitch_hz": 91.36658714486173,
+    "lyric": "to"
+  },
+  {
+    "start_ms": 42885.0,
+    "duration_ms": 220.0,
+    "pitch_hz": 269.08685288118863,
+    "lyric": "the"
+  },
+  {
+    "start_ms": 43205.0,
+    "duration_ms": 1124.0,
+    "pitch_hz": 100.79368399158986,
+    "lyric": "human"
+  },
+  {
+    "start_ms": 45131.0,
+    "duration_ms": 221.0,
+    "pitch_hz": 175.49492438632035,
+    "lyric": "the"
+  },
+  {
+    "start_ms": 45392.0,
+    "duration_ms": 863.0,
+    "pitch_hz": 195.84856692874484,
+    "lyric": "celebration"
+  },
+  {
+    "start_ms": 46596.0,
+    "duration_ms": 100.0,
+    "pitch_hz": 149.28527864588918,
+    "lyric": "Mr."
+  }
+]

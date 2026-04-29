@@ -1,14 +1,26 @@
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Square } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
 import { PitchGraph } from "@/components/graph/PitchGraph"
+import { ScoreDisplay } from "@/components/autotune/ScoreDisplay"
+import { ResultsScreen } from "@/components/autotune/ResultsScreen"
 import { API_BASE } from "@/config"
-import type { LyricLine, PitchReading, SongEntry } from "@/types"
+import type { LyricLine, NoteCompleted, PitchReading, SongEntry } from "@/types"
+
+const WORD_GLOW_THRESHOLD = 0.6
+const WORD_GLOW_DURATION_MS = 500
 
 interface Props {
   readings: PitchReading[]
   latest?: PitchReading | null
+}
+
+interface ResultsSnapshot {
+  stars: number | null
+  score: number | null
+  bestCombo: number | null
+  songTitle?: string
 }
 
 export function SingAlongView({ readings, latest }: Props) {
@@ -17,6 +29,11 @@ export function SingAlongView({ readings, latest }: Props) {
   const [loading, setLoading] = useState(true)
   const [lyrics, setLyrics] = useState<LyricLine[]>([])
   const [vocalsVolume, setVocalsVolume] = useState(30)
+  const [results, setResults] = useState<ResultsSnapshot | null>(null)
+
+  // Word-glow latch: most recent successful note's lyric + expiry timestamp.
+  const [glowWord, setGlowWord] = useState<{ lyric: string; until: number } | null>(null)
+  const lastNoteRef = useRef<NoteCompleted | null>(null)
 
   const handleVolumeChange = useCallback((value: number[]) => {
     const v = value[0]
@@ -39,13 +56,46 @@ export function SingAlongView({ readings, latest }: Props) {
     ])
     setLyrics(lyricsData)
     setActiveSong(song)
+    setResults(null)
+    lastNoteRef.current = null
+    setGlowWord(null)
   }
 
   async function handleStop() {
     await fetch(`${API_BASE}/songs/stop`, { method: "POST" })
     setActiveSong(null)
     setLyrics([])
+    setResults(null)
   }
+
+  // Watch for song completion and snapshot results so we can keep the dialog
+  // open after the backend tears down the scoring session.
+  useEffect(() => {
+    if (!latest || !activeSong) return
+    if (latest.song_complete && results === null) {
+      setResults({
+        stars: latest.stars ?? 0,
+        score: latest.score ?? 0,
+        bestCombo: latest.best_combo ?? 0,
+        songTitle: activeSong.title,
+      })
+    }
+  }, [latest, activeSong, results])
+
+  // Word glow: when a new note_completed arrives with a passing score, latch
+  // its lyric for a short window so the karaoke text can pulse it.
+  useEffect(() => {
+    const note = latest?.note_completed
+    if (!note) return
+    if (note === lastNoteRef.current) return
+    lastNoteRef.current = note
+    if (note.score >= WORD_GLOW_THRESHOLD && note.lyric) {
+      setGlowWord({
+        lyric: note.lyric,
+        until: (typeof performance !== "undefined" ? performance.now() : Date.now()) + WORD_GLOW_DURATION_MS,
+      })
+    }
+  }, [latest])
 
   // Stop audio when this view unmounts (mode switch or back navigation)
   useEffect(() => {
@@ -99,15 +149,35 @@ export function SingAlongView({ readings, latest }: Props) {
           </Button>
         </div>
 
+        {/* Score + combo strip */}
+        <ScoreDisplay
+          score={latest?.score ?? null}
+          combo={latest?.combo ?? null}
+          bestCombo={latest?.best_combo ?? null}
+        />
+
         {/* Lyrics */}
         {lyrics.length > 0 && (
-          <KaraokeDisplay lyrics={lyrics} positionMs={latest?.song_position_ms ?? null} />
+          <KaraokeDisplay
+            lyrics={lyrics}
+            positionMs={latest?.song_position_ms ?? null}
+            glowWord={glowWord}
+          />
         )}
 
         {/* Pitch graph */}
         <div className="min-h-0 flex-1 p-4">
           <PitchGraph readings={readings} showTarget={true} />
         </div>
+
+        <ResultsScreen
+          open={results !== null}
+          stars={results?.stars ?? null}
+          score={results?.score ?? null}
+          bestCombo={results?.bestCombo ?? null}
+          songTitle={results?.songTitle}
+          onDone={handleStop}
+        />
       </div>
     )
   }
@@ -155,9 +225,10 @@ export function SingAlongView({ readings, latest }: Props) {
 interface KaraokeProps {
   lyrics: LyricLine[]
   positionMs: number | null
+  glowWord: { lyric: string; until: number } | null
 }
 
-function KaraokeDisplay({ lyrics, positionMs }: KaraokeProps) {
+function KaraokeDisplay({ lyrics, positionMs, glowWord }: KaraokeProps) {
   const pos = positionMs ?? 0
 
   // Find current line index
@@ -172,6 +243,19 @@ function KaraokeDisplay({ lyrics, positionMs }: KaraokeProps) {
 
   const line = lineIdx >= 0 ? lyrics[lineIdx] : null
 
+  // Re-render on a short interval so the glow class clears when its window expires.
+  const [, setTick] = useState(0)
+  useEffect(() => {
+    if (!glowWord) return
+    const remaining = glowWord.until - (typeof performance !== "undefined" ? performance.now() : Date.now())
+    if (remaining <= 0) return
+    const t = setTimeout(() => setTick((n) => n + 1), Math.max(40, remaining + 16))
+    return () => clearTimeout(t)
+  }, [glowWord])
+
+  const now = typeof performance !== "undefined" ? performance.now() : Date.now()
+  const glowActive = glowWord && glowWord.until > now ? glowWord.lyric : null
+
   return (
     <div className="shrink-0 flex items-center justify-center min-h-16 px-6 py-2">
       {line && (
@@ -182,15 +266,19 @@ function KaraokeDisplay({ lyrics, positionMs }: KaraokeProps) {
               const wordEnd = w.end_ms ?? (nextWord?.timestamp_ms ?? (line.timestamp_ms + 5000))
               const active = pos >= w.timestamp_ms && pos < wordEnd
               const past = pos >= wordEnd
+              const glow = glowActive !== null && glowActive === w.text && past
               return (
                 <span
                   key={i}
                   className={
-                    active
+                    (glow
+                      ? "text-primary drop-shadow-[0_0_6px_var(--primary)] "
+                      : "") +
+                    (active
                       ? "text-primary transition-colors duration-75"
                       : past
                       ? "text-muted-foreground transition-colors duration-150"
-                      : "text-foreground/40 transition-colors duration-150"
+                      : "text-foreground/40 transition-colors duration-150")
                   }
                 >
                   {w.text}{" "}

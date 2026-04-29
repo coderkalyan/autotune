@@ -1,0 +1,14 @@
+{
+  "name": "Dancing Queen",
+  "artist": "ABBA",
+  "album": "Arrival",
+  "year": "1976-10-11",
+  "pfp": "cover.jpg",
+  "slug": "dancing_queen",
+  "duration_ms": 61000,
+  "sample_rate": 48000,
+  "crop_start_ms": 74000,
+  "crop_end_ms": 135000,
+  "grade_start_ms": 8000,
+  "grade_end_ms": 51000
+}

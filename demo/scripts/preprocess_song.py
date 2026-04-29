@@ -29,6 +29,7 @@ import librosa
 import numpy as np
 import soundfile as sf
 from mutagen.id3 import ID3, ID3NoHeaderError
+from mutagen.flac import FLAC, Picture as FLACPicture
 
 from whisperx_lyrics import transcribe_lyrics
 
@@ -52,16 +53,25 @@ def slugify(name: str) -> str:
 
 def read_id3_metadata(input_path: Path) -> dict:
     """
-    Read ID3 tags from an MP3 file (as written by tag_songs.py).
+    Read embedded tags from an MP3 (ID3) or FLAC (Vorbis comments) file.
 
-    Returns a dict with keys: title, artist, album, year, cover_bytes.
-    Any missing field is an empty string / None.
+    Returns a dict with keys: title, artist, album, year, cover_bytes,
+    crop_start_ms, crop_end_ms, grade_start_ms, grade_end_ms.
+    Any missing field is empty string / None.
     """
     meta = {
         "title": "", "artist": "", "album": "", "year": "",
         "cover_bytes": None,
         "crop_start_ms": None, "crop_end_ms": None,
+        "grade_start_ms": None, "grade_end_ms": None,
     }
+    ext = input_path.suffix.lower()
+    if ext == ".flac":
+        return _read_flac_metadata(input_path, meta)
+    return _read_mp3_metadata(input_path, meta)
+
+
+def _read_mp3_metadata(input_path: Path, meta: dict) -> dict:
     try:
         tags = ID3(str(input_path))
     except ID3NoHeaderError:
@@ -76,28 +86,71 @@ def read_id3_metadata(input_path: Path) -> dict:
     if "TDRC" in tags:
         meta["year"] = str(tags["TDRC"])
 
-    # Embedded album art
     apic_keys = [k for k in tags.keys() if k.startswith("APIC")]
     if apic_keys:
         meta["cover_bytes"] = tags[apic_keys[0]].data
 
-    # Crop window written by crop_song.py
     txxx = {f.desc: f.text[0] for f in tags.getall("TXXX") if f.text}
     if "CROP_START_MS" in txxx:
         meta["crop_start_ms"] = int(txxx["CROP_START_MS"])
     if "CROP_END_MS" in txxx:
         meta["crop_end_ms"] = int(txxx["CROP_END_MS"])
+    if "GRADE_START_MS" in txxx:
+        meta["grade_start_ms"] = int(txxx["GRADE_START_MS"])
+    if "GRADE_END_MS" in txxx:
+        meta["grade_end_ms"] = int(txxx["GRADE_END_MS"])
 
     return meta
 
 
-def run_demucs(input_path: Path, out_dir: Path) -> tuple[Path, Path]:
+def _read_flac_metadata(input_path: Path, meta: dict) -> dict:
+    try:
+        flac = FLAC(str(input_path))
+    except Exception:
+        return meta
+
+    def _first(key: str) -> str:
+        v = flac.get(key)
+        if not v:
+            return ""
+        return str(v[0]) if isinstance(v, list) else str(v)
+
+    meta["title"] = _first("title")
+    meta["artist"] = _first("artist")
+    meta["album"] = _first("album")
+    meta["year"] = _first("date") or _first("year")
+
+    if flac.pictures:
+        meta["cover_bytes"] = flac.pictures[0].data
+
+    # Vorbis comments are case-insensitive but mutagen normalizes to lower-case keys.
+    def _int(key: str) -> int | None:
+        v = flac.get(key.lower()) or flac.get(key)
+        if not v:
+            return None
+        try:
+            return int(v[0]) if isinstance(v, list) else int(v)
+        except (TypeError, ValueError):
+            return None
+
+    meta["crop_start_ms"] = _int("CROP_START_MS")
+    meta["crop_end_ms"] = _int("CROP_END_MS")
+    meta["grade_start_ms"] = _int("GRADE_START_MS")
+    meta["grade_end_ms"] = _int("GRADE_END_MS")
+
+    return meta
+
+
+def run_demucs(input_path: Path, out_dir: Path, model_name: str = "htdemucs_ft") -> tuple[Path, Path]:
     """
     Run Demucs stem separation using the internal Python API.
 
     Avoids torchaudio.save() (which requires the optional torchcodec package
     in newer torchaudio releases) by calling apply_model directly and saving
     stems with soundfile.
+
+    `model_name` defaults to htdemucs_ft (fine-tuned, higher SDR, ~4x slower).
+    Pass "htdemucs" for the faster base model.
 
     Returns (vocals_path, no_vocals_path).
     """
@@ -106,10 +159,10 @@ def run_demucs(input_path: Path, out_dir: Path) -> tuple[Path, Path]:
     from demucs.pretrained import get_model
     from demucs.separate import load_track
 
-    print(f"[1/3] Splitting stems with Demucs: {input_path.name}")
+    print(f"[1/3] Splitting stems with Demucs ({model_name}): {input_path.name}")
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
-    model = get_model("htdemucs")
+    model = get_model(model_name)
     model.eval()
 
     # load_track returns a (channels, samples) float32 tensor at model.samplerate
@@ -182,6 +235,28 @@ def detect_pitch(vocals_path: Path) -> tuple[np.ndarray, np.ndarray]:
     return timestamps_ms, frequencies_hz, duration_ms
 
 
+def _apply_fade(y: np.ndarray, sr: int, fade_in_sec: float, fade_out_sec: float) -> np.ndarray:
+    """Apply linear fade-in/out in-place. Mono (samples,) or stereo (samples, ch)."""
+    n = y.shape[0]
+    if fade_in_sec > 0:
+        fi = min(int(fade_in_sec * sr), n)
+        if fi > 0:
+            ramp = np.linspace(0.0, 1.0, fi, dtype=y.dtype)
+            if y.ndim == 2:
+                y[:fi] *= ramp[:, None]
+            else:
+                y[:fi] *= ramp
+    if fade_out_sec > 0:
+        fo = min(int(fade_out_sec * sr), n)
+        if fo > 0:
+            ramp = np.linspace(1.0, 0.0, fo, dtype=y.dtype)
+            if y.ndim == 2:
+                y[-fo:] *= ramp[:, None]
+            else:
+                y[-fo:] *= ramp
+    return y
+
+
 def write_outputs(
     song_dir: Path,
     vocals_path: Path,
@@ -197,20 +272,32 @@ def write_outputs(
     cover_bytes: bytes | None = None,
     crop_start_ms: int | None = None,
     crop_end_ms: int | None = None,
+    grade_start_ms: int | None = None,
+    grade_end_ms: int | None = None,
     lyrics: list[dict] | None = None,
+    fade_in_sec: float = 1.5,
+    fade_out_sec: float = 2.0,
 ) -> None:
-    """Write all output files to song_dir."""
+    """Write all output files to song_dir. Stems land as MP3 at TARGET_SR."""
     print(f"[3/3] Writing outputs to {song_dir} ...")
     song_dir.mkdir(parents=True, exist_ok=True)
 
-    # Copy and resample stems to TARGET_SR WAV
-    for src, dst_name in [(vocals_path, "vocals.wav"), (no_vocals_path, "instrumental.wav")]:
+    # Drop any stale .wav stems from older preprocess runs so we don't have
+    # both formats sitting next to each other.
+    for stale in (song_dir / "vocals.wav", song_dir / "instrumental.wav"):
+        if stale.exists():
+            stale.unlink()
+
+    # Resample stems to TARGET_SR, apply fades, write MP3.
+    for src, dst_name in [(vocals_path, "vocals.mp3"), (no_vocals_path, "instrumental.mp3")]:
         y, sr = librosa.load(str(src), sr=TARGET_SR, mono=False)
-        # librosa loads mono by default when mono=False it returns shape (channels, samples)
-        # or (samples,) for mono — soundfile expects (samples, channels) or (samples,)
+        # librosa returns (channels, samples) for stereo; soundfile wants
+        # (samples, channels) or (samples,) for mono.
         if y.ndim == 2:
-            y = y.T  # (channels, samples) → (samples, channels)
-        sf.write(str(song_dir / dst_name), y, TARGET_SR, subtype="PCM_16")
+            y = y.T
+        y = np.ascontiguousarray(y, dtype=np.float32)
+        _apply_fade(y, TARGET_SR, fade_in_sec, fade_out_sec)
+        sf.write(str(song_dir / dst_name), y, TARGET_SR, format="MP3")
 
     # Pitch track CSV
     csv_path = song_dir / "pitch_track.csv"
@@ -240,6 +327,8 @@ def write_outputs(
         "sample_rate": TARGET_SR,
         "crop_start_ms": crop_start_ms,
         "crop_end_ms": crop_end_ms,
+        "grade_start_ms": grade_start_ms,
+        "grade_end_ms": grade_end_ms,
     }
     (song_dir / "meta.json").write_text(json.dumps(meta, indent=2) + "\n")
 
@@ -265,7 +354,7 @@ def write_outputs(
     else:
         print(f"    notes.json written (empty — no lyrics or no voiced pitch).")
 
-    print(f"    instrumental.wav, vocals.wav, pitch_track.csv, meta.json written.")
+    print(f"    instrumental.mp3, vocals.mp3, pitch_track.csv, meta.json written.")
 
 
 def derive_notes_from_lyrics(
@@ -334,6 +423,18 @@ def main() -> None:
         default="cpu",
         help="Device for WhisperX: cpu or cuda (default: cpu)",
     )
+    parser.add_argument(
+        "--fade-in", type=float, default=1.5,
+        help="Fade-in seconds applied to output stems (default: 1.5)",
+    )
+    parser.add_argument(
+        "--fade-out", type=float, default=2.0,
+        help="Fade-out seconds applied to output stems (default: 2.0)",
+    )
+    parser.add_argument(
+        "--demucs-model", default="htdemucs_ft",
+        help="Demucs model name: htdemucs_ft (default, best), htdemucs (faster), htdemucs_6s, mdx_extra.",
+    )
     args = parser.parse_args()
 
     input_path: Path = args.input.resolve()
@@ -363,7 +464,7 @@ def main() -> None:
     with tempfile.TemporaryDirectory(prefix="autotune_demucs_") as tmp:
         tmp_path = Path(tmp)
 
-        vocals_path, no_vocals_path = run_demucs(input_path, tmp_path)
+        vocals_path, no_vocals_path = run_demucs(input_path, tmp_path, args.demucs_model)
         timestamps_ms, frequencies_hz, duration_ms = detect_pitch(vocals_path)
 
         lyrics: list[dict] | None = None
@@ -390,7 +491,11 @@ def main() -> None:
             cover_bytes=id3["cover_bytes"],
             crop_start_ms=id3["crop_start_ms"],
             crop_end_ms=id3["crop_end_ms"],
+            grade_start_ms=id3["grade_start_ms"],
+            grade_end_ms=id3["grade_end_ms"],
             lyrics=lyrics,
+            fade_in_sec=args.fade_in,
+            fade_out_sec=args.fade_out,
         )
 
     print(f"\nDone! Song '{name}' saved to: {song_dir}")

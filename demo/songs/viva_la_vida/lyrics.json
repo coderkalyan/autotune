@@ -1,1565 +1,545 @@
 [
   {
-    "timestamp_ms": 13748,
-    "text": "I used to see sunrise when I gave the word, now in the morning I sleep.",
+    "timestamp_ms": 12780,
+    "text": "I used to roll the dice Feel the fear in my enemies eyes Listen as the crowd would sing Now the old king stayed along with the king one minute",
     "words": [
       {
-        "timestamp_ms": 13748,
-        "end_ms": 13808,
+        "timestamp_ms": 12780,
+        "end_ms": 12860,
         "text": "I"
       },
       {
-        "timestamp_ms": 13928,
-        "end_ms": 14108,
+        "timestamp_ms": 13021,
+        "end_ms": 13221,
         "text": "used"
       },
       {
-        "timestamp_ms": 14228,
-        "end_ms": 16970,
+        "timestamp_ms": 13301,
+        "end_ms": 13521,
         "text": "to"
       },
       {
-        "timestamp_ms": 17491,
-        "end_ms": 17791,
-        "text": "see"
-      },
-      {
-        "timestamp_ms": 17811,
-        "end_ms": 18572,
-        "text": "sunrise"
-      },
-      {
-        "timestamp_ms": 18632,
-        "end_ms": 18852,
-        "text": "when"
-      },
-      {
-        "timestamp_ms": 18912,
-        "end_ms": 18992,
-        "text": "I"
-      },
-      {
-        "timestamp_ms": 19052,
-        "end_ms": 19432,
-        "text": "gave"
-      },
-      {
-        "timestamp_ms": 19492,
-        "end_ms": 19652,
-        "text": "the"
-      },
-      {
-        "timestamp_ms": 19712,
-        "end_ms": 20073,
-        "text": "word,"
-      },
-      {
-        "timestamp_ms": 20113,
-        "end_ms": 20313,
-        "text": "now"
-      },
-      {
-        "timestamp_ms": 20433,
-        "end_ms": 20553,
-        "text": "in"
-      },
-      {
-        "timestamp_ms": 20573,
-        "end_ms": 20673,
-        "text": "the"
-      },
-      {
-        "timestamp_ms": 20773,
-        "end_ms": 21214,
-        "text": "morning"
-      },
-      {
-        "timestamp_ms": 21334,
-        "end_ms": 21454,
-        "text": "I"
-      },
-      {
-        "timestamp_ms": 21594,
-        "end_ms": 23915,
-        "text": "sleep."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 24396,
-    "text": "Sweet the streets I used to own.",
-    "words": [
-      {
-        "timestamp_ms": 24396,
-        "end_ms": 24796,
-        "text": "Sweet"
-      },
-      {
-        "timestamp_ms": 24876,
-        "end_ms": 24976,
-        "text": "the"
-      },
-      {
-        "timestamp_ms": 25036,
-        "end_ms": 25497,
-        "text": "streets"
-      },
-      {
-        "timestamp_ms": 25837,
-        "end_ms": 25977,
-        "text": "I"
-      },
-      {
-        "timestamp_ms": 26117,
-        "end_ms": 26297,
-        "text": "used"
-      },
-      {
-        "timestamp_ms": 26417,
-        "end_ms": 26677,
-        "text": "to"
-      },
-      {
-        "timestamp_ms": 26858,
-        "end_ms": 27558,
-        "text": "own."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 41515,
-    "text": "I used to roll the dice Feel the fear in my enemy's eyes Missing was the crowd would sing Now the old king's dead along with the king One minute I",
-    "words": [
-      {
-        "timestamp_ms": 41515,
-        "end_ms": 41615,
-        "text": "I"
-      },
-      {
-        "timestamp_ms": 41755,
-        "end_ms": 41976,
-        "text": "used"
-      },
-      {
-        "timestamp_ms": 42036,
-        "end_ms": 42336,
-        "text": "to"
-      },
-      {
-        "timestamp_ms": 42516,
-        "end_ms": 43757,
+        "timestamp_ms": 13742,
+        "end_ms": 15003,
         "text": "roll"
       },
       {
-        "timestamp_ms": 43817,
-        "end_ms": 43978,
+        "timestamp_ms": 15064,
+        "end_ms": 15224,
         "text": "the"
       },
       {
-        "timestamp_ms": 44038,
-        "end_ms": 44878,
+        "timestamp_ms": 15304,
+        "end_ms": 16145,
         "text": "dice"
       },
       {
-        "timestamp_ms": 45339,
-        "end_ms": 45699,
+        "timestamp_ms": 16586,
+        "end_ms": 16966,
         "text": "Feel"
       },
       {
-        "timestamp_ms": 45759,
-        "end_ms": 45859,
+        "timestamp_ms": 17006,
+        "end_ms": 17127,
         "text": "the"
       },
       {
-        "timestamp_ms": 46000,
-        "end_ms": 46440,
+        "timestamp_ms": 17247,
+        "end_ms": 17707,
         "text": "fear"
       },
       {
-        "timestamp_ms": 46520,
-        "end_ms": 46640,
+        "timestamp_ms": 17788,
+        "end_ms": 17888,
         "text": "in"
       },
       {
-        "timestamp_ms": 46680,
-        "end_ms": 46820,
+        "timestamp_ms": 17928,
+        "end_ms": 18088,
         "text": "my"
       },
       {
-        "timestamp_ms": 47001,
-        "end_ms": 47501,
-        "text": "enemy's"
+        "timestamp_ms": 18248,
+        "end_ms": 18769,
+        "text": "enemies"
       },
       {
-        "timestamp_ms": 47962,
-        "end_ms": 48202,
+        "timestamp_ms": 19230,
+        "end_ms": 19470,
         "text": "eyes"
       },
       {
-        "timestamp_ms": 48582,
-        "end_ms": 49063,
-        "text": "Missing"
+        "timestamp_ms": 19831,
+        "end_ms": 20311,
+        "text": "Listen"
       },
       {
-        "timestamp_ms": 49083,
-        "end_ms": 49223,
-        "text": "was"
+        "timestamp_ms": 20371,
+        "end_ms": 20472,
+        "text": "as"
       },
       {
-        "timestamp_ms": 49283,
-        "end_ms": 49383,
+        "timestamp_ms": 20532,
+        "end_ms": 20632,
         "text": "the"
       },
       {
-        "timestamp_ms": 49463,
-        "end_ms": 50484,
+        "timestamp_ms": 20732,
+        "end_ms": 21753,
         "text": "crowd"
       },
       {
-        "timestamp_ms": 50564,
-        "end_ms": 51665,
+        "timestamp_ms": 21834,
+        "end_ms": 22915,
         "text": "would"
       },
       {
-        "timestamp_ms": 51685,
-        "end_ms": 51765,
+        "timestamp_ms": 22935,
+        "end_ms": 23015,
         "text": "sing"
       },
       {
-        "timestamp_ms": 52446,
-        "end_ms": 52686,
+        "timestamp_ms": 23696,
+        "end_ms": 23937,
         "text": "Now"
       },
       {
-        "timestamp_ms": 52726,
-        "end_ms": 52886,
+        "timestamp_ms": 23997,
+        "end_ms": 24137,
         "text": "the"
       },
       {
-        "timestamp_ms": 52987,
-        "end_ms": 53147,
+        "timestamp_ms": 24257,
+        "end_ms": 24397,
         "text": "old"
       },
       {
-        "timestamp_ms": 53187,
-        "end_ms": 53527,
-        "text": "king's"
-      },
-      {
-        "timestamp_ms": 53607,
-        "end_ms": 54088,
-        "text": "dead"
-      },
-      {
-        "timestamp_ms": 54148,
-        "end_ms": 54488,
-        "text": "along"
-      },
-      {
-        "timestamp_ms": 54508,
-        "end_ms": 54648,
-        "text": "with"
-      },
-      {
-        "timestamp_ms": 54688,
-        "end_ms": 54808,
-        "text": "the"
-      },
-      {
-        "timestamp_ms": 54868,
-        "end_ms": 55209,
+        "timestamp_ms": 24457,
+        "end_ms": 24778,
         "text": "king"
       },
       {
-        "timestamp_ms": 55369,
-        "end_ms": 55489,
-        "text": "One"
+        "timestamp_ms": 24798,
+        "end_ms": 25339,
+        "text": "stayed"
       },
       {
-        "timestamp_ms": 55569,
-        "end_ms": 56030,
+        "timestamp_ms": 25399,
+        "end_ms": 25779,
+        "text": "along"
+      },
+      {
+        "timestamp_ms": 25799,
+        "end_ms": 25920,
+        "text": "with"
+      },
+      {
+        "timestamp_ms": 25960,
+        "end_ms": 26080,
+        "text": "the"
+      },
+      {
+        "timestamp_ms": 26140,
+        "end_ms": 26480,
+        "text": "king"
+      },
+      {
+        "timestamp_ms": 26621,
+        "end_ms": 26741,
+        "text": "one"
+      },
+      {
+        "timestamp_ms": 26821,
+        "end_ms": 27241,
         "text": "minute"
-      },
-      {
-        "timestamp_ms": 56130,
-        "end_ms": 56150,
-        "text": "I"
       }
     ]
   },
   {
-    "timestamp_ms": 57190,
-    "text": "I held the key, mixed the walls from close to me, and I discovered that my castle stem, upon pillars of song and pillars of sound.",
+    "timestamp_ms": 28443,
+    "text": "I held the key, next the walls were closed on me, and I discovered that my castle stem, upon pillars of salt and pillars of sand.",
     "words": [
       {
-        "timestamp_ms": 57190,
-        "end_ms": 57230,
+        "timestamp_ms": 28443,
+        "end_ms": 28463,
         "text": "I"
       },
       {
-        "timestamp_ms": 57310,
-        "end_ms": 57510,
+        "timestamp_ms": 28603,
+        "end_ms": 28763,
         "text": "held"
       },
       {
-        "timestamp_ms": 57691,
-        "end_ms": 57811,
+        "timestamp_ms": 28943,
+        "end_ms": 29063,
         "text": "the"
       },
       {
-        "timestamp_ms": 57911,
-        "end_ms": 58651,
+        "timestamp_ms": 29163,
+        "end_ms": 29924,
         "text": "key,"
       },
       {
-        "timestamp_ms": 59231,
-        "end_ms": 59611,
-        "text": "mixed"
+        "timestamp_ms": 29944,
+        "end_ms": 30864,
+        "text": "next"
       },
       {
-        "timestamp_ms": 59671,
-        "end_ms": 59811,
+        "timestamp_ms": 30944,
+        "end_ms": 31084,
         "text": "the"
       },
       {
-        "timestamp_ms": 59871,
-        "end_ms": 60452,
+        "timestamp_ms": 31144,
+        "end_ms": 31705,
         "text": "walls"
       },
       {
-        "timestamp_ms": 60512,
-        "end_ms": 60672,
-        "text": "from"
+        "timestamp_ms": 31785,
+        "end_ms": 31925,
+        "text": "were"
       },
       {
-        "timestamp_ms": 60752,
-        "end_ms": 61172,
-        "text": "close"
+        "timestamp_ms": 32005,
+        "end_ms": 32445,
+        "text": "closed"
       },
       {
-        "timestamp_ms": 61212,
-        "end_ms": 61592,
-        "text": "to"
+        "timestamp_ms": 32645,
+        "end_ms": 32846,
+        "text": "on"
       },
       {
-        "timestamp_ms": 61652,
-        "end_ms": 61852,
+        "timestamp_ms": 32906,
+        "end_ms": 33146,
         "text": "me,"
       },
       {
-        "timestamp_ms": 61932,
-        "end_ms": 62032,
+        "timestamp_ms": 33206,
+        "end_ms": 33326,
         "text": "and"
       },
       {
-        "timestamp_ms": 62132,
-        "end_ms": 62233,
+        "timestamp_ms": 33406,
+        "end_ms": 33486,
         "text": "I"
       },
       {
-        "timestamp_ms": 62253,
-        "end_ms": 62873,
+        "timestamp_ms": 33526,
+        "end_ms": 34126,
         "text": "discovered"
       },
       {
-        "timestamp_ms": 62913,
-        "end_ms": 63093,
+        "timestamp_ms": 34166,
+        "end_ms": 34347,
         "text": "that"
       },
       {
-        "timestamp_ms": 63153,
-        "end_ms": 63313,
+        "timestamp_ms": 34407,
+        "end_ms": 34567,
         "text": "my"
       },
       {
-        "timestamp_ms": 63373,
-        "end_ms": 64714,
+        "timestamp_ms": 34627,
+        "end_ms": 36008,
         "text": "castle"
       },
       {
-        "timestamp_ms": 64794,
-        "end_ms": 65714,
+        "timestamp_ms": 36048,
+        "end_ms": 36948,
         "text": "stem,"
       },
       {
-        "timestamp_ms": 66194,
-        "end_ms": 66754,
+        "timestamp_ms": 37469,
+        "end_ms": 38009,
         "text": "upon"
       },
       {
-        "timestamp_ms": 66815,
-        "end_ms": 67255,
+        "timestamp_ms": 38069,
+        "end_ms": 38509,
         "text": "pillars"
       },
       {
-        "timestamp_ms": 67355,
-        "end_ms": 67435,
+        "timestamp_ms": 38610,
+        "end_ms": 38690,
         "text": "of"
       },
       {
-        "timestamp_ms": 67515,
-        "end_ms": 67955,
-        "text": "song"
+        "timestamp_ms": 38770,
+        "end_ms": 39230,
+        "text": "salt"
       },
       {
-        "timestamp_ms": 68015,
-        "end_ms": 68115,
+        "timestamp_ms": 39270,
+        "end_ms": 39370,
         "text": "and"
       },
       {
-        "timestamp_ms": 68155,
-        "end_ms": 68575,
+        "timestamp_ms": 39430,
+        "end_ms": 39830,
         "text": "pillars"
       },
       {
-        "timestamp_ms": 68675,
-        "end_ms": 68735,
+        "timestamp_ms": 39930,
+        "end_ms": 39990,
         "text": "of"
       },
       {
-        "timestamp_ms": 68795,
-        "end_ms": 69536,
-        "text": "sound."
+        "timestamp_ms": 40051,
+        "end_ms": 40731,
+        "text": "sand."
       }
     ]
   },
   {
-    "timestamp_ms": 70116,
-    "text": "I can't cherish the bells and ringing, Roman capital requests singing.",
+    "timestamp_ms": 40751,
+    "text": "I hear Jerusalem bells ringing, Roman capital requests to sing it.",
     "words": [
       {
-        "timestamp_ms": 70116,
-        "end_ms": 70196,
+        "timestamp_ms": 40751,
+        "end_ms": 40771,
         "text": "I"
       },
       {
-        "timestamp_ms": 70296,
-        "end_ms": 70736,
-        "text": "can't"
+        "timestamp_ms": 41552,
+        "end_ms": 42012,
+        "text": "hear"
       },
       {
-        "timestamp_ms": 70756,
-        "end_ms": 71617,
-        "text": "cherish"
+        "timestamp_ms": 42072,
+        "end_ms": 43073,
+        "text": "Jerusalem"
       },
       {
-        "timestamp_ms": 71637,
-        "end_ms": 71837,
-        "text": "the"
-      },
-      {
-        "timestamp_ms": 71877,
-        "end_ms": 72457,
+        "timestamp_ms": 43113,
+        "end_ms": 43933,
         "text": "bells"
       },
       {
-        "timestamp_ms": 72597,
-        "end_ms": 72677,
-        "text": "and"
-      },
-      {
-        "timestamp_ms": 72737,
-        "end_ms": 73417,
+        "timestamp_ms": 43993,
+        "end_ms": 44734,
         "text": "ringing,"
       },
       {
-        "timestamp_ms": 73758,
-        "end_ms": 74538,
+        "timestamp_ms": 45014,
+        "end_ms": 45794,
         "text": "Roman"
       },
       {
-        "timestamp_ms": 74618,
-        "end_ms": 75078,
+        "timestamp_ms": 45895,
+        "end_ms": 46335,
         "text": "capital"
       },
       {
-        "timestamp_ms": 75118,
-        "end_ms": 76059,
+        "timestamp_ms": 46375,
+        "end_ms": 47215,
         "text": "requests"
       },
       {
-        "timestamp_ms": 76179,
-        "end_ms": 76899,
-        "text": "singing."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 77419,
-    "text": "Ema mirror my sword and shield, my missionaries in a foreign field.",
-    "words": [
-      {
-        "timestamp_ms": 77419,
-        "end_ms": 78079,
-        "text": "Ema"
-      },
-      {
-        "timestamp_ms": 78139,
-        "end_ms": 78540,
-        "text": "mirror"
-      },
-      {
-        "timestamp_ms": 78560,
-        "end_ms": 78740,
-        "text": "my"
-      },
-      {
-        "timestamp_ms": 78820,
-        "end_ms": 79420,
-        "text": "sword"
-      },
-      {
-        "timestamp_ms": 79500,
-        "end_ms": 79580,
-        "text": "and"
-      },
-      {
-        "timestamp_ms": 79700,
-        "end_ms": 80340,
-        "text": "shield,"
-      },
-      {
-        "timestamp_ms": 80560,
-        "end_ms": 80701,
-        "text": "my"
-      },
-      {
-        "timestamp_ms": 80761,
-        "end_ms": 81841,
-        "text": "missionaries"
-      },
-      {
-        "timestamp_ms": 81941,
-        "end_ms": 82061,
-        "text": "in"
-      },
-      {
-        "timestamp_ms": 82161,
-        "end_ms": 82201,
-        "text": "a"
-      },
-      {
-        "timestamp_ms": 82281,
-        "end_ms": 83002,
-        "text": "foreign"
-      },
-      {
-        "timestamp_ms": 83142,
-        "end_ms": 83642,
-        "text": "field."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 84242,
-    "text": "For some reason I can't explain Once you go, there was never never all this word That was when I ruled the world",
-    "words": [
-      {
-        "timestamp_ms": 84242,
-        "end_ms": 84522,
-        "text": "For"
-      },
-      {
-        "timestamp_ms": 84602,
-        "end_ms": 84982,
-        "text": "some"
-      },
-      {
-        "timestamp_ms": 85022,
-        "end_ms": 85543,
-        "text": "reason"
-      },
-      {
-        "timestamp_ms": 85643,
-        "end_ms": 85743,
-        "text": "I"
-      },
-      {
-        "timestamp_ms": 85783,
-        "end_ms": 86263,
-        "text": "can't"
-      },
-      {
-        "timestamp_ms": 86323,
-        "end_ms": 87184,
-        "text": "explain"
-      },
-      {
-        "timestamp_ms": 87764,
-        "end_ms": 88004,
-        "text": "Once"
-      },
-      {
-        "timestamp_ms": 88084,
-        "end_ms": 88464,
-        "text": "you"
-      },
-      {
-        "timestamp_ms": 88564,
-        "end_ms": 89045,
-        "text": "go,"
-      },
-      {
-        "timestamp_ms": 89065,
-        "end_ms": 89205,
-        "text": "there"
-      },
-      {
-        "timestamp_ms": 89225,
-        "end_ms": 89425,
-        "text": "was"
-      },
-      {
-        "timestamp_ms": 89485,
-        "end_ms": 89865,
-        "text": "never"
-      },
-      {
-        "timestamp_ms": 89885,
-        "end_ms": 90505,
-        "text": "never"
-      },
-      {
-        "timestamp_ms": 90525,
-        "end_ms": 90926,
-        "text": "all"
-      },
-      {
-        "timestamp_ms": 92206,
-        "end_ms": 92546,
-        "text": "this"
-      },
-      {
-        "timestamp_ms": 92686,
-        "end_ms": 93567,
-        "text": "word"
-      },
-      {
-        "timestamp_ms": 94227,
-        "end_ms": 94387,
-        "text": "That"
-      },
-      {
-        "timestamp_ms": 94427,
-        "end_ms": 94567,
-        "text": "was"
-      },
-      {
-        "timestamp_ms": 94667,
-        "end_ms": 95368,
-        "text": "when"
-      },
-      {
-        "timestamp_ms": 95388,
-        "end_ms": 95408,
-        "text": "I"
-      },
-      {
-        "timestamp_ms": 95508,
-        "end_ms": 95948,
-        "text": "ruled"
-      },
-      {
-        "timestamp_ms": 97029,
-        "end_ms": 97409,
-        "text": "the"
-      },
-      {
-        "timestamp_ms": 99210,
-        "end_ms": 99570,
-        "text": "world"
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 110635,
-    "text": "It was a wicked and wild win Blue down the doors to let me in Shattered windows in the sound of drums People couldn't believe what I've been coming revolutionaries",
-    "words": [
-      {
-        "timestamp_ms": 110635,
-        "end_ms": 110735,
-        "text": "It"
-      },
-      {
-        "timestamp_ms": 110795,
-        "end_ms": 110955,
-        "text": "was"
-      },
-      {
-        "timestamp_ms": 111075,
-        "end_ms": 111135,
-        "text": "a"
-      },
-      {
-        "timestamp_ms": 111195,
-        "end_ms": 111635,
-        "text": "wicked"
-      },
-      {
-        "timestamp_ms": 111695,
-        "end_ms": 113456,
-        "text": "and"
-      },
-      {
-        "timestamp_ms": 113596,
-        "end_ms": 114196,
-        "text": "wild"
-      },
-      {
-        "timestamp_ms": 114216,
-        "end_ms": 114276,
-        "text": "win"
-      },
-      {
-        "timestamp_ms": 114817,
-        "end_ms": 115057,
-        "text": "Blue"
-      },
-      {
-        "timestamp_ms": 115097,
-        "end_ms": 115337,
-        "text": "down"
-      },
-      {
-        "timestamp_ms": 115357,
-        "end_ms": 115457,
-        "text": "the"
-      },
-      {
-        "timestamp_ms": 115517,
-        "end_ms": 116057,
-        "text": "doors"
-      },
-      {
-        "timestamp_ms": 116157,
-        "end_ms": 116317,
+        "timestamp_ms": 47255,
+        "end_ms": 47376,
         "text": "to"
       },
       {
-        "timestamp_ms": 116397,
-        "end_ms": 116697,
-        "text": "let"
-      },
-      {
-        "timestamp_ms": 116817,
-        "end_ms": 117157,
-        "text": "me"
-      },
-      {
-        "timestamp_ms": 117338,
-        "end_ms": 117518,
-        "text": "in"
-      },
-      {
-        "timestamp_ms": 117658,
-        "end_ms": 118118,
-        "text": "Shattered"
-      },
-      {
-        "timestamp_ms": 118178,
-        "end_ms": 118558,
-        "text": "windows"
-      },
-      {
-        "timestamp_ms": 118658,
-        "end_ms": 118778,
-        "text": "in"
-      },
-      {
-        "timestamp_ms": 118798,
-        "end_ms": 118858,
-        "text": "the"
-      },
-      {
-        "timestamp_ms": 118998,
-        "end_ms": 120079,
-        "text": "sound"
-      },
-      {
-        "timestamp_ms": 120239,
-        "end_ms": 120379,
-        "text": "of"
-      },
-      {
-        "timestamp_ms": 120479,
-        "end_ms": 121339,
-        "text": "drums"
-      },
-      {
-        "timestamp_ms": 122039,
-        "end_ms": 122399,
-        "text": "People"
-      },
-      {
-        "timestamp_ms": 122459,
-        "end_ms": 122880,
-        "text": "couldn't"
-      },
-      {
-        "timestamp_ms": 122940,
-        "end_ms": 123660,
-        "text": "believe"
-      },
-      {
-        "timestamp_ms": 123760,
-        "end_ms": 124040,
-        "text": "what"
-      },
-      {
-        "timestamp_ms": 124180,
-        "end_ms": 124360,
-        "text": "I've"
-      },
-      {
-        "timestamp_ms": 124420,
-        "end_ms": 124580,
-        "text": "been"
-      },
-      {
-        "timestamp_ms": 124640,
-        "end_ms": 125020,
-        "text": "coming"
-      },
-      {
-        "timestamp_ms": 125120,
-        "end_ms": 126621,
-        "text": "revolutionaries"
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 127522,
-    "text": "for my head on a silver plate, just to pop it on a lullaby string.",
-    "words": [
-      {
-        "timestamp_ms": 127522,
-        "end_ms": 128282,
-        "text": "for"
-      },
-      {
-        "timestamp_ms": 129243,
-        "end_ms": 129423,
-        "text": "my"
-      },
-      {
-        "timestamp_ms": 129523,
-        "end_ms": 129943,
-        "text": "head"
-      },
-      {
-        "timestamp_ms": 130044,
-        "end_ms": 130164,
-        "text": "on"
-      },
-      {
-        "timestamp_ms": 130184,
-        "end_ms": 130204,
-        "text": "a"
-      },
-      {
-        "timestamp_ms": 130324,
-        "end_ms": 130944,
-        "text": "silver"
-      },
-      {
-        "timestamp_ms": 131004,
-        "end_ms": 131525,
-        "text": "plate,"
-      },
-      {
-        "timestamp_ms": 131625,
-        "end_ms": 131845,
-        "text": "just"
-      },
-      {
-        "timestamp_ms": 131865,
-        "end_ms": 132025,
-        "text": "to"
-      },
-      {
-        "timestamp_ms": 132085,
-        "end_ms": 132285,
-        "text": "pop"
-      },
-      {
-        "timestamp_ms": 132305,
-        "end_ms": 132465,
-        "text": "it"
-      },
-      {
-        "timestamp_ms": 132485,
-        "end_ms": 132565,
-        "text": "on"
-      },
-      {
-        "timestamp_ms": 132645,
-        "end_ms": 132725,
-        "text": "a"
-      },
-      {
-        "timestamp_ms": 132746,
-        "end_ms": 134267,
-        "text": "lullaby"
-      },
-      {
-        "timestamp_ms": 134327,
-        "end_ms": 135367,
-        "text": "string."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 135387,
-    "text": "Oh, who would have a world ever came?",
-    "words": [
-      {
-        "timestamp_ms": 135387,
-        "end_ms": 136248,
-        "text": "Oh,"
-      },
-      {
-        "timestamp_ms": 136388,
-        "end_ms": 136588,
-        "text": "who"
-      },
-      {
-        "timestamp_ms": 136628,
-        "end_ms": 136869,
-        "text": "would"
-      },
-      {
-        "timestamp_ms": 136909,
-        "end_ms": 137089,
-        "text": "have"
-      },
-      {
-        "timestamp_ms": 137129,
-        "end_ms": 137169,
-        "text": "a"
-      },
-      {
-        "timestamp_ms": 137249,
-        "end_ms": 137529,
-        "text": "world"
-      },
-      {
-        "timestamp_ms": 137609,
-        "end_ms": 137789,
-        "text": "ever"
-      },
-      {
-        "timestamp_ms": 137909,
-        "end_ms": 138750,
-        "text": "came?"
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 139671,
-    "text": "I can't cherish the bells to ring in a Roman cavalry choir, so sing it.",
-    "words": [
-      {
-        "timestamp_ms": 139671,
-        "end_ms": 139771,
-        "text": "I"
-      },
-      {
-        "timestamp_ms": 139851,
-        "end_ms": 140251,
-        "text": "can't"
-      },
-      {
-        "timestamp_ms": 140311,
-        "end_ms": 141072,
-        "text": "cherish"
-      },
-      {
-        "timestamp_ms": 141212,
-        "end_ms": 141372,
-        "text": "the"
-      },
-      {
-        "timestamp_ms": 141432,
-        "end_ms": 142052,
-        "text": "bells"
-      },
-      {
-        "timestamp_ms": 142092,
-        "end_ms": 142233,
-        "text": "to"
-      },
-      {
-        "timestamp_ms": 142313,
-        "end_ms": 142733,
-        "text": "ring"
-      },
-      {
-        "timestamp_ms": 142853,
-        "end_ms": 142993,
-        "text": "in"
-      },
-      {
-        "timestamp_ms": 143013,
-        "end_ms": 143033,
-        "text": "a"
-      },
-      {
-        "timestamp_ms": 143353,
-        "end_ms": 144114,
-        "text": "Roman"
-      },
-      {
-        "timestamp_ms": 144194,
-        "end_ms": 144814,
-        "text": "cavalry"
-      },
-      {
-        "timestamp_ms": 144895,
-        "end_ms": 145515,
-        "text": "choir,"
-      },
-      {
-        "timestamp_ms": 145555,
-        "end_ms": 145675,
-        "text": "so"
-      },
-      {
-        "timestamp_ms": 145755,
-        "end_ms": 146235,
+        "timestamp_ms": 47456,
+        "end_ms": 47916,
         "text": "sing"
       },
       {
-        "timestamp_ms": 146336,
-        "end_ms": 146456,
+        "timestamp_ms": 47996,
+        "end_ms": 48116,
         "text": "it."
       }
     ]
   },
   {
-    "timestamp_ms": 147376,
-    "text": "I remember my sword and shield, my missionaries in a foreign field.",
+    "timestamp_ms": 48516,
+    "text": "Be my mirror, my sword and shield, my missionaries in a foreign field.",
     "words": [
       {
-        "timestamp_ms": 147376,
-        "end_ms": 147476,
-        "text": "I"
+        "timestamp_ms": 48516,
+        "end_ms": 48917,
+        "text": "Be"
       },
       {
-        "timestamp_ms": 147556,
-        "end_ms": 148117,
-        "text": "remember"
-      },
-      {
-        "timestamp_ms": 148137,
-        "end_ms": 148297,
+        "timestamp_ms": 48977,
+        "end_ms": 49337,
         "text": "my"
       },
       {
-        "timestamp_ms": 148397,
-        "end_ms": 148958,
+        "timestamp_ms": 49397,
+        "end_ms": 49797,
+        "text": "mirror,"
+      },
+      {
+        "timestamp_ms": 49837,
+        "end_ms": 49997,
+        "text": "my"
+      },
+      {
+        "timestamp_ms": 50077,
+        "end_ms": 50698,
         "text": "sword"
       },
       {
-        "timestamp_ms": 149058,
-        "end_ms": 149138,
+        "timestamp_ms": 50738,
+        "end_ms": 50838,
         "text": "and"
       },
       {
-        "timestamp_ms": 149278,
-        "end_ms": 149878,
+        "timestamp_ms": 50978,
+        "end_ms": 51558,
         "text": "shield,"
       },
       {
-        "timestamp_ms": 150118,
-        "end_ms": 150258,
+        "timestamp_ms": 51578,
+        "end_ms": 51959,
         "text": "my"
       },
       {
-        "timestamp_ms": 150299,
-        "end_ms": 151439,
+        "timestamp_ms": 52019,
+        "end_ms": 53119,
         "text": "missionaries"
       },
       {
-        "timestamp_ms": 151519,
-        "end_ms": 151660,
+        "timestamp_ms": 53220,
+        "end_ms": 53340,
         "text": "in"
       },
       {
-        "timestamp_ms": 151720,
-        "end_ms": 151780,
+        "timestamp_ms": 53420,
+        "end_ms": 53480,
         "text": "a"
       },
       {
-        "timestamp_ms": 151840,
-        "end_ms": 152580,
+        "timestamp_ms": 53540,
+        "end_ms": 54260,
         "text": "foreign"
       },
       {
-        "timestamp_ms": 152680,
-        "end_ms": 153301,
+        "timestamp_ms": 54400,
+        "end_ms": 55001,
         "text": "field."
       }
     ]
   },
   {
-    "timestamp_ms": 153741,
-    "text": "For some reason I can't explain I know St. Peter won't call my name Never known his word But that was when I ruled the world",
+    "timestamp_ms": 55461,
+    "text": "For some reason I can't explain Once you've done it was never never honest word And that was when I ruled the world",
     "words": [
       {
-        "timestamp_ms": 153741,
-        "end_ms": 154081,
+        "timestamp_ms": 55461,
+        "end_ms": 55781,
         "text": "For"
       },
       {
-        "timestamp_ms": 154201,
-        "end_ms": 154582,
+        "timestamp_ms": 55861,
+        "end_ms": 56262,
         "text": "some"
       },
       {
-        "timestamp_ms": 154602,
-        "end_ms": 155142,
+        "timestamp_ms": 56302,
+        "end_ms": 56802,
         "text": "reason"
       },
       {
-        "timestamp_ms": 155202,
-        "end_ms": 155282,
+        "timestamp_ms": 56882,
+        "end_ms": 57002,
         "text": "I"
       },
       {
-        "timestamp_ms": 155362,
-        "end_ms": 155782,
+        "timestamp_ms": 57042,
+        "end_ms": 57483,
         "text": "can't"
       },
       {
-        "timestamp_ms": 155842,
-        "end_ms": 156623,
+        "timestamp_ms": 57563,
+        "end_ms": 58403,
         "text": "explain"
       },
       {
-        "timestamp_ms": 156643,
-        "end_ms": 156663,
-        "text": "I"
+        "timestamp_ms": 59024,
+        "end_ms": 59264,
+        "text": "Once"
       },
       {
-        "timestamp_ms": 157243,
-        "end_ms": 157564,
-        "text": "know"
+        "timestamp_ms": 59564,
+        "end_ms": 59745,
+        "text": "you've"
       },
       {
-        "timestamp_ms": 157684,
-        "end_ms": 158044,
-        "text": "St."
+        "timestamp_ms": 59825,
+        "end_ms": 60285,
+        "text": "done"
       },
       {
-        "timestamp_ms": 158104,
-        "end_ms": 158544,
-        "text": "Peter"
+        "timestamp_ms": 60385,
+        "end_ms": 60465,
+        "text": "it"
       },
       {
-        "timestamp_ms": 158584,
-        "end_ms": 158784,
-        "text": "won't"
+        "timestamp_ms": 60485,
+        "end_ms": 60665,
+        "text": "was"
       },
       {
-        "timestamp_ms": 158844,
-        "end_ms": 159185,
-        "text": "call"
+        "timestamp_ms": 60745,
+        "end_ms": 61166,
+        "text": "never"
       },
       {
-        "timestamp_ms": 159245,
-        "end_ms": 159605,
-        "text": "my"
+        "timestamp_ms": 61566,
+        "end_ms": 61966,
+        "text": "never"
       },
       {
-        "timestamp_ms": 159665,
-        "end_ms": 160025,
-        "text": "name"
+        "timestamp_ms": 62227,
+        "end_ms": 63788,
+        "text": "honest"
       },
       {
-        "timestamp_ms": 160325,
-        "end_ms": 160746,
-        "text": "Never"
-      },
-      {
-        "timestamp_ms": 160766,
-        "end_ms": 161846,
-        "text": "known"
-      },
-      {
-        "timestamp_ms": 161907,
-        "end_ms": 162127,
-        "text": "his"
-      },
-      {
-        "timestamp_ms": 162227,
-        "end_ms": 162987,
+        "timestamp_ms": 63928,
+        "end_ms": 64829,
         "text": "word"
       },
       {
-        "timestamp_ms": 163568,
-        "end_ms": 163728,
-        "text": "But"
+        "timestamp_ms": 65289,
+        "end_ms": 65449,
+        "text": "And"
       },
       {
-        "timestamp_ms": 163768,
-        "end_ms": 163968,
+        "timestamp_ms": 65489,
+        "end_ms": 65649,
         "text": "that"
       },
       {
-        "timestamp_ms": 164008,
-        "end_ms": 164148,
+        "timestamp_ms": 65689,
+        "end_ms": 65829,
         "text": "was"
       },
       {
-        "timestamp_ms": 164248,
-        "end_ms": 164508,
+        "timestamp_ms": 65909,
+        "end_ms": 66150,
         "text": "when"
       },
       {
-        "timestamp_ms": 164728,
-        "end_ms": 164929,
+        "timestamp_ms": 66330,
+        "end_ms": 66610,
         "text": "I"
       },
       {
-        "timestamp_ms": 165089,
-        "end_ms": 165509,
+        "timestamp_ms": 66770,
+        "end_ms": 67171,
         "text": "ruled"
       },
       {
-        "timestamp_ms": 165569,
-        "end_ms": 165689,
+        "timestamp_ms": 67231,
+        "end_ms": 67391,
         "text": "the"
       },
       {
-        "timestamp_ms": 165769,
-        "end_ms": 166730,
-        "text": "world"
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 180121,
-    "text": "Oh, oh, oh, oh, oh, oh, oh, oh, oh",
-    "words": [
-      {
-        "timestamp_ms": 180121,
-        "end_ms": 180181,
-        "text": "Oh,"
-      },
-      {
-        "timestamp_ms": 180201,
-        "end_ms": 180261,
-        "text": "oh,"
-      },
-      {
-        "timestamp_ms": 180281,
-        "end_ms": 180341,
-        "text": "oh,"
-      },
-      {
-        "timestamp_ms": 180361,
-        "end_ms": 180422,
-        "text": "oh,"
-      },
-      {
-        "timestamp_ms": 180442,
-        "end_ms": 180502,
-        "text": "oh,"
-      },
-      {
-        "timestamp_ms": 180522,
-        "end_ms": 180582,
-        "text": "oh,"
-      },
-      {
-        "timestamp_ms": 180602,
-        "end_ms": 180662,
-        "text": "oh,"
-      },
-      {
-        "timestamp_ms": 180682,
-        "end_ms": 180742,
-        "text": "oh,"
-      },
-      {
-        "timestamp_ms": 180762,
-        "end_ms": 180802,
-        "text": "oh"
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 195463,
-    "text": "I can't get rid of the bells, laying it Roman capital requires to sing it Be my mirror, my soul, to cheer The missionaries in a foreign field Some reason I can't explain I don't think we don't call my name Never let all this work But that was when I ruled the world",
-    "words": [
-      {
-        "timestamp_ms": 195463,
-        "end_ms": 195503,
-        "text": "I"
-      },
-      {
-        "timestamp_ms": 195523,
-        "end_ms": 195883,
-        "text": "can't"
-      },
-      {
-        "timestamp_ms": 195943,
-        "end_ms": 196383,
-        "text": "get"
-      },
-      {
-        "timestamp_ms": 196503,
-        "end_ms": 196563,
-        "text": "rid"
-      },
-      {
-        "timestamp_ms": 196803,
-        "end_ms": 196883,
-        "text": "of"
-      },
-      {
-        "timestamp_ms": 196903,
-        "end_ms": 197003,
-        "text": "the"
-      },
-      {
-        "timestamp_ms": 197063,
-        "end_ms": 197684,
-        "text": "bells,"
-      },
-      {
-        "timestamp_ms": 197904,
-        "end_ms": 198424,
-        "text": "laying"
-      },
-      {
-        "timestamp_ms": 198544,
-        "end_ms": 198764,
-        "text": "it"
-      },
-      {
-        "timestamp_ms": 199004,
-        "end_ms": 199744,
-        "text": "Roman"
-      },
-      {
-        "timestamp_ms": 199824,
-        "end_ms": 200284,
-        "text": "capital"
-      },
-      {
-        "timestamp_ms": 200304,
-        "end_ms": 201185,
-        "text": "requires"
-      },
-      {
-        "timestamp_ms": 201205,
-        "end_ms": 201285,
-        "text": "to"
-      },
-      {
-        "timestamp_ms": 201385,
-        "end_ms": 201885,
-        "text": "sing"
-      },
-      {
-        "timestamp_ms": 201945,
-        "end_ms": 202045,
-        "text": "it"
-      },
-      {
-        "timestamp_ms": 202465,
-        "end_ms": 202925,
-        "text": "Be"
-      },
-      {
-        "timestamp_ms": 202985,
-        "end_ms": 203305,
-        "text": "my"
-      },
-      {
-        "timestamp_ms": 203345,
-        "end_ms": 203785,
-        "text": "mirror,"
-      },
-      {
-        "timestamp_ms": 203805,
-        "end_ms": 203925,
-        "text": "my"
-      },
-      {
-        "timestamp_ms": 204025,
-        "end_ms": 204585,
-        "text": "soul,"
-      },
-      {
-        "timestamp_ms": 204605,
-        "end_ms": 204725,
-        "text": "to"
-      },
-      {
-        "timestamp_ms": 204906,
-        "end_ms": 205506,
-        "text": "cheer"
-      },
-      {
-        "timestamp_ms": 205746,
-        "end_ms": 205906,
-        "text": "The"
-      },
-      {
-        "timestamp_ms": 205966,
-        "end_ms": 207086,
-        "text": "missionaries"
-      },
-      {
-        "timestamp_ms": 207186,
-        "end_ms": 207286,
-        "text": "in"
-      },
-      {
-        "timestamp_ms": 207366,
-        "end_ms": 207406,
-        "text": "a"
-      },
-      {
-        "timestamp_ms": 207486,
-        "end_ms": 208186,
-        "text": "foreign"
-      },
-      {
-        "timestamp_ms": 208326,
-        "end_ms": 209007,
-        "text": "field"
-      },
-      {
-        "timestamp_ms": 209847,
-        "end_ms": 210227,
-        "text": "Some"
-      },
-      {
-        "timestamp_ms": 210287,
-        "end_ms": 210807,
-        "text": "reason"
-      },
-      {
-        "timestamp_ms": 210867,
-        "end_ms": 210927,
-        "text": "I"
-      },
-      {
-        "timestamp_ms": 211007,
-        "end_ms": 211427,
-        "text": "can't"
-      },
-      {
-        "timestamp_ms": 211507,
-        "end_ms": 212327,
-        "text": "explain"
-      },
-      {
-        "timestamp_ms": 212788,
-        "end_ms": 212888,
-        "text": "I"
-      },
-      {
-        "timestamp_ms": 212928,
-        "end_ms": 213228,
-        "text": "don't"
-      },
-      {
-        "timestamp_ms": 213348,
-        "end_ms": 213768,
-        "text": "think"
-      },
-      {
-        "timestamp_ms": 213828,
-        "end_ms": 213968,
-        "text": "we"
-      },
-      {
-        "timestamp_ms": 214008,
-        "end_ms": 214428,
-        "text": "don't"
-      },
-      {
-        "timestamp_ms": 214488,
-        "end_ms": 214828,
-        "text": "call"
-      },
-      {
-        "timestamp_ms": 214908,
-        "end_ms": 215248,
-        "text": "my"
-      },
-      {
-        "timestamp_ms": 215268,
-        "end_ms": 215588,
-        "text": "name"
-      },
-      {
-        "timestamp_ms": 215948,
-        "end_ms": 216369,
-        "text": "Never"
-      },
-      {
-        "timestamp_ms": 216569,
-        "end_ms": 216669,
-        "text": "let"
-      },
-      {
-        "timestamp_ms": 216949,
-        "end_ms": 217489,
-        "text": "all"
-      },
-      {
-        "timestamp_ms": 217509,
-        "end_ms": 217769,
-        "text": "this"
-      },
-      {
-        "timestamp_ms": 217909,
-        "end_ms": 218829,
-        "text": "work"
-      },
-      {
-        "timestamp_ms": 219209,
-        "end_ms": 219369,
-        "text": "But"
-      },
-      {
-        "timestamp_ms": 219429,
-        "end_ms": 219609,
-        "text": "that"
-      },
-      {
-        "timestamp_ms": 219649,
-        "end_ms": 219789,
-        "text": "was"
-      },
-      {
-        "timestamp_ms": 219909,
-        "end_ms": 220130,
-        "text": "when"
-      },
-      {
-        "timestamp_ms": 220330,
-        "end_ms": 220570,
-        "text": "I"
-      },
-      {
-        "timestamp_ms": 220730,
-        "end_ms": 221150,
-        "text": "ruled"
-      },
-      {
-        "timestamp_ms": 221190,
-        "end_ms": 221350,
-        "text": "the"
-      },
-      {
-        "timestamp_ms": 221410,
-        "end_ms": 221870,
+        "timestamp_ms": 67491,
+        "end_ms": 68692,
         "text": "world"
       }
     ]
