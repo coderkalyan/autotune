@@ -11,9 +11,9 @@ import serial
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from audio_engine import AudioEngine
 from midi_bridge import MIDIBridge
 from scoring import ScoringSession
 from song_manager import SongManager
@@ -22,15 +22,21 @@ from uart_parser import UARTParser
 SERIAL_PORT = "/dev/cu.usbserial-FTA9O9VB"
 BAUD = 31250
 WS_INTERVAL = 0.033  # ~30 Hz
+PLAYBACK_STALE_S = 0.25
 
 SONGS_DIR = os.path.join(os.path.dirname(__file__), "..", "songs")
 
 uart_reader: UARTParser | None = None
 midi_bridge: MIDIBridge | None = None
 song_manager: SongManager = SongManager(SONGS_DIR)
-audio_engine: AudioEngine = AudioEngine()
 scoring_session: ScoringSession | None = None
 _connected: set[WebSocket] = set()
+_playback_state: dict = {
+    "song_id": None,
+    "position_ms": None,
+    "playing": False,
+    "received_at": 0.0,
+}
 
 
 async def _broadcast(message: dict) -> None:
@@ -58,8 +64,9 @@ async def _pitch_loop() -> None:
 
         reading = uart_reader.get_latest() if uart_reader else None
 
-        playing = audio_engine.is_playing
-        position_ms = audio_engine.get_position_ms() if playing else None
+        fresh = (time.monotonic() - _playback_state["received_at"]) <= PLAYBACK_STALE_S
+        playing = bool(_playback_state["playing"]) and fresh
+        position_ms = _playback_state["position_ms"] if playing else None
         raw_target = (
             song_manager.get_target_hz(position_ms) if position_ms is not None else None
         )
@@ -245,6 +252,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.mount("/audio", StaticFiles(directory=SONGS_DIR), name="audio")
+
 
 @app.get("/health")
 def health():
@@ -278,33 +287,24 @@ def song_lyrics(song_id: str):
         return json.load(f)
 
 
-@app.post("/songs/{song_id}/play")
-def play_song(song_id: str, vocals_volume: float = 0.3):
+@app.post("/songs/{song_id}/start")
+def start_song(song_id: str):
     global scoring_session
     instrumental = song_manager.instrumental_path(song_id)
     if not os.path.isfile(instrumental):
         raise HTTPException(status_code=404, detail="Song not found")
-    vocals = song_manager.vocals_path(song_id)
     song_manager.load(song_id)
-    audio_engine.play(
-        instrumental,
-        vocals_path=vocals if os.path.isfile(vocals) else None,
-        vocals_volume=vocals_volume,
-    )
     notes = song_manager.get_notes()
     scoring_session = ScoringSession(notes) if notes else None
-    return {"ok": True, "playing": song_id, "note_count": len(notes)}
-
-
-@app.post("/songs/vocals_volume")
-def set_vocals_volume(volume: float):
-    audio_engine.set_vocals_volume(volume)
-    return {"ok": True, "vocals_volume": volume}
+    return {"ok": True, "song_id": song_id, "note_count": len(notes)}
 
 
 @app.post("/songs/stop")
 def stop_song():
-    audio_engine.stop()
+    _playback_state["song_id"] = None
+    _playback_state["position_ms"] = None
+    _playback_state["playing"] = False
+    _playback_state["received_at"] = 0.0
     song_manager.unload()
     return {"ok": True}
 
@@ -329,7 +329,21 @@ async def websocket_endpoint(ws: WebSocket):
     _connected.add(ws)
     try:
         while True:
-            await ws.receive_text()  # keep connection alive; ignore incoming
+            text = await ws.receive_text()
+            try:
+                msg = json.loads(text)
+            except (ValueError, TypeError):
+                continue
+            if not isinstance(msg, dict):
+                continue
+            if msg.get("type") == "playback":
+                pos = msg.get("position_ms")
+                _playback_state["song_id"] = msg.get("song_id")
+                _playback_state["position_ms"] = (
+                    float(pos) if isinstance(pos, (int, float)) else None
+                )
+                _playback_state["playing"] = bool(msg.get("playing"))
+                _playback_state["received_at"] = time.monotonic()
     except WebSocketDisconnect:
         pass
     finally:

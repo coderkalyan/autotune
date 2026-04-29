@@ -16,3 +16,5 @@ incremental_db/
 
 greybox_tmp/
 simulation/
+
+*.flac

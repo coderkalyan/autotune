@@ -6,6 +6,7 @@ import { PitchGraph } from "@/components/graph/PitchGraph"
 import { ScoreDisplay } from "@/components/autotune/ScoreDisplay"
 import { ResultsScreen } from "@/components/autotune/ResultsScreen"
 import { API_BASE } from "@/config"
+import type { SongPlayback } from "@/hooks/useSongPlayback"
 import type { LyricLine, NoteCompleted, PitchReading, SongEntry } from "@/types"
 
 const WORD_GLOW_THRESHOLD = 0.6
@@ -14,6 +15,7 @@ const WORD_GLOW_DURATION_MS = 500
 interface Props {
   readings: PitchReading[]
   latest?: PitchReading | null
+  playback: SongPlayback
 }
 
 interface ResultsSnapshot {
@@ -23,7 +25,7 @@ interface ResultsSnapshot {
   songTitle?: string
 }
 
-export function SingAlongView({ readings, latest }: Props) {
+export function SingAlongView({ readings, latest, playback }: Props) {
   const [songs, setSongs] = useState<SongEntry[]>([])
   const [activeSong, setActiveSong] = useState<SongEntry | null>(null)
   const [loading, setLoading] = useState(true)
@@ -38,8 +40,8 @@ export function SingAlongView({ readings, latest }: Props) {
   const handleVolumeChange = useCallback((value: number[]) => {
     const v = value[0]
     setVocalsVolume(v)
-    fetch(`${API_BASE}/songs/vocals_volume?volume=${v / 100}`, { method: "POST" }).catch(() => {})
-  }, [])
+    playback.setVocalsVolume(v / 100)
+  }, [playback])
 
   useEffect(() => {
     fetch(`${API_BASE}/songs`)
@@ -51,7 +53,7 @@ export function SingAlongView({ readings, latest }: Props) {
 
   async function handleSelect(song: SongEntry) {
     const [, lyricsData] = await Promise.all([
-      fetch(`${API_BASE}/songs/${song.id}/play`, { method: "POST" }),
+      fetch(`${API_BASE}/songs/${song.id}/start`, { method: "POST" }),
       fetch(`${API_BASE}/songs/${song.id}/lyrics`).then((r) => r.json()).catch(() => []),
     ])
     setLyrics(lyricsData)
@@ -59,9 +61,12 @@ export function SingAlongView({ readings, latest }: Props) {
     setResults(null)
     lastNoteRef.current = null
     setGlowWord(null)
+    playback.setVocalsVolume(vocalsVolume / 100)
+    await playback.play(song.id)
   }
 
   async function handleStop() {
+    playback.stop()
     await fetch(`${API_BASE}/songs/stop`, { method: "POST" })
     setActiveSong(null)
     setLyrics([])
@@ -101,23 +106,11 @@ export function SingAlongView({ readings, latest }: Props) {
   useEffect(() => {
     return () => {
       if (activeSong) {
+        playback.stop()
         fetch(`${API_BASE}/songs/stop`, { method: "POST" }).catch(() => {})
       }
     }
-  }, [activeSong])
-
-  // Stop audio when the browser tab is closed or refreshed
-  useEffect(() => {
-    if (!activeSong) return
-    const handleUnload = () => navigator.sendBeacon(`${API_BASE}/songs/stop`)
-    const handleVisibility = () => { if (document.visibilityState === "hidden") handleUnload() }
-    window.addEventListener("pagehide", handleUnload)
-    document.addEventListener("visibilitychange", handleVisibility)
-    return () => {
-      window.removeEventListener("pagehide", handleUnload)
-      document.removeEventListener("visibilitychange", handleVisibility)
-    }
-  }, [activeSong])
+  }, [activeSong, playback])
 
   if (activeSong) {
     return (

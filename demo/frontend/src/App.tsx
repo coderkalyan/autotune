@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react"
 import { usePitchSocket } from "@/hooks/usePitchSocket"
+import { useSongPlayback } from "@/hooks/useSongPlayback"
 import { SplashScreen } from "@/components/splash/SplashScreen"
 import { WS_URL } from "@/config"
 import type { AppScreen } from "@/types"
@@ -15,7 +16,8 @@ const VocoderScreen = lazy(() =>
 
 export default function App() {
   const [appScreen, setAppScreen] = useState<AppScreen>({ screen: "splash" })
-  const { readings, latest, connected } = usePitchSocket(WS_URL)
+  const playback = useSongPlayback()
+  const { readings, latest, connected } = usePitchSocket(WS_URL, playback.getPlayback)
 
   const navigate = useCallback((next: AppScreen) => {
     setAppScreen(next)
@@ -38,6 +40,7 @@ export default function App() {
               readings={readings}
               latest={latest}
               connected={connected}
+              playback={playback}
             />
           </Suspense>
         </div>

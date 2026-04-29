@@ -4,6 +4,7 @@ import { SystemStatus } from "@/components/shared/SystemStatus"
 import { FreeModeView } from "./FreeModeView"
 import { SingAlongView } from "./SingAlongView"
 import { SubModeToggle } from "./SubModeToggle"
+import type { SongPlayback } from "@/hooks/useSongPlayback"
 import type { AppScreen, PitchReading } from "@/types"
 
 interface Props {
@@ -12,9 +13,10 @@ interface Props {
   readings: PitchReading[]
   latest: PitchReading | null
   connected: boolean
+  playback: SongPlayback
 }
 
-export function AutotuneScreen({ screenState, onNavigate, readings, latest, connected }: Props) {
+export function AutotuneScreen({ screenState, onNavigate, readings, latest, connected, playback }: Props) {
   const { subMode, selectedSong } = screenState
 
   function handleSubMode(next: "free" | "sing-along") {
@@ -42,7 +44,7 @@ export function AutotuneScreen({ screenState, onNavigate, readings, latest, conn
           <FreeModeView readings={readings} latest={latest} />
         )}
         {subMode === "sing-along" && (
-          <SingAlongView readings={readings} latest={latest} />
+          <SingAlongView readings={readings} latest={latest} playback={playback} />
         )}
       </div>
     </div>
