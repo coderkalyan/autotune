@@ -14,7 +14,7 @@ logic init, transmitting, set_done; // State machine outputs
 
 // MUX AND COMBINATIONAL LOGIC SIGNALS //
 logic shift;
-localparam BAUD_RATE = 12'd1600; // 50_000_000 / 31250 baud = 1600 clks per bit
+localparam BAUD_RATE = 12'd434; // 50_000_000 / 115200 baud ≈ 434 clks per bit (0.006% error)
 logic [1:0] sel;
 logic [1:0] baud_sel;
 logic [11:0] baud_cnt;

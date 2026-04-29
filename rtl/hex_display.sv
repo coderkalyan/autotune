@@ -60,6 +60,7 @@ always_comb begin
         AUTOTUNE: eff_mode = A;
         VOCODE: eff_mode = V;
         SYNTH: eff_mode = S;
+        HARMONY: eff_mode = H;
         default: eff_mode = NONE;
     endcase
 end
@@ -119,6 +120,7 @@ function automatic logic [6:0] hex7_notes(input hex_t val);
       // Optional patterns for G and S (customize if needed)
       G: hex7_notes = 7'b0000010;  // similar to '6'
       S: hex7_notes = 7'b0010010;  // similar to '5'
+      H: hex7_notes = 7'b0001001;  // a,d off; b,c,e,f,g lit
 
       NONE: hex7_notes = 7'b1111111;
 

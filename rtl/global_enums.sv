@@ -24,7 +24,8 @@ typedef enum logic [4:0] {
       S     = 5'h11,
       NONE  = 5'h12,
       V     = 5'h13,
-      P     = 5'h14
+      P     = 5'h14,
+      H     = 5'h15
   } hex_t;
 
 typedef enum logic [2:0] {
@@ -32,7 +33,8 @@ typedef enum logic [2:0] {
   PASSTHROUGH = 3'b001,
   AUTOTUNE = 3'b010,
   VOCODE = 3'b011,
-  SYNTH = 3'b100
+  SYNTH = 3'b100,
+  HARMONY = 3'b101
 } mode_t;
 
 endpackage

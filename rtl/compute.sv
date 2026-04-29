@@ -366,6 +366,13 @@ module compute #(
         pre_valid = adc_en;
       end
       AUTOTUNE: begin
+        // Root only, no harmonies.
+        pre_lf = psola_lf;
+        pre_rf = psola_rf;
+        pre_valid = psola_valid;
+      end
+      HARMONY: begin
+        // Root + Markov-driven harmony stack.
         pre_lf = stack_lf;
         pre_rf = stack_rf;
         pre_valid = psola_valid;

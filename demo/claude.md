@@ -8,7 +8,7 @@ A live demo app running on a Raspberry Pi that visualizes and drives an FPGA-bas
 
 - **FPGA**: Performs autocorrelation-based pitch detection, nearest-note correction via LUT, and outputs corrected audio to speaker
 - **Microphone**: Plugged directly into the FPGA
-- **Raspberry Pi**: Running ROS, connected to FPGA via UART on `/dev/ttyUSB0` at baud rate `31250`
+- **Raspberry Pi**: Running ROS, connected to FPGA via UART on `/dev/ttyUSB0` at baud rate `115200`
 - **Display**: Monitor connected to Pi, running the React frontend locally
 
 ## Modes
@@ -30,7 +30,7 @@ TBD — will display different visualizations. Not in scope for initial build.
 ## Architecture
 
 ```
-Mic → FPGA → UART (/dev/ttyUSB0, 31250 baud)
+Mic → FPGA → UART (/dev/ttyUSB0, 115200 baud)
                ↓
         Python Backend (FastAPI)
         - UART reader thread: parses 10-bit pitch period, computes Hz + corrected note
@@ -63,7 +63,7 @@ The backend samples incoming UART data and pushes messages at a controlled rate:
 
 ## UART Protocol
 
-- **Connection**: `/dev/ttyUSB0`, baud `31250`
+- **Connection**: `/dev/ttyUSB0`, baud `115200`
 - **Details**: Take a look at ../rtl/uart_tx_wrapper.sv for the UART protocol details
 - **Frequency conversion**: `f = 48000 / pitch_period`
 - **Sanity check**: clamp to 80–1100 Hz (typical vocal range); values outside this range are treated as unvoiced/silence
