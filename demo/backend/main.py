@@ -55,7 +55,8 @@ async def _pitch_loop() -> None:
 
     detected_window: deque[float] = deque(maxlen=5)
     corrected_window: deque[float] = deque(maxlen=5)
-    was_playing = False
+    held_score_fields: dict = {}
+    last_scoring_id: int | None = None
 
     while True:
         await asyncio.sleep(WS_INTERVAL)
@@ -66,17 +67,25 @@ async def _pitch_loop() -> None:
 
         fresh = (time.monotonic() - _playback_state["received_at"]) <= PLAYBACK_STALE_S
         playing = bool(_playback_state["playing"]) and fresh
-        position_ms = _playback_state["position_ms"] if playing else None
+        # Display position is emitted whether playing or paused so the UI
+        # (lyrics, target line) stays alive while paused. Scoring updates are
+        # gated separately on `playing` below.
+        display_position_ms = _playback_state["position_ms"] if fresh else None
+        position_ms = display_position_ms if playing else None
         raw_target = (
-            song_manager.get_target_hz(position_ms) if position_ms is not None else None
+            song_manager.get_target_hz(display_position_ms)
+            if display_position_ms is not None
+            else None
         )
         target_hz = round(raw_target, 2) if raw_target is not None else None
         lyric = (
-            song_manager.get_current_lyric(position_ms)
-            if position_ms is not None
+            song_manager.get_current_lyric(display_position_ms)
+            if display_position_ms is not None
             else None
         )
-        song_position_ms = round(position_ms) if position_ms is not None else None
+        song_position_ms = (
+            round(display_position_ms) if display_position_ms is not None else None
+        )
 
         filtered_detected: float | None = None
         filtered_corrected: float | None = None
@@ -120,6 +129,12 @@ async def _pitch_loop() -> None:
                 )
 
         # --- scoring ---
+        # Drop the held cache if the session was replaced (seek / start / stop).
+        current_scoring_id = id(scoring_session) if scoring_session is not None else None
+        if current_scoring_id != last_scoring_id:
+            held_score_fields = {}
+            last_scoring_id = current_scoring_id
+
         score_fields = {
             "detected_hit": None,
             "detected_near": None,
@@ -133,7 +148,7 @@ async def _pitch_loop() -> None:
             "note_completed": None,
             "frame_quality": None,
         }
-        if scoring_session is not None and position_ms is not None:
+        if scoring_session is not None and position_ms is not None and playing:
             state = scoring_session.update(
                 position_ms=position_ms,
                 detected_hz=filtered_detected,
@@ -169,16 +184,23 @@ async def _pitch_loop() -> None:
             elif state.detected_bucket == "miss":
                 score_fields["detected_miss"] = filtered_detected
 
-        # --- song-complete on stop / natural end ---
-        if was_playing and not playing and scoring_session is not None:
-            final = scoring_session.finish()
-            score_fields["score"] = round(final.score, 4)
-            score_fields["combo"] = final.combo
-            score_fields["best_combo"] = final.best_combo
-            score_fields["stars"] = final.stars
-            score_fields["song_complete"] = True
-            scoring_session = None
-        was_playing = playing
+            # Cache the persistent fields so a subsequent pause keeps the UI
+            # showing the same running score/stars.
+            held_score_fields = {
+                "score": score_fields["score"],
+                "best_combo": score_fields["best_combo"],
+                "stars": score_fields["stars"],
+            }
+
+            # Natural completion: cursor reached the end of the note list.
+            if state.complete:
+                score_fields["song_complete"] = True
+                scoring_session = None
+                held_score_fields = {}
+        elif scoring_session is not None:
+            # Paused (or no position yet): replay the last running score so the
+            # UI freezes the displayed totals instead of blanking them.
+            score_fields.update(held_score_fields)
 
         if reading:
             msg = {
@@ -307,12 +329,25 @@ def start_song(song_id: str):
 
 @app.post("/songs/stop")
 def stop_song():
+    global scoring_session
     _playback_state["song_id"] = None
     _playback_state["position_ms"] = None
     _playback_state["playing"] = False
     _playback_state["received_at"] = 0.0
     song_manager.unload()
+    scoring_session = None
     return {"ok": True}
+
+
+@app.post("/songs/seek")
+def seek_song(position_ms: float):
+    global scoring_session
+    if song_manager.current_song_id is None:
+        raise HTTPException(status_code=400, detail="No song loaded")
+    # Drop notes already past so fast-forward doesn't penalize skipped notes.
+    notes = [n for n in song_manager.get_notes() if n.end_ms > position_ms]
+    scoring_session = ScoringSession(notes) if notes else None
+    return {"ok": True, "position_ms": position_ms, "note_count": len(notes)}
 
 
 class MidiCommand(BaseModel):

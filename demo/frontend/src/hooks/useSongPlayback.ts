@@ -10,6 +10,11 @@ export interface PlaybackSnapshot {
 export interface SongPlayback {
   play: (songId: string) => Promise<void>
   stop: () => void
+  pause: () => void
+  resume: () => Promise<void>
+  seek: (ms: number) => void
+  getDuration: () => number
+  isPaused: () => boolean
   setVocalsVolume: (v: number) => void
   getPlayback: () => PlaybackSnapshot | null
   setOnEnded: (cb: (() => void) | null) => void
@@ -88,6 +93,37 @@ export function useSongPlayback(): SongPlayback {
     }
   }, [])
 
+  const pause = useCallback(() => {
+    instrumentalRef.current?.pause()
+  }, [])
+
+  const resume = useCallback(async () => {
+    const instrumental = instrumentalRef.current
+    if (!instrumental || !instrumental.src) return
+    try {
+      await instrumental.play()
+    } catch (err) {
+      console.warn("[useSongPlayback] resume rejected", err)
+    }
+  }, [])
+
+  const seek = useCallback((ms: number) => {
+    const instrumental = instrumentalRef.current
+    if (!instrumental) return
+    const dur = instrumental.duration
+    const clamped = Math.max(0, Math.min(Number.isFinite(dur) ? dur : Infinity, ms / 1000))
+    instrumental.currentTime = clamped
+  }, [])
+
+  const getDuration = useCallback(() => {
+    const d = instrumentalRef.current?.duration
+    return Number.isFinite(d) ? (d as number) : 0
+  }, [])
+
+  const isPaused = useCallback(() => {
+    return instrumentalRef.current?.paused ?? true
+  }, [])
+
   const stop = useCallback(() => {
     const instrumental = instrumentalRef.current
     const vocals = vocalsRef.current
@@ -126,7 +162,29 @@ export function useSongPlayback(): SongPlayback {
   }, [])
 
   return useMemo(
-    () => ({ play, stop, setVocalsVolume, getPlayback, setOnEnded }),
-    [play, stop, setVocalsVolume, getPlayback, setOnEnded],
+    () => ({
+      play,
+      stop,
+      pause,
+      resume,
+      seek,
+      getDuration,
+      isPaused,
+      setVocalsVolume,
+      getPlayback,
+      setOnEnded,
+    }),
+    [
+      play,
+      stop,
+      pause,
+      resume,
+      seek,
+      getDuration,
+      isPaused,
+      setVocalsVolume,
+      getPlayback,
+      setOnEnded,
+    ],
   )
 }
