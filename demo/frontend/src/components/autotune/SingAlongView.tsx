@@ -27,6 +27,7 @@ interface ResultsSnapshot {
   score: number | null
   bestCombo: number | null
   songTitle?: string
+  songKey?: string | null
   notes: NoteCompleted[]
 }
 
@@ -108,6 +109,7 @@ export function SingAlongView({ latest, playback }: Props) {
         score: cur?.score ?? 0,
         bestCombo: cur?.best_combo ?? 0,
         songTitle: song.title,
+        songKey: song.key ?? null,
         notes: noteHistoryRef.current,
       })
     })
@@ -328,6 +330,7 @@ export function SingAlongView({ latest, playback }: Props) {
           score={results?.score ?? null}
           bestCombo={results?.bestCombo ?? null}
           songTitle={results?.songTitle}
+          songKey={results?.songKey}
           notes={results?.notes ?? []}
           onDone={handleStop}
         />

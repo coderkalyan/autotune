@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
-import { formatCents, formatNote } from "@/lib/noteName"
+import { formatCents, formatNoteInKey } from "@/lib/noteName"
 import type { NoteCompleted } from "@/types"
 
 interface Props {
@@ -19,6 +19,7 @@ interface Props {
   score: number | null
   bestCombo: number | null
   songTitle?: string
+  songKey?: string | null
   notes: NoteCompleted[]
   onDone: () => void
 }
@@ -62,6 +63,7 @@ export function ResultsScreen({
   score,
   bestCombo,
   songTitle,
+  songKey,
   notes,
   onDone,
 }: Props) {
@@ -140,7 +142,7 @@ export function ResultsScreen({
             value="word"
             className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border data-[state=inactive]:hidden"
           >
-            <ByWordTable notes={notes} />
+            <ByWordTable notes={notes} songKey={songKey} />
           </TabsContent>
 
           <TabsContent
@@ -169,7 +171,13 @@ export function ResultsScreen({
 const BY_WORD_GRID =
   "grid-cols-[1.6fr_0.9fr_1.2fr_0.8fr_0.9fr_0.9fr_1.6fr]"
 
-function ByWordTable({ notes }: { notes: NoteCompleted[] }) {
+function ByWordTable({
+  notes,
+  songKey,
+}: {
+  notes: NoteCompleted[]
+  songKey?: string | null
+}) {
   return (
     <>
       <div
@@ -195,7 +203,7 @@ function ByWordTable({ notes }: { notes: NoteCompleted[] }) {
           {notes.map((n, i) => {
             const tier = scoreTier(n.score)
             const sangHz = n.detected_pitch_hz ?? null
-            const sang = formatNote(sangHz, { showCents: true })
+            const sang = formatNoteInKey(sangHz, songKey, { showCents: true })
             const cents = formatCents(n.cents_off ?? null)
             const pctNote = Math.round(n.score * 100)
             const timingTier =
@@ -212,7 +220,7 @@ function ByWordTable({ notes }: { notes: NoteCompleted[] }) {
                   {n.lyric || <span className="text-muted-foreground">—</span>}
                 </span>
                 <span className="font-mono tabular-nums">
-                  {formatNote(n.pitch_hz)}
+                  {formatNoteInKey(n.pitch_hz, songKey)}
                 </span>
                 <span
                   className={cn(

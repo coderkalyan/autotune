@@ -41,6 +41,7 @@ class SongManager:
                     "bpm": meta.get("bpm", None),
                     "grade_start_ms": meta.get("grade_start_ms", 0),
                     "grade_end_ms": meta.get("grade_end_ms", 0),
+                    "key": meta.get("key"),
                 }
             )
         return songs

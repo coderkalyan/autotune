@@ -90,6 +90,7 @@ export interface SongEntry {
   bpm: number | null
   grade_start_ms: number
   grade_end_ms: number
+  key?: string | null
 }
 
 export type AutotuneSubMode = "free" | "sing-along"
