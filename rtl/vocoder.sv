@@ -260,9 +260,10 @@ module vocoder #(
         end
         OUTPUT: begin
           state <= IDLE;
-          o_data <= (i_notes == 0) ? 27'd0 : (fixed_t'(sample) + fnorm_mul(
+          o_data <= (bypass_r) ? sample : 
+          ((i_notes == 0) ? 27'd0 : (fixed_t'(sample) + fnorm_mul(
               bandpass_o_data[BANKS], whitenoise[whitenoise_idx]
-          ));
+          )));
           whitenoise_idx <= whitenoise_idx + 1;
           o_valid <= 1'b1;
         end
