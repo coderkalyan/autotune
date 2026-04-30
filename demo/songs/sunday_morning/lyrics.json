@@ -6,217 +6,282 @@
       {
         "timestamp_ms": 131,
         "end_ms": 211,
-        "text": "and"
+        "text": "and",
+        "note": 62
       },
       {
         "timestamp_ms": 371,
         "end_ms": 451,
-        "text": "i"
+        "text": "i",
+        "note": 64
       },
       {
         "timestamp_ms": 471,
         "end_ms": 691,
-        "text": "would"
+        "text": "would",
+        "note": 67
       },
       {
         "timestamp_ms": 751,
         "end_ms": 1371,
-        "text": "gladly"
+        "text": "gladly",
+        "note": [
+          69,
+          67
+        ]
       },
       {
         "timestamp_ms": 1451,
         "end_ms": 1752,
-        "text": "hit"
+        "text": "hit",
+        "note": 67
       },
       {
         "timestamp_ms": 1812,
         "end_ms": 2052,
-        "text": "the"
+        "text": "the",
+        "note": 64
       },
       {
         "timestamp_ms": 2112,
         "end_ms": 2532,
-        "text": "road"
+        "text": "road",
+        "note": 69
       },
       {
         "timestamp_ms": 2612,
         "end_ms": 2872,
-        "text": "get"
+        "text": "get",
+        "note": 67
       },
       {
         "timestamp_ms": 2992,
         "end_ms": 3092,
-        "text": "up"
+        "text": "up",
+        "note": 67
       },
       {
         "timestamp_ms": 3272,
         "end_ms": 3412,
-        "text": "and"
+        "text": "and",
+        "note": 64
       },
       {
         "timestamp_ms": 3452,
         "end_ms": 3792,
-        "text": "go"
+        "text": "go",
+        "note": 69
       },
       {
         "timestamp_ms": 3892,
         "end_ms": 4032,
-        "text": "if"
+        "text": "if",
+        "note": 67
       },
       {
         "timestamp_ms": 4152,
         "end_ms": 4252,
-        "text": "i"
+        "text": "i",
+        "note": 67
       },
       {
         "timestamp_ms": 4292,
         "end_ms": 4652,
-        "text": "knew"
+        "text": "knew",
+        "note": [
+          64,
+          69
+        ]
       },
       {
         "timestamp_ms": 5893,
         "end_ms": 6153,
-        "text": "that"
+        "text": "that",
+        "note": 67
       },
       {
         "timestamp_ms": 6213,
         "end_ms": 6933,
-        "text": "someday"
+        "text": "someday",
+        "note": [
+          65,
+          64
+        ]
       },
       {
         "timestamp_ms": 7073,
         "end_ms": 7153,
-        "text": "it"
+        "text": "it",
+        "note": 62
       },
       {
         "timestamp_ms": 7233,
         "end_ms": 7533,
-        "text": "would"
+        "text": "would",
+        "note": 60
       },
       {
         "timestamp_ms": 7593,
         "end_ms": 7873,
-        "text": "lead"
+        "text": "lead",
+        "note": 62
       },
       {
         "timestamp_ms": 7913,
         "end_ms": 8113,
-        "text": "me"
+        "text": "me",
+        "note": 64
       },
       {
         "timestamp_ms": 8234,
         "end_ms": 9034,
-        "text": "back"
+        "text": "back",
+        "note": 62
       },
       {
         "timestamp_ms": 9054,
         "end_ms": 9094,
-        "text": "to"
+        "text": "to",
+        "note": 60
       },
       {
         "timestamp_ms": 9114,
         "end_ms": 9174,
-        "text": "you"
+        "text": "you",
+        "note": 64
       },
       {
         "timestamp_ms": 11354,
         "end_ms": 11595,
-        "text": "that"
+        "text": "that",
+        "note": 67
       },
       {
         "timestamp_ms": 11675,
         "end_ms": 12395,
-        "text": "someday"
+        "text": "someday",
+        "note": [
+          65,
+          64
+        ]
       },
       {
         "timestamp_ms": 12535,
         "end_ms": 12615,
-        "text": "it"
+        "text": "it",
+        "note": 62
       },
       {
         "timestamp_ms": 12695,
         "end_ms": 12975,
-        "text": "would"
+        "text": "would",
+        "note": 60
       },
       {
         "timestamp_ms": 13035,
         "end_ms": 13335,
-        "text": "lead"
+        "text": "lead",
+        "note": 62
       },
       {
         "timestamp_ms": 13375,
         "end_ms": 13595,
-        "text": "me"
+        "text": "me",
+        "note": 64
       },
       {
         "timestamp_ms": 13735,
         "end_ms": 14115,
-        "text": "back"
+        "text": "back",
+        "note": 62
       },
       {
         "timestamp_ms": 14195,
         "end_ms": 14355,
-        "text": "to"
+        "text": "to",
+        "note": [
+          60,
+          60
+        ]
       },
       {
         "timestamp_ms": 14415,
         "end_ms": 15756,
-        "text": "you"
+        "text": "you",
+        "note": 60
       },
       {
         "timestamp_ms": 16136,
         "end_ms": 16376,
-        "text": "that"
+        "text": "that",
+        "note": 62
       },
       {
         "timestamp_ms": 16476,
         "end_ms": 16796,
-        "text": "may"
+        "text": "may",
+        "note": 64
       },
       {
         "timestamp_ms": 16816,
         "end_ms": 17136,
-        "text": "be"
+        "text": "be",
+        "note": 65
       },
       {
         "timestamp_ms": 19657,
         "end_ms": 19957,
-        "text": "all"
+        "text": "all",
+        "note": 67
       },
       {
         "timestamp_ms": 20037,
         "end_ms": 20217,
-        "text": "i"
+        "text": "i",
+        "note": 64
       },
       {
         "timestamp_ms": 20237,
         "end_ms": 20317,
-        "text": "need"
+        "text": "need",
+        "note": 60
       },
       {
         "timestamp_ms": 21037,
         "end_ms": 21137,
-        "text": "in"
+        "text": "in",
+        "note": 62
       },
       {
         "timestamp_ms": 21197,
         "end_ms": 21798,
-        "text": "darkness"
+        "text": "darkness",
+        "note": [
+          64,
+          62
+        ]
       },
       {
         "timestamp_ms": 21878,
         "end_ms": 22278,
-        "text": "she"
+        "text": "she",
+        "note": 64
       },
       {
         "timestamp_ms": 22418,
         "end_ms": 22558,
-        "text": "is"
+        "text": "is",
+        "note": 65
       },
       {
         "timestamp_ms": 22878,
         "end_ms": 22958,
-        "text": "all I see"
+        "text": "all I see",
+        "note": [
+          67,
+          64,
+          60
+        ]
       }
     ]
   },
@@ -227,147 +292,205 @@
       {
         "timestamp_ms": 25255,
         "end_ms": 26295,
-        "text": "Come"
+        "text": "Come",
+        "note": 64
       },
       {
         "timestamp_ms": 26915,
         "end_ms": 27176,
-        "text": "and"
+        "text": "and",
+        "note": 62
       },
       {
         "timestamp_ms": 27256,
         "end_ms": 27616,
-        "text": "rest"
+        "text": "rest",
+        "note": 64
       },
       {
         "timestamp_ms": 27656,
         "end_ms": 27936,
-        "text": "your"
+        "text": "your",
+        "note": 65
       },
       {
         "timestamp_ms": 28016,
         "end_ms": 29336,
-        "text": "bones"
+        "text": "bones",
+        "note": 67
       },
       {
         "timestamp_ms": 29396,
         "end_ms": 30656,
-        "text": "with"
+        "text": "with",
+        "note": 64
       },
       {
         "timestamp_ms": 30736,
         "end_ms": 31056,
-        "text": "me"
+        "text": "me",
+        "note": 60
       },
       {
         "timestamp_ms": 31597,
         "end_ms": 31997,
-        "text": "Diving"
+        "text": "Diving",
+        "note": [
+          64,
+          65
+        ]
       },
       {
         "timestamp_ms": 32037,
         "end_ms": 32457,
-        "text": "slow"
+        "text": "slow",
+        "note": 64
       },
       {
         "timestamp_ms": 32497,
         "end_ms": 32717,
-        "text": "on"
+        "text": "on",
+        "note": 62
       },
       {
         "timestamp_ms": 32777,
         "end_ms": 33397,
-        "text": "Sunday"
+        "text": "Sunday",
+        "note": [
+          60,
+          57
+        ]
       },
       {
         "timestamp_ms": 33457,
         "end_ms": 34237,
-        "text": "morning"
+        "text": "morning",
+        "note": [
+          57,
+          60
+        ]
       },
       {
         "timestamp_ms": 34257,
         "end_ms": 34317,
-        "text": "And"
+        "text": "And",
+        "note": 67
       },
       {
         "timestamp_ms": 34777,
         "end_ms": 34917,
-        "text": "I"
+        "text": "I",
+        "note": 67
       },
       {
         "timestamp_ms": 34977,
         "end_ms": 35377,
-        "text": "never"
+        "text": "never",
+        "note": [
+          67,
+          64
+        ]
       },
       {
         "timestamp_ms": 35498,
         "end_ms": 36338,
-        "text": "want"
+        "text": "want",
+        "note": 62
       },
       {
         "timestamp_ms": 36378,
         "end_ms": 36538,
-        "text": "to"
+        "text": "to",
+        "note": 60
       },
       {
         "timestamp_ms": 36598,
         "end_ms": 37198,
-        "text": "leave"
+        "text": "leave",
+        "note": 60
       },
       {
         "timestamp_ms": 39779,
         "end_ms": 40259,
-        "text": "Fingers"
+        "text": "Fingers",
+        "note": [
+          67,
+          64
+        ]
       },
       {
         "timestamp_ms": 40399,
         "end_ms": 40779,
-        "text": "trace"
+        "text": "trace",
+        "note": 67
       },
       {
         "timestamp_ms": 40799,
         "end_ms": 41019,
-        "text": "your"
+        "text": "your",
+        "note": 64
       },
       {
         "timestamp_ms": 41159,
         "end_ms": 41579,
-        "text": "every"
+        "text": "every",
+        "note": [
+          67,
+          64
+        ]
       },
       {
         "timestamp_ms": 41779,
         "end_ms": 42359,
-        "text": "outline"
+        "text": "outline",
+        "note": [
+          62,
+          60,
+          57
+        ]
       },
       {
         "timestamp_ms": 42379,
         "end_ms": 44520,
-        "text": "Paint"
+        "text": "Paint",
+        "note": 67
       },
       {
         "timestamp_ms": 45960,
         "end_ms": 45980,
-        "text": "a"
+        "text": "a",
+        "note": 64
       },
       {
         "timestamp_ms": 46060,
         "end_ms": 46520,
-        "text": "picture"
+        "text": "picture",
+        "note": [
+          67,
+          64
+        ]
       },
       {
         "timestamp_ms": 46560,
         "end_ms": 46720,
-        "text": "with"
+        "text": "with",
+        "note": 62
       },
       {
         "timestamp_ms": 46800,
         "end_ms": 47000,
-        "text": "my"
+        "text": "my",
+        "note": 60
       },
       {
         "timestamp_ms": 47040,
         "end_ms": 48081,
-        "text": "hands"
+        "text": "hands",
+        "note": [
+          60,
+          57,
+          55
+        ]
       }
     ]
   }
