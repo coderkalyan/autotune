@@ -20,7 +20,7 @@ from song_manager import SongManager
 from uart_parser import UARTParser
 
 SERIAL_PORT = "/dev/cu.usbserial-FTA9O9VB"
-BAUD = 31250
+BAUD = 115200
 WS_INTERVAL = 0.033  # ~30 Hz
 PLAYBACK_STALE_S = 0.25
 
