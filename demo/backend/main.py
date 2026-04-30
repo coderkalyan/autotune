@@ -412,8 +412,9 @@ async def websocket_endpoint(ws: WebSocket):
                 except (TypeError, ValueError):
                     continue
                 if 0 <= mode <= 5:
-                    # MIDI Note-On Ch9, note = 0x28 + mode (rtl/midi_receiver.sv:100-114)
-                    midi_bridge.send_raw(bytes([0x99, 0x28 + mode, 0x7F]))
+                    # MIDI Note-On Ch9, pad note per mode (rtl/midi_receiver.sv:100-114)
+                    pad = (0x28, 0x29, 0x2A, 0x2B, 0x30, 0x31)[mode]
+                    midi_bridge.send_raw(bytes([0x99, pad, 0x7F]))
     except WebSocketDisconnect:
         pass
     finally:

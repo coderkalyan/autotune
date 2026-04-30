@@ -15,10 +15,10 @@ import sys
 import mido
 import serial
 
-SERIAL_PORT = "COM5"
-BAUD = 31250
+SERIAL_PORT = "COM7"
+BAUD = 115200
 
-MODE_NAMES = {0x28: "MUTE", 0x29: "PASSTHROUGH", 0x2A: "AUTOTUNE", 0x2B: "VOCODE", 0x2C: "SYNTH"}
+MODE_NAMES = {0x28: "MUTE", 0x29: "PASSTHROUGH", 0x2A: "AUTOTUNE", 0x2b: "VOCODE", 0x30: "SYNTH", 0x31: "HARMONY"}
 _SKIP_KEYWORDS = ("through", "midi through", "loopmidi")
 
 
