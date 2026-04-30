@@ -98,6 +98,11 @@ logic vad_active, vad_voiced;
 mode_t mode;
 logic [32*27-1:0] vocode_bands_flat;
 logic [9:0] target_lag;
+logic [6:0] melody_midi, held_midi, harm1_midi, harm2_midi;
+logic any_note_pressed;
+logic [3:0] harm_tonic;
+logic harm_mode_bit, harm_in_scale;
+logic [2:0] harm_chord_state;
 compute #(
     .WINDOW_SIZE(WINDOW_SIZE),
     .TESTBENCH(0)   //if 1 bypasses and uses test_pitch_factor as the pf
@@ -127,7 +132,16 @@ compute #(
     .HEX3(HEX3),
     .HEX4(HEX4),
     .HEX5(HEX5),
-    .o_vocode_bands_flat(vocode_bands_flat)
+    .o_vocode_bands_flat(vocode_bands_flat),
+    .o_melody_midi(melody_midi),
+    .o_held_midi(held_midi),
+    .o_any_note_pressed(any_note_pressed),
+    .o_harm_tonic(harm_tonic),
+    .o_harm_mode(harm_mode_bit),
+    .o_chord_state(harm_chord_state),
+    .o_in_scale(harm_in_scale),
+    .o_harm1_midi(harm1_midi),
+    .o_harm2_midi(harm2_midi)
 );
 
 // ----------------------------------------------------------------
@@ -148,6 +162,15 @@ uart_tx_wrapper iTX_WRAP (
     .i_config_done(config_done),
     .i_config_err(config_err),
     .i_target_lag(target_lag),
+    .i_melody_midi(melody_midi),
+    .i_held_midi(held_midi),
+    .i_any_note_pressed(any_note_pressed),
+    .i_harm_tonic(harm_tonic),
+    .i_harm_mode(harm_mode_bit),
+    .i_chord_state(harm_chord_state),
+    .i_in_scale(harm_in_scale),
+    .i_harm1_midi(harm1_midi),
+    .i_harm2_midi(harm2_midi),
     .o_transmission_done(transmission_done),
     .o_tx(o_txd)
 );
