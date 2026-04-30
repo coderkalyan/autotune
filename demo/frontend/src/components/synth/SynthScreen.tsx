@@ -18,9 +18,6 @@ const PALETTE = [
   "#d946ef", // fuchsia-500
   "#f43f5e", // rose-500
 ]
-const PARTICLE_COUNT = 14
-const PARTICLE_GRAVITY = 1100 // px/s² downward
-const PARTICLE_LIFE_MS = 900
 const NOTE_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 const WHITE_SEMI = new Set([0, 2, 4, 5, 7, 9, 11])
 
@@ -58,18 +55,6 @@ interface RisingNote {
   color: string
 }
 
-interface Particle {
-  id: number
-  x: number          // px from panel left
-  y: number          // px from panel bottom (positive = up)
-  vx: number         // px/s
-  vy: number         // px/s (positive = up)
-  bornMs: number
-  life: number       // ms
-  color: string
-  size: number
-}
-
 interface Props {
   onNavigate: (screen: AppScreen) => void
   latest: PitchReading | null
@@ -100,13 +85,10 @@ export function SynthScreen({ onNavigate, latest, connected, sendMessage }: Prop
   const activeNotes = useMemo(() => new Set(latest?.midi_notes ?? []), [latest?.midi_notes])
 
   const panelRef = useRef<HTMLDivElement>(null)
-  const particleLayerRef = useRef<HTMLDivElement>(null)
   const idRef = useRef(0)
   const prevActiveRef = useRef<Set<number>>(new Set())
   const risingRef = useRef<RisingNote[]>([])
   const noteElsRef = useRef<Map<number, HTMLDivElement>>(new Map())
-  const particlesRef = useRef<Particle[]>([])
-  const particleElsRef = useRef<Map<number, HTMLDivElement>>(new Map())
   const pointerNoteRef = useRef<Map<number, number>>(new Map())
 
   const handlePointerDown = (midi: number) => (e: PointerEvent<HTMLDivElement>) => {
@@ -125,7 +107,6 @@ export function SynthScreen({ onNavigate, latest, connected, sendMessage }: Prop
   useEffect(() => {
     const now = performance.now()
     const prev = prevActiveRef.current
-    const panel = panelRef.current
     activeNotes.forEach((m) => {
       if (!prev.has(m)) {
         risingRef.current.push({
@@ -135,29 +116,6 @@ export function SynthScreen({ onNavigate, latest, connected, sendMessage }: Prop
           endMs: null,
           color: PALETTE[m % PALETTE.length],
         })
-
-        // Particle burst at the impact point (key x, panel bottom).
-        if (panel) {
-          const w = panel.clientWidth
-          const xPct = xCenterPctForMidi(m)
-          const x0 = (xPct / 100) * w
-          const color = PALETTE[m % PALETTE.length]
-          for (let i = 0; i < PARTICLE_COUNT; i++) {
-            const angle = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 0.9
-            const speed = 220 + Math.random() * 520
-            particlesRef.current.push({
-              id: idRef.current++,
-              x: x0 + (Math.random() - 0.5) * 6,
-              y: 0,
-              vx: Math.cos(angle) * speed,
-              vy: -Math.sin(angle) * speed, // angle ≈ -π/2 ⇒ vy positive (up)
-              bornMs: now,
-              life: PARTICLE_LIFE_MS * (0.6 + Math.random() * 0.7),
-              color,
-              size: 3 + Math.random() * 4,
-            })
-          }
-        }
       }
     })
     prev.forEach((m) => {
@@ -177,17 +135,12 @@ export function SynthScreen({ onNavigate, latest, connected, sendMessage }: Prop
   // Imperative DOM sync: spawn/remove note elements, then animate via RAF.
   useEffect(() => {
     let raf = 0
-    let lastNow = performance.now()
     const S = PIXELS_PER_SECOND / 1000
 
     const tick = () => {
       const now = performance.now()
-      const dt = Math.min(0.05, (now - lastNow) / 1000) // clamp big gaps after tab idle
-      lastNow = now
       const panel = panelRef.current
-      const particleLayer = particleLayerRef.current
       const panelHeight = panel?.clientHeight ?? 0
-      const panelWidth = panel?.clientWidth ?? 0
 
       // --- rising bars ---
       const keep: RisingNote[] = []
@@ -225,46 +178,6 @@ export function SynthScreen({ onNavigate, latest, connected, sendMessage }: Prop
       }
       risingRef.current = keep
 
-      // --- particles ---
-      const keepP: Particle[] = []
-      for (const p of particlesRef.current) {
-        const age = now - p.bornMs
-        if (age >= p.life || p.x < -20 || p.x > panelWidth + 20 || p.y < -20) {
-          const stale = particleElsRef.current.get(p.id)
-          if (stale) {
-            stale.remove()
-            particleElsRef.current.delete(p.id)
-          }
-          continue
-        }
-        // Integrate physics.
-        p.vy -= PARTICLE_GRAVITY * dt
-        p.x += p.vx * dt
-        p.y += p.vy * dt
-
-        let el = particleElsRef.current.get(p.id)
-        if (!el && particleLayer) {
-          el = document.createElement("div")
-          el.className = "absolute rounded-full"
-          el.style.width = `${p.size}px`
-          el.style.height = `${p.size}px`
-          el.style.background = p.color
-          el.style.boxShadow = `0 0 ${p.size * 3}px ${p.size * 0.6}px ${p.color}, 0 0 ${p.size * 7}px ${p.size}px color-mix(in srgb, ${p.color} 50%, transparent)`
-          el.style.willChange = "transform, opacity"
-          particleLayer.appendChild(el)
-          particleElsRef.current.set(p.id, el)
-        }
-        if (el) {
-          // Use translate3d for GPU compositing; bottom/left as base.
-          el.style.left = `${p.x - p.size / 2}px`
-          el.style.bottom = `${p.y - p.size / 2}px`
-          const t = age / p.life
-          el.style.opacity = `${(1 - t) * (1 - t)}` // ease-out fade
-        }
-        keepP.push(p)
-      }
-      particlesRef.current = keepP
-
       raf = requestAnimationFrame(tick)
     }
 
@@ -273,8 +186,6 @@ export function SynthScreen({ onNavigate, latest, connected, sendMessage }: Prop
       cancelAnimationFrame(raf)
       noteElsRef.current.forEach((el) => el.remove())
       noteElsRef.current.clear()
-      particleElsRef.current.forEach((el) => el.remove())
-      particleElsRef.current.clear()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -298,16 +209,8 @@ export function SynthScreen({ onNavigate, latest, connected, sendMessage }: Prop
       <Separator />
 
       <div className="flex min-h-0 flex-1 flex-col bg-gradient-to-b from-background to-muted/20 px-4 pb-6">
-        {/* Bars + particles inset matches the keyboard inner width (mx-4 outer + p-2 inner ring). */}
         <div className="relative min-h-0 flex-1 px-2">
-          <div ref={panelRef} className="relative size-full overflow-hidden">
-            {/* Particle layer — sits above bars, additive blend for bloom. */}
-            <div
-              ref={particleLayerRef}
-              className="pointer-events-none absolute inset-0"
-              style={{ mixBlendMode: "screen" }}
-            />
-          </div>
+          <div ref={panelRef} className="relative size-full overflow-hidden" />
         </div>
 
         <div
@@ -425,17 +328,6 @@ export function SynthScreen({ onNavigate, latest, connected, sendMessage }: Prop
               })}
             </div>
 
-            {/* Soft top-edge bloom that intensifies with active notes */}
-            {activeNotes.size > 0 && (
-              <div
-                className="pointer-events-none absolute inset-x-0 top-0 h-8 opacity-90"
-                style={{
-                  background: `linear-gradient(to bottom, ${HOT_PINK}66 0%, transparent 100%)`,
-                  filter: "blur(6px)",
-                  mixBlendMode: "screen",
-                }}
-              />
-            )}
           </div>
         </div>
       </div>
