@@ -14,6 +14,11 @@ from typing import Literal
 # ---------- tunables ----------
 PITCH_PERFECT_CENTS = 50.0
 PITCH_TOLERANCE_CENTS = 200.0
+# Fraction of each note's duration over which pitch frames are scored.
+# Defaults to the middle 50% (0.25..0.75) so attack/release transients
+# don't drag the average down.
+PITCH_SCORE_WINDOW_START = 0.25
+PITCH_SCORE_WINDOW_END = 0.75
 TIMING_PERFECT_MS = 100.0
 TIMING_TOLERANCE_MS = 300.0
 W_PITCH = 0.85
@@ -241,8 +246,10 @@ class ScoringSession:
                 ):
                     self._onset_offset_ms = position_ms - note.start_ms
 
+                score_start = note.start_ms + PITCH_SCORE_WINDOW_START * note.duration_ms
+                score_end = note.start_ms + PITCH_SCORE_WINDOW_END * note.duration_ms
                 if (
-                    note.start_ms <= position_ms < note.end_ms
+                    score_start <= position_ms < score_end
                     and vad_voiced
                     and detected_hz is not None
                     and target_hz is not None
