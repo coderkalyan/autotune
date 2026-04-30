@@ -30,7 +30,17 @@ module compute #(
     output logic [6:0] HEX3,
     output logic [6:0] HEX4,
     output logic [6:0] HEX5,
-    output logic [32*27-1:0] o_vocode_bands_flat
+    output logic [32*27-1:0] o_vocode_bands_flat,
+    // Harmony / key telemetry
+    output logic [6:0] o_melody_midi,
+    output logic [6:0] o_held_midi,
+    output logic       o_any_note_pressed,
+    output logic [3:0] o_harm_tonic,
+    output logic       o_harm_mode,
+    output logic [2:0] o_chord_state,
+    output logic       o_in_scale,
+    output logic [6:0] o_harm1_midi,
+    output logic [6:0] o_harm2_midi
 );
 
   // ----------------------------------------------------------------
@@ -70,15 +80,15 @@ module compute #(
   logic r_pitch_valid;
 
   assign or_pitch_period = r_pitch_period;
-  assign or_pitch_valid  = r_pitch_valid;
+  assign or_pitch_valid = r_pitch_valid;
 
 
   // ----------------------------------------------------------------
   // Preprocessing
   // ----------------------------------------------------------------
   // preprocessing disabled — pass through
-  assign lpf_lf   = lf;
-  assign lpf_rf   = rf;
+  assign lpf_lf = lf;
+  assign lpf_rf = rf;
   assign lpf_done = adc_en;
 
   // Voice activation detection.
@@ -208,7 +218,7 @@ module compute #(
   // inside pitch_detection, so a downstream change-detect doesn't chatter.
   wire [6:0] detected_midi;
   lag_to_midi_lut iL2M (
-      .i_lag(pitch_period),
+      .i_lag (pitch_period),
       .o_midi(detected_midi)
   );
 
@@ -237,6 +247,9 @@ module compute #(
   // harm{1,2}_ratio are Q11.16 reciprocals; multiply with eff_pitch_factor to
   // get each harmony's PSOLA i_advance.
   fixed_t harm1_ratio, harm2_ratio;
+  logic [2:0] harm_chord_state;
+  logic       harm_in_scale;
+  logic signed [7:0] harm1_semi, harm2_semi;
   harmony_gen iHARM (
       .clk(clk),
       .rst(rst),
@@ -247,9 +260,30 @@ module compute #(
       .harm1_ratio(harm1_ratio),
       .harm2_ratio(harm2_ratio),
       .ratios_valid(),
-      .o_chord_state(),
-      .o_in_scale()
+      .o_chord_state(harm_chord_state),
+      .o_in_scale(harm_in_scale),
+      .o_harm1_semi(harm1_semi),
+      .o_harm2_semi(harm2_semi)
   );
+
+  // Compute harmony MIDI = melody_midi + semitone offset, saturated to [0,127].
+  function automatic logic [6:0] sat_midi(input logic [6:0] base, input logic signed [7:0] semi);
+    logic signed [9:0] s;
+    s = $signed({2'b00, base}) + $signed({{2{semi[7]}}, semi});
+    if (s < 0)         sat_midi = 7'd0;
+    else if (s > 127)  sat_midi = 7'd127;
+    else               sat_midi = s[6:0];
+  endfunction
+
+  assign o_melody_midi      = melody_midi;
+  assign o_held_midi        = note_number;
+  assign o_any_note_pressed = |notes;
+  assign o_harm_tonic       = harm_tonic;
+  assign o_harm_mode        = harm_mode;
+  assign o_chord_state      = harm_chord_state;
+  assign o_in_scale         = harm_in_scale;
+  assign o_harm1_midi       = sat_midi(melody_midi, harm1_semi);
+  assign o_harm2_midi       = sat_midi(melody_midi, harm2_semi);
 
   fixed_t harm_h1_advance, harm_h2_advance;
   assign harm_h1_advance = fixed_mul(eff_pitch_factor, harm1_ratio);
@@ -308,8 +342,8 @@ module compute #(
 
   // Stacked mix: root unity, harmonies at 1/2. May exceed full-scale; OK.
   fixed_t stack_lf, stack_rf;
-  assign stack_lf = psola_lf + (psola_lf_h1 >>> 1) + (psola_lf_h2 >>> 1);
-  assign stack_rf = psola_rf + (psola_rf_h1 >>> 1) + (psola_rf_h2 >>> 1);
+  assign stack_lf = psola_lf + (psola_lf_h1 >>> 0) + (psola_lf_h2 >>> 0);
+  assign stack_rf = psola_rf + (psola_rf_h1 >>> 0) + (psola_rf_h2 >>> 0);
 
   // ----------------------------------------------------------------
   // Vocoding
@@ -428,14 +462,13 @@ module compute #(
   // left-shift to boost it — no DSP needed.
   localparam int VOCODE_BOOST_SHIFT = 2;  // 2x boost
   assign vol_gain_base = fixed_t'({1'b0, volume}) << (16 - VOL_SHIFT);
-  assign vol_gain      = (mode == VOCODE) ? (vol_gain_base << VOCODE_BOOST_SHIFT)
-                                          : vol_gain_base;
+  assign vol_gain      = (mode == VOCODE) ? (vol_gain_base << VOCODE_BOOST_SHIFT) : vol_gain_base;
   // assign o_lf    = fixed_mul(pre_lf, vol_gain);
   // assign o_rf    = fixed_mul(pre_rf, vol_gain);
   // assign o_valid = pre_valid;
-  assign o_lf    = fixed_mul(post_lf, vol_gain);
-  assign o_rf    = fixed_mul(post_rf, vol_gain);
-  assign o_valid = post_valid;
+  assign o_lf          = fixed_mul(post_lf, vol_gain);
+  assign o_rf          = fixed_mul(post_rf, vol_gain);
+  assign o_valid       = post_valid;
 
 
   // ----------------------------------------------------------------

@@ -28,7 +28,9 @@ module harmony_gen (
     output fixed_t      harm2_ratio,
     output logic        ratios_valid,
     output logic [2:0]  o_chord_state,  // debug
-    output logic        o_in_scale       // debug
+    output logic        o_in_scale,      // debug
+    output logic signed [7:0] o_harm1_semi, // semitone offset selected for harm1
+    output logic signed [7:0] o_harm2_semi  // semitone offset selected for harm2
 );
 
   // ----------------------------------------------------------------
@@ -148,6 +150,8 @@ module harmony_gen (
   logic signed [7:0] harm2_semi;
   assign harm1_semi = $signed(voic_word[15:8]);
   assign harm2_semi = $signed(voic_word[7:0]);
+  assign o_harm1_semi = harm1_semi;
+  assign o_harm2_semi = harm2_semi;
 
   // ----------------------------------------------------------------
   // Ratio ROM — addr = signed_semi + 16. Clamp out-of-range entries.
