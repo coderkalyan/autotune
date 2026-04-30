@@ -48,12 +48,16 @@ Bucket = Literal["hit", "near", "miss"]
 class Note:
     start_ms: float
     duration_ms: float
-    pitch_hz: float
+    pitch_hz_candidates: list[float]
     lyric: str = ""
 
     @property
     def end_ms(self) -> float:
         return self.start_ms + self.duration_ms
+
+    @property
+    def pitch_hz(self) -> float:
+        return self.pitch_hz_candidates[0]
 
 
 @dataclass
@@ -152,6 +156,11 @@ def bucket_for(cents: float) -> Bucket:
     return "miss"
 
 
+def _best_candidate(detected_hz: float, candidates: list[float]) -> float:
+    """Pick candidate minimizing |cents_off(detected, c)|."""
+    return min(candidates, key=lambda c: abs(cents_off(detected_hz, c)))
+
+
 class ScoringSession:
     def __init__(self, notes: list[Note]) -> None:
         self._notes = sorted(notes, key=lambda n: n.start_ms)
@@ -190,20 +199,31 @@ class ScoringSession:
         self,
         position_ms: float,
         detected_hz: float | None,
-        target_hz: float | None,
         vad_voiced: bool,
     ) -> ScoreState:
+        # The "active note" for octave/quality/bucket is the one currently
+        # playing under position_ms, regardless of whether the cursor has
+        # advanced past it yet this tick. Pick it up front.
+        active_note: Note | None = None
+        for n in self._notes[self._cursor:]:
+            if n.start_ms <= position_ms < n.end_ms:
+                active_note = n
+                break
+            if position_ms < n.start_ms:
+                break
+
         # --- octave detection ---
         if (
             not self._octave_locked
             and vad_voiced
             and detected_hz is not None
-            and target_hz is not None
+            and active_note is not None
         ):
             if self._octave_first_ms is None:
                 self._octave_first_ms = position_ms
+            best = _best_candidate(detected_hz, active_note.pitch_hz_candidates)
             self._octave_pairs_det.append(detected_hz)
-            self._octave_pairs_tgt.append(target_hz)
+            self._octave_pairs_tgt.append(best)
             elapsed = position_ms - self._octave_first_ms
             if (
                 len(self._octave_pairs_det) >= OCTAVE_DETECT_MAX_PAIRS
@@ -263,21 +283,26 @@ class ScoringSession:
                     score_start <= position_ms < score_end
                     and vad_voiced
                     and detected_hz is not None
-                    and target_hz is not None
                 ):
-                    self._active_pitch_scores.append(
-                        frame_pitch_score(cents_off(detected_hz, target_hz))
+                    fps = max(
+                        frame_pitch_score(cents_off(detected_hz, c))
+                        for c in note.pitch_hz_candidates
                     )
+                    self._active_pitch_scores.append(fps)
                     self._active_detected_hzs.append(detected_hz)
 
         # --- frame bucket for color shift ---
         bucket: Bucket | None = None
-        if vad_voiced and detected_hz is not None and target_hz is not None:
-            bucket = bucket_for(cents_off(detected_hz, target_hz))
+        if vad_voiced and detected_hz is not None and active_note is not None:
+            best = _best_candidate(detected_hz, active_note.pitch_hz_candidates)
+            bucket = bucket_for(cents_off(detected_hz, best))
 
         # --- frame quality EMA (powers the pulsing border on the frontend) ---
-        if vad_voiced and detected_hz is not None and target_hz is not None:
-            fps = frame_pitch_score(cents_off(detected_hz, target_hz))
+        if vad_voiced and detected_hz is not None and active_note is not None:
+            fps = max(
+                frame_pitch_score(cents_off(detected_hz, c))
+                for c in active_note.pitch_hz_candidates
+            )
             if self._quality_ema is None:
                 self._quality_ema = fps
             else:
@@ -291,7 +316,10 @@ class ScoringSession:
         if self._cursor >= len(self._notes) and not self._complete:
             self._complete = True
 
-        return self._build_state(target_hz, bucket, completed)
+        target_for_display = (
+            active_note.pitch_hz_candidates[0] if active_note is not None else None
+        )
+        return self._build_state(target_for_display, bucket, completed)
 
     def finish(self) -> ScoreState:
         """Force-complete the session (e.g. user pressed Stop)."""
@@ -336,15 +364,17 @@ class ScoringSession:
             if self._active_detected_hzs
             else None
         )
-        cents = (
-            cents_off(detected_median, note.pitch_hz)
-            if detected_median is not None
-            else None
-        )
+        if detected_median is not None:
+            best = _best_candidate(detected_median, note.pitch_hz_candidates)
+            cents = cents_off(detected_median, best)
+            display_target = best
+        else:
+            cents = None
+            display_target = note.pitch_hz_candidates[0]
 
         return NoteResult(
             lyric=note.lyric,
-            pitch_hz=note.pitch_hz,
+            pitch_hz=display_target,
             score=score,
             pitch_score=avg,
             timing_score=t,
@@ -434,9 +464,9 @@ if __name__ == "__main__":
 
     print("ScoringSession (synthetic perfect run):")
     notes = [
-        Note(start_ms=0, duration_ms=500, pitch_hz=440.0, lyric="a"),
-        Note(start_ms=500, duration_ms=500, pitch_hz=494.0, lyric="b"),
-        Note(start_ms=1000, duration_ms=500, pitch_hz=523.25, lyric="c"),
+        Note(start_ms=0, duration_ms=500, pitch_hz_candidates=[440.0], lyric="a"),
+        Note(start_ms=500, duration_ms=500, pitch_hz_candidates=[494.0], lyric="b"),
+        Note(start_ms=1000, duration_ms=500, pitch_hz_candidates=[523.25], lyric="c"),
     ]
     sess = ScoringSession(notes)
     completed_results: list[NoteResult] = []
@@ -447,7 +477,7 @@ if __name__ == "__main__":
             if n.start_ms <= t < n.end_ms:
                 target = n.pitch_hz
                 break
-        state = sess.update(t, target, target, vad_voiced=target is not None)
+        state = sess.update(t, target, vad_voiced=target is not None)
         if state.note_completed is not None:
             completed_results.append(state.note_completed)
         t += 33.0
@@ -487,7 +517,7 @@ if __name__ == "__main__":
     silent_results: list[NoteResult] = []
     t = 0.0
     while t < 1600:
-        state2 = sess2.update(t, None, None, vad_voiced=False)
+        state2 = sess2.update(t, None, vad_voiced=False)
         if state2.note_completed is not None:
             silent_results.append(state2.note_completed)
         t += 33.0
@@ -508,29 +538,60 @@ if __name__ == "__main__":
         "ScoringSession (voiced phrase then silence -> frame_quality decays to None):"
     )
     sess3 = ScoringSession(
-        [Note(start_ms=0, duration_ms=1000, pitch_hz=440.0, lyric="x")]
+        [Note(start_ms=0, duration_ms=1000, pitch_hz_candidates=[440.0], lyric="x")]
     )
     t = 0.0
     # 1 s voiced
     while t < 1000:
-        sess3.update(t, 440.0, 440.0, vad_voiced=True)
+        sess3.update(t, 440.0, vad_voiced=True)
         t += 33.0
-    mid = sess3.update(1000.0, 440.0, 440.0, vad_voiced=True)
+    mid = sess3.update(999.0, 440.0, vad_voiced=True)
     check(
         "frame_quality high after voiced phrase",
         mid.frame_quality is not None and mid.frame_quality >= 0.99,
         f"frame_quality={mid.frame_quality}",
     )
+    sess3.update(1000.0, 440.0, vad_voiced=True)  # advance cursor past note
     # 2 s silence
     last_silence: ScoreState | None = None
     while t < 3000:
-        last_silence = sess3.update(t, None, None, vad_voiced=False)
+        last_silence = sess3.update(t, None, vad_voiced=False)
         t += 33.0
     assert last_silence is not None
     check(
         "frame_quality decays to None after 2 s silence",
         last_silence.frame_quality is None,
         f"frame_quality={last_silence.frame_quality}",
+    )
+
+    print("ScoringSession (multi-candidate generosity):")
+
+    def _run_constant_pitch(candidates: list[float], detected: float) -> float:
+        sess_mc = ScoringSession(
+            [
+                Note(
+                    start_ms=0,
+                    duration_ms=500,
+                    pitch_hz_candidates=candidates,
+                    lyric="m",
+                )
+            ]
+        )
+        t_mc = 0.0
+        while t_mc < 600:
+            sess_mc.update(t_mc, detected, vad_voiced=True)
+            t_mc += 33.0
+        return sess_mc.finish().score
+
+    score_a = _run_constant_pitch([440.0, 494.0], 440.0)
+    score_b = _run_constant_pitch([440.0, 494.0], 494.0)
+    score_mid = _run_constant_pitch([440.0, 494.0], 466.16)
+    check("singer hits low candidate -> 1.0", abs(score_a - 1.0) < 1e-3, f"{score_a:.3f}")
+    check("singer hits high candidate -> 1.0", abs(score_b - 1.0) < 1e-3, f"{score_b:.3f}")
+    check(
+        "singer between candidates -> partial",
+        0.3 < score_mid < 0.7,
+        f"{score_mid:.3f}",
     )
 
     sys.exit(0 if failures == 0 else 1)

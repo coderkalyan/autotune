@@ -1,9 +1,9 @@
 import bisect
-import csv
 import json
+import math
 import os
-import statistics
 
+from pitch_utils import midi_to_hz
 from scoring import Note
 
 
@@ -11,11 +11,10 @@ class SongManager:
     def __init__(self, songs_dir: str) -> None:
         self._songs_dir = os.path.abspath(songs_dir)
         self._current_song_id: str | None = None
-        self._timestamps: list[float] = []
-        self._freqs: list[float] = []
         self._lyric_times: list[float] = []
         self._lyric_texts: list[str] = []
         self._notes: list[Note] = []
+        self._note_starts: list[float] = []
 
     # ------------------------------------------------------------------
     # Song catalogue
@@ -39,6 +38,8 @@ class SongManager:
                     "duration_ms": meta.get("duration_ms", 0),
                     "album_art_url": f"/songs/{slug}/cover",
                     "bpm": meta.get("bpm", None),
+                    "grade_start_ms": meta.get("grade_start_ms", 0),
+                    "grade_end_ms": meta.get("grade_end_ms", 0),
                 }
             )
         return songs
@@ -69,17 +70,6 @@ class SongManager:
     # ------------------------------------------------------------------
 
     def load(self, song_id: str) -> None:
-        pitch_path = os.path.join(self.song_dir(song_id), "pitch_track.csv")
-        timestamps: list[float] = []
-        freqs: list[float] = []
-        with open(pitch_path, newline="") as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                timestamps.append(float(row["timestamp_ms"]))
-                freqs.append(float(row["frequency_hz"]))
-        self._timestamps = timestamps
-        self._freqs = freqs
-
         lyric_times: list[float] = []
         lyric_texts: list[str] = []
         lyrics_raw: list[dict] = []
@@ -93,26 +83,36 @@ class SongManager:
         self._lyric_times = lyric_times
         self._lyric_texts = lyric_texts
 
-        # Notes: prefer notes.json, otherwise derive from lyrics + pitch track and cache.
+        # Notes: prefer notes.json (v2 schema with pitch_hz_candidates), otherwise
+        # derive from lyrics' MIDI notes and cache.
         notes_path = os.path.join(self.song_dir(song_id), "notes.json")
         notes: list[Note] = []
         if os.path.isfile(notes_path):
             try:
                 with open(notes_path) as f:
-                    for entry in json.load(f):
+                    cached = json.load(f)
+                if all("pitch_hz_candidates" in entry for entry in cached):
+                    for entry in cached:
                         notes.append(
                             Note(
                                 start_ms=float(entry["start_ms"]),
                                 duration_ms=float(entry["duration_ms"]),
-                                pitch_hz=float(entry["pitch_hz"]),
+                                pitch_hz_candidates=[
+                                    float(c) for c in entry["pitch_hz_candidates"]
+                                ],
                                 lyric=str(entry.get("lyric", "")),
                             )
                         )
+                else:
+                    print(
+                        f"[song_manager] notes.json at {notes_path} is stale (missing"
+                        " pitch_hz_candidates); re-deriving"
+                    )
             except Exception as e:
                 print(f"[song_manager] failed to read notes.json ({e}); deriving instead")
                 notes = []
-        if not notes and lyrics_raw and timestamps:
-            notes = derive_notes_from_lyrics(lyrics_raw, timestamps, freqs)
+        if not notes and lyrics_raw:
+            notes = derive_notes_from_lyrics(lyrics_raw)
             if notes:
                 try:
                     with open(notes_path, "w") as f:
@@ -121,7 +121,7 @@ class SongManager:
                                 {
                                     "start_ms": n.start_ms,
                                     "duration_ms": n.duration_ms,
-                                    "pitch_hz": n.pitch_hz,
+                                    "pitch_hz_candidates": n.pitch_hz_candidates,
                                     "lyric": n.lyric,
                                 }
                                 for n in notes
@@ -133,25 +133,27 @@ class SongManager:
                 except Exception as e:
                     print(f"[song_manager] failed to write notes.json ({e})")
         self._notes = notes
+        self._note_starts = [n.start_ms for n in notes]
 
         self._current_song_id = song_id
 
     def unload(self) -> None:
         self._current_song_id = None
-        self._timestamps = []
-        self._freqs = []
         self._lyric_times = []
         self._lyric_texts = []
         self._notes = []
+        self._note_starts = []
 
     def get_target_hz(self, position_ms: float) -> float | None:
-        if not self._timestamps:
+        if not self._notes:
             return None
-        idx = bisect.bisect_left(self._timestamps, position_ms)
-        # Clamp to valid range
-        idx = max(0, min(idx, len(self._timestamps) - 1))
-        freq = self._freqs[idx]
-        return freq if freq > 0.0 else None
+        idx = bisect.bisect_right(self._note_starts, position_ms) - 1
+        if idx < 0:
+            return None
+        note = self._notes[idx]
+        if position_ms >= note.end_ms:
+            return None
+        return note.pitch_hz_candidates[0]
 
     def get_current_lyric(self, position_ms: float) -> str | None:
         if not self._lyric_times:
@@ -173,19 +175,13 @@ class SongManager:
 # Note derivation from lyrics word timings + pitch track
 # ---------------------------------------------------------------------------
 
-def derive_notes_from_lyrics(
-    lyrics: list[dict],
-    pitch_timestamps: list[float],
-    pitch_freqs: list[float],
-) -> list[Note]:
-    """Each lyric word becomes one note. Pitch is the median of voiced
-    pitch_track.csv samples falling inside the word's [start, end) window.
-    Words with no voiced samples are dropped (rests don't score).
+def derive_notes_from_lyrics(lyrics: list[dict]) -> list[Note]:
+    """Each lyric word becomes one scoring Note. Targets come from the word's
+    `note` field, which is either a single MIDI int or a list of MIDI ints
+    (melisma). Each MIDI value is converted to Hz; the scoring engine then
+    grades each frame against the closest candidate (per-frame max).
 
-    Note: `pitch_hz` here is metadata only. The scoring engine does
-    per-frame comparison against the live `target_hz` from `pitch_track.csv`,
-    so multi-pitch (melisma) words are graded against the actual contour, not
-    this single median.
+    Words missing a `note` field, or with empty/non-numeric notes, are skipped.
     """
     notes: list[Note] = []
     for line in lyrics:
@@ -196,19 +192,25 @@ def derive_notes_from_lyrics(
             end = float(end_raw) if end_raw is not None else start + 200.0
             if end <= start:
                 continue
-            lo = bisect.bisect_left(pitch_timestamps, start)
-            hi = bisect.bisect_left(pitch_timestamps, end)
-            voiced = [
-                f for f in pitch_freqs[lo:hi] if f > 0.0
-            ]
-            if not voiced:
+            raw = w.get("note")
+            if raw is None:
                 continue
-            pitch_hz = statistics.median(voiced)
+            midis = raw if isinstance(raw, list) else [raw]
+            candidates: list[float] = []
+            for m in midis:
+                try:
+                    hz = midi_to_hz(float(m))
+                except (TypeError, ValueError):
+                    continue
+                if math.isfinite(hz) and hz > 0.0:
+                    candidates.append(hz)
+            if not candidates:
+                continue
             notes.append(
                 Note(
                     start_ms=start,
                     duration_ms=end - start,
-                    pitch_hz=pitch_hz,
+                    pitch_hz_candidates=candidates,
                     lyric=str(w.get("text", "")),
                 )
             )

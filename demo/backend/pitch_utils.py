@@ -30,6 +30,11 @@ LAG_TO_HZ: dict[int, float] = {lag: FS / lag for lag in _LAG_TO_NOTE}
 _VALID_LAGS: list[int] = sorted(LAG_TO_HZ)
 
 
+def midi_to_hz(midi: float) -> float:
+    """Convert a MIDI note number to frequency in Hz (A4 = 69 = 440 Hz)."""
+    return 440.0 * (2.0 ** ((midi - 69.0) / 12.0))
+
+
 def lag_to_hz(lag: int) -> float | None:
     """Convert a raw autocorrelation lag to frequency in Hz.
 
