@@ -19,7 +19,8 @@ from scoring import ScoringSession
 from song_manager import SongManager
 from uart_parser import UARTParser
 
-SERIAL_PORT = "/dev/cu.usbserial-FTA9O9VB"
+# SERIAL_PORT = "/dev/cu.usbserial-FTA9O9VB"
+SERIAL_PORT = "/dev/serial/by-id/usb-FTDI_TTL232R-3V3_FTA9OC5H-if00-port0"
 BAUD = 115200
 WS_INTERVAL = 0.033  # ~30 Hz
 PLAYBACK_STALE_S = 0.25
@@ -242,6 +243,19 @@ async def _pitch_loop() -> None:
                 "config_err": reading["config_err"],
                 "vocode_bands": reading["vocode_bands"],
                 "midi_notes": midi_notes,
+                "melody_midi": reading.get("melody_midi"),
+                "held_midi": reading.get("held_midi"),
+                "any_note_pressed": reading.get("any_note_pressed"),
+                "harm1_midi": reading.get("harm1_midi"),
+                "harm2_midi": reading.get("harm2_midi"),
+                "harm_tonic": reading.get("harm_tonic"),
+                "harm_mode": reading.get("harm_mode"),
+                "harm_key_name": reading.get("harm_key_name"),
+                "chord_state": reading.get("chord_state"),
+                "in_scale": reading.get("in_scale"),
+                "melody_note_name": reading.get("melody_note_name"),
+                "harm1_note_name": reading.get("harm1_note_name"),
+                "harm2_note_name": reading.get("harm2_note_name"),
             }
         else:
             # No packet received yet — emit nulls so the frontend graph keeps ticking
@@ -261,6 +275,19 @@ async def _pitch_loop() -> None:
                 "config_err": None,
                 "vocode_bands": None,
                 "midi_notes": midi_notes,
+                "melody_midi": None,
+                "held_midi": None,
+                "any_note_pressed": None,
+                "harm1_midi": None,
+                "harm2_midi": None,
+                "harm_tonic": None,
+                "harm_mode": None,
+                "harm_key_name": None,
+                "chord_state": None,
+                "in_scale": None,
+                "melody_note_name": None,
+                "harm1_note_name": None,
+                "harm2_note_name": None,
             }
 
         msg.update(score_fields)

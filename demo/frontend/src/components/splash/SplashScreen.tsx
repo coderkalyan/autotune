@@ -1,4 +1,4 @@
-import { Music2, Piano, Radio } from "lucide-react"
+import { Music2, Piano, Radio, Layers3 } from "lucide-react"
 import type { AppScreen } from "@/types"
 import { ModeHalf } from "./ModeHalf"
 
@@ -113,6 +113,15 @@ export function SplashScreen({ onNavigate }: Props) {
         accentColor="#f472b6"
         illustration={<PianoKeysIllustration />}
         onClick={() => onNavigate({ screen: "synth" })}
+      />
+
+      <ModeHalf
+        title="Harmony"
+        description="Markov-driven chord stacking with key, voicing, and pitch-class wheel"
+        Icon={Layers3}
+        accentColor="#facc15"
+        illustration={<PianoKeysIllustration />}
+        onClick={() => onNavigate({ screen: "harmony" })}
       />
     </div>
   )

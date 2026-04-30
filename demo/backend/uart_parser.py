@@ -6,30 +6,41 @@ import serial
 
 from pitch_utils import lag_to_hz, nearest_note_hz
 
-NUM_BYTES = 128
-PAYLOAD_BITS = NUM_BYTES * 7  # 896
-PAYLOAD_BYTES = PAYLOAD_BITS // 8  # 112
+NUM_BYTES = 144
+PAYLOAD_BITS = NUM_BYTES * 7  # 1008
+PAYLOAD_BYTES = PAYLOAD_BITS // 8  # 126
 
-# Payload layout (896 bits, MSB first):
-#   [895:886] 10-bit lag
-#   [885]     1-bit  autocorrelation confidence
-#   [884:21]  32 × 27-bit Q3.24 fixed_t vocode bands
-#   [20:18]   3-bit  mode (MUTE=0, PASSTHROUGH=1, AUTOTUNE=2, VOCODE=3, SYNTH=4)
-#   [17]      vad_active
-#   [16]      vad_voiced
-#   [15]      dac_full
-#   [14]      adc_empty
-#   [13]      config_done
-#   [12]      config_err
-#   [11:2]    10-bit target_lag
-#   [1:0]     padding
+# Payload layout (1008 bits, MSB first) — mirror of rtl/uart_tx_wrapper.sv:
+#   [1007:998] 10-bit lag
+#   [997]      1-bit  autocorrelation confidence
+#   [996:133]  32 × 27-bit Q3.24 fixed_t vocode bands
+#   [132:130]  3-bit  mode (MUTE=0, PASSTHROUGH=1, AUTOTUNE=2, HARMONY=3, VOCODE=4, SYNTH=5)
+#   [129]      vad_active
+#   [128]      vad_voiced
+#   [127]      dac_full
+#   [126]      adc_empty
+#   [125]      config_done
+#   [124]      config_err
+#   [123:114]  10-bit target_lag
+#   [113:107]  7-bit melody_midi (input to harmony_gen)
+#   [106:100]  7-bit held_midi (priority-encoder MIDI of held keys)
+#   [99]       any_note_pressed
+#   [98:92]    7-bit harm1_midi
+#   [91:85]    7-bit harm2_midi
+#   [84:81]    4-bit harm_tonic (0=C..11=B)
+#   [80]       harm_mode (0=major, 1=minor)
+#   [79:77]    3-bit chord_state (Markov FSM state)
+#   [76]       in_scale
+#   [75:0]     padding
 
 FIXED_MASK = (1 << 27) - 1
 FIXED_SIGN = 1 << 26
 
+PITCH_CLASS_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
+
 
 def decode_payload(buf: list[int]) -> int:
-    """Reassemble 128 framed bytes (7 data bits each) into a 896-bit integer."""
+    """Reassemble framed bytes (7 data bits each) into a PAYLOAD_BITS-wide int."""
     bits = 0
     for b in buf:
         bits = (bits << 7) | (b & 0x7F)
@@ -37,26 +48,36 @@ def decode_payload(buf: list[int]) -> int:
 
 
 def unpack_payload(bits: int) -> dict:
-    """Extract all fields from a 896-bit payload integer."""
-    lag = (bits >> 886) & 0x3FF
-    valid = (bits >> 885) & 1
+    """Extract all fields from a 1008-bit payload integer."""
+    lag = (bits >> 998) & 0x3FF
+    valid = (bits >> 997) & 1
 
     bands = []
     for j in range(32):
-        shift = 884 - j * 27 - 26  # LSB position of band j
+        shift = 996 - j * 27 - 26  # LSB position of band j
         raw = (bits >> shift) & FIXED_MASK
         if raw & FIXED_SIGN:
             raw -= 1 << 27
         bands.append(raw)
 
-    mode = (bits >> 18) & 0x7
-    vad_active = (bits >> 17) & 1
-    vad_voiced = (bits >> 16) & 1
-    dac_full = (bits >> 15) & 1
-    adc_empty = (bits >> 14) & 1
-    config_done = (bits >> 13) & 1
-    config_err = (bits >> 12) & 1
-    target_lag = (bits >> 2) & 0x3FF
+    mode = (bits >> 130) & 0x7
+    vad_active = (bits >> 129) & 1
+    vad_voiced = (bits >> 128) & 1
+    dac_full = (bits >> 127) & 1
+    adc_empty = (bits >> 126) & 1
+    config_done = (bits >> 125) & 1
+    config_err = (bits >> 124) & 1
+    target_lag = (bits >> 114) & 0x3FF
+
+    melody_midi = (bits >> 107) & 0x7F
+    held_midi = (bits >> 100) & 0x7F
+    any_note_pressed = (bits >> 99) & 1
+    harm1_midi = (bits >> 92) & 0x7F
+    harm2_midi = (bits >> 85) & 0x7F
+    harm_tonic = (bits >> 81) & 0xF
+    harm_mode = (bits >> 80) & 1
+    chord_state = (bits >> 77) & 0x7
+    in_scale = (bits >> 76) & 1
 
     to_return = {
         "lag": lag,
@@ -70,21 +91,40 @@ def unpack_payload(bits: int) -> dict:
         "config_done": config_done,
         "config_err": config_err,
         "target_lag": target_lag,
+        "melody_midi": melody_midi,
+        "held_midi": held_midi,
+        "any_note_pressed": any_note_pressed,
+        "harm1_midi": harm1_midi,
+        "harm2_midi": harm2_midi,
+        "harm_tonic": harm_tonic,
+        "harm_mode": harm_mode,
+        "chord_state": chord_state,
+        "in_scale": in_scale,
     }
-
-    # print(to_return)
 
     return to_return
 
 
+def midi_to_name(m: int) -> str:
+    """Format MIDI number as e.g. 'A4'. Returns '' for 0 (sentinel)."""
+    if m <= 0 or m > 127:
+        return ""
+    return f"{PITCH_CLASS_NAMES[m % 12]}{m // 12 - 1}"
+
+
+def harm_key_name(tonic: int, mode: int) -> str:
+    if tonic > 11:
+        tonic = 0
+    return f"{PITCH_CLASS_NAMES[tonic]} {'minor' if mode else 'major'}"
+
+
 class Parser:
-    """128-byte UART packet parser.
+    """Framed UART packet parser.
 
     Packet format (from rtl/uart_tx_wrapper.sv):
-      128 bytes, MSB of each byte is a framing bit:
-        byte 0:     MSB=1 (start), lower 7 bits = payload[895:889]
-        byte 1-127: MSB=0, lower 7 bits = next 7 payload bits
-      Total payload: 896 bits.
+      NUM_BYTES bytes, MSB of each byte is a framing bit:
+        byte 0:    MSB=1 (start), lower 7 bits = top 7 payload bits
+        byte 1..:  MSB=0, lower 7 bits = next 7 payload bits
     """
 
     def __init__(self, on_reading):
@@ -198,6 +238,20 @@ class UARTParser:
                 "config_err": bool(fields["config_err"]),
                 "target_lag": fields["target_lag"],
                 "vocode_bands": [v / (1 << 24) for v in fields["vocode_bands"]],
+                # Harmony / key telemetry
+                "melody_midi": fields["melody_midi"],
+                "held_midi": fields["held_midi"],
+                "any_note_pressed": bool(fields["any_note_pressed"]),
+                "harm1_midi": fields["harm1_midi"],
+                "harm2_midi": fields["harm2_midi"],
+                "harm_tonic": fields["harm_tonic"],
+                "harm_mode": fields["harm_mode"],
+                "harm_key_name": harm_key_name(fields["harm_tonic"], fields["harm_mode"]),
+                "chord_state": fields["chord_state"],
+                "in_scale": bool(fields["in_scale"]),
+                "melody_note_name": midi_to_name(fields["melody_midi"]),
+                "harm1_note_name": midi_to_name(fields["harm1_midi"]),
+                "harm2_note_name": midi_to_name(fields["harm2_midi"]),
             }
 
     def _run(self) -> None:
@@ -216,7 +270,7 @@ if __name__ == "__main__":
     results = []
 
     def capture(detected, corrected, fields):
-        results.append((detected, corrected))
+        results.append((detected, corrected, fields))
 
     def make_packet(
         valid: bool,
@@ -229,23 +283,43 @@ if __name__ == "__main__":
         adc_empty=0,
         config_done=0,
         config_err=0,
+        target_lag=0,
+        melody_midi=0,
+        held_midi=0,
+        any_note_pressed=0,
+        harm1_midi=0,
+        harm2_midi=0,
+        harm_tonic=0,
+        harm_mode=0,
+        chord_state=0,
+        in_scale=0,
     ) -> list[int]:
-        """Build a 128-byte framed packet from fields."""
+        """Build a framed packet from fields."""
         bits = 0
-        bits |= (lag & 0x3FF) << 886
-        bits |= (int(valid) & 1) << 885
+        bits |= (lag & 0x3FF) << 998
+        bits |= (int(valid) & 1) << 997
         if bands:
             for j, b in enumerate(bands):
-                shift = 884 - j * 27 - 26
+                shift = 996 - j * 27 - 26
                 bits |= (b & FIXED_MASK) << shift
-        bits |= (mode & 0x7) << 18
-        bits |= (vad_active & 1) << 17
-        bits |= (vad_voiced & 1) << 16
-        bits |= (dac_full & 1) << 15
-        bits |= (adc_empty & 1) << 14
-        bits |= (config_done & 1) << 13
-        bits |= (config_err & 1) << 12
-        # Split into 128 groups of 7 bits, MSB-first
+        bits |= (mode & 0x7) << 130
+        bits |= (vad_active & 1) << 129
+        bits |= (vad_voiced & 1) << 128
+        bits |= (dac_full & 1) << 127
+        bits |= (adc_empty & 1) << 126
+        bits |= (config_done & 1) << 125
+        bits |= (config_err & 1) << 124
+        bits |= (target_lag & 0x3FF) << 114
+        bits |= (melody_midi & 0x7F) << 107
+        bits |= (held_midi & 0x7F) << 100
+        bits |= (any_note_pressed & 1) << 99
+        bits |= (harm1_midi & 0x7F) << 92
+        bits |= (harm2_midi & 0x7F) << 85
+        bits |= (harm_tonic & 0xF) << 81
+        bits |= (harm_mode & 1) << 80
+        bits |= (chord_state & 0x7) << 77
+        bits |= (in_scale & 1) << 76
+        # Split into NUM_BYTES groups of 7 bits, MSB-first
         packet = []
         for i in range(NUM_BYTES):
             shift = (NUM_BYTES - 1 - i) * 7
@@ -261,21 +335,21 @@ if __name__ == "__main__":
     for b in make_packet(True, 109):
         parser.parse_byte(b)
     assert results, "No reading produced"
-    d, c = results[-1]
+    d, c, _ = results[-1]
     assert abs(d - 440.37) < 1.0, f"detected_hz wrong: {d}"
     print(f"  detected_hz={d:.2f}  corrected_hz={c:.2f}  OK")
 
-    print("Test 2 — invalid packet (valid=0), should produce no reading")
-    before = len(results)
+    print("Test 2 — invalid packet (valid=0) emits None hz")
     for b in make_packet(False, 109):
         parser.parse_byte(b)
-    assert len(results) == before, "Should not emit reading for invalid packet"
-    print("  No reading emitted  OK")
+    d, c, _ = results[-1]
+    assert d is None and c is None, "Invalid packet should null out hz"
+    print("  None hz  OK")
 
     print("Test 3 — packet with lag=183 (C4 ~262 Hz)")
     for b in make_packet(True, 183):
         parser.parse_byte(b)
-    d, c = results[-1]
+    d, c, _ = results[-1]
     assert abs(d - 262.30) < 1.0, f"detected_hz wrong: {d}"
     print(f"  detected_hz={d:.2f}  corrected_hz={c:.2f}  OK")
 
@@ -292,6 +366,16 @@ if __name__ == "__main__":
         adc_empty=0,
         config_done=1,
         config_err=1,
+        target_lag=137,
+        melody_midi=69,
+        held_midi=72,
+        any_note_pressed=1,
+        harm1_midi=64,
+        harm2_midi=76,
+        harm_tonic=9,
+        harm_mode=1,
+        chord_state=5,
+        in_scale=1,
     )
     bits = decode_payload(pkt)
     f = unpack_payload(bits)
@@ -304,8 +388,21 @@ if __name__ == "__main__":
     assert f["adc_empty"] == 0
     assert f["config_done"] == 1
     assert f["config_err"] == 1
+    assert f["target_lag"] == 137
+    assert f["melody_midi"] == 69
+    assert f["held_midi"] == 72
+    assert f["any_note_pressed"] == 1
+    assert f["harm1_midi"] == 64
+    assert f["harm2_midi"] == 76
+    assert f["harm_tonic"] == 9
+    assert f["harm_mode"] == 1
+    assert f["chord_state"] == 5
+    assert f["in_scale"] == 1
     for i in range(32):
         assert f["vocode_bands"][i] == test_bands[i], f"band {i} mismatch"
+    print(f"  harm_key={harm_key_name(f['harm_tonic'], f['harm_mode'])}  "
+          f"melody={midi_to_name(f['melody_midi'])}  "
+          f"h1={midi_to_name(f['harm1_midi'])}  h2={midi_to_name(f['harm2_midi'])}")
     print("  All fields round-tripped  OK")
 
     print("All tests passed.")

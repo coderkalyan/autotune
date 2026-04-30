@@ -19,6 +19,21 @@ export interface PitchReading {
   vocode_bands: number[] | null  // 32 Q11.16 values converted to float
   midi_notes?: number[] | null   // currently held MIDI notes (Synth mode visualization)
 
+  // Harmony-mode telemetry (mirrors demo/backend/uart_parser.py)
+  melody_midi?: number | null            // MIDI note feeding harmony_gen
+  held_midi?: number | null              // priority-encoder MIDI of held keys
+  any_note_pressed?: boolean | null
+  harm1_midi?: number | null             // first harmony voice MIDI
+  harm2_midi?: number | null             // second harmony voice MIDI
+  harm_tonic?: number | null             // 0=C..11=B
+  harm_mode?: number | null              // 0=major, 1=minor
+  harm_key_name?: string | null          // e.g. "A minor"
+  chord_state?: number | null            // Markov state 1..7
+  in_scale?: boolean | null
+  melody_note_name?: string | null       // e.g. "A4"
+  harm1_note_name?: string | null
+  harm2_note_name?: string | null
+
   // Karaoke scoring (sing-along mode)
   detected_hit?: number | null
   detected_near?: number | null
@@ -77,3 +92,4 @@ export type AppScreen =
   | { screen: "autotune"; subMode: AutotuneSubMode; selectedSong: SongEntry | null }
   | { screen: "vocoder" }
   | { screen: "synth" }
+  | { screen: "harmony" }
