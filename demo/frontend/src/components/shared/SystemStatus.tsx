@@ -18,6 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { MODE_LABEL } from "@/lib/modeSync"
 import type { PitchReading } from "@/types"
 
 interface SystemCheck {
@@ -125,8 +126,24 @@ export function SystemStatus({ connected, latest }: Props) {
     </ul>
   )
 
+  const showModeBadge = latest?.mode === 0 || latest?.mode === 1
+  const modeBadgeClass =
+    latest?.mode === 0
+      ? "bg-red-500/15 text-red-400 ring-red-500/30"
+      : "bg-amber-500/15 text-amber-400 ring-amber-500/30"
+
   return (
-    <>
+    <div className="flex items-center gap-2">
+      {showModeBadge && (
+        <span
+          className={cn(
+            "rounded-full px-2 py-0.5 text-xs font-medium uppercase tracking-wide ring-1 ring-inset",
+            modeBadgeClass,
+          )}
+        >
+          {MODE_LABEL[latest!.mode!]}
+        </span>
+      )}
       <button
         onClick={() => setOpen(true)}
         className="flex cursor-pointer items-center gap-2 rounded-full px-2 py-1 transition-colors hover:bg-muted/50"
@@ -180,6 +197,6 @@ export function SystemStatus({ connected, latest }: Props) {
           </DialogContent>
         </Dialog>
       )}
-    </>
+    </div>
   )
 }

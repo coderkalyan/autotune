@@ -406,6 +406,14 @@ async def websocket_endpoint(ws: WebSocket):
                     continue
                 if 0 <= note <= 127:
                     midi_bridge.send_note(note, on=False)
+            elif msg.get("type") == "mode_change" and midi_bridge is not None:
+                try:
+                    mode = int(msg.get("mode", -1))
+                except (TypeError, ValueError):
+                    continue
+                if 0 <= mode <= 5:
+                    # MIDI Note-On Ch9, note = 0x28 + mode (rtl/midi_receiver.sv:100-114)
+                    midi_bridge.send_raw(bytes([0x99, 0x28 + mode, 0x7F]))
     except WebSocketDisconnect:
         pass
     finally:

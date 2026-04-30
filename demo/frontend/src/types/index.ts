@@ -1,4 +1,4 @@
-export type UARTMode = 0 | 1 | 2 | 3 | 4 // MUTE | PASSTHROUGH | AUTOTUNE | VOCODE | SYNTH
+export type UARTMode = 0 | 1 | 2 | 3 | 4 | 5 // MUTE | PASSTHROUGH | AUTOTUNE | VOCODE | SYNTH | HARMONY
 
 export interface PitchReading {
   detected_hz: number | null
@@ -37,6 +37,13 @@ export interface NoteCompleted {
   lyric: string
   pitch_hz: number
   score: number
+  detected_pitch_hz?: number | null
+  cents_off?: number | null
+  pitch_score?: number
+  timing_score?: number
+  duration_ms?: number
+  onset_offset_ms?: number | null
+  weight?: number
 }
 
 export interface LyricWord {
@@ -59,6 +66,8 @@ export interface SongEntry {
   duration_ms: number
   album_art_url: string
   bpm: number | null
+  grade_start_ms: number
+  grade_end_ms: number
 }
 
 export type AutotuneSubMode = "free" | "sing-along"
