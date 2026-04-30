@@ -31,10 +31,10 @@ export function ModeHalf({ title, description, Icon, accentColor, illustration, 
       />
 
       {/* Subtle top-edge glow */}
-      <div
+      {/* <div
         className="pointer-events-none absolute inset-x-0 top-0 h-px opacity-40"
         style={{ background: `linear-gradient(to right, transparent, ${accentColor}, transparent)` }}
-      />
+      /> */}
 
       {/* Background illustration */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-5 transition-opacity duration-300 group-hover:opacity-10">

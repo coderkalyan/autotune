@@ -246,7 +246,9 @@ class UARTParser:
                 "harm2_midi": fields["harm2_midi"],
                 "harm_tonic": fields["harm_tonic"],
                 "harm_mode": fields["harm_mode"],
-                "harm_key_name": harm_key_name(fields["harm_tonic"], fields["harm_mode"]),
+                "harm_key_name": harm_key_name(
+                    fields["harm_tonic"], fields["harm_mode"]
+                ),
                 "chord_state": fields["chord_state"],
                 "in_scale": bool(fields["in_scale"]),
                 "melody_note_name": midi_to_name(fields["melody_midi"]),
@@ -400,9 +402,11 @@ if __name__ == "__main__":
     assert f["in_scale"] == 1
     for i in range(32):
         assert f["vocode_bands"][i] == test_bands[i], f"band {i} mismatch"
-    print(f"  harm_key={harm_key_name(f['harm_tonic'], f['harm_mode'])}  "
-          f"melody={midi_to_name(f['melody_midi'])}  "
-          f"h1={midi_to_name(f['harm1_midi'])}  h2={midi_to_name(f['harm2_midi'])}")
+    print(
+        f"  harm_key={harm_key_name(f['harm_tonic'], f['harm_mode'])}  "
+        f"melody={midi_to_name(f['melody_midi'])}  "
+        f"h1={midi_to_name(f['harm1_midi'])}  h2={midi_to_name(f['harm2_midi'])}"
+    )
     print("  All fields round-tripped  OK")
 
     print("All tests passed.")

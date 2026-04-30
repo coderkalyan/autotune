@@ -14,6 +14,7 @@ class SongManager:
         self._lyric_times: list[float] = []
         self._lyric_texts: list[str] = []
         self._notes: list[Note] = []
+        self._grade_window: tuple[float, float] | None = None
         self._note_starts: list[float] = []
 
     # ------------------------------------------------------------------
@@ -70,6 +71,17 @@ class SongManager:
     # ------------------------------------------------------------------
 
     def load(self, song_id: str) -> None:
+        meta_path = os.path.join(self.song_dir(song_id), "meta.json")
+        grade_window: tuple[float, float] | None = None
+        if os.path.isfile(meta_path):
+            with open(meta_path) as f:
+                meta = json.load(f)
+            gs = meta.get("grade_start_ms")
+            ge = meta.get("grade_end_ms")
+            if isinstance(gs, (int, float)) and isinstance(ge, (int, float)) and ge > gs:
+                grade_window = (float(gs), float(ge))
+        self._grade_window = grade_window
+
         lyric_times: list[float] = []
         lyric_texts: list[str] = []
         lyrics_raw: list[dict] = []
@@ -143,6 +155,10 @@ class SongManager:
         self._lyric_texts = []
         self._notes = []
         self._note_starts = []
+        self._grade_window = None
+
+    def get_grade_window(self) -> tuple[float, float] | None:
+        return self._grade_window
 
     def get_target_hz(self, position_ms: float) -> float | None:
         if not self._notes:

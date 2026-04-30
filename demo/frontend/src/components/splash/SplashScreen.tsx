@@ -76,7 +76,7 @@ interface Props {
 
 export function SplashScreen({ onNavigate }: Props) {
   return (
-    <div className="relative flex size-full bg-background">
+    <div className="relative grid size-full grid-cols-2 grid-rows-2 bg-background">
       <ModeHalf
         title="Autotune"
         description="Pitch correction and real-time sing-along with scrolling pitch visualization"

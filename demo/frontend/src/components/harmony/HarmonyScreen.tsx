@@ -2,7 +2,10 @@ import { useMemo } from "react"
 import { Separator } from "@/components/ui/separator"
 import { BackButton } from "@/components/shared/BackButton"
 import { SystemStatus } from "@/components/shared/SystemStatus"
-import { PianoKeyboard, type KeyHighlight } from "@/components/shared/PianoKeyboard"
+import {
+  PianoKeyboard,
+  type KeyHighlight,
+} from "@/components/shared/PianoKeyboard"
 import type { AppScreen, PitchReading } from "@/types"
 import { PitchClassWheel } from "./PitchClassWheel"
 import { ChordHud } from "./ChordHud"
@@ -45,7 +48,7 @@ export function HarmonyScreen({ onNavigate, latest, connected }: Props) {
         <div className="flex flex-1 justify-start">
           <BackButton onNavigate={onNavigate} />
         </div>
-        <h1 className="text-lg font-semibold">Harmony</h1>
+        <h1 className="text-lg font-semibold">Harmonize</h1>
         <div className="flex flex-1 justify-end">
           <SystemStatus connected={connected} latest={latest} />
         </div>
@@ -89,12 +92,15 @@ export function HarmonyScreen({ onNavigate, latest, connected }: Props) {
           style={{ height: `${KEYBOARD_HEIGHT_PX + 16}px` }}
         >
           <div
-            className="pointer-events-none absolute -top-3 inset-x-6 h-3 rounded-full opacity-80 blur-md"
+            className="pointer-events-none absolute inset-x-6 -top-3 h-3 rounded-full opacity-80 blur-md"
             style={{
               background: `linear-gradient(to right, transparent, ${PRIMARY}, transparent)`,
             }}
           />
-          <PianoKeyboard highlights={highlights} heightPx={KEYBOARD_HEIGHT_PX} />
+          <PianoKeyboard
+            highlights={highlights}
+            heightPx={KEYBOARD_HEIGHT_PX}
+          />
         </div>
       </div>
     </div>

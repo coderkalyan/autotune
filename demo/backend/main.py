@@ -19,8 +19,7 @@ from scoring import ScoringSession
 from song_manager import SongManager
 from uart_parser import UARTParser
 
-# SERIAL_PORT = "/dev/cu.usbserial-FTA9O9VB"
-SERIAL_PORT = "/dev/serial/by-id/usb-FTDI_TTL232R-3V3_FTA9OC5H-if00-port0"
+SERIAL_PORT = "/dev/cu.usbserial-FTA9OC5H"
 BAUD = 115200
 WS_INTERVAL = 0.033  # ~30 Hz
 PLAYBACK_STALE_S = 0.25
@@ -138,6 +137,18 @@ async def _pitch_loop() -> None:
             held_score_fields = {}
             last_scoring_id = current_scoring_id
 
+        grade_window = song_manager.get_grade_window()
+        in_grade_window = (
+            grade_window is not None
+            and position_ms is not None
+            and grade_window[0] <= position_ms <= grade_window[1]
+        )
+        grade_complete = (
+            grade_window is not None
+            and position_ms is not None
+            and position_ms > grade_window[1]
+        )
+
         score_fields = {
             "detected_hit": None,
             "detected_near": None,
@@ -150,12 +161,14 @@ async def _pitch_loop() -> None:
             "song_complete": None,
             "note_completed": None,
             "frame_quality": None,
+            "grade_complete": grade_complete,
+            "grade_start_ms": int(grade_window[0]) if grade_window is not None else None,
+            "grade_end_ms": int(grade_window[1]) if grade_window is not None else None,
         }
-        if scoring_session is not None and position_ms is not None and playing:
+        if scoring_session is not None and position_ms is not None and playing and in_grade_window:
             state = scoring_session.update(
                 position_ms=position_ms,
                 detected_hz=filtered_detected,
-                target_hz=raw_target,
                 vad_voiced=vad_voiced_flag,
             )
             score_fields["target_hz_display"] = (
@@ -167,7 +180,10 @@ async def _pitch_loop() -> None:
             score_fields["combo"] = state.combo
             score_fields["best_combo"] = state.best_combo
             score_fields["stars"] = state.stars
-            score_fields["song_complete"] = state.complete
+            # song_complete is now derived on the frontend from the audio
+            # element's `ended` event so the results modal fires at song-end
+            # rather than at the end of the grade window.
+            score_fields["song_complete"] = None
             score_fields["frame_quality"] = (
                 round(state.frame_quality, 4)
                 if state.frame_quality is not None
@@ -206,22 +222,17 @@ async def _pitch_loop() -> None:
             elif state.detected_bucket == "miss":
                 score_fields["detected_miss"] = filtered_detected
 
-            # Cache the persistent fields so a subsequent pause keeps the UI
-            # showing the same running score/stars.
+            # Cache the persistent fields so a subsequent pause / postroll
+            # keeps the UI showing the same running score/stars instead of
+            # blanking them.
             held_score_fields = {
                 "score": score_fields["score"],
                 "best_combo": score_fields["best_combo"],
                 "stars": score_fields["stars"],
             }
-
-            # Natural completion: cursor reached the end of the note list.
-            if state.complete:
-                score_fields["song_complete"] = True
-                scoring_session = None
-                held_score_fields = {}
         elif scoring_session is not None:
-            # Paused (or no position yet): replay the last running score so the
-            # UI freezes the displayed totals instead of blanking them.
+            # Outside the grade window (preroll / postroll), or paused: replay
+            # the last running score so the StatusRow stays frozen.
             score_fields.update(held_score_fields)
 
         midi_notes = midi_bridge.get_active_notes() if midi_bridge else []
@@ -374,9 +385,17 @@ def start_song(song_id: str):
     if not os.path.isfile(instrumental):
         raise HTTPException(status_code=404, detail="Song not found")
     song_manager.load(song_id)
-    notes = song_manager.get_notes()
+    notes = _notes_in_grade_window(song_manager.get_notes())
     scoring_session = ScoringSession(notes) if notes else None
     return {"ok": True, "song_id": song_id, "note_count": len(notes)}
+
+
+def _notes_in_grade_window(notes: list) -> list:
+    window = song_manager.get_grade_window()
+    if window is None:
+        return list(notes)
+    gs, ge = window
+    return [n for n in notes if n.end_ms > gs and n.start_ms < ge]
 
 
 @app.post("/songs/stop")
@@ -396,8 +415,10 @@ def seek_song(position_ms: float):
     global scoring_session
     if song_manager.current_song_id is None:
         raise HTTPException(status_code=400, detail="No song loaded")
-    # Drop notes already past so fast-forward doesn't penalize skipped notes.
-    notes = [n for n in song_manager.get_notes() if n.end_ms > position_ms]
+    # Drop notes already past so fast-forward doesn't penalize skipped notes,
+    # and clip to the grade window so scoring never extends beyond it.
+    in_window = _notes_in_grade_window(song_manager.get_notes())
+    notes = [n for n in in_window if n.end_ms > position_ms]
     scoring_session = ScoringSession(notes) if notes else None
     return {"ok": True, "position_ms": position_ms, "note_count": len(notes)}
 
