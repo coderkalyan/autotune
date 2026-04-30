@@ -1,7 +1,7 @@
 [
   {
     "timestamp_ms": 512,
-    "text": "With a bit of rock music, everything's fine, throwing the moon for a dance.",
+    "text": "With a bit of rock music, everything's fine, your in the mood for a dance.",
     "words": [
       {
         "timestamp_ms": 512,
@@ -46,7 +46,7 @@
       {
         "timestamp_ms": 4399,
         "end_ms": 5160,
-        "text": "throwing"
+        "text": "your in"
       },
       {
         "timestamp_ms": 5200,
@@ -56,7 +56,7 @@
       {
         "timestamp_ms": 5441,
         "end_ms": 5721,
-        "text": "moon"
+        "text": "mood"
       },
       {
         "timestamp_ms": 5761,

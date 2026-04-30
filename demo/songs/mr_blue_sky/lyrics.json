@@ -113,7 +113,7 @@
   },
   {
     "timestamp_ms": 10299,
-    "text": "Mr. Blue Sky is living in the day.",
+    "text": "Mr. Blue Sky is living here day.",
     "words": [
       {
         "timestamp_ms": 10299,
@@ -143,17 +143,12 @@
       {
         "timestamp_ms": 13222,
         "end_ms": 13562,
-        "text": "in"
+        "text": "here"
       },
       {
         "timestamp_ms": 13582,
-        "end_ms": 13882,
-        "text": "the"
-      },
-      {
-        "timestamp_ms": 14603,
         "end_ms": 15183,
-        "text": "day."
+        "text": "today."
       }
     ]
   },
@@ -251,12 +246,12 @@
   },
   {
     "timestamp_ms": 23850,
-    "text": "Why did we go wrong?",
+    "text": "Where did we go wrong?",
     "words": [
       {
         "timestamp_ms": 23850,
         "end_ms": 24371,
-        "text": "Why"
+        "text": "Where"
       },
       {
         "timestamp_ms": 24391,

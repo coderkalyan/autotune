@@ -1,7 +1,7 @@
 [
   {
     "timestamp_ms": 5644,
-    "text": "And I just can't look, it's killing me They're taking control",
+    "text": "And I just can't look, it's killing me and taking control",
     "words": [
       {
         "timestamp_ms": 5644,
@@ -46,7 +46,7 @@
       {
         "timestamp_ms": 10091,
         "end_ms": 11833,
-        "text": "They're"
+        "text": "and"
       },
       {
         "timestamp_ms": 11853,
@@ -62,7 +62,7 @@
   },
   {
     "timestamp_ms": 18356,
-    "text": "Jealousy turning saints into deceit Swimming through sick lullabies Joking on your alibis But it's just the price I pay Destiny is calling me Open up my eager eyes Cause I'm Mr. Brightside",
+    "text": "Jealousy turning saints into the sea Swimming through sick lullabies Choking on your alibis But it's just the price I pay Destiny is calling me Open up my eager eyes Cause I'm Mr. Brightside",
     "words": [
       {
         "timestamp_ms": 18356,
@@ -77,7 +77,7 @@
       {
         "timestamp_ms": 20778,
         "end_ms": 21138,
-        "text": "saints"
+        "text": "into saints"
       },
       {
         "timestamp_ms": 21378,
@@ -112,7 +112,7 @@
       {
         "timestamp_ms": 26481,
         "end_ms": 27322,
-        "text": "Joking"
+        "text": "Choking"
       },
       {
         "timestamp_ms": 27502,

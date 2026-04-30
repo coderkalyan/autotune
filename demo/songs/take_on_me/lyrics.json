@@ -196,7 +196,7 @@
   },
   {
     "timestamp_ms": 19420,
-    "text": "Take on me.",
+    "text": "Take me on.",
     "words": [
       {
         "timestamp_ms": 19420,
@@ -206,18 +206,18 @@
       {
         "timestamp_ms": 20201,
         "end_ms": 20361,
-        "text": "on"
+        "text": "me"
       },
       {
         "timestamp_ms": 20501,
         "end_ms": 20821,
-        "text": "me."
+        "text": "on."
       }
     ]
   },
   {
     "timestamp_ms": 25115,
-    "text": "Take on me I'll be gone In a day or two So needless to say I've ought to send it But I'll be stumbling away Slowly learning that life is okay Say up to me It's no better to be saved",
+    "text": "Take on me I'll be gone In a day or two So needless to say I'm odds and ends But I'll be stumbling away Slowly learning that life is okay Say it after me It's no better to be saved",
     "words": [
       {
         "timestamp_ms": 25115,
@@ -297,27 +297,22 @@
       {
         "timestamp_ms": 40578,
         "end_ms": 40658,
-        "text": "I've"
+        "text": "I'm"
       },
       {
         "timestamp_ms": 40738,
         "end_ms": 40898,
-        "text": "ought"
+        "text": "odds "
       },
       {
         "timestamp_ms": 40918,
         "end_ms": 41018,
-        "text": "to"
+        "text": "and"
       },
       {
         "timestamp_ms": 41058,
-        "end_ms": 41318,
-        "text": "send"
-      },
-      {
-        "timestamp_ms": 41558,
         "end_ms": 41678,
-        "text": "it"
+        "text": "ends"
       },
       {
         "timestamp_ms": 41698,
@@ -422,7 +417,7 @@
       {
         "timestamp_ms": 53500,
         "end_ms": 53760,
-        "text": "saved"
+        "text": "safe"
       }
     ]
   }
