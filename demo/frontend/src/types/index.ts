@@ -1,4 +1,4 @@
-export type UARTMode = 0 | 1 | 2 | 3 // MUTE | PASSTHROUGH | AUTOTUNE | VOCODE
+export type UARTMode = 0 | 1 | 2 | 3 | 4 // MUTE | PASSTHROUGH | AUTOTUNE | VOCODE | SYNTH
 
 export interface PitchReading {
   detected_hz: number | null
@@ -17,6 +17,7 @@ export interface PitchReading {
   config_done: boolean | null
   config_err: boolean | null
   vocode_bands: number[] | null  // 32 Q11.16 values converted to float
+  midi_notes?: number[] | null   // currently held MIDI notes (Synth mode visualization)
 
   // Karaoke scoring (sing-along mode)
   detected_hit?: number | null
@@ -66,3 +67,4 @@ export type AppScreen =
   | { screen: "splash" }
   | { screen: "autotune"; subMode: AutotuneSubMode; selectedSong: SongEntry | null }
   | { screen: "vocoder" }
+  | { screen: "synth" }

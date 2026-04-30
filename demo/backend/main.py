@@ -202,6 +202,8 @@ async def _pitch_loop() -> None:
             # UI freezes the displayed totals instead of blanking them.
             score_fields.update(held_score_fields)
 
+        midi_notes = midi_bridge.get_active_notes() if midi_bridge else []
+
         if reading:
             msg = {
                 "detected_hz": filtered_detected,
@@ -218,6 +220,7 @@ async def _pitch_loop() -> None:
                 "config_done": reading["config_done"],
                 "config_err": reading["config_err"],
                 "vocode_bands": reading["vocode_bands"],
+                "midi_notes": midi_notes,
             }
         else:
             # No packet received yet — emit nulls so the frontend graph keeps ticking
@@ -236,6 +239,7 @@ async def _pitch_loop() -> None:
                 "config_done": None,
                 "config_err": None,
                 "vocode_bands": None,
+                "midi_notes": midi_notes,
             }
 
         msg.update(score_fields)
@@ -385,6 +389,23 @@ async def websocket_endpoint(ws: WebSocket):
                 )
                 _playback_state["playing"] = bool(msg.get("playing"))
                 _playback_state["received_at"] = time.monotonic()
+            elif msg.get("type") == "midi_note_on" and midi_bridge is not None:
+                try:
+                    note = int(msg.get("note", -1))
+                    velocity = int(msg.get("velocity", 100))
+                except (TypeError, ValueError):
+                    continue
+                if 0 <= note <= 127:
+                    midi_bridge.send_note(
+                        note, on=True, velocity=max(1, min(127, velocity))
+                    )
+            elif msg.get("type") == "midi_note_off" and midi_bridge is not None:
+                try:
+                    note = int(msg.get("note", -1))
+                except (TypeError, ValueError):
+                    continue
+                if 0 <= note <= 127:
+                    midi_bridge.send_note(note, on=False)
     except WebSocketDisconnect:
         pass
     finally:

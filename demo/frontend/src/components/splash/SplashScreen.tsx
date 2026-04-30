@@ -1,4 +1,4 @@
-import { Music2, Radio } from "lucide-react"
+import { Music2, Piano, Radio } from "lucide-react"
 import type { AppScreen } from "@/types"
 import { ModeHalf } from "./ModeHalf"
 
@@ -13,6 +13,37 @@ function SineWaveIllustration() {
           stroke="white"
           strokeWidth={3 - i * 0.8}
           opacity={1 - i * 0.3}
+        />
+      ))}
+    </svg>
+  )
+}
+
+// Stacked piano-key illustration for Synth
+function PianoKeysIllustration() {
+  return (
+    <svg viewBox="0 0 600 300" className="w-full max-w-2xl" fill="none">
+      {Array.from({ length: 9 }).map((_, i) => (
+        <rect
+          key={`w-${i}`}
+          x={40 + i * 60}
+          y={60}
+          width={56}
+          height={200}
+          stroke="white"
+          strokeWidth={1.5}
+          opacity={0.6}
+        />
+      ))}
+      {[0, 1, 3, 4, 5, 7, 8].map((i) => (
+        <rect
+          key={`b-${i}`}
+          x={70 + i * 60}
+          y={60}
+          width={36}
+          height={120}
+          fill="white"
+          opacity={0.35}
         />
       ))}
     </svg>
@@ -73,6 +104,15 @@ export function SplashScreen({ onNavigate }: Props) {
         accentColor="#a78bfa"
         illustration={<ConcentricRingsIllustration />}
         onClick={() => onNavigate({ screen: "vocoder" })}
+      />
+
+      <ModeHalf
+        title="Synth"
+        description="Live MIDI keyboard visualization with rising notes and FPGA synthesis"
+        Icon={Piano}
+        accentColor="#f472b6"
+        illustration={<PianoKeysIllustration />}
+        onClick={() => onNavigate({ screen: "synth" })}
       />
     </div>
   )

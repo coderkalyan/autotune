@@ -13,11 +13,14 @@ const AutotuneScreen = lazy(() =>
 const VocoderScreen = lazy(() =>
   import("@/components/vocoder/VocoderScreen").then((m) => ({ default: m.VocoderScreen }))
 )
+const SynthScreen = lazy(() =>
+  import("@/components/synth/SynthScreen").then((m) => ({ default: m.SynthScreen }))
+)
 
 export default function App() {
   const [appScreen, setAppScreen] = useState<AppScreen>({ screen: "splash" })
   const playback = useSongPlayback()
-  const { readings, latest, connected } = usePitchSocket(WS_URL, playback.getPlayback)
+  const { readings, latest, connected, sendMessage } = usePitchSocket(WS_URL, playback.getPlayback)
 
   const navigate = useCallback((next: AppScreen) => {
     setAppScreen(next)
@@ -50,6 +53,19 @@ export default function App() {
         <div key="vocoder" className="screen-enter size-full">
           <Suspense fallback={null}>
             <VocoderScreen onNavigate={navigate} latest={latest} connected={connected} />
+          </Suspense>
+        </div>
+      )}
+
+      {appScreen.screen === "synth" && (
+        <div key="synth" className="screen-enter size-full">
+          <Suspense fallback={null}>
+            <SynthScreen
+              onNavigate={navigate}
+              latest={latest}
+              connected={connected}
+              sendMessage={sendMessage}
+            />
           </Suspense>
         </div>
       )}

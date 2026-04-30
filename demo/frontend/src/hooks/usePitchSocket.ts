@@ -125,5 +125,11 @@ export function usePitchSocket(
     }
   }, [connect])
 
-  return { readings, latest, connected }
+  const sendMessage = useCallback((msg: object) => {
+    const sock = wsRef.current
+    if (!sock || sock.readyState !== WebSocket.OPEN) return
+    sock.send(JSON.stringify(msg))
+  }, [])
+
+  return { readings, latest, connected, sendMessage }
 }
