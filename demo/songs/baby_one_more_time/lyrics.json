@@ -1,7 +1,7 @@
 [
   {
     "timestamp_ms": 511,
-    "text": "How you want it to be Tell me baby Cause I need to know now Because My loneliness Is killing me And I I must confess I still believe I still believe When I'm happy with you I lose my mind Give me a sign",
+    "text": "How you want it to be Tell me baby Cause I need to know now Because My loneliness Is killing me And I I must confess I still believe I still believe When I'm not with you I lose my mind Give me a sign",
     "words": [
       {
         "timestamp_ms": 511,
@@ -176,7 +176,7 @@
       {
         "timestamp_ms": 20895,
         "end_ms": 21115,
-        "text": "happy"
+        "text": "not"
       },
       {
         "timestamp_ms": 21175,
@@ -232,7 +232,7 @@
   },
   {
     "timestamp_ms": 27636,
-    "text": "Hit me, baby, one more time Oh, baby, baby, the reason I breathe is you Boy, you got me planted, oh, baby",
+    "text": "Hit me, baby, one more time Oh, baby, baby, the reason I breathe is you Boy, you got me blinded, oh, baby",
     "words": [
       {
         "timestamp_ms": 27636,
@@ -332,7 +332,7 @@
       {
         "timestamp_ms": 39181,
         "end_ms": 39881,
-        "text": "planted,"
+        "text": "blinded,"
       },
       {
         "timestamp_ms": 40221,

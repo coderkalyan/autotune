@@ -184,7 +184,7 @@
   },
   {
     "timestamp_ms": 25143,
-    "text": "Ask her if she wants to stay a while, then she will.",
+    "text": "Ask her if she wants to stay a while, And she will.",
     "words": [
       {
         "timestamp_ms": 25143,
@@ -234,7 +234,7 @@
       {
         "timestamp_ms": 28265,
         "end_ms": 28505,
-        "text": "then"
+        "text": "And"
       },
       {
         "timestamp_ms": 28565,
@@ -250,7 +250,7 @@
   },
   {
     "timestamp_ms": 33010,
-    "text": "And she will be lost Tap on my window, knock on my door I want to make you feel beautiful",
+    "text": "And she will be loved Tap on my window, knock on my door I want to make you feel beautiful",
     "words": [
       {
         "timestamp_ms": 33010,
@@ -275,7 +275,7 @@
       {
         "timestamp_ms": 35913,
         "end_ms": 39417,
-        "text": "lost"
+        "text": "loved"
       },
       {
         "timestamp_ms": 41179,

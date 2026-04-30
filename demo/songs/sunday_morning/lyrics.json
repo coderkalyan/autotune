@@ -1,7 +1,7 @@
 [
   {
     "timestamp_ms": 131,
-    "text": "and i would gladly hit the road get up and go if i knew that someday it would lead me back to you that someday it would lead me back to you that may be all i need in darkness she is all",
+    "text": "and i would gladly hit the road get up and go if i knew that someday it would lead me back to you that someday it would lead me back to you that may be all i need in darkness she is all I see",
     "words": [
       {
         "timestamp_ms": 131,
@@ -216,13 +216,13 @@
       {
         "timestamp_ms": 22878,
         "end_ms": 22958,
-        "text": "all"
+        "text": "all I see"
       }
     ]
   },
   {
     "timestamp_ms": 25255,
-    "text": "Come and rest your bones with me Dive in slow on Sunday morning And I never want to leave Fingers trace your every outline Paint a picture with my hands",
+    "text": "Come and rest your bones with me Diving slow on Sunday morning And I never want to leave Fingers trace your every outline Paint a picture with my hands",
     "words": [
       {
         "timestamp_ms": 25255,
@@ -261,13 +261,8 @@
       },
       {
         "timestamp_ms": 31597,
-        "end_ms": 31817,
-        "text": "Dive"
-      },
-      {
-        "timestamp_ms": 31917,
         "end_ms": 31997,
-        "text": "in"
+        "text": "Diving"
       },
       {
         "timestamp_ms": 32037,
