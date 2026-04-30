@@ -297,7 +297,7 @@ class ScoringSession:
 
     def _finalize_active_note(self, note: Note) -> NoteResult:
         avg = (
-            statistics.mean(self._active_pitch_scores)
+            statistics.median(self._active_pitch_scores)
             if self._active_pitch_scores
             else 0.0
         )
