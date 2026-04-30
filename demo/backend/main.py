@@ -130,7 +130,9 @@ async def _pitch_loop() -> None:
 
         # --- scoring ---
         # Drop the held cache if the session was replaced (seek / start / stop).
-        current_scoring_id = id(scoring_session) if scoring_session is not None else None
+        current_scoring_id = (
+            id(scoring_session) if scoring_session is not None else None
+        )
         if current_scoring_id != last_scoring_id:
             held_score_fields = {}
             last_scoring_id = current_scoring_id
@@ -176,6 +178,25 @@ async def _pitch_loop() -> None:
                     "lyric": nr.lyric,
                     "pitch_hz": round(nr.pitch_hz, 2),
                     "score": round(nr.score, 4),
+                    "detected_pitch_hz": (
+                        round(nr.detected_pitch_hz, 2)
+                        if nr.detected_pitch_hz is not None
+                        else None
+                    ),
+                    "cents_off": (
+                        round(nr.cents_off, 1)
+                        if nr.cents_off is not None
+                        else None
+                    ),
+                    "pitch_score": round(nr.pitch_score, 4),
+                    "timing_score": round(nr.timing_score, 4),
+                    "duration_ms": round(nr.duration_ms, 1),
+                    "onset_offset_ms": (
+                        round(nr.onset_offset_ms, 1)
+                        if nr.onset_offset_ms is not None
+                        else None
+                    ),
+                    "weight": round(nr.weight, 4),
                 }
             if state.detected_bucket == "hit":
                 score_fields["detected_hit"] = filtered_detected

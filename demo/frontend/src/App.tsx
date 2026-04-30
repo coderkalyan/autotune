@@ -1,9 +1,12 @@
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
+import { toast } from "sonner"
 import { usePitchSocket } from "@/hooks/usePitchSocket"
 import { useSongPlayback } from "@/hooks/useSongPlayback"
 import { SplashScreen } from "@/components/splash/SplashScreen"
+import { Toaster } from "@/components/ui/sonner"
+import { SCREEN_TO_MODE, screenForMode } from "@/lib/modeSync"
 import { WS_URL } from "@/config"
-import type { AppScreen } from "@/types"
+import type { AppScreen, UARTMode } from "@/types"
 
 // Lazy imports — screens are small but this keeps the initial bundle tight
 import { lazy, Suspense } from "react"
@@ -21,10 +24,43 @@ export default function App() {
   const [appScreen, setAppScreen] = useState<AppScreen>({ screen: "splash" })
   const playback = useSongPlayback()
   const { readings, latest, connected, sendMessage } = usePitchSocket(WS_URL, playback.getPlayback)
+  const lastSeenModeRef = useRef<UARTMode | null>(null)
 
-  const navigate = useCallback((next: AppScreen) => {
-    setAppScreen(next)
-  }, [])
+  const navigate = useCallback(
+    (next: AppScreen) => {
+      const mode = SCREEN_TO_MODE[next.screen]
+      if (mode !== undefined) {
+        sendMessage({ type: "mode_change", mode })
+      }
+      setAppScreen(next)
+    },
+    [sendMessage],
+  )
+
+  useEffect(() => {
+    const mode = latest?.mode ?? null
+    if (mode === lastSeenModeRef.current) return
+    const prev = lastSeenModeRef.current
+    lastSeenModeRef.current = mode
+    if (prev === null) return // first frame — keep splash sticky on cold load
+
+    // Sing-along is locked to AUTOTUNE. Revert any external mode change.
+    if (
+      appScreen.screen === "autotune" &&
+      appScreen.selectedSong !== null &&
+      mode !== 2
+    ) {
+      toast.info("Mode locked during sing-along")
+      sendMessage({ type: "mode_change", mode: 2 })
+      return
+    }
+
+    const next = screenForMode(mode)
+    if (next === null) return // MUTE / PASSTHROUGH / HARMONY — no nav
+    if (next.screen !== appScreen.screen) {
+      setAppScreen(next)
+    }
+  }, [latest?.mode, appScreen, sendMessage])
 
   return (
     <div className="size-full overflow-hidden bg-background">
@@ -69,6 +105,8 @@ export default function App() {
           </Suspense>
         </div>
       )}
+
+      <Toaster />
     </div>
   )
 }

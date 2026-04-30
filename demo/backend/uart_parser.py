@@ -1,4 +1,7 @@
 import threading
+import time
+from collections import deque
+
 import serial
 
 from pitch_utils import lag_to_hz, nearest_note_hz
@@ -129,6 +132,8 @@ class UARTParser:
         self._latest: dict | None = None
         self._thread: threading.Thread | None = None
         self._stop_event = threading.Event()
+        self._packet_times: deque[float] = deque()
+        self._last_rate_log: float = 0.0
 
     def start(self) -> None:
         self._stop_event.clear()
@@ -144,9 +149,42 @@ class UARTParser:
         with self._lock:
             return dict(self._latest) if self._latest else None
 
+    def get_packet_stats(self) -> tuple[float, float]:
+        """Rolling 1-second stats: (rate_hz, avg_latency_ms)."""
+        now = time.monotonic()
+        with self._lock:
+            cutoff = now - 1.0
+            while self._packet_times and self._packet_times[0] < cutoff:
+                self._packet_times.popleft()
+            n = len(self._packet_times)
+            if n < 2:
+                return (float(n), 0.0)
+            span = self._packet_times[-1] - self._packet_times[0]
+            avg_latency_ms = (span / (n - 1)) * 1000.0
+            return (float(n), avg_latency_ms)
+
     def _on_reading(
         self, detected_hz: float | None, corrected_hz: float | None, fields: dict
     ) -> None:
+        now = time.monotonic()
+        with self._lock:
+            self._packet_times.append(now)
+            cutoff = now - 1.0
+            while self._packet_times and self._packet_times[0] < cutoff:
+                self._packet_times.popleft()
+            n = len(self._packet_times)
+            if n >= 2:
+                span = self._packet_times[-1] - self._packet_times[0]
+                avg_latency_ms = (span / (n - 1)) * 1000.0
+            else:
+                avg_latency_ms = 0.0
+            should_log = now - self._last_rate_log >= 1.0
+            if should_log:
+                self._last_rate_log = now
+        if should_log:
+            print(
+                f"[uart_reader] {n} Hz (1s avg), {avg_latency_ms:.2f} ms between packets"
+            )
         with self._lock:
             self._latest = {
                 "detected_hz": detected_hz,
