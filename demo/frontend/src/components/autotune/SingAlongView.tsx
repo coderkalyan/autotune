@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { Pause, Play, RotateCcw, Square } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
@@ -8,7 +8,8 @@ import { ResultsScreen } from "@/components/autotune/ResultsScreen"
 import { StatusRow } from "@/components/autotune/StatusRow"
 import { API_BASE } from "@/config"
 import type { SongPlayback } from "@/hooks/useSongPlayback"
-import type { LyricLine, PitchReading, SongEntry } from "@/types"
+import { useSongPreview } from "@/hooks/useSongPreview"
+import type { LyricLine, NoteCompleted, PitchReading, SongEntry } from "@/types"
 
 interface Props {
   readings: PitchReading[]
@@ -21,6 +22,7 @@ interface ResultsSnapshot {
   score: number | null
   bestCombo: number | null
   songTitle?: string
+  notes: NoteCompleted[]
 }
 
 function formatTime(ms: number): string {
@@ -42,6 +44,9 @@ export function SingAlongView({ latest, playback }: Props) {
   const [durationMs, setDurationMs] = useState(0)
   const [paused, setPaused] = useState(false)
   const [scrubValue, setScrubValue] = useState<number | null>(null)
+  const [noteHistory, setNoteHistory] = useState<NoteCompleted[]>([])
+  const lastAppendedNoteRef = useRef<NoteCompleted | null>(null)
+  const preview = useSongPreview()
 
   const handleVolumeChange = useCallback(
     (value: number[]) => {
@@ -61,6 +66,7 @@ export function SingAlongView({ latest, playback }: Props) {
   }, [])
 
   async function handleSelect(song: SongEntry) {
+    preview.stop()
     const [, lyricsData] = await Promise.all([
       fetch(`${API_BASE}/songs/${song.id}/start`, { method: "POST" }),
       fetch(`${API_BASE}/songs/${song.id}/lyrics`)
@@ -74,6 +80,8 @@ export function SingAlongView({ latest, playback }: Props) {
     setDurationMs(0)
     setScrubValue(null)
     setPaused(false)
+    setNoteHistory([])
+    lastAppendedNoteRef.current = null
     playback.setVocalsVolume(vocalsVolume / 100)
     await playback.play(song.id)
   }
@@ -88,7 +96,19 @@ export function SingAlongView({ latest, playback }: Props) {
     setDurationMs(0)
     setScrubValue(null)
     setPaused(false)
+    setNoteHistory([])
+    lastAppendedNoteRef.current = null
   }
+
+  // Append every fresh note_completed event into the per-note history so
+  // the results modal can show a per-word breakdown at song end.
+  useEffect(() => {
+    const nc = latest?.note_completed
+    if (!nc) return
+    if (nc === lastAppendedNoteRef.current) return
+    lastAppendedNoteRef.current = nc
+    setNoteHistory((prev) => [...prev, nc])
+  }, [latest?.note_completed])
 
   // Snapshot results so the dialog stays open after the backend tears down
   // the scoring session.
@@ -100,9 +120,10 @@ export function SingAlongView({ latest, playback }: Props) {
         score: latest.score ?? 0,
         bestCombo: latest.best_combo ?? 0,
         songTitle: activeSong.title,
+        notes: noteHistory,
       })
     }
-  }, [latest, activeSong, results])
+  }, [latest, activeSong, results, noteHistory])
 
   // Stop audio when this view unmounts (mode switch or back navigation)
   useEffect(() => {
@@ -264,6 +285,7 @@ export function SingAlongView({ latest, playback }: Props) {
           score={results?.score ?? null}
           bestCombo={results?.bestCombo ?? null}
           songTitle={results?.songTitle}
+          notes={results?.notes ?? []}
           onDone={handleStop}
         />
       </div>
@@ -286,27 +308,50 @@ export function SingAlongView({ latest, playback }: Props) {
       ) : (
         <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-6">
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-            {songs.map((song) => (
-              <button
-                key={song.id}
-                onClick={() => handleSelect(song)}
-                className="group flex flex-col gap-2 rounded-lg border border-border bg-card p-3 text-left transition-colors hover:border-accent-foreground/20 hover:bg-accent"
-              >
-                <img
-                  src={`${API_BASE}${song.album_art_url}`}
-                  alt={song.title}
-                  className="aspect-square w-full rounded object-cover"
-                />
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium leading-tight">
-                    {song.title}
-                  </p>
-                  <p className="truncate text-xs text-muted-foreground">
-                    {song.artist}
-                  </p>
-                </div>
-              </button>
-            ))}
+            {songs.map((song) => {
+              const isPreviewing = preview.previewingId === song.id
+              return (
+                <button
+                  key={song.id}
+                  onClick={() => handleSelect(song)}
+                  className="group flex flex-col gap-2 rounded-lg border border-border bg-card p-3 text-left transition-colors hover:border-accent-foreground/20 hover:bg-accent"
+                >
+                  <div className="relative">
+                    <img
+                      src={`${API_BASE}${song.album_art_url}`}
+                      alt={song.title}
+                      className="aspect-square w-full rounded object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        preview.toggle(song)
+                      }}
+                      aria-label={isPreviewing ? "Stop preview" : "Preview"}
+                      className="absolute right-2 top-2 flex size-8 items-center justify-center rounded-full bg-background/80 text-foreground shadow-sm backdrop-blur transition-colors hover:bg-background"
+                    >
+                      {isPreviewing ? (
+                        <Square className="size-4" />
+                      ) : (
+                        <Play className="size-4" />
+                      )}
+                    </button>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium leading-tight">
+                      {song.title}
+                    </p>
+                    <div className="flex items-baseline justify-between gap-2 text-xs text-muted-foreground">
+                      <p className="truncate">{song.artist}</p>
+                      <span className="shrink-0 tabular-nums">
+                        {formatTime(song.duration_ms)}
+                      </span>
+                    </div>
+                  </div>
+                </button>
+              )
+            })}
           </div>
         </div>
       )}
