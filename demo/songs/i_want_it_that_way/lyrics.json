@@ -6,57 +6,78 @@
       {
         "timestamp_ms": 532,
         "end_ms": 592,
-        "text": "But"
+        "text": "But",
+        "note": 66
       },
       {
         "timestamp_ms": 1213,
         "end_ms": 1713,
-        "text": "we"
+        "text": "we",
+        "note": 69
       },
       {
         "timestamp_ms": 1733,
         "end_ms": 1793,
-        "text": "are"
+        "text": "are",
+        "note": 73
       },
       {
         "timestamp_ms": 3896,
         "end_ms": 4778,
-        "text": "two"
+        "text": "two",
+        "note": 66
       },
       {
         "timestamp_ms": 4838,
         "end_ms": 5479,
-        "text": "worlds"
+        "text": "worlds",
+        "note": 64
       },
       {
         "timestamp_ms": 5879,
         "end_ms": 6881,
-        "text": "apart"
+        "text": "apart",
+        "note": [
+          66,
+          69
+        ]
       },
       {
         "timestamp_ms": 8162,
         "end_ms": 8763,
-        "text": "Can't"
+        "text": "Can't",
+        "note": 73
       },
       {
         "timestamp_ms": 8823,
         "end_ms": 9604,
-        "text": "reach"
+        "text": "reach",
+        "note": 66
       },
       {
         "timestamp_ms": 9664,
         "end_ms": 9745,
-        "text": "to"
+        "text": "to",
+        "note": [
+          71,
+          69
+        ]
       },
       {
         "timestamp_ms": 9945,
         "end_ms": 10345,
-        "text": "your"
+        "text": "your",
+        "note": 73
       },
       {
         "timestamp_ms": 10365,
         "end_ms": 10466,
-        "text": "heart"
+        "text": "heart",
+        "note": [
+          71,
+          69,
+          66
+        ]
       }
     ]
   },
@@ -67,207 +88,276 @@
       {
         "timestamp_ms": 13043,
         "end_ms": 13403,
-        "text": "When"
+        "text": "When",
+        "note": 66
       },
       {
         "timestamp_ms": 13603,
         "end_ms": 14324,
-        "text": "you"
+        "text": "you",
+        "note": 69
       },
       {
         "timestamp_ms": 14484,
         "end_ms": 15205,
-        "text": "say"
+        "text": "say",
+        "note": 73
       },
       {
         "timestamp_ms": 15725,
         "end_ms": 15985,
-        "text": "That"
+        "text": "That",
+        "note": 64
       },
       {
         "timestamp_ms": 16766,
         "end_ms": 16886,
-        "text": "I"
+        "text": "I",
+        "note": 66
       },
       {
         "timestamp_ms": 16946,
         "end_ms": 17826,
-        "text": "want"
+        "text": "want",
+        "note": 69
       },
       {
         "timestamp_ms": 18127,
         "end_ms": 18347,
-        "text": "it"
+        "text": "it",
+        "note": 73
       },
       {
         "timestamp_ms": 18467,
         "end_ms": 19287,
-        "text": "that"
+        "text": "that",
+        "note": 71
       },
       {
         "timestamp_ms": 19367,
         "end_ms": 19948,
-        "text": "way"
+        "text": "way",
+        "note": 69
       },
       {
         "timestamp_ms": 20248,
         "end_ms": 20588,
-        "text": "Tell"
+        "text": "Tell",
+        "note": 61
       },
       {
         "timestamp_ms": 20628,
         "end_ms": 20808,
-        "text": "me"
+        "text": "me",
+        "note": 64
       },
       {
         "timestamp_ms": 20908,
         "end_ms": 21249,
-        "text": "why"
+        "text": "why",
+        "note": [
+          64,
+          66
+        ]
       },
       {
         "timestamp_ms": 21389,
         "end_ms": 21529,
-        "text": "Ain't"
+        "text": "Ain't",
+        "note": 64
       },
       {
         "timestamp_ms": 21789,
         "end_ms": 22630,
-        "text": "nothing"
+        "text": "nothing",
+        "note": [
+          62,
+          61
+        ]
       },
       {
         "timestamp_ms": 22710,
         "end_ms": 23050,
-        "text": "but"
+        "text": "but",
+        "note": 59
       },
       {
         "timestamp_ms": 23130,
         "end_ms": 23190,
-        "text": "a"
+        "text": "a",
+        "note": 57
       },
       {
         "timestamp_ms": 23310,
         "end_ms": 24991,
-        "text": "heartache"
+        "text": "heartache",
+        "note": [
+          56,
+          57
+        ]
       },
       {
         "timestamp_ms": 25111,
         "end_ms": 25452,
-        "text": "Tell"
+        "text": "Tell",
+        "note": 61
       },
       {
         "timestamp_ms": 25472,
         "end_ms": 25672,
-        "text": "me"
+        "text": "me",
+        "note": 64
       },
       {
         "timestamp_ms": 25752,
         "end_ms": 26092,
-        "text": "why"
+        "text": "why",
+        "note": [
+          64,
+          66
+        ]
       },
       {
         "timestamp_ms": 26192,
         "end_ms": 26372,
-        "text": "Ain't"
+        "text": "Ain't",
+        "note": 64
       },
       {
         "timestamp_ms": 26632,
         "end_ms": 27473,
-        "text": "nothing"
+        "text": "nothing",
+        "note": [
+          62,
+          61
+        ]
       },
       {
         "timestamp_ms": 27553,
         "end_ms": 27913,
-        "text": "but"
+        "text": "but",
+        "note": 59
       },
       {
         "timestamp_ms": 27973,
         "end_ms": 28073,
-        "text": "a"
+        "text": "a",
+        "note": 57
       },
       {
         "timestamp_ms": 28173,
         "end_ms": 29855,
-        "text": "mistake"
+        "text": "mistake",
+        "note": [
+          56,
+          57
+        ]
       },
       {
         "timestamp_ms": 29975,
         "end_ms": 30295,
-        "text": "Tell"
+        "text": "Tell",
+        "note": 56
       },
       {
         "timestamp_ms": 30315,
         "end_ms": 30475,
-        "text": "me"
+        "text": "me",
+        "note": 54
       },
       {
         "timestamp_ms": 30575,
         "end_ms": 30975,
-        "text": "why"
+        "text": "why",
+        "note": 54
       },
       {
         "timestamp_ms": 31436,
         "end_ms": 31636,
-        "text": "I"
+        "text": "I",
+        "note": 64
       },
       {
         "timestamp_ms": 31816,
         "end_ms": 32336,
-        "text": "never"
+        "text": "never",
+        "note": [
+          62,
+          61
+        ]
       },
       {
         "timestamp_ms": 32416,
         "end_ms": 32957,
-        "text": "wanna"
+        "text": "wanna",
+        "note": [
+          59,
+          57
+        ]
       },
       {
         "timestamp_ms": 33017,
         "end_ms": 33377,
-        "text": "hear"
+        "text": "hear",
+        "note": 59
       },
       {
         "timestamp_ms": 33577,
         "end_ms": 33737,
-        "text": "you"
+        "text": "you",
+        "note": 59
       },
       {
         "timestamp_ms": 33897,
         "end_ms": 34758,
-        "text": "say"
+        "text": "say",
+        "note": [
+          61,
+          59,
+          57
+        ]
       },
       {
         "timestamp_ms": 34778,
         "end_ms": 34798,
-        "text": "I"
+        "text": "I",
+        "note": 66
       },
       {
         "timestamp_ms": 36359,
         "end_ms": 37220,
-        "text": "want"
+        "text": "want",
+        "note": 69
       },
       {
         "timestamp_ms": 37500,
         "end_ms": 37700,
-        "text": "it"
+        "text": "it",
+        "note": 73
       },
       {
         "timestamp_ms": 37880,
         "end_ms": 38561,
-        "text": "that"
+        "text": "that",
+        "note": 71
       },
       {
         "timestamp_ms": 38781,
         "end_ms": 39561,
-        "text": "way"
+        "text": "way",
+        "note": 69
       },
       {
         "timestamp_ms": 39801,
         "end_ms": 39922,
-        "text": "Am"
+        "text": "Am",
+        "note": 66
       },
       {
         "timestamp_ms": 40242,
         "end_ms": 40282,
-        "text": "I?"
+        "text": "I?",
+        "note": 69
       }
     ]
   },
@@ -278,27 +368,40 @@
       {
         "timestamp_ms": 42059,
         "end_ms": 42440,
-        "text": "Your"
+        "text": "Your",
+        "note": 73
       },
       {
         "timestamp_ms": 42680,
         "end_ms": 44282,
-        "text": "fire,"
+        "text": "fire,",
+        "note": [
+          66,
+          64
+        ]
       },
       {
         "timestamp_ms": 44522,
         "end_ms": 44783,
-        "text": "your"
+        "text": "your",
+        "note": 66
       },
       {
         "timestamp_ms": 45143,
         "end_ms": 45584,
-        "text": "one"
+        "text": "one",
+        "note": 69
       },
       {
         "timestamp_ms": 46946,
         "end_ms": 49028,
-        "text": "desire."
+        "text": "desire.",
+        "note": [
+          73,
+          66,
+          71,
+          69
+        ]
       }
     ]
   },
@@ -309,62 +412,88 @@
       {
         "timestamp_ms": 49068,
         "end_ms": 49289,
-        "text": "Yes,"
+        "text": "Yes,",
+        "note": [
+          73,
+          76
+        ]
       },
       {
         "timestamp_ms": 49569,
         "end_ms": 49649,
-        "text": "I"
+        "text": "I",
+        "note": 76
       },
       {
         "timestamp_ms": 49669,
         "end_ms": 50911,
-        "text": "know"
+        "text": "know",
+        "note": [
+          76,
+          75,
+          73
+        ]
       },
       {
         "timestamp_ms": 52032,
         "end_ms": 52293,
-        "text": "it's"
+        "text": "it's",
+        "note": 69
       },
       {
         "timestamp_ms": 52373,
         "end_ms": 52913,
-        "text": "too"
+        "text": "too",
+        "note": [
+          71,
+          69
+        ]
       },
       {
         "timestamp_ms": 53294,
         "end_ms": 53915,
-        "text": "late,"
+        "text": "late,",
+        "note": [
+          69,
+          71,
+          73
+        ]
       },
       {
         "timestamp_ms": 54515,
         "end_ms": 54876,
-        "text": "but"
+        "text": "but",
+        "note": 64
       },
       {
         "timestamp_ms": 55236,
         "end_ms": 55477,
-        "text": "I"
+        "text": "I",
+        "note": 66
       },
       {
         "timestamp_ms": 55737,
         "end_ms": 56178,
-        "text": "want"
+        "text": "want",
+        "note": 69
       },
       {
         "timestamp_ms": 56778,
         "end_ms": 56939,
-        "text": "it"
+        "text": "it",
+        "note": 73
       },
       {
         "timestamp_ms": 57259,
         "end_ms": 57820,
-        "text": "that"
+        "text": "that",
+        "note": 71
       },
       {
         "timestamp_ms": 57840,
         "end_ms": 57960,
-        "text": "way."
+        "text": "way.",
+        "note": 69
       }
     ]
   }
