@@ -1,349 +1,378 @@
 [
   {
-    "timestamp_ms": 2067,
-    "text": "I called you and asked your board with me.",
+    "timestamp_ms": 131,
+    "text": "and i would gladly hit the road get up and go if i knew that someday it would lead me back to you that someday it would lead me back to you that may be all i need in darkness she is all",
     "words": [
       {
-        "timestamp_ms": 2067,
-        "end_ms": 2207,
-        "text": "I"
-      },
-      {
-        "timestamp_ms": 2267,
-        "end_ms": 3308,
-        "text": "called"
-      },
-      {
-        "timestamp_ms": 3608,
-        "end_ms": 4029,
-        "text": "you"
-      },
-      {
-        "timestamp_ms": 4109,
-        "end_ms": 4169,
+        "timestamp_ms": 131,
+        "end_ms": 211,
         "text": "and"
       },
       {
-        "timestamp_ms": 4389,
-        "end_ms": 4629,
-        "text": "asked"
+        "timestamp_ms": 371,
+        "end_ms": 451,
+        "text": "i"
       },
       {
-        "timestamp_ms": 4669,
-        "end_ms": 4929,
-        "text": "your"
+        "timestamp_ms": 471,
+        "end_ms": 691,
+        "text": "would"
       },
       {
-        "timestamp_ms": 5009,
-        "end_ms": 6330,
-        "text": "board"
+        "timestamp_ms": 751,
+        "end_ms": 1371,
+        "text": "gladly"
       },
       {
-        "timestamp_ms": 6390,
-        "end_ms": 7651,
-        "text": "with"
+        "timestamp_ms": 1451,
+        "end_ms": 1752,
+        "text": "hit"
       },
       {
-        "timestamp_ms": 7732,
-        "end_ms": 8032,
-        "text": "me."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 8052,
-    "text": "I died in slow Sunday morning and I never want to leave.",
-    "words": [
-      {
-        "timestamp_ms": 8052,
-        "end_ms": 8072,
-        "text": "I"
+        "timestamp_ms": 1812,
+        "end_ms": 2052,
+        "text": "the"
       },
       {
-        "timestamp_ms": 8592,
-        "end_ms": 8832,
-        "text": "died"
+        "timestamp_ms": 2112,
+        "end_ms": 2532,
+        "text": "road"
       },
       {
-        "timestamp_ms": 8912,
-        "end_ms": 9013,
-        "text": "in"
+        "timestamp_ms": 2612,
+        "end_ms": 2872,
+        "text": "get"
       },
       {
-        "timestamp_ms": 9053,
-        "end_ms": 9693,
-        "text": "slow"
+        "timestamp_ms": 2992,
+        "end_ms": 3092,
+        "text": "up"
       },
       {
-        "timestamp_ms": 9793,
-        "end_ms": 10394,
-        "text": "Sunday"
-      },
-      {
-        "timestamp_ms": 10474,
-        "end_ms": 11214,
-        "text": "morning"
-      },
-      {
-        "timestamp_ms": 11234,
-        "end_ms": 11294,
+        "timestamp_ms": 3272,
+        "end_ms": 3412,
         "text": "and"
       },
       {
-        "timestamp_ms": 11314,
-        "end_ms": 11334,
-        "text": "I"
+        "timestamp_ms": 3452,
+        "end_ms": 3792,
+        "text": "go"
       },
       {
-        "timestamp_ms": 11975,
-        "end_ms": 12435,
-        "text": "never"
+        "timestamp_ms": 3892,
+        "end_ms": 4032,
+        "text": "if"
       },
       {
-        "timestamp_ms": 12515,
-        "end_ms": 13356,
-        "text": "want"
+        "timestamp_ms": 4152,
+        "end_ms": 4252,
+        "text": "i"
       },
       {
-        "timestamp_ms": 13396,
-        "end_ms": 13536,
+        "timestamp_ms": 4292,
+        "end_ms": 4652,
+        "text": "knew"
+      },
+      {
+        "timestamp_ms": 5893,
+        "end_ms": 6153,
+        "text": "that"
+      },
+      {
+        "timestamp_ms": 6213,
+        "end_ms": 6933,
+        "text": "someday"
+      },
+      {
+        "timestamp_ms": 7073,
+        "end_ms": 7153,
+        "text": "it"
+      },
+      {
+        "timestamp_ms": 7233,
+        "end_ms": 7533,
+        "text": "would"
+      },
+      {
+        "timestamp_ms": 7593,
+        "end_ms": 7873,
+        "text": "lead"
+      },
+      {
+        "timestamp_ms": 7913,
+        "end_ms": 8113,
+        "text": "me"
+      },
+      {
+        "timestamp_ms": 8234,
+        "end_ms": 9034,
+        "text": "back"
+      },
+      {
+        "timestamp_ms": 9054,
+        "end_ms": 9094,
         "text": "to"
       },
       {
-        "timestamp_ms": 13616,
-        "end_ms": 14157,
-        "text": "leave."
+        "timestamp_ms": 9114,
+        "end_ms": 9174,
+        "text": "you"
+      },
+      {
+        "timestamp_ms": 11354,
+        "end_ms": 11595,
+        "text": "that"
+      },
+      {
+        "timestamp_ms": 11675,
+        "end_ms": 12395,
+        "text": "someday"
+      },
+      {
+        "timestamp_ms": 12535,
+        "end_ms": 12615,
+        "text": "it"
+      },
+      {
+        "timestamp_ms": 12695,
+        "end_ms": 12975,
+        "text": "would"
+      },
+      {
+        "timestamp_ms": 13035,
+        "end_ms": 13335,
+        "text": "lead"
+      },
+      {
+        "timestamp_ms": 13375,
+        "end_ms": 13595,
+        "text": "me"
+      },
+      {
+        "timestamp_ms": 13735,
+        "end_ms": 14115,
+        "text": "back"
+      },
+      {
+        "timestamp_ms": 14195,
+        "end_ms": 14355,
+        "text": "to"
+      },
+      {
+        "timestamp_ms": 14415,
+        "end_ms": 15756,
+        "text": "you"
+      },
+      {
+        "timestamp_ms": 16136,
+        "end_ms": 16376,
+        "text": "that"
+      },
+      {
+        "timestamp_ms": 16476,
+        "end_ms": 16796,
+        "text": "may"
+      },
+      {
+        "timestamp_ms": 16816,
+        "end_ms": 17136,
+        "text": "be"
+      },
+      {
+        "timestamp_ms": 19657,
+        "end_ms": 19957,
+        "text": "all"
+      },
+      {
+        "timestamp_ms": 20037,
+        "end_ms": 20217,
+        "text": "i"
+      },
+      {
+        "timestamp_ms": 20237,
+        "end_ms": 20317,
+        "text": "need"
+      },
+      {
+        "timestamp_ms": 21037,
+        "end_ms": 21137,
+        "text": "in"
+      },
+      {
+        "timestamp_ms": 21197,
+        "end_ms": 21798,
+        "text": "darkness"
+      },
+      {
+        "timestamp_ms": 21878,
+        "end_ms": 22278,
+        "text": "she"
+      },
+      {
+        "timestamp_ms": 22418,
+        "end_ms": 22558,
+        "text": "is"
+      },
+      {
+        "timestamp_ms": 22878,
+        "end_ms": 22958,
+        "text": "all"
       }
     ]
   },
   {
-    "timestamp_ms": 15795,
-    "text": "Yeah.",
+    "timestamp_ms": 25255,
+    "text": "Come and rest your bones with me Dive in slow on Sunday morning And I never want to leave Fingers trace your every outline Paint a picture with my hands",
     "words": [
       {
-        "timestamp_ms": 15795,
-        "end_ms": 15975,
-        "text": "Yeah."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 16776,
-    "text": "Yeah.",
-    "words": [
+        "timestamp_ms": 25255,
+        "end_ms": 26295,
+        "text": "Come"
+      },
       {
-        "timestamp_ms": 16776,
-        "end_ms": 17036,
-        "text": "Yeah."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 17076,
-    "text": "Yeah.",
-    "words": [
+        "timestamp_ms": 26915,
+        "end_ms": 27176,
+        "text": "and"
+      },
       {
-        "timestamp_ms": 17076,
-        "end_ms": 17276,
-        "text": "Yeah."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 17416,
-    "text": "Yeah.",
-    "words": [
+        "timestamp_ms": 27256,
+        "end_ms": 27616,
+        "text": "rest"
+      },
       {
-        "timestamp_ms": 17416,
-        "end_ms": 17776,
-        "text": "Yeah."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 17796,
-    "text": "Yeah.",
-    "words": [
+        "timestamp_ms": 27656,
+        "end_ms": 27936,
+        "text": "your"
+      },
       {
-        "timestamp_ms": 17796,
-        "end_ms": 18036,
-        "text": "Yeah."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 18056,
-    "text": "Yeah.",
-    "words": [
+        "timestamp_ms": 28016,
+        "end_ms": 29336,
+        "text": "bones"
+      },
       {
-        "timestamp_ms": 18056,
-        "end_ms": 18357,
-        "text": "Yeah."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 18457,
-    "text": "Yeah.",
-    "words": [
+        "timestamp_ms": 29396,
+        "end_ms": 30656,
+        "text": "with"
+      },
       {
-        "timestamp_ms": 18457,
-        "end_ms": 18597,
-        "text": "Yeah."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 18637,
-    "text": "Yeah.",
-    "words": [
+        "timestamp_ms": 30736,
+        "end_ms": 31056,
+        "text": "me"
+      },
       {
-        "timestamp_ms": 18637,
-        "end_ms": 18937,
-        "text": "Yeah."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 19197,
-    "text": "Yeah.",
-    "words": [
+        "timestamp_ms": 31597,
+        "end_ms": 31817,
+        "text": "Dive"
+      },
       {
-        "timestamp_ms": 19197,
-        "end_ms": 19397,
-        "text": "Yeah."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 19677,
-    "text": "Yeah.",
-    "words": [
+        "timestamp_ms": 31917,
+        "end_ms": 31997,
+        "text": "in"
+      },
       {
-        "timestamp_ms": 19677,
-        "end_ms": 19938,
-        "text": "Yeah."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 19998,
-    "text": "Yeah.",
-    "words": [
+        "timestamp_ms": 32037,
+        "end_ms": 32457,
+        "text": "slow"
+      },
       {
-        "timestamp_ms": 19998,
-        "end_ms": 20618,
-        "text": "Yeah."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 20658,
-    "text": "Yeah.",
-    "words": [
+        "timestamp_ms": 32497,
+        "end_ms": 32717,
+        "text": "on"
+      },
       {
-        "timestamp_ms": 20658,
-        "end_ms": 21479,
-        "text": "Yeah."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 21659,
-    "text": "Yeah.",
-    "words": [
+        "timestamp_ms": 32777,
+        "end_ms": 33397,
+        "text": "Sunday"
+      },
       {
-        "timestamp_ms": 21659,
-        "end_ms": 22039,
-        "text": "Yeah."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 22379,
-    "text": "Yeah.",
-    "words": [
+        "timestamp_ms": 33457,
+        "end_ms": 34237,
+        "text": "morning"
+      },
       {
-        "timestamp_ms": 22379,
-        "end_ms": 22840,
-        "text": "Yeah."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 22860,
-    "text": "Yeah.",
-    "words": [
+        "timestamp_ms": 34257,
+        "end_ms": 34317,
+        "text": "And"
+      },
       {
-        "timestamp_ms": 22860,
-        "end_ms": 23200,
-        "text": "Yeah."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 23280,
-    "text": "Yeah.",
-    "words": [
+        "timestamp_ms": 34777,
+        "end_ms": 34917,
+        "text": "I"
+      },
       {
-        "timestamp_ms": 23280,
-        "end_ms": 23520,
-        "text": "Yeah."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 23560,
-    "text": "Yeah.",
-    "words": [
+        "timestamp_ms": 34977,
+        "end_ms": 35377,
+        "text": "never"
+      },
       {
-        "timestamp_ms": 23560,
-        "end_ms": 23740,
-        "text": "Yeah."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 23920,
-    "text": "Yeah.",
-    "words": [
+        "timestamp_ms": 35498,
+        "end_ms": 36338,
+        "text": "want"
+      },
       {
-        "timestamp_ms": 23920,
-        "end_ms": 24240,
-        "text": "Yeah."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 24260,
-    "text": "Yeah.",
-    "words": [
+        "timestamp_ms": 36378,
+        "end_ms": 36538,
+        "text": "to"
+      },
       {
-        "timestamp_ms": 24260,
-        "end_ms": 25101,
-        "text": "Yeah."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 25381,
-    "text": "Yeah.",
-    "words": [
+        "timestamp_ms": 36598,
+        "end_ms": 37198,
+        "text": "leave"
+      },
       {
-        "timestamp_ms": 25381,
-        "end_ms": 26142,
-        "text": "Yeah."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 26182,
-    "text": "Yeah.",
-    "words": [
+        "timestamp_ms": 39779,
+        "end_ms": 40259,
+        "text": "Fingers"
+      },
       {
-        "timestamp_ms": 26182,
-        "end_ms": 26822,
-        "text": "Yeah."
+        "timestamp_ms": 40399,
+        "end_ms": 40779,
+        "text": "trace"
+      },
+      {
+        "timestamp_ms": 40799,
+        "end_ms": 41019,
+        "text": "your"
+      },
+      {
+        "timestamp_ms": 41159,
+        "end_ms": 41579,
+        "text": "every"
+      },
+      {
+        "timestamp_ms": 41779,
+        "end_ms": 42359,
+        "text": "outline"
+      },
+      {
+        "timestamp_ms": 42379,
+        "end_ms": 44520,
+        "text": "Paint"
+      },
+      {
+        "timestamp_ms": 45960,
+        "end_ms": 45980,
+        "text": "a"
+      },
+      {
+        "timestamp_ms": 46060,
+        "end_ms": 46520,
+        "text": "picture"
+      },
+      {
+        "timestamp_ms": 46560,
+        "end_ms": 46720,
+        "text": "with"
+      },
+      {
+        "timestamp_ms": 46800,
+        "end_ms": 47000,
+        "text": "my"
+      },
+      {
+        "timestamp_ms": 47040,
+        "end_ms": 48081,
+        "text": "hands"
       }
     ]
   }

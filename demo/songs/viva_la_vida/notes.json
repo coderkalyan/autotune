@@ -3,7 +3,7 @@
     "start_ms": 12780.0,
     "duration_ms": 80.0,
     "pitch_hz": 231.5630779904605,
-    "lyric": "I"
+    "lyric": "i"
   },
   {
     "start_ms": 13021.0,
@@ -12,14 +12,14 @@
     "lyric": "used"
   },
   {
-    "start_ms": 13301.0,
-    "duration_ms": 220.0,
+    "start_ms": 13321.0,
+    "duration_ms": 200.0,
     "pitch_hz": 259.92076683399534,
     "lyric": "to"
   },
   {
-    "start_ms": 13742.0,
-    "duration_ms": 1261.0,
+    "start_ms": 13722.0,
+    "duration_ms": 1281.0,
     "pitch_hz": 261.42647251857596,
     "lyric": "roll"
   },
@@ -30,8 +30,8 @@
     "lyric": "the"
   },
   {
-    "start_ms": 15304.0,
-    "duration_ms": 841.0,
+    "start_ms": 15284.0,
+    "duration_ms": 861.0,
     "pitch_hz": 232.90450925475,
     "lyric": "dice"
   },
@@ -39,7 +39,7 @@
     "start_ms": 16586.0,
     "duration_ms": 380.0,
     "pitch_hz": 224.97092665957592,
-    "lyric": "Feel"
+    "lyric": "feel"
   },
   {
     "start_ms": 17006.0,
@@ -68,8 +68,8 @@
   {
     "start_ms": 18248.0,
     "duration_ms": 521.0,
-    "pitch_hz": 238.34839409963237,
-    "lyric": "enemies"
+    "pitch_hz": 239.72913230026901,
+    "lyric": "enemy's"
   },
   {
     "start_ms": 19230.0,
@@ -80,8 +80,8 @@
   {
     "start_ms": 19831.0,
     "duration_ms": 480.0,
-    "pitch_hz": 259.92076683399534,
-    "lyric": "Listen"
+    "pitch_hz": 258.42373337601344,
+    "lyric": "listen"
   },
   {
     "start_ms": 20371.0,
@@ -117,7 +117,7 @@
     "start_ms": 23696.0,
     "duration_ms": 241.0,
     "pitch_hz": 205.11105310731665,
-    "lyric": "Now"
+    "lyric": "now"
   },
   {
     "start_ms": 23997.0,
@@ -128,20 +128,20 @@
   {
     "start_ms": 24257.0,
     "duration_ms": 140.0,
-    "pitch_hz": 239.72913230026904,
+    "pitch_hz": 241.13395891027716,
     "lyric": "old"
   },
   {
     "start_ms": 24457.0,
-    "duration_ms": 321.0,
-    "pitch_hz": 227.58496291156504,
+    "duration_ms": 241.0,
+    "pitch_hz": 228.90334918964132,
     "lyric": "king"
   },
   {
-    "start_ms": 24798.0,
-    "duration_ms": 541.0,
-    "pitch_hz": 206.29924935033267,
-    "lyric": "stayed"
+    "start_ms": 24878.0,
+    "duration_ms": 461.0,
+    "pitch_hz": 205.11105310731665,
+    "lyric": "dead"
   },
   {
     "start_ms": 25399.0,
@@ -175,9 +175,15 @@
   },
   {
     "start_ms": 26821.0,
-    "duration_ms": 420.0,
+    "duration_ms": 481.0,
     "pitch_hz": 348.9624744528825,
     "lyric": "minute"
+  },
+  {
+    "start_ms": 27402.0,
+    "duration_ms": 20.0,
+    "pitch_hz": 350.98399350228027,
+    "lyric": "i"
   },
   {
     "start_ms": 28443.0,
@@ -186,9 +192,9 @@
     "lyric": "I"
   },
   {
-    "start_ms": 28603.0,
-    "duration_ms": 160.0,
-    "pitch_hz": 353.01722309239886,
+    "start_ms": 28563.0,
+    "duration_ms": 200.0,
+    "pitch_hz": 357.1190856416714,
     "lyric": "held"
   },
   {
@@ -211,26 +217,26 @@
   },
   {
     "start_ms": 30944.0,
-    "duration_ms": 140.0,
+    "duration_ms": 120.0,
     "pitch_hz": 309.09962525595057,
     "lyric": "the"
   },
   {
     "start_ms": 31144.0,
     "duration_ms": 561.0,
-    "pitch_hz": 311.79070553405626,
+    "pitch_hz": 312.69118989895867,
     "lyric": "walls"
   },
   {
     "start_ms": 31785.0,
     "duration_ms": 140.0,
-    "pitch_hz": 167.08450202843466,
+    "pitch_hz": 166.60194440556904,
     "lyric": "were"
   },
   {
     "start_ms": 32005.0,
-    "duration_ms": 440.0,
-    "pitch_hz": 295.9960496843598,
+    "duration_ms": 420.0,
+    "pitch_hz": 296.85091742121904,
     "lyric": "closed"
   },
   {
@@ -241,14 +247,14 @@
   },
   {
     "start_ms": 32906.0,
-    "duration_ms": 240.0,
+    "duration_ms": 220.0,
     "pitch_hz": 260.6736196762856,
-    "lyric": "me,"
+    "lyric": "me"
   },
   {
     "start_ms": 33206.0,
     "duration_ms": 120.0,
-    "pitch_hz": 125.53345566348013,
+    "pitch_hz": 126.26066357418266,
     "lyric": "and"
   },
   {
@@ -260,7 +266,7 @@
   {
     "start_ms": 33526.0,
     "duration_ms": 600.0,
-    "pitch_hz": 260.6736196762856,
+    "pitch_hz": 259.92076683399534,
     "lyric": "discovered"
   },
   {
@@ -285,24 +291,24 @@
     "start_ms": 36048.0,
     "duration_ms": 900.0,
     "pitch_hz": 234.25371135130007,
-    "lyric": "stem,"
+    "lyric": "stand"
   },
   {
     "start_ms": 37469.0,
     "duration_ms": 540.0,
-    "pitch_hz": 205.11105310731665,
+    "pitch_hz": 203.92970037108196,
     "lyric": "upon"
   },
   {
     "start_ms": 38069.0,
     "duration_ms": 440.0,
-    "pitch_hz": 239.03876319995072,
+    "pitch_hz": 239.72913230026901,
     "lyric": "pillars"
   },
   {
     "start_ms": 38610.0,
     "duration_ms": 80.0,
-    "pitch_hz": 190.27313840043536,
+    "pitch_hz": 196.9831061351866,
     "lyric": "of"
   },
   {
@@ -343,26 +349,32 @@
   },
   {
     "start_ms": 41552.0,
-    "duration_ms": 460.0,
+    "duration_ms": 440.0,
     "pitch_hz": 344.95429857371363,
     "lyric": "hear"
   },
   {
-    "start_ms": 42072.0,
-    "duration_ms": 1001.0,
-    "pitch_hz": 343.9609032926637,
+    "start_ms": 42052.0,
+    "duration_ms": 1021.0,
+    "pitch_hz": 342.9675080116138,
     "lyric": "Jerusalem"
   },
   {
     "start_ms": 43113.0,
-    "duration_ms": 820.0,
+    "duration_ms": 620.0,
     "pitch_hz": 310.89022116915385,
     "lyric": "bells"
   },
   {
+    "start_ms": 43853.0,
+    "duration_ms": 80.0,
+    "pitch_hz": 236.97560836585026,
+    "lyric": "are"
+  },
+  {
     "start_ms": 43993.0,
     "duration_ms": 741.0,
-    "pitch_hz": 267.53702665232305,
+    "pitch_hz": 267.537026652323,
     "lyric": "ringing,"
   },
   {
@@ -373,27 +385,21 @@
   },
   {
     "start_ms": 45895.0,
-    "duration_ms": 440.0,
-    "pitch_hz": 295.1411819475005,
-    "lyric": "capital"
+    "duration_ms": 620.0,
+    "pitch_hz": 303.78947870416613,
+    "lyric": "cavalry"
   },
   {
-    "start_ms": 46375.0,
-    "duration_ms": 840.0,
+    "start_ms": 46575.0,
+    "duration_ms": 640.0,
     "pitch_hz": 265.9961267656921,
-    "lyric": "requests"
+    "lyric": "choirs"
   },
   {
     "start_ms": 47456.0,
-    "duration_ms": 460.0,
-    "pitch_hz": 195.84856692874484,
-    "lyric": "sing"
-  },
-  {
-    "start_ms": 47996.0,
-    "duration_ms": 120.0,
-    "pitch_hz": 207.49432874416155,
-    "lyric": "it."
+    "duration_ms": 660.0,
+    "pitch_hz": 198.12421766039049,
+    "lyric": "singing."
   },
   {
     "start_ms": 48516.0,
@@ -426,8 +432,8 @@
     "lyric": "sword"
   },
   {
-    "start_ms": 50738.0,
-    "duration_ms": 100.0,
+    "start_ms": 50758.0,
+    "duration_ms": 80.0,
     "pitch_hz": 231.5630779904605,
     "lyric": "and"
   },
@@ -440,12 +446,12 @@
   {
     "start_ms": 51578.0,
     "duration_ms": 381.0,
-    "pitch_hz": 189.1772457643437,
+    "pitch_hz": 190.82425893920998,
     "lyric": "my"
   },
   {
     "start_ms": 52019.0,
-    "duration_ms": 1100.0,
+    "duration_ms": 1080.0,
     "pitch_hz": 307.3193424163214,
     "lyric": "missionaries"
   },
@@ -458,7 +464,7 @@
   {
     "start_ms": 53420.0,
     "duration_ms": 60.0,
-    "pitch_hz": 301.2302621819109,
+    "pitch_hz": 306.43432783382735,
     "lyric": "a"
   },
   {
@@ -469,13 +475,13 @@
   },
   {
     "start_ms": 54400.0,
-    "duration_ms": 601.0,
+    "duration_ms": 581.0,
     "pitch_hz": 199.27193957741167,
     "lyric": "field."
   },
   {
     "start_ms": 55461.0,
-    "duration_ms": 320.0,
+    "duration_ms": 340.0,
     "pitch_hz": 685.9464590948287,
     "lyric": "For"
   },
@@ -492,9 +498,9 @@
     "lyric": "reason"
   },
   {
-    "start_ms": 56882.0,
-    "duration_ms": 120.0,
-    "pitch_hz": 346.9525984964539,
+    "start_ms": 56902.0,
+    "duration_ms": 100.0,
+    "pitch_hz": 344.95429857371363,
     "lyric": "I"
   },
   {
@@ -516,16 +522,16 @@
     "lyric": "Once"
   },
   {
-    "start_ms": 59564.0,
-    "duration_ms": 181.0,
-    "pitch_hz": 310.89022116915385,
-    "lyric": "you've"
+    "start_ms": 59344.0,
+    "duration_ms": 381.0,
+    "pitch_hz": 309.09962525595057,
+    "lyric": "you'd"
   },
   {
     "start_ms": 59825.0,
     "duration_ms": 460.0,
     "pitch_hz": 310.89022116915385,
-    "lyric": "done"
+    "lyric": "gone"
   },
   {
     "start_ms": 60385.0,
@@ -541,9 +547,9 @@
   },
   {
     "start_ms": 60745.0,
-    "duration_ms": 421.0,
-    "pitch_hz": 264.4685137165725,
-    "lyric": "never"
+    "duration_ms": 401.0,
+    "pitch_hz": 265.9961267656921,
+    "lyric": "never,"
   },
   {
     "start_ms": 61566.0,
@@ -552,20 +558,26 @@
     "lyric": "never"
   },
   {
-    "start_ms": 62227.0,
-    "duration_ms": 1561.0,
+    "start_ms": 62207.0,
+    "duration_ms": 440.0,
+    "pitch_hz": 261.42647251857596,
+    "lyric": "an"
+  },
+  {
+    "start_ms": 62687.0,
+    "duration_ms": 1101.0,
     "pitch_hz": 262.94090066745287,
     "lyric": "honest"
   },
   {
     "start_ms": 63928.0,
-    "duration_ms": 901.0,
+    "duration_ms": 881.0,
     "pitch_hz": 234.25371135130007,
     "lyric": "word"
   },
   {
-    "start_ms": 65289.0,
-    "duration_ms": 160.0,
+    "start_ms": 65309.0,
+    "duration_ms": 140.0,
     "pitch_hz": 213.5743766672055,
     "lyric": "And"
   },
@@ -577,13 +589,13 @@
   },
   {
     "start_ms": 65689.0,
-    "duration_ms": 140.0,
+    "duration_ms": 141.0,
     "pitch_hz": 208.09532995332592,
     "lyric": "was"
   },
   {
-    "start_ms": 65909.0,
-    "duration_ms": 241.0,
+    "start_ms": 65910.0,
+    "duration_ms": 240.0,
     "pitch_hz": 196.9831061351866,
     "lyric": "when"
   },
@@ -595,8 +607,8 @@
   },
   {
     "start_ms": 66770.0,
-    "duration_ms": 401.0,
-    "pitch_hz": 245.33662789309622,
+    "duration_ms": 421.0,
+    "pitch_hz": 242.51869637842702,
     "lyric": "ruled"
   },
   {

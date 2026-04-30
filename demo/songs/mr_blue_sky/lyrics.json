@@ -1,286 +1,394 @@
 [
   {
-    "timestamp_ms": 71,
-    "text": "Please tell us why you had to hide away for so long.",
+    "timestamp_ms": 31,
+    "text": "running down the avenue.",
     "words": [
       {
-        "timestamp_ms": 71,
-        "end_ms": 471,
-        "text": "Please"
+        "timestamp_ms": 31,
+        "end_ms": 631,
+        "text": "running"
       },
       {
-        "timestamp_ms": 511,
-        "end_ms": 772,
-        "text": "tell"
+        "timestamp_ms": 692,
+        "end_ms": 1052,
+        "text": "down"
       },
       {
-        "timestamp_ms": 872,
-        "end_ms": 972,
-        "text": "us"
+        "timestamp_ms": 1072,
+        "end_ms": 1272,
+        "text": "the"
       },
       {
-        "timestamp_ms": 1052,
-        "end_ms": 1472,
-        "text": "why"
-      },
-      {
-        "timestamp_ms": 1592,
-        "end_ms": 1833,
-        "text": "you"
-      },
-      {
-        "timestamp_ms": 1893,
-        "end_ms": 2073,
-        "text": "had"
-      },
-      {
-        "timestamp_ms": 2113,
-        "end_ms": 2313,
-        "text": "to"
-      },
-      {
-        "timestamp_ms": 2473,
-        "end_ms": 2953,
-        "text": "hide"
-      },
-      {
-        "timestamp_ms": 3034,
-        "end_ms": 3394,
-        "text": "away"
-      },
-      {
-        "timestamp_ms": 3454,
-        "end_ms": 3774,
-        "text": "for"
-      },
-      {
-        "timestamp_ms": 3894,
-        "end_ms": 4615,
-        "text": "so"
-      },
-      {
-        "timestamp_ms": 4655,
-        "end_ms": 5255,
-        "text": "long."
+        "timestamp_ms": 1532,
+        "end_ms": 2193,
+        "text": "avenue."
       }
     ]
   },
   {
-    "timestamp_ms": 5836,
-    "text": "Why did we go wrong?",
+    "timestamp_ms": 3053,
+    "text": "See how the sun shines brightly in the city, on the streets where once was pity.",
     "words": [
       {
-        "timestamp_ms": 5836,
-        "end_ms": 6296,
-        "text": "Why"
+        "timestamp_ms": 3053,
+        "end_ms": 3374,
+        "text": "See"
       },
       {
-        "timestamp_ms": 6316,
-        "end_ms": 6597,
-        "text": "did"
+        "timestamp_ms": 3414,
+        "end_ms": 3814,
+        "text": "how"
       },
       {
-        "timestamp_ms": 6697,
-        "end_ms": 6937,
-        "text": "we"
+        "timestamp_ms": 3854,
+        "end_ms": 4034,
+        "text": "the"
       },
       {
-        "timestamp_ms": 6977,
-        "end_ms": 7177,
-        "text": "go"
+        "timestamp_ms": 4074,
+        "end_ms": 4695,
+        "text": "sun"
       },
       {
-        "timestamp_ms": 7237,
-        "end_ms": 7778,
-        "text": "wrong?"
+        "timestamp_ms": 4775,
+        "end_ms": 5395,
+        "text": "shines"
+      },
+      {
+        "timestamp_ms": 5455,
+        "end_ms": 6136,
+        "text": "brightly"
+      },
+      {
+        "timestamp_ms": 6416,
+        "end_ms": 6496,
+        "text": "in"
+      },
+      {
+        "timestamp_ms": 6516,
+        "end_ms": 6676,
+        "text": "the"
+      },
+      {
+        "timestamp_ms": 6696,
+        "end_ms": 7237,
+        "text": "city,"
+      },
+      {
+        "timestamp_ms": 7257,
+        "end_ms": 7297,
+        "text": "on"
+      },
+      {
+        "timestamp_ms": 7917,
+        "end_ms": 8098,
+        "text": "the"
+      },
+      {
+        "timestamp_ms": 8138,
+        "end_ms": 8458,
+        "text": "streets"
+      },
+      {
+        "timestamp_ms": 8518,
+        "end_ms": 8878,
+        "text": "where"
+      },
+      {
+        "timestamp_ms": 8998,
+        "end_ms": 9198,
+        "text": "once"
+      },
+      {
+        "timestamp_ms": 9258,
+        "end_ms": 9539,
+        "text": "was"
+      },
+      {
+        "timestamp_ms": 9599,
+        "end_ms": 10119,
+        "text": "pity."
       }
     ]
   },
   {
-    "timestamp_ms": 7798,
-    "text": "Mr. Blue Sky, please tell us why you had to hide away for so long.",
+    "timestamp_ms": 10299,
+    "text": "Mr. Blue Sky is living in the day.",
     "words": [
       {
-        "timestamp_ms": 7798,
-        "end_ms": 7858,
+        "timestamp_ms": 10299,
+        "end_ms": 10800,
         "text": "Mr."
       },
       {
-        "timestamp_ms": 9739,
-        "end_ms": 10520,
+        "timestamp_ms": 10840,
+        "end_ms": 11120,
         "text": "Blue"
       },
       {
-        "timestamp_ms": 10560,
-        "end_ms": 11020,
+        "timestamp_ms": 11580,
+        "end_ms": 12061,
+        "text": "Sky"
+      },
+      {
+        "timestamp_ms": 12141,
+        "end_ms": 12221,
+        "text": "is"
+      },
+      {
+        "timestamp_ms": 12281,
+        "end_ms": 12941,
+        "text": "living"
+      },
+      {
+        "timestamp_ms": 13222,
+        "end_ms": 13562,
+        "text": "in"
+      },
+      {
+        "timestamp_ms": 13582,
+        "end_ms": 13882,
+        "text": "the"
+      },
+      {
+        "timestamp_ms": 14603,
+        "end_ms": 15183,
+        "text": "day."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 15203,
+    "text": "Hey!",
+    "words": [
+      {
+        "timestamp_ms": 15203,
+        "end_ms": 17045,
+        "text": "Hey!"
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 17125,
+    "text": "Mr. Blue Sky, please tell us why you had to hide away for so long.",
+    "words": [
+      {
+        "timestamp_ms": 17125,
+        "end_ms": 17245,
+        "text": "Mr."
+      },
+      {
+        "timestamp_ms": 17325,
+        "end_ms": 17625,
+        "text": "Blue"
+      },
+      {
+        "timestamp_ms": 17665,
+        "end_ms": 18186,
         "text": "Sky,"
       },
       {
-        "timestamp_ms": 11040,
-        "end_ms": 11381,
+        "timestamp_ms": 18206,
+        "end_ms": 18486,
         "text": "please"
       },
       {
-        "timestamp_ms": 11421,
-        "end_ms": 11681,
+        "timestamp_ms": 18526,
+        "end_ms": 18786,
         "text": "tell"
       },
       {
-        "timestamp_ms": 11761,
-        "end_ms": 11861,
+        "timestamp_ms": 18866,
+        "end_ms": 18986,
         "text": "us"
       },
       {
-        "timestamp_ms": 11921,
-        "end_ms": 12301,
+        "timestamp_ms": 19066,
+        "end_ms": 19507,
         "text": "why"
       },
       {
-        "timestamp_ms": 12442,
-        "end_ms": 12702,
+        "timestamp_ms": 19587,
+        "end_ms": 19847,
         "text": "you"
       },
       {
-        "timestamp_ms": 12782,
-        "end_ms": 12962,
+        "timestamp_ms": 19907,
+        "end_ms": 20087,
         "text": "had"
       },
       {
-        "timestamp_ms": 12982,
-        "end_ms": 13202,
+        "timestamp_ms": 20107,
+        "end_ms": 20307,
         "text": "to"
       },
       {
-        "timestamp_ms": 13362,
-        "end_ms": 13843,
+        "timestamp_ms": 20447,
+        "end_ms": 21128,
         "text": "hide"
       },
       {
-        "timestamp_ms": 13923,
-        "end_ms": 14263,
+        "timestamp_ms": 21148,
+        "end_ms": 21408,
         "text": "away"
       },
       {
-        "timestamp_ms": 14343,
-        "end_ms": 14643,
+        "timestamp_ms": 21468,
+        "end_ms": 21789,
         "text": "for"
       },
       {
-        "timestamp_ms": 14744,
-        "end_ms": 15444,
+        "timestamp_ms": 21909,
+        "end_ms": 22629,
         "text": "so"
       },
       {
-        "timestamp_ms": 15504,
-        "end_ms": 16105,
+        "timestamp_ms": 22689,
+        "end_ms": 23270,
         "text": "long."
       }
     ]
   },
   {
-    "timestamp_ms": 16665,
+    "timestamp_ms": 23850,
     "text": "Why did we go wrong?",
     "words": [
       {
-        "timestamp_ms": 16665,
-        "end_ms": 17146,
+        "timestamp_ms": 23850,
+        "end_ms": 24371,
         "text": "Why"
       },
       {
-        "timestamp_ms": 17166,
-        "end_ms": 17426,
+        "timestamp_ms": 24391,
+        "end_ms": 24611,
         "text": "did"
       },
       {
-        "timestamp_ms": 17666,
-        "end_ms": 17806,
+        "timestamp_ms": 24711,
+        "end_ms": 24971,
         "text": "we"
       },
       {
-        "timestamp_ms": 17846,
-        "end_ms": 18046,
+        "timestamp_ms": 24991,
+        "end_ms": 25191,
         "text": "go"
       },
       {
-        "timestamp_ms": 18106,
-        "end_ms": 18687,
+        "timestamp_ms": 25251,
+        "end_ms": 25772,
         "text": "wrong?"
       }
     ]
   },
   {
-    "timestamp_ms": 39474,
-    "text": "Hey you with the pretty face Welcome to the human race, the celebration Mr.",
+    "timestamp_ms": 27746,
+    "text": "Mr. Blue Sky, please tell us why you had to hide away for so long.",
     "words": [
       {
-        "timestamp_ms": 39474,
-        "end_ms": 39715,
-        "text": "Hey"
+        "timestamp_ms": 27746,
+        "end_ms": 27927,
+        "text": "Mr."
       },
       {
-        "timestamp_ms": 39795,
-        "end_ms": 40076,
+        "timestamp_ms": 28187,
+        "end_ms": 28528,
+        "text": "Blue"
+      },
+      {
+        "timestamp_ms": 28568,
+        "end_ms": 29029,
+        "text": "Sky,"
+      },
+      {
+        "timestamp_ms": 29110,
+        "end_ms": 29370,
+        "text": "please"
+      },
+      {
+        "timestamp_ms": 29410,
+        "end_ms": 29671,
+        "text": "tell"
+      },
+      {
+        "timestamp_ms": 29751,
+        "end_ms": 29851,
+        "text": "us"
+      },
+      {
+        "timestamp_ms": 29932,
+        "end_ms": 30272,
+        "text": "why"
+      },
+      {
+        "timestamp_ms": 30433,
+        "end_ms": 30693,
         "text": "you"
       },
       {
-        "timestamp_ms": 40136,
-        "end_ms": 40357,
-        "text": "with"
+        "timestamp_ms": 30774,
+        "end_ms": 30954,
+        "text": "had"
       },
       {
-        "timestamp_ms": 40377,
-        "end_ms": 40457,
-        "text": "the"
-      },
-      {
-        "timestamp_ms": 40477,
-        "end_ms": 40798,
-        "text": "pretty"
-      },
-      {
-        "timestamp_ms": 40818,
-        "end_ms": 41260,
-        "text": "face"
-      },
-      {
-        "timestamp_ms": 41801,
-        "end_ms": 42463,
-        "text": "Welcome"
-      },
-      {
-        "timestamp_ms": 42523,
-        "end_ms": 42824,
+        "timestamp_ms": 30994,
+        "end_ms": 31175,
         "text": "to"
       },
       {
-        "timestamp_ms": 42885,
-        "end_ms": 43105,
-        "text": "the"
+        "timestamp_ms": 31315,
+        "end_ms": 31997,
+        "text": "hide"
       },
       {
-        "timestamp_ms": 43205,
-        "end_ms": 44329,
-        "text": "human"
+        "timestamp_ms": 32017,
+        "end_ms": 32277,
+        "text": "away"
       },
       {
-        "timestamp_ms": 44389,
-        "end_ms": 44871,
-        "text": "race,"
+        "timestamp_ms": 32358,
+        "end_ms": 32638,
+        "text": "for"
       },
       {
-        "timestamp_ms": 45131,
-        "end_ms": 45352,
-        "text": "the"
+        "timestamp_ms": 32719,
+        "end_ms": 33420,
+        "text": "so"
       },
       {
-        "timestamp_ms": 45392,
-        "end_ms": 46255,
-        "text": "celebration"
+        "timestamp_ms": 33501,
+        "end_ms": 34122,
+        "text": "long."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 34844,
+    "text": "Where did we go wrong?",
+    "words": [
+      {
+        "timestamp_ms": 34844,
+        "end_ms": 35145,
+        "text": "Where"
       },
       {
-        "timestamp_ms": 46596,
-        "end_ms": 46696,
-        "text": "Mr."
+        "timestamp_ms": 35165,
+        "end_ms": 35425,
+        "text": "did"
+      },
+      {
+        "timestamp_ms": 35486,
+        "end_ms": 35806,
+        "text": "we"
+      },
+      {
+        "timestamp_ms": 35866,
+        "end_ms": 36067,
+        "text": "go"
+      },
+      {
+        "timestamp_ms": 36087,
+        "end_ms": 36709,
+        "text": "wrong?"
       }
     ]
   }

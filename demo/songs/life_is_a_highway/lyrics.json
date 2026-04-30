@@ -1,560 +1,231 @@
 [
   {
-    "timestamp_ms": 695,
-    "text": "I do all these cities and all these towns that sit in my blood and it's all around.",
+    "timestamp_ms": 391,
+    "text": "We won't hesitate to break down the garden gate.",
     "words": [
       {
-        "timestamp_ms": 695,
-        "end_ms": 755,
-        "text": "I"
+        "timestamp_ms": 391,
+        "end_ms": 651,
+        "text": "We"
       },
       {
-        "timestamp_ms": 795,
-        "end_ms": 995,
-        "text": "do"
-      },
-      {
-        "timestamp_ms": 1155,
-        "end_ms": 1375,
-        "text": "all"
-      },
-      {
-        "timestamp_ms": 1395,
-        "end_ms": 1535,
-        "text": "these"
-      },
-      {
-        "timestamp_ms": 1555,
-        "end_ms": 1995,
-        "text": "cities"
-      },
-      {
-        "timestamp_ms": 2055,
-        "end_ms": 2135,
-        "text": "and"
-      },
-      {
-        "timestamp_ms": 2256,
-        "end_ms": 2416,
-        "text": "all"
-      },
-      {
-        "timestamp_ms": 2456,
-        "end_ms": 2656,
-        "text": "these"
-      },
-      {
-        "timestamp_ms": 2716,
-        "end_ms": 3136,
-        "text": "towns"
-      },
-      {
-        "timestamp_ms": 3156,
-        "end_ms": 3296,
-        "text": "that"
-      },
-      {
-        "timestamp_ms": 3316,
-        "end_ms": 3536,
-        "text": "sit"
-      },
-      {
-        "timestamp_ms": 3556,
-        "end_ms": 3596,
-        "text": "in"
-      },
-      {
-        "timestamp_ms": 3616,
-        "end_ms": 3796,
-        "text": "my"
-      },
-      {
-        "timestamp_ms": 3836,
-        "end_ms": 4196,
-        "text": "blood"
-      },
-      {
-        "timestamp_ms": 4236,
-        "end_ms": 4316,
-        "text": "and"
-      },
-      {
-        "timestamp_ms": 4356,
-        "end_ms": 4536,
-        "text": "it's"
-      },
-      {
-        "timestamp_ms": 4856,
-        "end_ms": 4976,
-        "text": "all"
-      },
-      {
-        "timestamp_ms": 4996,
-        "end_ms": 5296,
-        "text": "around."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 5637,
-    "text": "I love you now, I'm gonna love you then.",
-    "words": [
-      {
-        "timestamp_ms": 5637,
-        "end_ms": 5717,
-        "text": "I"
-      },
-      {
-        "timestamp_ms": 5757,
-        "end_ms": 6037,
-        "text": "love"
-      },
-      {
-        "timestamp_ms": 6057,
-        "end_ms": 6157,
-        "text": "you"
-      },
-      {
-        "timestamp_ms": 6217,
-        "end_ms": 6477,
-        "text": "now,"
-      },
-      {
-        "timestamp_ms": 6557,
-        "end_ms": 6637,
-        "text": "I'm"
-      },
-      {
-        "timestamp_ms": 6657,
-        "end_ms": 6757,
-        "text": "gonna"
-      },
-      {
-        "timestamp_ms": 6777,
-        "end_ms": 7217,
-        "text": "love"
-      },
-      {
-        "timestamp_ms": 7237,
-        "end_ms": 7337,
-        "text": "you"
-      },
-      {
-        "timestamp_ms": 7357,
-        "end_ms": 7677,
-        "text": "then."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 7977,
-    "text": "This is the road and these other hands, commotion be to those Memphis nights.",
-    "words": [
-      {
-        "timestamp_ms": 7977,
-        "end_ms": 8197,
-        "text": "This"
-      },
-      {
-        "timestamp_ms": 8297,
-        "end_ms": 8377,
-        "text": "is"
-      },
-      {
-        "timestamp_ms": 8417,
-        "end_ms": 8497,
-        "text": "the"
-      },
-      {
-        "timestamp_ms": 8557,
-        "end_ms": 8978,
-        "text": "road"
-      },
-      {
-        "timestamp_ms": 9018,
-        "end_ms": 9098,
-        "text": "and"
-      },
-      {
-        "timestamp_ms": 9138,
-        "end_ms": 9438,
-        "text": "these"
-      },
-      {
-        "timestamp_ms": 9498,
-        "end_ms": 9678,
-        "text": "other"
-      },
-      {
-        "timestamp_ms": 9718,
-        "end_ms": 10058,
-        "text": "hands,"
-      },
-      {
-        "timestamp_ms": 10178,
-        "end_ms": 10858,
-        "text": "commotion"
-      },
-      {
-        "timestamp_ms": 10898,
-        "end_ms": 11118,
-        "text": "be"
-      },
-      {
-        "timestamp_ms": 11158,
-        "end_ms": 11238,
-        "text": "to"
-      },
-      {
-        "timestamp_ms": 11278,
-        "end_ms": 11418,
-        "text": "those"
-      },
-      {
-        "timestamp_ms": 11458,
-        "end_ms": 11979,
-        "text": "Memphis"
-      },
-      {
-        "timestamp_ms": 12059,
-        "end_ms": 12459,
-        "text": "nights."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 12479,
-    "text": "The copper past has been cool as well.",
-    "words": [
-      {
-        "timestamp_ms": 12479,
-        "end_ms": 12579,
-        "text": "The"
-      },
-      {
-        "timestamp_ms": 12599,
-        "end_ms": 13139,
-        "text": "copper"
-      },
-      {
-        "timestamp_ms": 13179,
-        "end_ms": 13479,
-        "text": "past"
-      },
-      {
-        "timestamp_ms": 13519,
-        "end_ms": 13619,
-        "text": "has"
-      },
-      {
-        "timestamp_ms": 13639,
-        "end_ms": 13839,
-        "text": "been"
-      },
-      {
-        "timestamp_ms": 13899,
-        "end_ms": 14199,
-        "text": "cool"
-      },
-      {
-        "timestamp_ms": 14239,
-        "end_ms": 14339,
-        "text": "as"
-      },
-      {
-        "timestamp_ms": 14359,
-        "end_ms": 14699,
-        "text": "well."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 14959,
-    "text": "And knock me down and back up again.",
-    "words": [
-      {
-        "timestamp_ms": 14959,
-        "end_ms": 15040,
-        "text": "And"
-      },
-      {
-        "timestamp_ms": 15080,
-        "end_ms": 15340,
-        "text": "knock"
-      },
-      {
-        "timestamp_ms": 15360,
-        "end_ms": 15480,
-        "text": "me"
-      },
-      {
-        "timestamp_ms": 15520,
-        "end_ms": 15820,
-        "text": "down"
-      },
-      {
-        "timestamp_ms": 15880,
-        "end_ms": 15960,
-        "text": "and"
-      },
-      {
-        "timestamp_ms": 15980,
-        "end_ms": 16120,
-        "text": "back"
-      },
-      {
-        "timestamp_ms": 16380,
-        "end_ms": 16560,
-        "text": "up"
-      },
-      {
-        "timestamp_ms": 16640,
-        "end_ms": 17020,
-        "text": "again."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 17260,
-    "text": "You're in my blood, I'm not an only man.",
-    "words": [
-      {
-        "timestamp_ms": 17260,
-        "end_ms": 17400,
-        "text": "You're"
-      },
-      {
-        "timestamp_ms": 17500,
-        "end_ms": 17660,
-        "text": "in"
-      },
-      {
-        "timestamp_ms": 17700,
-        "end_ms": 17800,
-        "text": "my"
-      },
-      {
-        "timestamp_ms": 17840,
-        "end_ms": 18140,
-        "text": "blood,"
-      },
-      {
-        "timestamp_ms": 18181,
-        "end_ms": 18261,
-        "text": "I'm"
-      },
-      {
-        "timestamp_ms": 18301,
-        "end_ms": 18461,
-        "text": "not"
-      },
-      {
-        "timestamp_ms": 18481,
-        "end_ms": 18521,
-        "text": "an"
-      },
-      {
-        "timestamp_ms": 18701,
-        "end_ms": 18981,
-        "text": "only"
-      },
-      {
-        "timestamp_ms": 19021,
-        "end_ms": 19281,
-        "text": "man."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 19961,
-    "text": "There's no one I can hold, approach the world, this time no.",
-    "words": [
-      {
-        "timestamp_ms": 19961,
-        "end_ms": 20282,
-        "text": "There's"
-      },
-      {
-        "timestamp_ms": 20302,
-        "end_ms": 20522,
-        "text": "no"
-      },
-      {
-        "timestamp_ms": 20682,
-        "end_ms": 20883,
-        "text": "one"
-      },
-      {
-        "timestamp_ms": 21063,
-        "end_ms": 21143,
-        "text": "I"
-      },
-      {
-        "timestamp_ms": 21183,
-        "end_ms": 21303,
-        "text": "can"
-      },
-      {
-        "timestamp_ms": 21343,
-        "end_ms": 21704,
-        "text": "hold,"
-      },
-      {
-        "timestamp_ms": 21944,
-        "end_ms": 22345,
-        "text": "approach"
-      },
-      {
-        "timestamp_ms": 22385,
-        "end_ms": 22505,
-        "text": "the"
-      },
-      {
-        "timestamp_ms": 22545,
-        "end_ms": 23026,
-        "text": "world,"
-      },
-      {
-        "timestamp_ms": 23086,
-        "end_ms": 23347,
-        "text": "this"
-      },
-      {
-        "timestamp_ms": 23387,
-        "end_ms": 23627,
-        "text": "time"
-      },
-      {
-        "timestamp_ms": 23647,
-        "end_ms": 24008,
-        "text": "no."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 24408,
-    "text": "I'll be in them when the light comes in, they're selling with survivors.",
-    "words": [
-      {
-        "timestamp_ms": 24408,
-        "end_ms": 24588,
-        "text": "I'll"
-      },
-      {
-        "timestamp_ms": 24609,
-        "end_ms": 24729,
-        "text": "be"
-      },
-      {
-        "timestamp_ms": 24789,
-        "end_ms": 24829,
-        "text": "in"
-      },
-      {
-        "timestamp_ms": 24869,
-        "end_ms": 25129,
-        "text": "them"
-      },
-      {
-        "timestamp_ms": 25149,
-        "end_ms": 25290,
-        "text": "when"
-      },
-      {
-        "timestamp_ms": 25310,
-        "end_ms": 25390,
-        "text": "the"
-      },
-      {
-        "timestamp_ms": 25450,
-        "end_ms": 25710,
-        "text": "light"
-      },
-      {
-        "timestamp_ms": 25750,
-        "end_ms": 25971,
-        "text": "comes"
-      },
-      {
-        "timestamp_ms": 26071,
-        "end_ms": 26131,
-        "text": "in,"
-      },
-      {
-        "timestamp_ms": 26151,
-        "end_ms": 26672,
-        "text": "they're"
-      },
-      {
-        "timestamp_ms": 26692,
-        "end_ms": 27172,
-        "text": "selling"
-      },
-      {
-        "timestamp_ms": 27193,
-        "end_ms": 27573,
-        "text": "with"
-      },
-      {
-        "timestamp_ms": 27613,
-        "end_ms": 28875,
-        "text": "survivors."
-      }
-    ]
-  },
-  {
-    "timestamp_ms": 29055,
-    "text": "Life is a highway, but I won't ride it on.",
-    "words": [
-      {
-        "timestamp_ms": 29055,
-        "end_ms": 29336,
-        "text": "Life"
-      },
-      {
-        "timestamp_ms": 29476,
-        "end_ms": 29676,
-        "text": "is"
-      },
-      {
-        "timestamp_ms": 29797,
-        "end_ms": 29857,
-        "text": "a"
-      },
-      {
-        "timestamp_ms": 29917,
-        "end_ms": 31119,
-        "text": "highway,"
-      },
-      {
-        "timestamp_ms": 31139,
-        "end_ms": 31199,
-        "text": "but"
-      },
-      {
-        "timestamp_ms": 31219,
-        "end_ms": 31239,
-        "text": "I"
-      },
-      {
-        "timestamp_ms": 31579,
-        "end_ms": 32481,
+        "timestamp_ms": 1392,
+        "end_ms": 2032,
         "text": "won't"
       },
       {
-        "timestamp_ms": 32541,
-        "end_ms": 33182,
+        "timestamp_ms": 2092,
+        "end_ms": 3353,
+        "text": "hesitate"
+      },
+      {
+        "timestamp_ms": 3633,
+        "end_ms": 3733,
+        "text": "to"
+      },
+      {
+        "timestamp_ms": 3773,
+        "end_ms": 4054,
+        "text": "break"
+      },
+      {
+        "timestamp_ms": 4094,
+        "end_ms": 4354,
+        "text": "down"
+      },
+      {
+        "timestamp_ms": 4374,
+        "end_ms": 4454,
+        "text": "the"
+      },
+      {
+        "timestamp_ms": 4514,
+        "end_ms": 5014,
+        "text": "garden"
+      },
+      {
+        "timestamp_ms": 5074,
+        "end_ms": 5595,
+        "text": "gate."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 6055,
+    "text": "There's not much time left today.",
+    "words": [
+      {
+        "timestamp_ms": 6055,
+        "end_ms": 6355,
+        "text": "There's"
+      },
+      {
+        "timestamp_ms": 6395,
+        "end_ms": 6595,
+        "text": "not"
+      },
+      {
+        "timestamp_ms": 6695,
+        "end_ms": 6895,
+        "text": "much"
+      },
+      {
+        "timestamp_ms": 6975,
+        "end_ms": 7496,
+        "text": "time"
+      },
+      {
+        "timestamp_ms": 7576,
+        "end_ms": 7796,
+        "text": "left"
+      },
+      {
+        "timestamp_ms": 7816,
+        "end_ms": 9817,
+        "text": "today."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 9837,
+    "text": "Life is a highway.",
+    "words": [
+      {
+        "timestamp_ms": 9837,
+        "end_ms": 9917,
+        "text": "Life"
+      },
+      {
+        "timestamp_ms": 10598,
+        "end_ms": 10738,
+        "text": "is"
+      },
+      {
+        "timestamp_ms": 10838,
+        "end_ms": 11078,
+        "text": "a"
+      },
+      {
+        "timestamp_ms": 11138,
+        "end_ms": 12579,
+        "text": "highway."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 12599,
+    "text": "I want to ride it all night long.",
+    "words": [
+      {
+        "timestamp_ms": 12599,
+        "end_ms": 12619,
+        "text": "I"
+      },
+      {
+        "timestamp_ms": 12639,
+        "end_ms": 12719,
+        "text": "want"
+      },
+      {
+        "timestamp_ms": 12979,
+        "end_ms": 13500,
+        "text": "to"
+      },
+      {
+        "timestamp_ms": 13540,
+        "end_ms": 14600,
         "text": "ride"
       },
       {
-        "timestamp_ms": 33242,
-        "end_ms": 33322,
+        "timestamp_ms": 14680,
+        "end_ms": 14761,
         "text": "it"
       },
       {
-        "timestamp_ms": 33703,
-        "end_ms": 33823,
-        "text": "on."
+        "timestamp_ms": 15161,
+        "end_ms": 15381,
+        "text": "all"
+      },
+      {
+        "timestamp_ms": 15441,
+        "end_ms": 15881,
+        "text": "night"
+      },
+      {
+        "timestamp_ms": 15981,
+        "end_ms": 16702,
+        "text": "long."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 16722,
+    "text": "If you're going my way, I want to drive it all night long.",
+    "words": [
+      {
+        "timestamp_ms": 16722,
+        "end_ms": 16762,
+        "text": "If"
+      },
+      {
+        "timestamp_ms": 19744,
+        "end_ms": 20104,
+        "text": "you're"
+      },
+      {
+        "timestamp_ms": 20144,
+        "end_ms": 20624,
+        "text": "going"
+      },
+      {
+        "timestamp_ms": 20684,
+        "end_ms": 21245,
+        "text": "my"
+      },
+      {
+        "timestamp_ms": 21265,
+        "end_ms": 21865,
+        "text": "way,"
+      },
+      {
+        "timestamp_ms": 21885,
+        "end_ms": 21905,
+        "text": "I"
+      },
+      {
+        "timestamp_ms": 21925,
+        "end_ms": 22005,
+        "text": "want"
+      },
+      {
+        "timestamp_ms": 22265,
+        "end_ms": 23226,
+        "text": "to"
+      },
+      {
+        "timestamp_ms": 23246,
+        "end_ms": 23926,
+        "text": "drive"
+      },
+      {
+        "timestamp_ms": 23987,
+        "end_ms": 24067,
+        "text": "it"
+      },
+      {
+        "timestamp_ms": 24427,
+        "end_ms": 24667,
+        "text": "all"
+      },
+      {
+        "timestamp_ms": 24747,
+        "end_ms": 25187,
+        "text": "night"
+      },
+      {
+        "timestamp_ms": 25327,
+        "end_ms": 25968,
+        "text": "long."
       }
     ]
   }

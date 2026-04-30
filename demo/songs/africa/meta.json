@@ -1,0 +1,14 @@
+{
+  "name": "Africa",
+  "artist": "Toto",
+  "album": "Toto IV",
+  "year": "1982-04-28",
+  "pfp": "cover.jpg",
+  "slug": "africa",
+  "duration_ms": 46000,
+  "sample_rate": 48000,
+  "crop_start_ms": 64000,
+  "crop_end_ms": 110000,
+  "grade_start_ms": 12000,
+  "grade_end_ms": 36000
+}

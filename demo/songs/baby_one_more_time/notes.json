@@ -1,0 +1,284 @@
+[
+  {
+    "start_ms": 511.0,
+    "duration_ms": 320.0,
+    "pitch_hz": 295.1461056233569,
+    "lyric": "How"
+  },
+  {
+    "start_ms": 871.0,
+    "duration_ms": 200.0,
+    "pitch_hz": 312.69118989895867,
+    "lyric": "you"
+  },
+  {
+    "start_ms": 1191.0,
+    "duration_ms": 360.0,
+    "pitch_hz": 336.10482540407406,
+    "lyric": "want"
+  },
+  {
+    "start_ms": 1611.0,
+    "duration_ms": 140.0,
+    "pitch_hz": 319.0784678108076,
+    "lyric": "it"
+  },
+  {
+    "start_ms": 1891.0,
+    "duration_ms": 1101.0,
+    "pitch_hz": 295.1411819475005,
+    "lyric": "to"
+  },
+  {
+    "start_ms": 3012.0,
+    "duration_ms": 40.0,
+    "pitch_hz": 272.43603931566565,
+    "lyric": "be"
+  },
+  {
+    "start_ms": 3752.0,
+    "duration_ms": 320.0,
+    "pitch_hz": 213.5743766672055,
+    "lyric": "Tell"
+  },
+  {
+    "start_ms": 4112.0,
+    "duration_ms": 160.0,
+    "pitch_hz": 295.1411819475005,
+    "lyric": "me"
+  },
+  {
+    "start_ms": 4392.0,
+    "duration_ms": 1220.0,
+    "pitch_hz": 310.89022116915385,
+    "lyric": "baby"
+  },
+  {
+    "start_ms": 5672.0,
+    "duration_ms": 380.0,
+    "pitch_hz": 297.74053694181833,
+    "lyric": "Cause"
+  },
+  {
+    "start_ms": 6152.0,
+    "duration_ms": 160.0,
+    "pitch_hz": 310.89022116915385,
+    "lyric": "I"
+  },
+  {
+    "start_ms": 6372.0,
+    "duration_ms": 280.0,
+    "pitch_hz": 342.9675080116138,
+    "lyric": "need"
+  },
+  {
+    "start_ms": 6692.0,
+    "duration_ms": 200.0,
+    "pitch_hz": 310.89022116915385,
+    "lyric": "to"
+  },
+  {
+    "start_ms": 6992.0,
+    "duration_ms": 600.0,
+    "pitch_hz": 389.44112437458904,
+    "lyric": "know"
+  },
+  {
+    "start_ms": 7652.0,
+    "duration_ms": 881.0,
+    "pitch_hz": 396.2484353207809,
+    "lyric": "now"
+  },
+  {
+    "start_ms": 8613.0,
+    "duration_ms": 960.0,
+    "pitch_hz": 354.03972707705464,
+    "lyric": "Because"
+  },
+  {
+    "start_ms": 9893.0,
+    "duration_ms": 300.0,
+    "pitch_hz": 261.42647251857596,
+    "lyric": "My"
+  },
+  {
+    "start_ms": 10233.0,
+    "duration_ms": 1080.0,
+    "pitch_hz": 262.1836865930144,
+    "lyric": "loneliness"
+  },
+  {
+    "start_ms": 12133.0,
+    "duration_ms": 560.0,
+    "pitch_hz": 251.07109973632242,
+    "lyric": "killing"
+  },
+  {
+    "start_ms": 12813.0,
+    "duration_ms": 540.0,
+    "pitch_hz": 307.3193424163214,
+    "lyric": "me"
+  },
+  {
+    "start_ms": 13713.0,
+    "duration_ms": 221.0,
+    "pitch_hz": 353.01722309239886,
+    "lyric": "And"
+  },
+  {
+    "start_ms": 14894.0,
+    "duration_ms": 100.0,
+    "pitch_hz": 320.0,
+    "lyric": "I"
+  },
+  {
+    "start_ms": 15714.0,
+    "duration_ms": 780.0,
+    "pitch_hz": 154.54981262797529,
+    "lyric": "confess"
+  },
+  {
+    "start_ms": 17674.0,
+    "duration_ms": 1120.0,
+    "pitch_hz": 393.96621227037315,
+    "lyric": "believe"
+  },
+  {
+    "start_ms": 18854.0,
+    "duration_ms": 361.0,
+    "pitch_hz": 527.4050024768007,
+    "lyric": "still"
+  },
+  {
+    "start_ms": 19255.0,
+    "duration_ms": 680.0,
+    "pitch_hz": 516.847466752027,
+    "lyric": "believe"
+  },
+  {
+    "start_ms": 20255.0,
+    "duration_ms": 360.0,
+    "pitch_hz": 265.23011428751994,
+    "lyric": "When"
+  },
+  {
+    "start_ms": 20635.0,
+    "duration_ms": 220.0,
+    "pitch_hz": 129.21186668800672,
+    "lyric": "I'm"
+  },
+  {
+    "start_ms": 22135.0,
+    "duration_ms": 320.0,
+    "pitch_hz": 242.5146506416637,
+    "lyric": "lose"
+  },
+  {
+    "start_ms": 22515.0,
+    "duration_ms": 220.0,
+    "pitch_hz": 262.94090066745287,
+    "lyric": "my"
+  },
+  {
+    "start_ms": 22815.0,
+    "duration_ms": 580.0,
+    "pitch_hz": 279.6441114954762,
+    "lyric": "mind"
+  },
+  {
+    "start_ms": 24075.0,
+    "duration_ms": 340.0,
+    "pitch_hz": 353.01722309239886,
+    "lyric": "me"
+  },
+  {
+    "start_ms": 24695.0,
+    "duration_ms": 2241.0,
+    "pitch_hz": 131.47045033372643,
+    "lyric": "sign"
+  },
+  {
+    "start_ms": 30377.0,
+    "duration_ms": 821.0,
+    "pitch_hz": 261.42647251857596,
+    "lyric": "baby,"
+  },
+  {
+    "start_ms": 31238.0,
+    "duration_ms": 580.0,
+    "pitch_hz": 259.1722501050044,
+    "lyric": "baby,"
+  },
+  {
+    "start_ms": 31858.0,
+    "duration_ms": 820.0,
+    "pitch_hz": 259.92076683399534,
+    "lyric": "the"
+  },
+  {
+    "start_ms": 32758.0,
+    "duration_ms": 600.0,
+    "pitch_hz": 257.679527786147,
+    "lyric": "reason"
+  },
+  {
+    "start_ms": 33519.0,
+    "duration_ms": 120.0,
+    "pitch_hz": 258.42373337601344,
+    "lyric": "I"
+  },
+  {
+    "start_ms": 33759.0,
+    "duration_ms": 640.0,
+    "pitch_hz": 193.5990542750868,
+    "lyric": "breathe"
+  },
+  {
+    "start_ms": 34919.0,
+    "duration_ms": 120.0,
+    "pitch_hz": 171.48661477370715,
+    "lyric": "is"
+  },
+  {
+    "start_ms": 35099.0,
+    "duration_ms": 1901.0,
+    "pitch_hz": 211.12126572366307,
+    "lyric": "you"
+  },
+  {
+    "start_ms": 37940.0,
+    "duration_ms": 340.0,
+    "pitch_hz": 243.91952372092192,
+    "lyric": "Boy,"
+  },
+  {
+    "start_ms": 38300.0,
+    "duration_ms": 241.0,
+    "pitch_hz": 258.42373337601344,
+    "lyric": "you"
+  },
+  {
+    "start_ms": 38941.0,
+    "duration_ms": 180.0,
+    "pitch_hz": 323.7182208966152,
+    "lyric": "me"
+  },
+  {
+    "start_ms": 39181.0,
+    "duration_ms": 700.0,
+    "pitch_hz": 291.75119633862937,
+    "lyric": "planted,"
+  },
+  {
+    "start_ms": 40221.0,
+    "duration_ms": 180.0,
+    "pitch_hz": 262.94090066745287,
+    "lyric": "oh,"
+  },
+  {
+    "start_ms": 40421.0,
+    "duration_ms": 561.0,
+    "pitch_hz": 227.58496291156504,
+    "lyric": "baby"
+  }
+]

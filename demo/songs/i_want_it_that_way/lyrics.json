@@ -1,0 +1,371 @@
+[
+  {
+    "timestamp_ms": 532,
+    "text": "But we are two worlds apart Can't reach to your heart",
+    "words": [
+      {
+        "timestamp_ms": 532,
+        "end_ms": 592,
+        "text": "But"
+      },
+      {
+        "timestamp_ms": 1213,
+        "end_ms": 1713,
+        "text": "we"
+      },
+      {
+        "timestamp_ms": 1733,
+        "end_ms": 1793,
+        "text": "are"
+      },
+      {
+        "timestamp_ms": 3896,
+        "end_ms": 4778,
+        "text": "two"
+      },
+      {
+        "timestamp_ms": 4838,
+        "end_ms": 5479,
+        "text": "worlds"
+      },
+      {
+        "timestamp_ms": 5879,
+        "end_ms": 6881,
+        "text": "apart"
+      },
+      {
+        "timestamp_ms": 8162,
+        "end_ms": 8763,
+        "text": "Can't"
+      },
+      {
+        "timestamp_ms": 8823,
+        "end_ms": 9604,
+        "text": "reach"
+      },
+      {
+        "timestamp_ms": 9664,
+        "end_ms": 9745,
+        "text": "to"
+      },
+      {
+        "timestamp_ms": 9945,
+        "end_ms": 10345,
+        "text": "your"
+      },
+      {
+        "timestamp_ms": 10365,
+        "end_ms": 10466,
+        "text": "heart"
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 13043,
+    "text": "When you say That I want it that way Tell me why Ain't nothing but a party Tell me why Ain't nothing but a mistake Tell me why I never wanna hear you say I want it that way Am I?",
+    "words": [
+      {
+        "timestamp_ms": 13043,
+        "end_ms": 13403,
+        "text": "When"
+      },
+      {
+        "timestamp_ms": 13603,
+        "end_ms": 14324,
+        "text": "you"
+      },
+      {
+        "timestamp_ms": 14484,
+        "end_ms": 15205,
+        "text": "say"
+      },
+      {
+        "timestamp_ms": 15725,
+        "end_ms": 15985,
+        "text": "That"
+      },
+      {
+        "timestamp_ms": 16766,
+        "end_ms": 16886,
+        "text": "I"
+      },
+      {
+        "timestamp_ms": 16946,
+        "end_ms": 17826,
+        "text": "want"
+      },
+      {
+        "timestamp_ms": 18127,
+        "end_ms": 18347,
+        "text": "it"
+      },
+      {
+        "timestamp_ms": 18467,
+        "end_ms": 19287,
+        "text": "that"
+      },
+      {
+        "timestamp_ms": 19367,
+        "end_ms": 19948,
+        "text": "way"
+      },
+      {
+        "timestamp_ms": 20248,
+        "end_ms": 20588,
+        "text": "Tell"
+      },
+      {
+        "timestamp_ms": 20628,
+        "end_ms": 20808,
+        "text": "me"
+      },
+      {
+        "timestamp_ms": 20908,
+        "end_ms": 21249,
+        "text": "why"
+      },
+      {
+        "timestamp_ms": 21389,
+        "end_ms": 21529,
+        "text": "Ain't"
+      },
+      {
+        "timestamp_ms": 21789,
+        "end_ms": 22630,
+        "text": "nothing"
+      },
+      {
+        "timestamp_ms": 22710,
+        "end_ms": 23050,
+        "text": "but"
+      },
+      {
+        "timestamp_ms": 23130,
+        "end_ms": 23190,
+        "text": "a"
+      },
+      {
+        "timestamp_ms": 23310,
+        "end_ms": 24991,
+        "text": "party"
+      },
+      {
+        "timestamp_ms": 25111,
+        "end_ms": 25452,
+        "text": "Tell"
+      },
+      {
+        "timestamp_ms": 25472,
+        "end_ms": 25672,
+        "text": "me"
+      },
+      {
+        "timestamp_ms": 25752,
+        "end_ms": 26092,
+        "text": "why"
+      },
+      {
+        "timestamp_ms": 26192,
+        "end_ms": 26372,
+        "text": "Ain't"
+      },
+      {
+        "timestamp_ms": 26632,
+        "end_ms": 27473,
+        "text": "nothing"
+      },
+      {
+        "timestamp_ms": 27553,
+        "end_ms": 27913,
+        "text": "but"
+      },
+      {
+        "timestamp_ms": 27973,
+        "end_ms": 28073,
+        "text": "a"
+      },
+      {
+        "timestamp_ms": 28173,
+        "end_ms": 29855,
+        "text": "mistake"
+      },
+      {
+        "timestamp_ms": 29975,
+        "end_ms": 30295,
+        "text": "Tell"
+      },
+      {
+        "timestamp_ms": 30315,
+        "end_ms": 30475,
+        "text": "me"
+      },
+      {
+        "timestamp_ms": 30575,
+        "end_ms": 30975,
+        "text": "why"
+      },
+      {
+        "timestamp_ms": 31436,
+        "end_ms": 31636,
+        "text": "I"
+      },
+      {
+        "timestamp_ms": 31816,
+        "end_ms": 32336,
+        "text": "never"
+      },
+      {
+        "timestamp_ms": 32416,
+        "end_ms": 32957,
+        "text": "wanna"
+      },
+      {
+        "timestamp_ms": 33017,
+        "end_ms": 33377,
+        "text": "hear"
+      },
+      {
+        "timestamp_ms": 33577,
+        "end_ms": 33737,
+        "text": "you"
+      },
+      {
+        "timestamp_ms": 33897,
+        "end_ms": 34758,
+        "text": "say"
+      },
+      {
+        "timestamp_ms": 34778,
+        "end_ms": 34798,
+        "text": "I"
+      },
+      {
+        "timestamp_ms": 36359,
+        "end_ms": 37220,
+        "text": "want"
+      },
+      {
+        "timestamp_ms": 37500,
+        "end_ms": 37700,
+        "text": "it"
+      },
+      {
+        "timestamp_ms": 37880,
+        "end_ms": 38561,
+        "text": "that"
+      },
+      {
+        "timestamp_ms": 38781,
+        "end_ms": 39561,
+        "text": "way"
+      },
+      {
+        "timestamp_ms": 39801,
+        "end_ms": 39922,
+        "text": "Am"
+      },
+      {
+        "timestamp_ms": 40242,
+        "end_ms": 40282,
+        "text": "I?"
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 42059,
+    "text": "Your fire, your one desire.",
+    "words": [
+      {
+        "timestamp_ms": 42059,
+        "end_ms": 42440,
+        "text": "Your"
+      },
+      {
+        "timestamp_ms": 42680,
+        "end_ms": 44282,
+        "text": "fire,"
+      },
+      {
+        "timestamp_ms": 44522,
+        "end_ms": 44783,
+        "text": "your"
+      },
+      {
+        "timestamp_ms": 45143,
+        "end_ms": 45584,
+        "text": "one"
+      },
+      {
+        "timestamp_ms": 46946,
+        "end_ms": 49028,
+        "text": "desire."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 49068,
+    "text": "Yes, I know it's too late, but I want it that way.",
+    "words": [
+      {
+        "timestamp_ms": 49068,
+        "end_ms": 49289,
+        "text": "Yes,"
+      },
+      {
+        "timestamp_ms": 49569,
+        "end_ms": 49649,
+        "text": "I"
+      },
+      {
+        "timestamp_ms": 49669,
+        "end_ms": 50911,
+        "text": "know"
+      },
+      {
+        "timestamp_ms": 52032,
+        "end_ms": 52293,
+        "text": "it's"
+      },
+      {
+        "timestamp_ms": 52373,
+        "end_ms": 52913,
+        "text": "too"
+      },
+      {
+        "timestamp_ms": 53294,
+        "end_ms": 53915,
+        "text": "late,"
+      },
+      {
+        "timestamp_ms": 54515,
+        "end_ms": 54876,
+        "text": "but"
+      },
+      {
+        "timestamp_ms": 55236,
+        "end_ms": 55477,
+        "text": "I"
+      },
+      {
+        "timestamp_ms": 55737,
+        "end_ms": 56178,
+        "text": "want"
+      },
+      {
+        "timestamp_ms": 56778,
+        "end_ms": 56939,
+        "text": "it"
+      },
+      {
+        "timestamp_ms": 57259,
+        "end_ms": 57820,
+        "text": "that"
+      },
+      {
+        "timestamp_ms": 57840,
+        "end_ms": 57960,
+        "text": "way."
+      }
+    ]
+  }
+]

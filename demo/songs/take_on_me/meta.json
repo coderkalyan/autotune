@@ -1,0 +1,14 @@
+{
+  "name": "Take on Me",
+  "artist": "A-Ha",
+  "album": "Hunting High and Low (Deluxe Edition)",
+  "year": "2010-07-23",
+  "pfp": "cover.jpg",
+  "slug": "take_on_me",
+  "duration_ms": 54000,
+  "sample_rate": 48000,
+  "crop_start_ms": 36000,
+  "crop_end_ms": 90000,
+  "grade_start_ms": 14000,
+  "grade_end_ms": 37000
+}

@@ -1,12 +1,12 @@
 [
   {
     "timestamp_ms": 12780,
-    "text": "I used to roll the dice Feel the fear in my enemies eyes Listen as the crowd would sing Now the old king stayed along with the king one minute",
+    "text": "i used to roll the dice feel the fear in my enemy's eyes listen as the crowd would sing now the old king is dead along with the king one minute i",
     "words": [
       {
         "timestamp_ms": 12780,
         "end_ms": 12860,
-        "text": "I"
+        "text": "i"
       },
       {
         "timestamp_ms": 13021,
@@ -14,12 +14,12 @@
         "text": "used"
       },
       {
-        "timestamp_ms": 13301,
+        "timestamp_ms": 13321,
         "end_ms": 13521,
         "text": "to"
       },
       {
-        "timestamp_ms": 13742,
+        "timestamp_ms": 13722,
         "end_ms": 15003,
         "text": "roll"
       },
@@ -29,14 +29,14 @@
         "text": "the"
       },
       {
-        "timestamp_ms": 15304,
+        "timestamp_ms": 15284,
         "end_ms": 16145,
         "text": "dice"
       },
       {
         "timestamp_ms": 16586,
         "end_ms": 16966,
-        "text": "Feel"
+        "text": "feel"
       },
       {
         "timestamp_ms": 17006,
@@ -61,7 +61,7 @@
       {
         "timestamp_ms": 18248,
         "end_ms": 18769,
-        "text": "enemies"
+        "text": "enemy's"
       },
       {
         "timestamp_ms": 19230,
@@ -71,7 +71,7 @@
       {
         "timestamp_ms": 19831,
         "end_ms": 20311,
-        "text": "Listen"
+        "text": "listen"
       },
       {
         "timestamp_ms": 20371,
@@ -101,7 +101,7 @@
       {
         "timestamp_ms": 23696,
         "end_ms": 23937,
-        "text": "Now"
+        "text": "now"
       },
       {
         "timestamp_ms": 23997,
@@ -115,13 +115,18 @@
       },
       {
         "timestamp_ms": 24457,
-        "end_ms": 24778,
+        "end_ms": 24698,
         "text": "king"
       },
       {
-        "timestamp_ms": 24798,
+        "timestamp_ms": 24718,
+        "end_ms": 24778,
+        "text": "is"
+      },
+      {
+        "timestamp_ms": 24878,
         "end_ms": 25339,
-        "text": "stayed"
+        "text": "dead"
       },
       {
         "timestamp_ms": 25399,
@@ -150,14 +155,19 @@
       },
       {
         "timestamp_ms": 26821,
-        "end_ms": 27241,
+        "end_ms": 27302,
         "text": "minute"
+      },
+      {
+        "timestamp_ms": 27402,
+        "end_ms": 27422,
+        "text": "i"
       }
     ]
   },
   {
     "timestamp_ms": 28443,
-    "text": "I held the key, next the walls were closed on me, and I discovered that my castle stem, upon pillars of salt and pillars of sand.",
+    "text": "I held the key, next the walls were closed on me and I discovered that my castle stand upon pillars of salt and pillars of sand.",
     "words": [
       {
         "timestamp_ms": 28443,
@@ -165,7 +175,7 @@
         "text": "I"
       },
       {
-        "timestamp_ms": 28603,
+        "timestamp_ms": 28563,
         "end_ms": 28763,
         "text": "held"
       },
@@ -186,7 +196,7 @@
       },
       {
         "timestamp_ms": 30944,
-        "end_ms": 31084,
+        "end_ms": 31064,
         "text": "the"
       },
       {
@@ -201,7 +211,7 @@
       },
       {
         "timestamp_ms": 32005,
-        "end_ms": 32445,
+        "end_ms": 32425,
         "text": "closed"
       },
       {
@@ -211,8 +221,8 @@
       },
       {
         "timestamp_ms": 32906,
-        "end_ms": 33146,
-        "text": "me,"
+        "end_ms": 33126,
+        "text": "me"
       },
       {
         "timestamp_ms": 33206,
@@ -247,7 +257,7 @@
       {
         "timestamp_ms": 36048,
         "end_ms": 36948,
-        "text": "stem,"
+        "text": "stand"
       },
       {
         "timestamp_ms": 37469,
@@ -293,7 +303,7 @@
   },
   {
     "timestamp_ms": 40751,
-    "text": "I hear Jerusalem bells ringing, Roman capital requests to sing it.",
+    "text": "I hear Jerusalem bells are ringing, Roman cavalry choirs are singing.",
     "words": [
       {
         "timestamp_ms": 40751,
@@ -302,18 +312,23 @@
       },
       {
         "timestamp_ms": 41552,
-        "end_ms": 42012,
+        "end_ms": 41992,
         "text": "hear"
       },
       {
-        "timestamp_ms": 42072,
+        "timestamp_ms": 42052,
         "end_ms": 43073,
         "text": "Jerusalem"
       },
       {
         "timestamp_ms": 43113,
-        "end_ms": 43933,
+        "end_ms": 43733,
         "text": "bells"
+      },
+      {
+        "timestamp_ms": 43853,
+        "end_ms": 43933,
+        "text": "are"
       },
       {
         "timestamp_ms": 43993,
@@ -327,28 +342,23 @@
       },
       {
         "timestamp_ms": 45895,
-        "end_ms": 46335,
-        "text": "capital"
+        "end_ms": 46515,
+        "text": "cavalry"
       },
       {
-        "timestamp_ms": 46375,
+        "timestamp_ms": 46575,
         "end_ms": 47215,
-        "text": "requests"
+        "text": "choirs"
       },
       {
-        "timestamp_ms": 47255,
+        "timestamp_ms": 47315,
         "end_ms": 47376,
-        "text": "to"
+        "text": "are"
       },
       {
         "timestamp_ms": 47456,
-        "end_ms": 47916,
-        "text": "sing"
-      },
-      {
-        "timestamp_ms": 47996,
         "end_ms": 48116,
-        "text": "it."
+        "text": "singing."
       }
     ]
   },
@@ -382,7 +392,7 @@
         "text": "sword"
       },
       {
-        "timestamp_ms": 50738,
+        "timestamp_ms": 50758,
         "end_ms": 50838,
         "text": "and"
       },
@@ -398,7 +408,7 @@
       },
       {
         "timestamp_ms": 52019,
-        "end_ms": 53119,
+        "end_ms": 53099,
         "text": "missionaries"
       },
       {
@@ -418,18 +428,18 @@
       },
       {
         "timestamp_ms": 54400,
-        "end_ms": 55001,
+        "end_ms": 54981,
         "text": "field."
       }
     ]
   },
   {
     "timestamp_ms": 55461,
-    "text": "For some reason I can't explain Once you've done it was never never honest word And that was when I ruled the world",
+    "text": "For some reason I can't explain Once you'd gone it was never, never an honest word And that was when I ruled the world",
     "words": [
       {
         "timestamp_ms": 55461,
-        "end_ms": 55781,
+        "end_ms": 55801,
         "text": "For"
       },
       {
@@ -443,7 +453,7 @@
         "text": "reason"
       },
       {
-        "timestamp_ms": 56882,
+        "timestamp_ms": 56902,
         "end_ms": 57002,
         "text": "I"
       },
@@ -463,14 +473,14 @@
         "text": "Once"
       },
       {
-        "timestamp_ms": 59564,
-        "end_ms": 59745,
-        "text": "you've"
+        "timestamp_ms": 59344,
+        "end_ms": 59725,
+        "text": "you'd"
       },
       {
         "timestamp_ms": 59825,
         "end_ms": 60285,
-        "text": "done"
+        "text": "gone"
       },
       {
         "timestamp_ms": 60385,
@@ -484,8 +494,8 @@
       },
       {
         "timestamp_ms": 60745,
-        "end_ms": 61166,
-        "text": "never"
+        "end_ms": 61146,
+        "text": "never,"
       },
       {
         "timestamp_ms": 61566,
@@ -493,17 +503,22 @@
         "text": "never"
       },
       {
-        "timestamp_ms": 62227,
+        "timestamp_ms": 62207,
+        "end_ms": 62647,
+        "text": "an"
+      },
+      {
+        "timestamp_ms": 62687,
         "end_ms": 63788,
         "text": "honest"
       },
       {
         "timestamp_ms": 63928,
-        "end_ms": 64829,
+        "end_ms": 64809,
         "text": "word"
       },
       {
-        "timestamp_ms": 65289,
+        "timestamp_ms": 65309,
         "end_ms": 65449,
         "text": "And"
       },
@@ -514,11 +529,11 @@
       },
       {
         "timestamp_ms": 65689,
-        "end_ms": 65829,
+        "end_ms": 65830,
         "text": "was"
       },
       {
-        "timestamp_ms": 65909,
+        "timestamp_ms": 65910,
         "end_ms": 66150,
         "text": "when"
       },
@@ -529,7 +544,7 @@
       },
       {
         "timestamp_ms": 66770,
-        "end_ms": 67171,
+        "end_ms": 67191,
         "text": "ruled"
       },
       {

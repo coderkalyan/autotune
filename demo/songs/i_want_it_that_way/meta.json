@@ -1,0 +1,14 @@
+{
+  "name": "I Want It That Way",
+  "artist": "Backstreet Boys",
+  "album": "Millennium",
+  "year": "1999-04-28",
+  "pfp": "cover.jpg",
+  "slug": "i_want_it_that_way",
+  "duration_ms": 58000,
+  "sample_rate": 48000,
+  "crop_start_ms": 28000,
+  "crop_end_ms": 86000,
+  "grade_start_ms": 20000,
+  "grade_end_ms": 39000
+}

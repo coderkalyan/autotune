@@ -5,10 +5,10 @@
   "year": "2002-06-25",
   "pfp": "cover.jpg",
   "slug": "sunday_morning",
-  "duration_ms": 44000,
+  "duration_ms": 50000,
   "sample_rate": 48000,
-  "crop_start_ms": 66000,
-  "crop_end_ms": 110000,
-  "grade_start_ms": 12000,
-  "grade_end_ms": 39000
+  "crop_start_ms": 43000,
+  "crop_end_ms": 93000,
+  "grade_start_ms": 16000,
+  "grade_end_ms": 38000
 }
