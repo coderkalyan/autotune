@@ -8,7 +8,7 @@ module midi_receiver (
     output logic  [6:0]   o_encoders [0:7],
     output mode_t         o_mode
 );
-  localparam logic [15:0] CLK_DIV = 16'd1600;  // 50 MHz / 31250 baud
+  localparam logic [15:0] CLK_DIV = 16'd434;  // 50 MHz / 115200 baud
 
   typedef enum logic [2:0] {
     STATUS,
