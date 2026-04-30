@@ -10,5 +10,6 @@
   "crop_start_ms": 72000,
   "crop_end_ms": 134000,
   "grade_start_ms": 8000,
-  "grade_end_ms": 55000
+  "grade_end_ms": 55000,
+  "key": "11B"
 }
