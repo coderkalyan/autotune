@@ -40,7 +40,7 @@ from pathlib import Path
 
 AUDIO_EXTENSIONS = {".mp3", ".wav", ".flac", ".m4a", ".ogg", ".aac"}
 HASH_CACHE_FILE = ".process_cache.json"         # stored inside SONGS_DIR
-REQUIRED_OUTPUTS = {"instrumental.wav", "vocals.wav", "pitch_track.csv", "meta.json"}
+REQUIRED_OUTPUTS = {"instrumental.mp3", "vocals.mp3", "pitch_track.csv", "meta.json"}
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -84,7 +84,13 @@ def tprint(*args, **kwargs) -> None:
         print(*args, **kwargs)
 
 
-def run_preprocess(input_file: Path, songs_dir: Path, dry_run: bool) -> bool:
+def run_preprocess(
+    input_file: Path,
+    songs_dir: Path,
+    dry_run: bool,
+    whisper_model: str,
+    whisper_device: str,
+) -> bool:
     """Run preprocess_song.py for one file. Returns True on success.
 
     Output from each subprocess is captured and flushed atomically so lines
@@ -95,6 +101,8 @@ def run_preprocess(input_file: Path, songs_dir: Path, dry_run: bool) -> bool:
         sys.executable, str(script),
         str(input_file),
         "--songs-dir", str(songs_dir),
+        "--whisper-model", whisper_model,
+        "--whisper-device", whisper_device,
     ]
     tprint(f"  [{input_file.name}] starting ...")
     if dry_run:
@@ -155,6 +163,16 @@ def main() -> None:
         metavar="N",
         help="Number of songs to process in parallel (default: 1). "
              "Try os.cpu_count() // 4 as a starting point since Demucs is already heavy.",
+    )
+    parser.add_argument(
+        "--whisper-model",
+        default="base",
+        help="Whisper model size for WhisperX (default: base). Forwarded to preprocess_song.py.",
+    )
+    parser.add_argument(
+        "--whisper-device",
+        default="cpu",
+        help="Device for WhisperX: cpu or cuda (default: cpu). Forwarded to preprocess_song.py.",
     )
     args = parser.parse_args()
 
@@ -246,7 +264,14 @@ def main() -> None:
 
         with ThreadPoolExecutor(max_workers=workers) as pool:
             future_to_file = {
-                pool.submit(run_preprocess, f, songs_dir, args.dry_run): f
+                pool.submit(
+                    run_preprocess,
+                    f,
+                    songs_dir,
+                    args.dry_run,
+                    args.whisper_model,
+                    args.whisper_device,
+                ): f
                 for f in to_process
             }
             for future in as_completed(future_to_file):
