@@ -8,7 +8,10 @@ interface Props {
 
 export function SubModeToggle({ value, onValueChange }: Props) {
   return (
-    <Tabs value={value} onValueChange={(v) => onValueChange(v as AutotuneSubMode)}>
+    <Tabs
+      value={value}
+      onValueChange={(v) => onValueChange(v as AutotuneSubMode)}
+    >
       <TabsList className="w-64">
         <TabsTrigger value="free" className="flex-1">
           Free Play

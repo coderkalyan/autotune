@@ -44,7 +44,7 @@ export function SingAlongView({ latest, playback }: Props) {
   const [activeSong, setActiveSong] = useState<SongEntry | null>(null)
   const [loading, setLoading] = useState(true)
   const [lyrics, setLyrics] = useState<LyricLine[]>([])
-  const [vocalsVolume, setVocalsVolume] = useState(30)
+  const [vocalsVolume, setVocalsVolume] = useState(60)
   const [results, setResults] = useState<ResultsSnapshot | null>(null)
   const [positionMs, setPositionMs] = useState(0)
   const [durationMs, setDurationMs] = useState(0)

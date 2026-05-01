@@ -83,7 +83,13 @@ export function SplashScreen({ onNavigate }: Props) {
         Icon={Music2}
         accentColor="#2dd4bf"
         illustration={<SineWaveIllustration />}
-        onClick={() => onNavigate({ screen: "autotune", subMode: "free", selectedSong: null })}
+        onClick={() =>
+          onNavigate({
+            screen: "autotune",
+            subMode: "sing-along",
+            selectedSong: null,
+          })
+        }
       />
 
       {/* Center divider with title badge
