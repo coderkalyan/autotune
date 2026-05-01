@@ -1,0 +1,610 @@
+[
+  {
+    "timestamp_ms": 31,
+    "text": "Do it for you Walked in and dream came true Do it for you Soft skin and hot perfume Do it for you I know I'm not done Do it for you Sat morning coffee Brewed it for you One touch and I'll brand new Do it for you And now he's Thinkin' bout me every night, oh So that's sweet, I guess so",
+    "words": [
+      {
+        "timestamp_ms": 31,
+        "end_ms": 211,
+        "text": "Do"
+      },
+      {
+        "timestamp_ms": 351,
+        "end_ms": 431,
+        "text": "it"
+      },
+      {
+        "timestamp_ms": 451,
+        "end_ms": 631,
+        "text": "for"
+      },
+      {
+        "timestamp_ms": 651,
+        "end_ms": 792,
+        "text": "you"
+      },
+      {
+        "timestamp_ms": 1052,
+        "end_ms": 1332,
+        "text": "Walked"
+      },
+      {
+        "timestamp_ms": 1432,
+        "end_ms": 1472,
+        "text": "in"
+      },
+      {
+        "timestamp_ms": 1552,
+        "end_ms": 1712,
+        "text": "and"
+      },
+      {
+        "timestamp_ms": 1772,
+        "end_ms": 2032,
+        "text": "dream"
+      },
+      {
+        "timestamp_ms": 2072,
+        "end_ms": 2313,
+        "text": "came"
+      },
+      {
+        "timestamp_ms": 2353,
+        "end_ms": 2533,
+        "text": "true"
+      },
+      {
+        "timestamp_ms": 2613,
+        "end_ms": 2653,
+        "text": "Do"
+      },
+      {
+        "timestamp_ms": 2673,
+        "end_ms": 2753,
+        "text": "it"
+      },
+      {
+        "timestamp_ms": 2773,
+        "end_ms": 2933,
+        "text": "for"
+      },
+      {
+        "timestamp_ms": 2953,
+        "end_ms": 3073,
+        "text": "you"
+      },
+      {
+        "timestamp_ms": 3353,
+        "end_ms": 3554,
+        "text": "Soft"
+      },
+      {
+        "timestamp_ms": 3574,
+        "end_ms": 3934,
+        "text": "skin"
+      },
+      {
+        "timestamp_ms": 4014,
+        "end_ms": 4094,
+        "text": "and"
+      },
+      {
+        "timestamp_ms": 4154,
+        "end_ms": 4314,
+        "text": "hot"
+      },
+      {
+        "timestamp_ms": 4374,
+        "end_ms": 4895,
+        "text": "perfume"
+      },
+      {
+        "timestamp_ms": 4935,
+        "end_ms": 4975,
+        "text": "Do"
+      },
+      {
+        "timestamp_ms": 4995,
+        "end_ms": 5035,
+        "text": "it"
+      },
+      {
+        "timestamp_ms": 5075,
+        "end_ms": 5435,
+        "text": "for"
+      },
+      {
+        "timestamp_ms": 7697,
+        "end_ms": 7937,
+        "text": "you"
+      },
+      {
+        "timestamp_ms": 8077,
+        "end_ms": 8237,
+        "text": "I"
+      },
+      {
+        "timestamp_ms": 8277,
+        "end_ms": 8537,
+        "text": "know"
+      },
+      {
+        "timestamp_ms": 8577,
+        "end_ms": 8677,
+        "text": "I'm"
+      },
+      {
+        "timestamp_ms": 8737,
+        "end_ms": 8918,
+        "text": "not"
+      },
+      {
+        "timestamp_ms": 8958,
+        "end_ms": 9198,
+        "text": "done"
+      },
+      {
+        "timestamp_ms": 9238,
+        "end_ms": 9458,
+        "text": "Do"
+      },
+      {
+        "timestamp_ms": 9578,
+        "end_ms": 9658,
+        "text": "it"
+      },
+      {
+        "timestamp_ms": 9678,
+        "end_ms": 9858,
+        "text": "for"
+      },
+      {
+        "timestamp_ms": 9878,
+        "end_ms": 9998,
+        "text": "you"
+      },
+      {
+        "timestamp_ms": 10258,
+        "end_ms": 10499,
+        "text": "Sat"
+      },
+      {
+        "timestamp_ms": 10519,
+        "end_ms": 10839,
+        "text": "morning"
+      },
+      {
+        "timestamp_ms": 10999,
+        "end_ms": 11519,
+        "text": "coffee"
+      },
+      {
+        "timestamp_ms": 11559,
+        "end_ms": 11860,
+        "text": "Brewed"
+      },
+      {
+        "timestamp_ms": 11900,
+        "end_ms": 11980,
+        "text": "it"
+      },
+      {
+        "timestamp_ms": 12000,
+        "end_ms": 12160,
+        "text": "for"
+      },
+      {
+        "timestamp_ms": 12200,
+        "end_ms": 12320,
+        "text": "you"
+      },
+      {
+        "timestamp_ms": 12660,
+        "end_ms": 12820,
+        "text": "One"
+      },
+      {
+        "timestamp_ms": 12860,
+        "end_ms": 13121,
+        "text": "touch"
+      },
+      {
+        "timestamp_ms": 13221,
+        "end_ms": 13321,
+        "text": "and"
+      },
+      {
+        "timestamp_ms": 13441,
+        "end_ms": 13561,
+        "text": "I'll"
+      },
+      {
+        "timestamp_ms": 13601,
+        "end_ms": 13881,
+        "text": "brand"
+      },
+      {
+        "timestamp_ms": 13961,
+        "end_ms": 14081,
+        "text": "new"
+      },
+      {
+        "timestamp_ms": 14101,
+        "end_ms": 14141,
+        "text": "Do"
+      },
+      {
+        "timestamp_ms": 14181,
+        "end_ms": 14281,
+        "text": "it"
+      },
+      {
+        "timestamp_ms": 14321,
+        "end_ms": 14482,
+        "text": "for"
+      },
+      {
+        "timestamp_ms": 14522,
+        "end_ms": 14662,
+        "text": "you"
+      },
+      {
+        "timestamp_ms": 14682,
+        "end_ms": 15743,
+        "text": "And"
+      },
+      {
+        "timestamp_ms": 15883,
+        "end_ms": 16583,
+        "text": "now"
+      },
+      {
+        "timestamp_ms": 16623,
+        "end_ms": 17023,
+        "text": "he's"
+      },
+      {
+        "timestamp_ms": 17444,
+        "end_ms": 17764,
+        "text": "Thinkin'"
+      },
+      {
+        "timestamp_ms": 17784,
+        "end_ms": 18024,
+        "text": "bout"
+      },
+      {
+        "timestamp_ms": 18084,
+        "end_ms": 18665,
+        "text": "me"
+      },
+      {
+        "timestamp_ms": 18705,
+        "end_ms": 18925,
+        "text": "every"
+      },
+      {
+        "timestamp_ms": 18965,
+        "end_ms": 19285,
+        "text": "night,"
+      },
+      {
+        "timestamp_ms": 19545,
+        "end_ms": 19705,
+        "text": "oh"
+      },
+      {
+        "timestamp_ms": 19846,
+        "end_ms": 20106,
+        "text": "So"
+      },
+      {
+        "timestamp_ms": 20126,
+        "end_ms": 20306,
+        "text": "that's"
+      },
+      {
+        "timestamp_ms": 20346,
+        "end_ms": 20686,
+        "text": "sweet,"
+      },
+      {
+        "timestamp_ms": 20786,
+        "end_ms": 20926,
+        "text": "I"
+      },
+      {
+        "timestamp_ms": 20986,
+        "end_ms": 21146,
+        "text": "guess"
+      },
+      {
+        "timestamp_ms": 21227,
+        "end_ms": 21487,
+        "text": "so"
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 22119,
+    "text": "So you can't sleep, baby, I know, less than me is for so Move it up, down, up, drive home, switch it up like Nintendo So you can't sleep, baby, I know, less than me is for so Holy shit Is it that sweet?",
+    "words": [
+      {
+        "timestamp_ms": 22119,
+        "end_ms": 22199,
+        "text": "So"
+      },
+      {
+        "timestamp_ms": 22239,
+        "end_ms": 22399,
+        "text": "you"
+      },
+      {
+        "timestamp_ms": 22439,
+        "end_ms": 22659,
+        "text": "can't"
+      },
+      {
+        "timestamp_ms": 22679,
+        "end_ms": 23280,
+        "text": "sleep,"
+      },
+      {
+        "timestamp_ms": 23300,
+        "end_ms": 23560,
+        "text": "baby,"
+      },
+      {
+        "timestamp_ms": 23680,
+        "end_ms": 23840,
+        "text": "I"
+      },
+      {
+        "timestamp_ms": 23860,
+        "end_ms": 24420,
+        "text": "know,"
+      },
+      {
+        "timestamp_ms": 24440,
+        "end_ms": 24620,
+        "text": "less"
+      },
+      {
+        "timestamp_ms": 24680,
+        "end_ms": 24980,
+        "text": "than"
+      },
+      {
+        "timestamp_ms": 25020,
+        "end_ms": 25240,
+        "text": "me"
+      },
+      {
+        "timestamp_ms": 25360,
+        "end_ms": 25481,
+        "text": "is"
+      },
+      {
+        "timestamp_ms": 25581,
+        "end_ms": 25741,
+        "text": "for"
+      },
+      {
+        "timestamp_ms": 25801,
+        "end_ms": 26241,
+        "text": "so"
+      },
+      {
+        "timestamp_ms": 26261,
+        "end_ms": 26941,
+        "text": "Move"
+      },
+      {
+        "timestamp_ms": 26981,
+        "end_ms": 27041,
+        "text": "it"
+      },
+      {
+        "timestamp_ms": 27101,
+        "end_ms": 27241,
+        "text": "up,"
+      },
+      {
+        "timestamp_ms": 27301,
+        "end_ms": 27822,
+        "text": "down,"
+      },
+      {
+        "timestamp_ms": 27842,
+        "end_ms": 27942,
+        "text": "up,"
+      },
+      {
+        "timestamp_ms": 27962,
+        "end_ms": 28482,
+        "text": "drive"
+      },
+      {
+        "timestamp_ms": 28542,
+        "end_ms": 29022,
+        "text": "home,"
+      },
+      {
+        "timestamp_ms": 29042,
+        "end_ms": 29482,
+        "text": "switch"
+      },
+      {
+        "timestamp_ms": 29502,
+        "end_ms": 29542,
+        "text": "it"
+      },
+      {
+        "timestamp_ms": 29562,
+        "end_ms": 29602,
+        "text": "up"
+      },
+      {
+        "timestamp_ms": 29622,
+        "end_ms": 29862,
+        "text": "like"
+      },
+      {
+        "timestamp_ms": 29902,
+        "end_ms": 30423,
+        "text": "Nintendo"
+      },
+      {
+        "timestamp_ms": 30483,
+        "end_ms": 30843,
+        "text": "So"
+      },
+      {
+        "timestamp_ms": 30863,
+        "end_ms": 30943,
+        "text": "you"
+      },
+      {
+        "timestamp_ms": 31323,
+        "end_ms": 31883,
+        "text": "can't"
+      },
+      {
+        "timestamp_ms": 31923,
+        "end_ms": 32504,
+        "text": "sleep,"
+      },
+      {
+        "timestamp_ms": 32524,
+        "end_ms": 32804,
+        "text": "baby,"
+      },
+      {
+        "timestamp_ms": 32924,
+        "end_ms": 33024,
+        "text": "I"
+      },
+      {
+        "timestamp_ms": 33044,
+        "end_ms": 33664,
+        "text": "know,"
+      },
+      {
+        "timestamp_ms": 33684,
+        "end_ms": 33864,
+        "text": "less"
+      },
+      {
+        "timestamp_ms": 33924,
+        "end_ms": 34224,
+        "text": "than"
+      },
+      {
+        "timestamp_ms": 34264,
+        "end_ms": 34464,
+        "text": "me"
+      },
+      {
+        "timestamp_ms": 34584,
+        "end_ms": 34725,
+        "text": "is"
+      },
+      {
+        "timestamp_ms": 34805,
+        "end_ms": 34985,
+        "text": "for"
+      },
+      {
+        "timestamp_ms": 35045,
+        "end_ms": 35565,
+        "text": "so"
+      },
+      {
+        "timestamp_ms": 36265,
+        "end_ms": 36445,
+        "text": "Holy"
+      },
+      {
+        "timestamp_ms": 36505,
+        "end_ms": 36905,
+        "text": "shit"
+      },
+      {
+        "timestamp_ms": 38326,
+        "end_ms": 38406,
+        "text": "Is"
+      },
+      {
+        "timestamp_ms": 38466,
+        "end_ms": 38546,
+        "text": "it"
+      },
+      {
+        "timestamp_ms": 38586,
+        "end_ms": 38766,
+        "text": "that"
+      },
+      {
+        "timestamp_ms": 38806,
+        "end_ms": 39126,
+        "text": "sweet?"
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 39247,
+    "text": "I guess so I'm working late, cause I'm a singer",
+    "words": [
+      {
+        "timestamp_ms": 39247,
+        "end_ms": 39347,
+        "text": "I"
+      },
+      {
+        "timestamp_ms": 39387,
+        "end_ms": 39627,
+        "text": "guess"
+      },
+      {
+        "timestamp_ms": 39687,
+        "end_ms": 40207,
+        "text": "so"
+      },
+      {
+        "timestamp_ms": 40947,
+        "end_ms": 41107,
+        "text": "I'm"
+      },
+      {
+        "timestamp_ms": 41187,
+        "end_ms": 41688,
+        "text": "working"
+      },
+      {
+        "timestamp_ms": 41788,
+        "end_ms": 42748,
+        "text": "late,"
+      },
+      {
+        "timestamp_ms": 43188,
+        "end_ms": 43448,
+        "text": "cause"
+      },
+      {
+        "timestamp_ms": 43568,
+        "end_ms": 43708,
+        "text": "I'm"
+      },
+      {
+        "timestamp_ms": 43788,
+        "end_ms": 43909,
+        "text": "a"
+      },
+      {
+        "timestamp_ms": 43989,
+        "end_ms": 44869,
+        "text": "singer"
+      }
+    ]
+  }
+]

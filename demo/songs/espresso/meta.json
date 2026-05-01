@@ -1,0 +1,14 @@
+{
+  "name": "Espresso",
+  "artist": "Sabrina Carpenter",
+  "album": "Short n' Sweet",
+  "year": "2024-08-23",
+  "pfp": "cover.jpg",
+  "slug": "espresso",
+  "duration_ms": 45000,
+  "sample_rate": 48000,
+  "crop_start_ms": 48000,
+  "crop_end_ms": 93000,
+  "grade_start_ms": 18000,
+  "grade_end_ms": 38000
+}

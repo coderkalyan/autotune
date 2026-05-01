@@ -1,0 +1,380 @@
+[
+  {
+    "start_ms": 812.0,
+    "duration_ms": 500.0,
+    "pitch_hz": 369.7128629991274,
+    "lyric": "We"
+  },
+  {
+    "start_ms": 1373.0,
+    "duration_ms": 420.0,
+    "pitch_hz": 439.6651671865885,
+    "lyric": "came"
+  },
+  {
+    "start_ms": 2314.0,
+    "duration_ms": 240.0,
+    "pitch_hz": 522.852945037152,
+    "lyric": "so"
+  },
+  {
+    "start_ms": 2614.0,
+    "duration_ms": 981.0,
+    "pitch_hz": 496.3663237867951,
+    "lyric": "far"
+  },
+  {
+    "start_ms": 4236.0,
+    "duration_ms": 520.0,
+    "pitch_hz": 369.7128629991274,
+    "lyric": "You"
+  },
+  {
+    "start_ms": 4797.0,
+    "duration_ms": 500.0,
+    "pitch_hz": 329.3767157259174,
+    "lyric": "know"
+  },
+  {
+    "start_ms": 17451.0,
+    "duration_ms": 340.0,
+    "pitch_hz": 586.8825876509895,
+    "lyric": "Gonna"
+  },
+  {
+    "start_ms": 17811.0,
+    "duration_ms": 120.0,
+    "pitch_hz": 586.8825876509895,
+    "lyric": "be,"
+  },
+  {
+    "start_ms": 17951.0,
+    "duration_ms": 320.0,
+    "pitch_hz": 536.6417839277556,
+    "lyric": "gonna"
+  },
+  {
+    "start_ms": 18291.0,
+    "duration_ms": 100.0,
+    "pitch_hz": 519.8415336679908,
+    "lyric": "be"
+  },
+  {
+    "start_ms": 18411.0,
+    "duration_ms": 521.0,
+    "pitch_hz": 513.8706443925608,
+    "lyric": "golden"
+  },
+  {
+    "start_ms": 20572.0,
+    "duration_ms": 160.0,
+    "pitch_hz": 662.5695512584815,
+    "lyric": "Up,"
+  },
+  {
+    "start_ms": 21072.0,
+    "duration_ms": 600.0,
+    "pitch_hz": 739.4380614255599,
+    "lyric": "up,"
+  },
+  {
+    "start_ms": 22113.0,
+    "duration_ms": 200.0,
+    "pitch_hz": 586.8825876509895,
+    "lyric": "up"
+  },
+  {
+    "start_ms": 22353.0,
+    "duration_ms": 440.0,
+    "pitch_hz": 590.282363895001,
+    "lyric": "with"
+  },
+  {
+    "start_ms": 22873.0,
+    "duration_ms": 80.0,
+    "pitch_hz": 442.2121215896884,
+    "lyric": "our"
+  },
+  {
+    "start_ms": 22993.0,
+    "duration_ms": 180.0,
+    "pitch_hz": 307.3193424163214,
+    "lyric": "voices"
+  },
+  {
+    "start_ms": 23293.0,
+    "duration_ms": 320.0,
+    "pitch_hz": 586.8825876509895,
+    "lyric": "Going"
+  },
+  {
+    "start_ms": 23633.0,
+    "duration_ms": 120.0,
+    "pitch_hz": 586.8825876509895,
+    "lyric": "to"
+  },
+  {
+    "start_ms": 23793.0,
+    "duration_ms": 140.0,
+    "pitch_hz": 590.282363895001,
+    "lyric": "get"
+  },
+  {
+    "start_ms": 23973.0,
+    "duration_ms": 100.0,
+    "pitch_hz": 522.852945037152,
+    "lyric": "you"
+  },
+  {
+    "start_ms": 24093.0,
+    "duration_ms": 320.0,
+    "pitch_hz": 522.852945037152,
+    "lyric": "so"
+  },
+  {
+    "start_ms": 24433.0,
+    "duration_ms": 160.0,
+    "pitch_hz": 516.847466752027,
+    "lyric": "I'm"
+  },
+  {
+    "start_ms": 24613.0,
+    "duration_ms": 181.0,
+    "pitch_hz": 493.50746413054105,
+    "lyric": "then"
+  },
+  {
+    "start_ms": 25274.0,
+    "duration_ms": 320.0,
+    "pitch_hz": 586.8825876509895,
+    "lyric": "Gonna"
+  },
+  {
+    "start_ms": 25614.0,
+    "duration_ms": 120.0,
+    "pitch_hz": 586.8825876509895,
+    "lyric": "be,"
+  },
+  {
+    "start_ms": 25754.0,
+    "duration_ms": 320.0,
+    "pitch_hz": 532.0011284616708,
+    "lyric": "gonna"
+  },
+  {
+    "start_ms": 26094.0,
+    "duration_ms": 100.0,
+    "pitch_hz": 522.852945037152,
+    "lyric": "be"
+  },
+  {
+    "start_ms": 26234.0,
+    "duration_ms": 500.0,
+    "pitch_hz": 519.8415336679908,
+    "lyric": "golden"
+  },
+  {
+    "start_ms": 27314.0,
+    "duration_ms": 1261.0,
+    "pitch_hz": 393.96621227037315,
+    "lyric": "I'm"
+  },
+  {
+    "start_ms": 28675.0,
+    "duration_ms": 360.0,
+    "pitch_hz": 391.69713385748963,
+    "lyric": "done"
+  },
+  {
+    "start_ms": 29135.0,
+    "duration_ms": 920.0,
+    "pitch_hz": 493.50746413054105,
+    "lyric": "hiding,"
+  },
+  {
+    "start_ms": 30135.0,
+    "duration_ms": 481.0,
+    "pitch_hz": 293.44129382549477,
+    "lyric": "now"
+  },
+  {
+    "start_ms": 30796.0,
+    "duration_ms": 200.0,
+    "pitch_hz": 369.7128629991274,
+    "lyric": "I'm"
+  },
+  {
+    "start_ms": 31076.0,
+    "duration_ms": 960.0,
+    "pitch_hz": 586.8825876509895,
+    "lyric": "shining"
+  },
+  {
+    "start_ms": 32076.0,
+    "duration_ms": 420.0,
+    "pitch_hz": 391.69713385748963,
+    "lyric": "Like"
+  },
+  {
+    "start_ms": 32796.0,
+    "duration_ms": 160.0,
+    "pitch_hz": 499.241744648559,
+    "lyric": "I'm"
+  },
+  {
+    "start_ms": 33056.0,
+    "duration_ms": 1521.0,
+    "pitch_hz": 783.3942677149793,
+    "lyric": "born"
+  },
+  {
+    "start_ms": 34597.0,
+    "duration_ms": 40.0,
+    "pitch_hz": 656.8563611648854,
+    "lyric": "to"
+  },
+  {
+    "start_ms": 35477.0,
+    "duration_ms": 961.0,
+    "pitch_hz": 331.28477562924076,
+    "lyric": "be"
+  },
+  {
+    "start_ms": 36558.0,
+    "duration_ms": 340.0,
+    "pitch_hz": 391.69713385748963,
+    "lyric": "Our"
+  },
+  {
+    "start_ms": 36918.0,
+    "duration_ms": 500.0,
+    "pitch_hz": 505.0426542967306,
+    "lyric": "time,"
+  },
+  {
+    "start_ms": 37458.0,
+    "duration_ms": 360.0,
+    "pitch_hz": 490.6650702942722,
+    "lyric": "no"
+  },
+  {
+    "start_ms": 37958.0,
+    "duration_ms": 440.0,
+    "pitch_hz": 295.1411819475005,
+    "lyric": "fears,"
+  },
+  {
+    "start_ms": 38458.0,
+    "duration_ms": 380.0,
+    "pitch_hz": 369.7128629991274,
+    "lyric": "no"
+  },
+  {
+    "start_ms": 38938.0,
+    "duration_ms": 461.0,
+    "pitch_hz": 298.57055729177836,
+    "lyric": "lies"
+  },
+  {
+    "start_ms": 39639.0,
+    "duration_ms": 220.0,
+    "pitch_hz": 400.852620359721,
+    "lyric": "As"
+  },
+  {
+    "start_ms": 39939.0,
+    "duration_ms": 400.0,
+    "pitch_hz": 195.84856692874484,
+    "lyric": "though"
+  },
+  {
+    "start_ms": 40419.0,
+    "duration_ms": 360.0,
+    "pitch_hz": 494.93689395866807,
+    "lyric": "we're"
+  },
+  {
+    "start_ms": 40859.0,
+    "duration_ms": 480.0,
+    "pitch_hz": 792.4968706415618,
+    "lyric": "born"
+  },
+  {
+    "start_ms": 41359.0,
+    "duration_ms": 200.0,
+    "pitch_hz": 743.7091756530174,
+    "lyric": "to"
+  },
+  {
+    "start_ms": 41659.0,
+    "duration_ms": 120.0,
+    "pitch_hz": 739.4257259982548,
+    "lyric": "be"
+  },
+  {
+    "start_ms": 45204.0,
+    "duration_ms": 502.0,
+    "pitch_hz": 196.9831061351866,
+    "lyric": "Waited"
+  },
+  {
+    "start_ms": 45786.0,
+    "duration_ms": 462.0,
+    "pitch_hz": 398.5438791548234,
+    "lyric": "so"
+  },
+  {
+    "start_ms": 46308.0,
+    "duration_ms": 502.0,
+    "pitch_hz": 391.69713385748963,
+    "lyric": "long"
+  },
+  {
+    "start_ms": 46830.0,
+    "duration_ms": 141.0,
+    "pitch_hz": 393.96621227037315,
+    "lyric": "to"
+  },
+  {
+    "start_ms": 47031.0,
+    "duration_ms": 401.0,
+    "pitch_hz": 359.1878554589993,
+    "lyric": "break"
+  },
+  {
+    "start_ms": 47472.0,
+    "duration_ms": 301.0,
+    "pitch_hz": 369.7128629991274,
+    "lyric": "these"
+  },
+  {
+    "start_ms": 47854.0,
+    "duration_ms": 722.0,
+    "pitch_hz": 363.3614173026807,
+    "lyric": "walls"
+  },
+  {
+    "start_ms": 48596.0,
+    "duration_ms": 281.0,
+    "pitch_hz": 327.4796454389679,
+    "lyric": "down"
+  },
+  {
+    "start_ms": 49258.0,
+    "duration_ms": 161.0,
+    "pitch_hz": 248.18316189339754,
+    "lyric": "to"
+  },
+  {
+    "start_ms": 49479.0,
+    "duration_ms": 422.0,
+    "pitch_hz": 246.75373206527053,
+    "lyric": "wake"
+  },
+  {
+    "start_ms": 49941.0,
+    "duration_ms": 40.0,
+    "pitch_hz": 292.59624508206207,
+    "lyric": "up"
+  }
+]

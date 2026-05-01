@@ -1,0 +1,335 @@
+[
+  {
+    "timestamp_ms": 812,
+    "text": "We came so far You know",
+    "words": [
+      {
+        "timestamp_ms": 812,
+        "end_ms": 1312,
+        "text": "We"
+      },
+      {
+        "timestamp_ms": 1373,
+        "end_ms": 1793,
+        "text": "came"
+      },
+      {
+        "timestamp_ms": 2314,
+        "end_ms": 2554,
+        "text": "so"
+      },
+      {
+        "timestamp_ms": 2614,
+        "end_ms": 3595,
+        "text": "far"
+      },
+      {
+        "timestamp_ms": 4236,
+        "end_ms": 4756,
+        "text": "You"
+      },
+      {
+        "timestamp_ms": 4797,
+        "end_ms": 5297,
+        "text": "know"
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 17451,
+    "text": "Gonna be, gonna be golden Up, up, up with our voices Going to get you so I'm then Gonna be, gonna be golden I'm done hiding, now I'm shining Like I'm born to be Our time, no fears, no lies As though we're born to be",
+    "words": [
+      {
+        "timestamp_ms": 17451,
+        "end_ms": 17791,
+        "text": "Gonna"
+      },
+      {
+        "timestamp_ms": 17811,
+        "end_ms": 17931,
+        "text": "be,"
+      },
+      {
+        "timestamp_ms": 17951,
+        "end_ms": 18271,
+        "text": "gonna"
+      },
+      {
+        "timestamp_ms": 18291,
+        "end_ms": 18391,
+        "text": "be"
+      },
+      {
+        "timestamp_ms": 18411,
+        "end_ms": 18932,
+        "text": "golden"
+      },
+      {
+        "timestamp_ms": 20572,
+        "end_ms": 20732,
+        "text": "Up,"
+      },
+      {
+        "timestamp_ms": 21072,
+        "end_ms": 21672,
+        "text": "up,"
+      },
+      {
+        "timestamp_ms": 22113,
+        "end_ms": 22313,
+        "text": "up"
+      },
+      {
+        "timestamp_ms": 22353,
+        "end_ms": 22793,
+        "text": "with"
+      },
+      {
+        "timestamp_ms": 22873,
+        "end_ms": 22953,
+        "text": "our"
+      },
+      {
+        "timestamp_ms": 22993,
+        "end_ms": 23173,
+        "text": "voices"
+      },
+      {
+        "timestamp_ms": 23293,
+        "end_ms": 23613,
+        "text": "Going"
+      },
+      {
+        "timestamp_ms": 23633,
+        "end_ms": 23753,
+        "text": "to"
+      },
+      {
+        "timestamp_ms": 23793,
+        "end_ms": 23933,
+        "text": "get"
+      },
+      {
+        "timestamp_ms": 23973,
+        "end_ms": 24073,
+        "text": "you"
+      },
+      {
+        "timestamp_ms": 24093,
+        "end_ms": 24413,
+        "text": "so"
+      },
+      {
+        "timestamp_ms": 24433,
+        "end_ms": 24593,
+        "text": "I'm"
+      },
+      {
+        "timestamp_ms": 24613,
+        "end_ms": 24794,
+        "text": "then"
+      },
+      {
+        "timestamp_ms": 25274,
+        "end_ms": 25594,
+        "text": "Gonna"
+      },
+      {
+        "timestamp_ms": 25614,
+        "end_ms": 25734,
+        "text": "be,"
+      },
+      {
+        "timestamp_ms": 25754,
+        "end_ms": 26074,
+        "text": "gonna"
+      },
+      {
+        "timestamp_ms": 26094,
+        "end_ms": 26194,
+        "text": "be"
+      },
+      {
+        "timestamp_ms": 26234,
+        "end_ms": 26734,
+        "text": "golden"
+      },
+      {
+        "timestamp_ms": 27314,
+        "end_ms": 28575,
+        "text": "I'm"
+      },
+      {
+        "timestamp_ms": 28675,
+        "end_ms": 29035,
+        "text": "done"
+      },
+      {
+        "timestamp_ms": 29135,
+        "end_ms": 30055,
+        "text": "hiding,"
+      },
+      {
+        "timestamp_ms": 30135,
+        "end_ms": 30616,
+        "text": "now"
+      },
+      {
+        "timestamp_ms": 30796,
+        "end_ms": 30996,
+        "text": "I'm"
+      },
+      {
+        "timestamp_ms": 31076,
+        "end_ms": 32036,
+        "text": "shining"
+      },
+      {
+        "timestamp_ms": 32076,
+        "end_ms": 32496,
+        "text": "Like"
+      },
+      {
+        "timestamp_ms": 32796,
+        "end_ms": 32956,
+        "text": "I'm"
+      },
+      {
+        "timestamp_ms": 33056,
+        "end_ms": 34577,
+        "text": "born"
+      },
+      {
+        "timestamp_ms": 34597,
+        "end_ms": 34637,
+        "text": "to"
+      },
+      {
+        "timestamp_ms": 35477,
+        "end_ms": 36438,
+        "text": "be"
+      },
+      {
+        "timestamp_ms": 36558,
+        "end_ms": 36898,
+        "text": "Our"
+      },
+      {
+        "timestamp_ms": 36918,
+        "end_ms": 37418,
+        "text": "time,"
+      },
+      {
+        "timestamp_ms": 37458,
+        "end_ms": 37818,
+        "text": "no"
+      },
+      {
+        "timestamp_ms": 37958,
+        "end_ms": 38398,
+        "text": "fears,"
+      },
+      {
+        "timestamp_ms": 38458,
+        "end_ms": 38838,
+        "text": "no"
+      },
+      {
+        "timestamp_ms": 38938,
+        "end_ms": 39399,
+        "text": "lies"
+      },
+      {
+        "timestamp_ms": 39639,
+        "end_ms": 39859,
+        "text": "As"
+      },
+      {
+        "timestamp_ms": 39939,
+        "end_ms": 40339,
+        "text": "though"
+      },
+      {
+        "timestamp_ms": 40419,
+        "end_ms": 40779,
+        "text": "we're"
+      },
+      {
+        "timestamp_ms": 40859,
+        "end_ms": 41339,
+        "text": "born"
+      },
+      {
+        "timestamp_ms": 41359,
+        "end_ms": 41559,
+        "text": "to"
+      },
+      {
+        "timestamp_ms": 41659,
+        "end_ms": 41779,
+        "text": "be"
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 45204,
+    "text": "Waited so long to break these walls down to wake up",
+    "words": [
+      {
+        "timestamp_ms": 45204,
+        "end_ms": 45706,
+        "text": "Waited"
+      },
+      {
+        "timestamp_ms": 45786,
+        "end_ms": 46248,
+        "text": "so"
+      },
+      {
+        "timestamp_ms": 46308,
+        "end_ms": 46810,
+        "text": "long"
+      },
+      {
+        "timestamp_ms": 46830,
+        "end_ms": 46971,
+        "text": "to"
+      },
+      {
+        "timestamp_ms": 47031,
+        "end_ms": 47432,
+        "text": "break"
+      },
+      {
+        "timestamp_ms": 47472,
+        "end_ms": 47773,
+        "text": "these"
+      },
+      {
+        "timestamp_ms": 47854,
+        "end_ms": 48576,
+        "text": "walls"
+      },
+      {
+        "timestamp_ms": 48596,
+        "end_ms": 48877,
+        "text": "down"
+      },
+      {
+        "timestamp_ms": 49258,
+        "end_ms": 49419,
+        "text": "to"
+      },
+      {
+        "timestamp_ms": 49479,
+        "end_ms": 49901,
+        "text": "wake"
+      },
+      {
+        "timestamp_ms": 49941,
+        "end_ms": 49981,
+        "text": "up"
+      }
+    ]
+  }
+]

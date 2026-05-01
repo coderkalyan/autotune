@@ -1,0 +1,14 @@
+{
+  "name": "Sweet Caroline",
+  "artist": "Neil Diamond",
+  "album": "Sweet Caroline",
+  "year": "1969-04-04",
+  "pfp": "cover.jpg",
+  "slug": "sweet_caroline",
+  "duration_ms": 51000,
+  "sample_rate": 48000,
+  "crop_start_ms": 46000,
+  "crop_end_ms": 97000,
+  "grade_start_ms": 20000,
+  "grade_end_ms": 43000
+}

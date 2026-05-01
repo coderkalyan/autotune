@@ -1,0 +1,292 @@
+[
+  {
+    "timestamp_ms": 2596,
+    "text": "West Virginia Blue Ridge Mountains Shenandoah River",
+    "words": [
+      {
+        "timestamp_ms": 2596,
+        "end_ms": 2916,
+        "text": "West"
+      },
+      {
+        "timestamp_ms": 2956,
+        "end_ms": 4279,
+        "text": "Virginia"
+      },
+      {
+        "timestamp_ms": 5461,
+        "end_ms": 5681,
+        "text": "Blue"
+      },
+      {
+        "timestamp_ms": 5721,
+        "end_ms": 6122,
+        "text": "Ridge"
+      },
+      {
+        "timestamp_ms": 6202,
+        "end_ms": 7284,
+        "text": "Mountains"
+      },
+      {
+        "timestamp_ms": 7645,
+        "end_ms": 9027,
+        "text": "Shenandoah"
+      },
+      {
+        "timestamp_ms": 9127,
+        "end_ms": 10309,
+        "text": "River"
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 12747,
+    "text": "Life is old there Older than the trees Younger than the mountains Growing like a breeze Country roads Take me home To the place I belong West Virginia",
+    "words": [
+      {
+        "timestamp_ms": 12747,
+        "end_ms": 13127,
+        "text": "Life"
+      },
+      {
+        "timestamp_ms": 13207,
+        "end_ms": 13307,
+        "text": "is"
+      },
+      {
+        "timestamp_ms": 13648,
+        "end_ms": 13968,
+        "text": "old"
+      },
+      {
+        "timestamp_ms": 14088,
+        "end_ms": 14508,
+        "text": "there"
+      },
+      {
+        "timestamp_ms": 15129,
+        "end_ms": 15469,
+        "text": "Older"
+      },
+      {
+        "timestamp_ms": 15509,
+        "end_ms": 15949,
+        "text": "than"
+      },
+      {
+        "timestamp_ms": 16029,
+        "end_ms": 16610,
+        "text": "the"
+      },
+      {
+        "timestamp_ms": 16710,
+        "end_ms": 17530,
+        "text": "trees"
+      },
+      {
+        "timestamp_ms": 17890,
+        "end_ms": 18411,
+        "text": "Younger"
+      },
+      {
+        "timestamp_ms": 18451,
+        "end_ms": 18951,
+        "text": "than"
+      },
+      {
+        "timestamp_ms": 19011,
+        "end_ms": 19131,
+        "text": "the"
+      },
+      {
+        "timestamp_ms": 19171,
+        "end_ms": 20412,
+        "text": "mountains"
+      },
+      {
+        "timestamp_ms": 20772,
+        "end_ms": 21453,
+        "text": "Growing"
+      },
+      {
+        "timestamp_ms": 21533,
+        "end_ms": 21973,
+        "text": "like"
+      },
+      {
+        "timestamp_ms": 21993,
+        "end_ms": 22013,
+        "text": "a"
+      },
+      {
+        "timestamp_ms": 22093,
+        "end_ms": 22834,
+        "text": "breeze"
+      },
+      {
+        "timestamp_ms": 23034,
+        "end_ms": 23514,
+        "text": "Country"
+      },
+      {
+        "timestamp_ms": 23574,
+        "end_ms": 25475,
+        "text": "roads"
+      },
+      {
+        "timestamp_ms": 25976,
+        "end_ms": 26316,
+        "text": "Take"
+      },
+      {
+        "timestamp_ms": 26356,
+        "end_ms": 26496,
+        "text": "me"
+      },
+      {
+        "timestamp_ms": 26576,
+        "end_ms": 28417,
+        "text": "home"
+      },
+      {
+        "timestamp_ms": 28877,
+        "end_ms": 29238,
+        "text": "To"
+      },
+      {
+        "timestamp_ms": 29318,
+        "end_ms": 29398,
+        "text": "the"
+      },
+      {
+        "timestamp_ms": 29458,
+        "end_ms": 31399,
+        "text": "place"
+      },
+      {
+        "timestamp_ms": 32060,
+        "end_ms": 32180,
+        "text": "I"
+      },
+      {
+        "timestamp_ms": 32220,
+        "end_ms": 34381,
+        "text": "belong"
+      },
+      {
+        "timestamp_ms": 34761,
+        "end_ms": 35101,
+        "text": "West"
+      },
+      {
+        "timestamp_ms": 35121,
+        "end_ms": 37063,
+        "text": "Virginia"
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 40597,
+    "text": "Take me home, country roads.",
+    "words": [
+      {
+        "timestamp_ms": 40597,
+        "end_ms": 40958,
+        "text": "Take"
+      },
+      {
+        "timestamp_ms": 40998,
+        "end_ms": 41118,
+        "text": "me"
+      },
+      {
+        "timestamp_ms": 41178,
+        "end_ms": 42960,
+        "text": "home,"
+      },
+      {
+        "timestamp_ms": 43501,
+        "end_ms": 44022,
+        "text": "country"
+      },
+      {
+        "timestamp_ms": 44082,
+        "end_ms": 46485,
+        "text": "roads."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 47967,
+    "text": "All my memories gather round her.",
+    "words": [
+      {
+        "timestamp_ms": 47967,
+        "end_ms": 48087,
+        "text": "All"
+      },
+      {
+        "timestamp_ms": 48127,
+        "end_ms": 48528,
+        "text": "my"
+      },
+      {
+        "timestamp_ms": 48608,
+        "end_ms": 49949,
+        "text": "memories"
+      },
+      {
+        "timestamp_ms": 50811,
+        "end_ms": 51331,
+        "text": "gather"
+      },
+      {
+        "timestamp_ms": 51391,
+        "end_ms": 51752,
+        "text": "round"
+      },
+      {
+        "timestamp_ms": 51772,
+        "end_ms": 52673,
+        "text": "her."
+      }
+    ]
+  },
+  {
+    "timestamp_ms": 53734,
+    "text": "Miner's lady, stranger to blue water.",
+    "words": [
+      {
+        "timestamp_ms": 53734,
+        "end_ms": 54395,
+        "text": "Miner's"
+      },
+      {
+        "timestamp_ms": 54455,
+        "end_ms": 55517,
+        "text": "lady,"
+      },
+      {
+        "timestamp_ms": 55857,
+        "end_ms": 56458,
+        "text": "stranger"
+      },
+      {
+        "timestamp_ms": 56518,
+        "end_ms": 56638,
+        "text": "to"
+      },
+      {
+        "timestamp_ms": 56658,
+        "end_ms": 56798,
+        "text": "blue"
+      },
+      {
+        "timestamp_ms": 56818,
+        "end_ms": 56959,
+        "text": "water."
+      }
+    ]
+  }
+]

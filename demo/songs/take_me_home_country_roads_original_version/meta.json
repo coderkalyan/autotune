@@ -1,0 +1,14 @@
+{
+  "name": "Take Me Home, Country Roads (Original Version)",
+  "artist": "John Denver",
+  "album": "John Denver's Greatest Hits",
+  "year": "1973-11-01",
+  "pfp": "cover.jpg",
+  "slug": "take_me_home_country_roads_original_version",
+  "duration_ms": 58000,
+  "sample_rate": 48000,
+  "crop_start_ms": 7000,
+  "crop_end_ms": 65000,
+  "grade_start_ms": 22000,
+  "grade_end_ms": 47000
+}
