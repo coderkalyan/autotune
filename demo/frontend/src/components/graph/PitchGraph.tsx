@@ -141,7 +141,7 @@ export function PitchGraph({ readings }: Props) {
           />
           <Line
             dataKey="corrected_hz"
-            stroke="var(--color-corrected_hz)"
+            stroke="var(--chart-4)"
             strokeWidth={2}
             dot={false}
             isAnimationActive={false}
@@ -149,7 +149,7 @@ export function PitchGraph({ readings }: Props) {
           />
           <Line
             dataKey="corrected_held"
-            stroke="var(--color-corrected_hz)"
+            stroke="var(--chart-4)"
             strokeWidth={2}
             strokeDasharray="4 4"
             strokeOpacity={0.45}
