@@ -1,7 +1,7 @@
 [
   {
     "timestamp_ms": 31,
-    "text": "Do it for you Walked in and dream came true Do it for you Soft skin and hot perfume Do it for you I know I'm not done Do it for you Sat morning coffee Brewed it for you One touch and I'll brand new Do it for you And now he's Thinkin' bout me every night, oh So that's sweet, I guess so",
+    "text": "Do it for you Walked in and dream came true it for you Soft skin and I perfumed it for you I know I Mountain Dew it for you That morning coffee Brewed it for you One touch and I'll brand newed it for you And now he's Thinkin' bout me every night, oh Isn't that sweet, I guess so",
     "words": [
       {
         "timestamp_ms": 31,
@@ -50,13 +50,8 @@
       },
       {
         "timestamp_ms": 2353,
-        "end_ms": 2533,
-        "text": "true"
-      },
-      {
-        "timestamp_ms": 2613,
         "end_ms": 2653,
-        "text": "Do"
+        "text": "trued"
       },
       {
         "timestamp_ms": 2673,
@@ -91,17 +86,12 @@
       {
         "timestamp_ms": 4154,
         "end_ms": 4314,
-        "text": "hot"
+        "text": "I"
       },
       {
         "timestamp_ms": 4374,
-        "end_ms": 4895,
-        "text": "perfume"
-      },
-      {
-        "timestamp_ms": 4935,
         "end_ms": 4975,
-        "text": "Do"
+        "text": "perfumed"
       },
       {
         "timestamp_ms": 4995,
@@ -131,22 +121,17 @@
       {
         "timestamp_ms": 8577,
         "end_ms": 8677,
-        "text": "I'm"
+        "text": "I"
       },
       {
         "timestamp_ms": 8737,
         "end_ms": 8918,
-        "text": "not"
+        "text": "Mountain"
       },
       {
         "timestamp_ms": 8958,
-        "end_ms": 9198,
-        "text": "done"
-      },
-      {
-        "timestamp_ms": 9238,
         "end_ms": 9458,
-        "text": "Do"
+        "text": "Dew"
       },
       {
         "timestamp_ms": 9578,
@@ -166,7 +151,7 @@
       {
         "timestamp_ms": 10258,
         "end_ms": 10499,
-        "text": "Sat"
+        "text": "That"
       },
       {
         "timestamp_ms": 10519,
@@ -216,7 +201,7 @@
       {
         "timestamp_ms": 13441,
         "end_ms": 13561,
-        "text": "I'll"
+        "text": "I"
       },
       {
         "timestamp_ms": 13601,
@@ -225,13 +210,8 @@
       },
       {
         "timestamp_ms": 13961,
-        "end_ms": 14081,
-        "text": "new"
-      },
-      {
-        "timestamp_ms": 14101,
         "end_ms": 14141,
-        "text": "Do"
+        "text": "newed"
       },
       {
         "timestamp_ms": 14181,
@@ -296,12 +276,12 @@
       {
         "timestamp_ms": 19846,
         "end_ms": 20106,
-        "text": "So"
+        "text": "Isn't"
       },
       {
         "timestamp_ms": 20126,
         "end_ms": 20306,
-        "text": "that's"
+        "text": "that"
       },
       {
         "timestamp_ms": 20346,
@@ -327,12 +307,12 @@
   },
   {
     "timestamp_ms": 22119,
-    "text": "So you can't sleep, baby, I know, less than me is for so Move it up, down, up, drive home, switch it up like Nintendo So you can't sleep, baby, I know, less than me is for so Holy shit Is it that sweet?",
+    "text": "Say you can't sleep, baby, I know, Thats that me espresso Move it up, down, left, right oh, switch it up like Nintendo So you can't sleep, baby, I know, Thats that me Espresso Holy shoot Is it that sweet?",
     "words": [
       {
         "timestamp_ms": 22119,
         "end_ms": 22199,
-        "text": "So"
+        "text": "Say"
       },
       {
         "timestamp_ms": 22239,
@@ -367,12 +347,12 @@
       {
         "timestamp_ms": 24440,
         "end_ms": 24620,
-        "text": "less"
+        "text": "Thats"
       },
       {
         "timestamp_ms": 24680,
         "end_ms": 24980,
-        "text": "than"
+        "text": "that"
       },
       {
         "timestamp_ms": 25020,
@@ -381,18 +361,8 @@
       },
       {
         "timestamp_ms": 25360,
-        "end_ms": 25481,
-        "text": "is"
-      },
-      {
-        "timestamp_ms": 25581,
-        "end_ms": 25741,
-        "text": "for"
-      },
-      {
-        "timestamp_ms": 25801,
         "end_ms": 26241,
-        "text": "so"
+        "text": "espresso"
       },
       {
         "timestamp_ms": 26261,
@@ -417,17 +387,17 @@
       {
         "timestamp_ms": 27842,
         "end_ms": 27942,
-        "text": "up,"
+        "text": "left,"
       },
       {
         "timestamp_ms": 27962,
         "end_ms": 28482,
-        "text": "drive"
+        "text": "right"
       },
       {
         "timestamp_ms": 28542,
         "end_ms": 29022,
-        "text": "home,"
+        "text": "oh,"
       },
       {
         "timestamp_ms": 29042,
@@ -457,7 +427,7 @@
       {
         "timestamp_ms": 30483,
         "end_ms": 30843,
-        "text": "So"
+        "text": "Say"
       },
       {
         "timestamp_ms": 30863,
@@ -492,12 +462,12 @@
       {
         "timestamp_ms": 33684,
         "end_ms": 33864,
-        "text": "less"
+        "text": "Thats"
       },
       {
         "timestamp_ms": 33924,
         "end_ms": 34224,
-        "text": "than"
+        "text": "that"
       },
       {
         "timestamp_ms": 34264,
@@ -506,18 +476,8 @@
       },
       {
         "timestamp_ms": 34584,
-        "end_ms": 34725,
-        "text": "is"
-      },
-      {
-        "timestamp_ms": 34805,
-        "end_ms": 34985,
-        "text": "for"
-      },
-      {
-        "timestamp_ms": 35045,
         "end_ms": 35565,
-        "text": "so"
+        "text": "espresso"
       },
       {
         "timestamp_ms": 36265,
@@ -527,7 +487,7 @@
       {
         "timestamp_ms": 36505,
         "end_ms": 36905,
-        "text": "shit"
+        "text": "shoot"
       },
       {
         "timestamp_ms": 38326,
