@@ -28,7 +28,7 @@ export function useSongPlayback(): SongPlayback {
   const instrumentalRef = useRef<HTMLAudioElement | null>(null)
   const vocalsRef = useRef<HTMLAudioElement | null>(null)
   const songIdRef = useRef<string | null>(null)
-  const vocalsVolumeRef = useRef<number>(0.3)
+  const vocalsVolumeRef = useRef<number>(0.7)
   const vocalsBoostRef = useRef<boolean>(false)
   const rampRafRef = useRef<number | null>(null)
   const onEndedRef = useRef<(() => void) | null>(null)
@@ -79,7 +79,7 @@ export function useSongPlayback(): SongPlayback {
 
     const onPlaying = () => {
       vocals.currentTime = instrumental.currentTime
-      vocals.play().catch(() => {})
+      vocals.play().catch(() => { })
     }
     const onPause = () => {
       vocals.pause()
