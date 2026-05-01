@@ -1,260 +1,376 @@
 [
   {
+    "start_ms": 5644.0,
+    "duration_ms": 120.0,
+    "pitch_hz_candidates": [
+      277.1826309768721
+    ],
+    "lyric": "And"
+  },
+  {
     "start_ms": 5925.0,
     "duration_ms": 180.0,
-    "pitch_hz": 348.9624744528825,
+    "pitch_hz_candidates": [
+      349.2282314330039
+    ],
     "lyric": "I"
   },
   {
     "start_ms": 6165.0,
     "duration_ms": 341.0,
-    "pitch_hz": 367.5834735990512,
+    "pitch_hz_candidates": [
+      349.2282314330039
+    ],
     "lyric": "just"
   },
   {
     "start_ms": 6566.0,
     "duration_ms": 400.0,
-    "pitch_hz": 352.00060829733957,
+    "pitch_hz_candidates": [
+      349.2282314330039
+    ],
     "lyric": "can't"
   },
   {
     "start_ms": 7006.0,
     "duration_ms": 421.0,
-    "pitch_hz": 276.9716995219658,
+    "pitch_hz_candidates": [
+      277.1826309768721
+    ],
     "lyric": "look,"
   },
   {
     "start_ms": 8168.0,
     "duration_ms": 360.0,
-    "pitch_hz": 310.89022116915385,
+    "pitch_hz_candidates": [
+      277.1826309768721,
+      311.1269837220809
+    ],
     "lyric": "it's"
   },
   {
     "start_ms": 8568.0,
     "duration_ms": 802.0,
-    "pitch_hz": 296.85091742121904,
+    "pitch_hz_candidates": [
+      311.1269837220809,
+      277.1826309768721
+    ],
     "lyric": "killing"
   },
   {
     "start_ms": 9450.0,
     "duration_ms": 621.0,
-    "pitch_hz": 346.9525984964539,
+    "pitch_hz_candidates": [
+      349.2282314330039
+    ],
     "lyric": "me"
   },
   {
     "start_ms": 10091.0,
     "duration_ms": 1742.0,
-    "pitch_hz": 350.98399350228027,
-    "lyric": "They're"
+    "pitch_hz_candidates": [
+      207.65234878997256
+    ],
+    "lyric": "and"
   },
   {
     "start_ms": 11853.0,
     "duration_ms": 601.0,
-    "pitch_hz": 308.209483836136,
+    "pitch_hz_candidates": [
+      311.1269837220809,
+      277.1826309768721
+    ],
     "lyric": "taking"
   },
   {
     "start_ms": 12494.0,
     "duration_ms": 961.0,
-    "pitch_hz": 309.09962525595057,
+    "pitch_hz_candidates": [
+      311.1269837220809,
+      277.1826309768721
+    ],
     "lyric": "control"
   },
   {
     "start_ms": 18356.0,
     "duration_ms": 1281.0,
-    "pitch_hz": 269.8662550216261,
+    "pitch_hz_candidates": [
+      261.6255653005986,
+      277.1826309768721,
+      277.1826309768721
+    ],
     "lyric": "Jealousy"
   },
   {
     "start_ms": 19997.0,
     "duration_ms": 741.0,
-    "pitch_hz": 276.9716995219658,
+    "pitch_hz_candidates": [
+      277.1826309768721,
+      277.1826309768721
+    ],
     "lyric": "turning"
   },
   {
     "start_ms": 20778.0,
     "duration_ms": 360.0,
-    "pitch_hz": 275.3764599181857,
+    "pitch_hz_candidates": [
+      277.1826309768721
+    ],
     "lyric": "saints"
   },
   {
     "start_ms": 21378.0,
     "duration_ms": 821.0,
-    "pitch_hz": 262.94090066745287,
+    "pitch_hz_candidates": [
+      277.1826309768721,
+      261.6255653005986
+    ],
     "lyric": "into"
   },
   {
     "start_ms": 22239.0,
     "duration_ms": 620.0,
-    "pitch_hz": 275.3764599181857,
-    "lyric": "deceit"
+    "pitch_hz_candidates": [
+      277.1826309768721,
+      277.1826309768721
+    ],
+    "lyric": "the sea"
   },
   {
     "start_ms": 23199.0,
     "duration_ms": 781.0,
-    "pitch_hz": 262.94090066745287,
+    "pitch_hz_candidates": [
+      311.1269837220809,
+      277.1826309768721
+    ],
     "lyric": "Swimming"
   },
   {
     "start_ms": 24020.0,
     "duration_ms": 340.0,
-    "pitch_hz": 262.94090066745287,
+    "pitch_hz_candidates": [
+      261.6255653005986
+    ],
     "lyric": "through"
   },
   {
     "start_ms": 24420.0,
     "duration_ms": 280.0,
-    "pitch_hz": 276.9716995219658,
+    "pitch_hz_candidates": [
+      277.1826309768721
+    ],
     "lyric": "sick"
   },
   {
     "start_ms": 24780.0,
     "duration_ms": 1341.0,
-    "pitch_hz": 269.08685288118863,
+    "pitch_hz_candidates": [
+      261.6255653005986,
+      277.1826309768721,
+      277.1826309768721
+    ],
     "lyric": "lullabies"
   },
   {
     "start_ms": 26481.0,
     "duration_ms": 841.0,
-    "pitch_hz": 272.2134915042738,
-    "lyric": "Joking"
+    "pitch_hz_candidates": [
+      277.1826309768721,
+      277.1826309768721
+    ],
+    "lyric": "Choking"
   },
   {
     "start_ms": 27502.0,
     "duration_ms": 160.0,
-    "pitch_hz": 261.42647251857596,
+    "pitch_hz_candidates": [
+      277.1826309768721
+    ],
     "lyric": "on"
   },
   {
     "start_ms": 27722.0,
     "duration_ms": 360.0,
-    "pitch_hz": 275.3764599181857,
+    "pitch_hz_candidates": [
+      261.6255653005986
+    ],
     "lyric": "your"
   },
   {
     "start_ms": 28623.0,
     "duration_ms": 820.0,
-    "pitch_hz": 275.3764599181857,
+    "pitch_hz_candidates": [
+      261.6255653005986,
+      277.1826309768721,
+      277.1826309768721
+    ],
     "lyric": "alibis"
   },
   {
     "start_ms": 29723.0,
     "duration_ms": 361.0,
-    "pitch_hz": 276.9716995219658,
+    "pitch_hz_candidates": [
+      277.1826309768721
+    ],
     "lyric": "But"
   },
   {
     "start_ms": 30104.0,
     "duration_ms": 320.0,
-    "pitch_hz": 276.9716995219658,
+    "pitch_hz_candidates": [
+      277.1826309768721
+    ],
     "lyric": "it's"
   },
   {
     "start_ms": 30504.0,
     "duration_ms": 340.0,
-    "pitch_hz": 277.77393988836275,
+    "pitch_hz_candidates": [
+      277.1826309768721
+    ],
     "lyric": "just"
   },
   {
     "start_ms": 30924.0,
     "duration_ms": 300.0,
-    "pitch_hz": 312.69118989895867,
+    "pitch_hz_candidates": [
+      311.1269837220809
+    ],
     "lyric": "the"
   },
   {
     "start_ms": 31284.0,
     "duration_ms": 521.0,
-    "pitch_hz": 369.7128629991274,
+    "pitch_hz_candidates": [
+      369.9944227116344
+    ],
     "lyric": "price"
   },
   {
     "start_ms": 32045.0,
     "duration_ms": 100.0,
-    "pitch_hz": 361.268609537962,
+    "pitch_hz_candidates": [
+      349.2282314330039
+    ],
     "lyric": "I"
   },
   {
     "start_ms": 32185.0,
     "duration_ms": 400.0,
-    "pitch_hz": 346.9525984964539,
+    "pitch_hz_candidates": [
+      349.2282314330039
+    ],
     "lyric": "pay"
   },
   {
     "start_ms": 32945.0,
     "duration_ms": 1261.0,
-    "pitch_hz": 348.9624744528825,
+    "pitch_hz_candidates": [
+      369.9944227116344,
+      349.2282314330039,
+      277.1826309768721
+    ],
     "lyric": "Destiny"
   },
   {
     "start_ms": 34306.0,
     "duration_ms": 180.0,
-    "pitch_hz": 207.49432874416155,
+    "pitch_hz_candidates": [
+      277.1826309768721
+    ],
     "lyric": "is"
   },
   {
     "start_ms": 34546.0,
     "duration_ms": 841.0,
-    "pitch_hz": 310.89022116915385,
+    "pitch_hz_candidates": [
+      311.1269837220809,
+      277.1826309768721
+    ],
     "lyric": "calling"
   },
   {
     "start_ms": 35427.0,
     "duration_ms": 380.0,
-    "pitch_hz": 276.9716995219658,
+    "pitch_hz_candidates": [
+      277.1826309768721
+    ],
     "lyric": "me"
   },
   {
     "start_ms": 36288.0,
     "duration_ms": 740.0,
-    "pitch_hz": 275.3764599181857,
+    "pitch_hz_candidates": [
+      277.1826309768721,
+      277.1826309768721
+    ],
     "lyric": "Open"
   },
   {
     "start_ms": 37168.0,
     "duration_ms": 140.0,
-    "pitch_hz": 273.7904082184327,
+    "pitch_hz_candidates": [
+      277.1826309768721
+    ],
     "lyric": "up"
   },
   {
     "start_ms": 37388.0,
     "duration_ms": 361.0,
-    "pitch_hz": 310.89022116915385,
+    "pitch_hz_candidates": [
+      311.1269837220809
+    ],
     "lyric": "my"
   },
   {
     "start_ms": 38049.0,
     "duration_ms": 1000.0,
-    "pitch_hz": 355.06223106171035,
+    "pitch_hz_candidates": [
+      369.9944227116344,
+      349.2282314330039
+    ],
     "lyric": "eager"
   },
   {
     "start_ms": 40070.0,
     "duration_ms": 340.0,
-    "pitch_hz": 310.89022116915385,
+    "pitch_hz_candidates": [
+      349.2282314330039
+    ],
     "lyric": "eyes"
   },
   {
     "start_ms": 40430.0,
     "duration_ms": 981.0,
-    "pitch_hz": 258.42373337601344,
+    "pitch_hz_candidates": [
+      349.2282314330039
+    ],
     "lyric": "Cause"
   },
   {
     "start_ms": 41651.0,
     "duration_ms": 560.0,
-    "pitch_hz": 316.3244865129268,
+    "pitch_hz_candidates": [
+      349.2282314330039
+    ],
     "lyric": "I'm"
   },
   {
     "start_ms": 42472.0,
     "duration_ms": 120.0,
-    "pitch_hz": 275.3764599181857,
+    "pitch_hz_candidates": [
+      311.1269837220809,
+      277.1826309768721
+    ],
     "lyric": "Mr."
   },
   {
     "start_ms": 42652.0,
     "duration_ms": 1441.0,
-    "pitch_hz": 295.1411819475005,
+    "pitch_hz_candidates": [
+      311.1269837220809,
+      277.1826309768721
+    ],
     "lyric": "Brightside"
   }
 ]

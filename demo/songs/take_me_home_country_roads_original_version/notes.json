@@ -2,295 +2,443 @@
   {
     "start_ms": 2596.0,
     "duration_ms": 320.0,
-    "pitch_hz": 179.59392772949968,
+    "pitch_hz_candidates": [
+      369.9944227116344
+    ],
     "lyric": "West"
   },
   {
     "start_ms": 2956.0,
     "duration_ms": 1323.0,
-    "pitch_hz": 219.83258359329426,
+    "pitch_hz_candidates": [
+      329.6275569128699,
+      369.9944227116344,
+      440.0
+    ],
     "lyric": "Virginia"
   },
   {
     "start_ms": 5461.0,
     "duration_ms": 220.0,
-    "pitch_hz": 241.81625983879792,
+    "pitch_hz_candidates": [
+      493.8833012561241
+    ],
     "lyric": "Blue"
   },
   {
     "start_ms": 5721.0,
     "duration_ms": 401.0,
-    "pitch_hz": 248.18316189339754,
+    "pitch_hz_candidates": [
+      493.8833012561241
+    ],
     "lyric": "Ridge"
   },
   {
     "start_ms": 6202.0,
     "duration_ms": 1082.0,
-    "pitch_hz": 246.75373206527053,
+    "pitch_hz_candidates": [
+      554.3652619537442,
+      493.8833012561241
+    ],
     "lyric": "Mountains"
   },
   {
     "start_ms": 7645.0,
     "duration_ms": 1382.0,
-    "pitch_hz": 182.73317428972345,
+    "pitch_hz_candidates": [
+      369.9944227116344,
+      369.9944227116344,
+      369.9944227116344,
+      329.6275569128699
+    ],
     "lyric": "Shenandoah"
   },
   {
     "start_ms": 9127.0,
     "duration_ms": 1182.0,
-    "pitch_hz": 219.83258359329426,
+    "pitch_hz_candidates": [
+      369.9944227116344,
+      440.0
+    ],
     "lyric": "River"
   },
   {
     "start_ms": 12747.0,
     "duration_ms": 380.0,
-    "pitch_hz": 169.5140950974872,
+    "pitch_hz_candidates": [
+      329.6275569128699
+    ],
     "lyric": "Life"
   },
   {
     "start_ms": 13207.0,
     "duration_ms": 100.0,
-    "pitch_hz": 159.5392339054038,
+    "pitch_hz_candidates": [
+      329.6275569128699
+    ],
     "lyric": "is"
   },
   {
     "start_ms": 13648.0,
     "duration_ms": 320.0,
-    "pitch_hz": 184.85643149956366,
+    "pitch_hz_candidates": [
+      369.9944227116344
+    ],
     "lyric": "old"
   },
   {
     "start_ms": 14088.0,
     "duration_ms": 420.0,
-    "pitch_hz": 80.0,
+    "pitch_hz_candidates": [
+      329.6275569128699
+    ],
     "lyric": "there"
   },
   {
     "start_ms": 15129.0,
     "duration_ms": 340.0,
-    "pitch_hz": 93.77300619379417,
+    "pitch_hz_candidates": [
+      369.9944227116344,
+      440.0
+    ],
     "lyric": "Older"
   },
   {
     "start_ms": 15509.0,
     "duration_ms": 440.0,
-    "pitch_hz": 218.56644108070327,
+    "pitch_hz_candidates": [
+      440.0
+    ],
     "lyric": "than"
   },
   {
     "start_ms": 16029.0,
     "duration_ms": 581.0,
-    "pitch_hz": 273.7904082184327,
+    "pitch_hz_candidates": [
+      554.3652619537442
+    ],
     "lyric": "the"
   },
   {
     "start_ms": 16710.0,
     "duration_ms": 820.0,
-    "pitch_hz": 350.98399350228027,
+    "pitch_hz_candidates": [
+      554.3652619537442
+    ],
     "lyric": "trees"
   },
   {
     "start_ms": 17890.0,
     "duration_ms": 521.0,
-    "pitch_hz": 82.8211939073102,
+    "pitch_hz_candidates": [
+      493.8833012561241,
+      493.8833012561241
+    ],
     "lyric": "Younger"
   },
   {
     "start_ms": 18451.0,
     "duration_ms": 500.0,
-    "pitch_hz": 82.8211939073102,
+    "pitch_hz_candidates": [
+      493.8833012561241
+    ],
     "lyric": "than"
   },
   {
     "start_ms": 19011.0,
     "duration_ms": 120.0,
-    "pitch_hz": 82.8211939073102,
+    "pitch_hz_candidates": [
+      493.8833012561241
+    ],
     "lyric": "the"
   },
   {
     "start_ms": 19171.0,
     "duration_ms": 1241.0,
-    "pitch_hz": 272.2134915042738,
+    "pitch_hz_candidates": [
+      554.3652619537442,
+      493.8833012561241
+    ],
     "lyric": "mountains"
   },
   {
     "start_ms": 20772.0,
     "duration_ms": 681.0,
-    "pitch_hz": 187.0043597697993,
+    "pitch_hz_candidates": [
+      369.9944227116344,
+      440.0
+    ],
     "lyric": "Growing"
   },
   {
     "start_ms": 21533.0,
     "duration_ms": 440.0,
-    "pitch_hz": 109.91629179664713,
+    "pitch_hz_candidates": [
+      440.0
+    ],
     "lyric": "like"
+  },
+  {
+    "start_ms": 21993.0,
+    "duration_ms": 20.0,
+    "pitch_hz_candidates": [
+      493.8833012561241
+    ],
+    "lyric": "a"
   },
   {
     "start_ms": 22093.0,
     "duration_ms": 741.0,
-    "pitch_hz": 111.83759473432156,
+    "pitch_hz_candidates": [
+      440.0
+    ],
     "lyric": "breeze"
   },
   {
     "start_ms": 23034.0,
     "duration_ms": 480.0,
-    "pitch_hz": 219.83258359329426,
+    "pitch_hz_candidates": [
+      440.0,
+      493.8833012561241
+    ],
     "lyric": "Country"
   },
   {
     "start_ms": 23574.0,
     "duration_ms": 1901.0,
-    "pitch_hz": 248.18316189339754,
+    "pitch_hz_candidates": [
+      554.3652619537442
+    ],
     "lyric": "roads"
   },
   {
     "start_ms": 25976.0,
     "duration_ms": 340.0,
-    "pitch_hz": 253.25274773163864,
+    "pitch_hz_candidates": [
+      493.8833012561241
+    ],
     "lyric": "Take"
   },
   {
     "start_ms": 26356.0,
     "duration_ms": 140.0,
-    "pitch_hz": 221.10606079484415,
+    "pitch_hz_candidates": [
+      440.0
+    ],
     "lyric": "me"
   },
   {
     "start_ms": 26576.0,
     "duration_ms": 1841.0,
-    "pitch_hz": 245.3325351471361,
+    "pitch_hz_candidates": [
+      493.8833012561241
+    ],
     "lyric": "home"
   },
   {
     "start_ms": 28877.0,
     "duration_ms": 361.0,
-    "pitch_hz": 298.57055729177836,
+    "pitch_hz_candidates": [
+      554.3652619537442
+    ],
     "lyric": "To"
+  },
+  {
+    "start_ms": 29318.0,
+    "duration_ms": 80.0,
+    "pitch_hz_candidates": [
+      493.8833012561241
+    ],
+    "lyric": "the"
   },
   {
     "start_ms": 29458.0,
     "duration_ms": 1941.0,
-    "pitch_hz": 221.10606079484415,
+    "pitch_hz_candidates": [
+      440.0
+    ],
     "lyric": "place"
   },
   {
     "start_ms": 32060.0,
     "duration_ms": 120.0,
-    "pitch_hz": 276.9716995219658,
+    "pitch_hz_candidates": [
+      554.3652619537442
+    ],
     "lyric": "I"
   },
   {
     "start_ms": 32220.0,
     "duration_ms": 2161.0,
-    "pitch_hz": 182.73317428972345,
+    "pitch_hz_candidates": [
+      659.2551138257398,
+      739.9888454232688
+    ],
     "lyric": "belong"
   },
   {
     "start_ms": 34761.0,
     "duration_ms": 340.0,
-    "pitch_hz": 359.1878554589993,
+    "pitch_hz_candidates": [
+      659.2551138257398
+    ],
     "lyric": "West"
   },
   {
     "start_ms": 35121.0,
-    "duration_ms": 1942.0,
-    "pitch_hz": 139.28809012737986,
-    "lyric": "Virginia"
+    "duration_ms": 3942.0,
+    "pitch_hz_candidates": [
+      554.3652619537442,
+      659.2551138257398,
+      554.3652619537442,
+      493.8833012561241,
+      440.0,
+      493.8833012561241,
+      554.3652619537442
+    ],
+    "lyric": "Virginia mountain mama"
   },
   {
     "start_ms": 40597.0,
     "duration_ms": 361.0,
-    "pitch_hz": 258.42373337601344,
+    "pitch_hz_candidates": [
+      493.8833012561241
+    ],
     "lyric": "Take"
+  },
+  {
+    "start_ms": 40998.0,
+    "duration_ms": 120.0,
+    "pitch_hz_candidates": [
+      440.0
+    ],
+    "lyric": "me"
   },
   {
     "start_ms": 41178.0,
     "duration_ms": 1782.0,
-    "pitch_hz": 221.10606079484415,
+    "pitch_hz_candidates": [
+      440.0
+    ],
     "lyric": "home,"
   },
   {
     "start_ms": 43501.0,
     "duration_ms": 521.0,
-    "pitch_hz": 222.39062513174363,
+    "pitch_hz_candidates": [
+      440.0,
+      493.8833012561241
+    ],
     "lyric": "country"
   },
   {
     "start_ms": 44082.0,
     "duration_ms": 2403.0,
-    "pitch_hz": 222.38691517477395,
+    "pitch_hz_candidates": [
+      440.0
+    ],
     "lyric": "roads."
   },
   {
     "start_ms": 47967.0,
     "duration_ms": 120.0,
-    "pitch_hz": 164.6911052670522,
+    "pitch_hz_candidates": [
+      329.6275569128699
+    ],
     "lyric": "All"
   },
   {
     "start_ms": 48127.0,
     "duration_ms": 401.0,
-    "pitch_hz": 164.21409029122134,
+    "pitch_hz_candidates": [
+      329.6275569128699
+    ],
     "lyric": "my"
   },
   {
     "start_ms": 48608.0,
     "duration_ms": 1341.0,
-    "pitch_hz": 165.6423878146204,
+    "pitch_hz_candidates": [
+      369.9944227116344,
+      329.6275569128699
+    ],
     "lyric": "memories"
   },
   {
     "start_ms": 50811.0,
     "duration_ms": 520.0,
-    "pitch_hz": 167.56705965130027,
+    "pitch_hz_candidates": [
+      369.9944227116344,
+      329.6275569128699
+    ],
     "lyric": "gather"
   },
   {
     "start_ms": 51391.0,
     "duration_ms": 361.0,
-    "pitch_hz": 184.85643149956366,
+    "pitch_hz_candidates": [
+      369.9944227116344
+    ],
     "lyric": "round"
   },
   {
     "start_ms": 51772.0,
     "duration_ms": 901.0,
-    "pitch_hz": 218.56644108070327,
+    "pitch_hz_candidates": [
+      440.0
+    ],
     "lyric": "her."
   },
   {
     "start_ms": 53734.0,
     "duration_ms": 661.0,
-    "pitch_hz": 243.91952372092192,
+    "pitch_hz_candidates": [
+      493.8833012561241,
+      493.8833012561241
+    ],
     "lyric": "Miner's"
   },
   {
     "start_ms": 54455.0,
     "duration_ms": 1062.0,
-    "pitch_hz": 249.6208723242795,
+    "pitch_hz_candidates": [
+      554.3652619537442,
+      493.8833012561241
+    ],
     "lyric": "lady,"
   },
   {
     "start_ms": 55857.0,
     "duration_ms": 601.0,
-    "pitch_hz": 184.85643149956366,
+    "pitch_hz_candidates": [
+      369.9944227116344,
+      369.9944227116344
+    ],
     "lyric": "stranger"
   },
   {
     "start_ms": 56518.0,
     "duration_ms": 120.0,
-    "pitch_hz": 189.1772457643437,
+    "pitch_hz_candidates": [
+      369.9944227116344
+    ],
     "lyric": "to"
   },
   {
     "start_ms": 56658.0,
     "duration_ms": 140.0,
-    "pitch_hz": 187.0043597697993,
+    "pitch_hz_candidates": [
+      329.6275569128699
+    ],
     "lyric": "blue"
   },
   {
     "start_ms": 56818.0,
     "duration_ms": 141.0,
-    "pitch_hz": 189.1772457643437,
+    "pitch_hz_candidates": [
+      369.9944227116344,
+      440.0
+    ],
     "lyric": "water."
   }
 ]

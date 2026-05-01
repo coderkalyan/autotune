@@ -2,703 +2,904 @@
   {
     "start_ms": 31.0,
     "duration_ms": 180.0,
-    "pitch_hz": 296.85091742121904,
+    "pitch_hz_candidates": [
+      329.6275569128699
+    ],
     "lyric": "Do"
   },
   {
     "start_ms": 351.0,
     "duration_ms": 80.0,
-    "pitch_hz": 329.3767157259174,
+    "pitch_hz_candidates": [
+      329.6275569128699
+    ],
     "lyric": "it"
   },
   {
     "start_ms": 451.0,
     "duration_ms": 180.0,
-    "pitch_hz": 295.9960496843598,
+    "pitch_hz_candidates": [
+      293.6647679174076
+    ],
     "lyric": "for"
   },
   {
     "start_ms": 651.0,
     "duration_ms": 141.0,
-    "pitch_hz": 294.29123788649764,
+    "pitch_hz_candidates": [
+      293.6647679174076
+    ],
     "lyric": "you"
   },
   {
     "start_ms": 1052.0,
     "duration_ms": 280.0,
-    "pitch_hz": 307.3193424163214,
+    "pitch_hz_candidates": [
+      329.6275569128699
+    ],
     "lyric": "Walked"
   },
   {
     "start_ms": 1432.0,
     "duration_ms": 40.0,
-    "pitch_hz": 288.4001480354657,
+    "pitch_hz_candidates": [
+      293.6647679174076
+    ],
     "lyric": "in"
   },
   {
     "start_ms": 1552.0,
     "duration_ms": 160.0,
-    "pitch_hz": 259.92076683399534,
+    "pitch_hz_candidates": [
+      261.6255653005986
+    ],
     "lyric": "and"
   },
   {
     "start_ms": 1772.0,
     "duration_ms": 260.0,
-    "pitch_hz": 295.1411819475005,
+    "pitch_hz_candidates": [
+      293.6647679174076
+    ],
     "lyric": "dream"
   },
   {
     "start_ms": 2072.0,
     "duration_ms": 241.0,
-    "pitch_hz": 296.85091742121904,
+    "pitch_hz_candidates": [
+      293.6647679174076
+    ],
     "lyric": "came"
   },
   {
     "start_ms": 2353.0,
-    "duration_ms": 180.0,
-    "pitch_hz": 295.1411819475005,
-    "lyric": "true"
-  },
-  {
-    "start_ms": 2613.0,
-    "duration_ms": 40.0,
-    "pitch_hz": 335.15648291210766,
-    "lyric": "Do"
+    "duration_ms": 300.0,
+    "pitch_hz_candidates": [
+      293.6647679174076,
+      329.6275569128699
+    ],
+    "lyric": "trued"
   },
   {
     "start_ms": 2673.0,
     "duration_ms": 80.0,
-    "pitch_hz": 333.203888811138,
+    "pitch_hz_candidates": [
+      329.6275569128699
+    ],
     "lyric": "it"
   },
   {
     "start_ms": 2773.0,
     "duration_ms": 160.0,
-    "pitch_hz": 291.75119633862937,
+    "pitch_hz_candidates": [
+      293.6647679174076
+    ],
     "lyric": "for"
   },
   {
     "start_ms": 2953.0,
     "duration_ms": 120.0,
-    "pitch_hz": 293.44129382549477,
+    "pitch_hz_candidates": [
+      293.6647679174076
+    ],
     "lyric": "you"
   },
   {
     "start_ms": 3353.0,
     "duration_ms": 201.0,
-    "pitch_hz": 298.57055729177836,
+    "pitch_hz_candidates": [
+      329.6275569128699
+    ],
     "lyric": "Soft"
   },
   {
     "start_ms": 3574.0,
     "duration_ms": 360.0,
-    "pitch_hz": 270.6456571620635,
+    "pitch_hz_candidates": [
+      293.6647679174076
+    ],
     "lyric": "skin"
   },
   {
     "start_ms": 4014.0,
     "duration_ms": 80.0,
-    "pitch_hz": 261.42647251857596,
+    "pitch_hz_candidates": [
+      261.6255653005986
+    ],
     "lyric": "and"
   },
   {
     "start_ms": 4154.0,
     "duration_ms": 160.0,
-    "pitch_hz": 291.75119633862937,
-    "lyric": "hot"
+    "pitch_hz_candidates": [
+      293.6647679174076
+    ],
+    "lyric": "I"
   },
   {
     "start_ms": 4374.0,
-    "duration_ms": 521.0,
-    "pitch_hz": 295.1411819475005,
-    "lyric": "perfume"
-  },
-  {
-    "start_ms": 4935.0,
-    "duration_ms": 40.0,
-    "pitch_hz": 331.28477562924076,
-    "lyric": "Do"
+    "duration_ms": 601.0,
+    "pitch_hz_candidates": [
+      293.6647679174076,
+      329.6275569128699
+    ],
+    "lyric": "perfumed"
   },
   {
     "start_ms": 4995.0,
     "duration_ms": 40.0,
-    "pitch_hz": 342.9675080116138,
+    "pitch_hz_candidates": [
+      329.6275569128699
+    ],
     "lyric": "it"
   },
   {
     "start_ms": 5075.0,
     "duration_ms": 360.0,
-    "pitch_hz": 295.1411819475005,
+    "pitch_hz_candidates": [
+      329.6275569128699,
+      293.6647679174076
+    ],
     "lyric": "for"
+  },
+  {
+    "start_ms": 7697.0,
+    "duration_ms": 240.0,
+    "pitch_hz_candidates": [
+      293.6647679174076
+    ],
+    "lyric": "you"
   },
   {
     "start_ms": 8077.0,
     "duration_ms": 160.0,
-    "pitch_hz": 327.4796454389679,
+    "pitch_hz_candidates": [
+      329.6275569128699
+    ],
     "lyric": "I"
   },
   {
     "start_ms": 8277.0,
     "duration_ms": 260.0,
-    "pitch_hz": 264.46410180934777,
+    "pitch_hz_candidates": [
+      261.6255653005986
+    ],
     "lyric": "know"
   },
   {
     "start_ms": 8577.0,
     "duration_ms": 100.0,
-    "pitch_hz": 267.537026652323,
-    "lyric": "I'm"
+    "pitch_hz_candidates": [
+      293.6647679174076
+    ],
+    "lyric": "I"
   },
   {
     "start_ms": 8737.0,
     "duration_ms": 181.0,
-    "pitch_hz": 296.85091742121904,
-    "lyric": "not"
+    "pitch_hz_candidates": [
+      293.6647679174076,
+      293.6647679174076
+    ],
+    "lyric": "Mountain"
   },
   {
     "start_ms": 8958.0,
-    "duration_ms": 240.0,
-    "pitch_hz": 296.85091742121904,
-    "lyric": "done"
-  },
-  {
-    "start_ms": 9238.0,
-    "duration_ms": 220.0,
-    "pitch_hz": 299.43535811327206,
-    "lyric": "Do"
+    "duration_ms": 500.0,
+    "pitch_hz_candidates": [
+      329.6275569128699
+    ],
+    "lyric": "Dew"
   },
   {
     "start_ms": 9578.0,
     "duration_ms": 80.0,
-    "pitch_hz": 335.13411930260065,
+    "pitch_hz_candidates": [
+      329.6275569128699
+    ],
     "lyric": "it"
   },
   {
     "start_ms": 9678.0,
     "duration_ms": 180.0,
-    "pitch_hz": 295.1411819475005,
+    "pitch_hz_candidates": [
+      293.6647679174076
+    ],
     "lyric": "for"
   },
   {
     "start_ms": 9878.0,
     "duration_ms": 120.0,
-    "pitch_hz": 294.29123788649764,
+    "pitch_hz_candidates": [
+      293.6647679174076
+    ],
     "lyric": "you"
   },
   {
     "start_ms": 10258.0,
     "duration_ms": 241.0,
-    "pitch_hz": 295.9960496843598,
-    "lyric": "Sat"
+    "pitch_hz_candidates": [
+      329.6275569128699
+    ],
+    "lyric": "That"
   },
   {
     "start_ms": 10519.0,
     "duration_ms": 320.0,
-    "pitch_hz": 281.8130795507675,
+    "pitch_hz_candidates": [
+      261.6255653005986,
+      293.6647679174076
+    ],
     "lyric": "morning"
   },
   {
     "start_ms": 10999.0,
     "duration_ms": 520.0,
-    "pitch_hz": 302.0397800581419,
+    "pitch_hz_candidates": [
+      293.6647679174076,
+      391.99543598174927
+    ],
     "lyric": "coffee"
   },
   {
     "start_ms": 11559.0,
     "duration_ms": 301.0,
-    "pitch_hz": 315.4451105845769,
+    "pitch_hz_candidates": [
+      329.6275569128699
+    ],
     "lyric": "Brewed"
   },
   {
     "start_ms": 11900.0,
     "duration_ms": 80.0,
-    "pitch_hz": 333.203888811138,
+    "pitch_hz_candidates": [
+      329.6275569128699
+    ],
     "lyric": "it"
   },
   {
     "start_ms": 12000.0,
     "duration_ms": 160.0,
-    "pitch_hz": 298.57055729177836,
+    "pitch_hz_candidates": [
+      293.6647679174076
+    ],
     "lyric": "for"
   },
   {
     "start_ms": 12200.0,
     "duration_ms": 120.0,
-    "pitch_hz": 292.59624508206207,
+    "pitch_hz_candidates": [
+      293.6647679174076
+    ],
     "lyric": "you"
   },
   {
     "start_ms": 12660.0,
     "duration_ms": 160.0,
-    "pitch_hz": 310.89022116915385,
+    "pitch_hz_candidates": [
+      329.6275569128699
+    ],
     "lyric": "One"
   },
   {
     "start_ms": 12860.0,
     "duration_ms": 261.0,
-    "pitch_hz": 281.00151760032537,
+    "pitch_hz_candidates": [
+      261.6255653005986
+    ],
     "lyric": "touch"
   },
   {
     "start_ms": 13221.0,
     "duration_ms": 100.0,
-    "pitch_hz": 264.46410180934777,
+    "pitch_hz_candidates": [
+      261.6255653005986,
+      293.6647679174076
+    ],
     "lyric": "and"
   },
   {
     "start_ms": 13441.0,
     "duration_ms": 120.0,
-    "pitch_hz": 312.69118989895867,
-    "lyric": "I'll"
+    "pitch_hz_candidates": [
+      293.6647679174076
+    ],
+    "lyric": "I"
   },
   {
     "start_ms": 13601.0,
     "duration_ms": 280.0,
-    "pitch_hz": 296.85091742121904,
+    "pitch_hz_candidates": [
+      293.6647679174076
+    ],
     "lyric": "brand"
   },
   {
     "start_ms": 13961.0,
-    "duration_ms": 120.0,
-    "pitch_hz": 302.0397800581419,
-    "lyric": "new"
-  },
-  {
-    "start_ms": 14101.0,
-    "duration_ms": 40.0,
-    "pitch_hz": 314.5235783953845,
-    "lyric": "Do"
+    "duration_ms": 180.0,
+    "pitch_hz_candidates": [
+      329.6275569128699
+    ],
+    "lyric": "newed"
   },
   {
     "start_ms": 14181.0,
     "duration_ms": 100.0,
-    "pitch_hz": 335.13411930260065,
+    "pitch_hz_candidates": [
+      329.6275569128699
+    ],
     "lyric": "it"
   },
   {
     "start_ms": 14321.0,
     "duration_ms": 161.0,
-    "pitch_hz": 295.1411819475005,
+    "pitch_hz_candidates": [
+      293.6647679174076
+    ],
     "lyric": "for"
   },
   {
     "start_ms": 14522.0,
     "duration_ms": 140.0,
-    "pitch_hz": 293.44129382549477,
+    "pitch_hz_candidates": [
+      293.6647679174076
+    ],
     "lyric": "you"
   },
   {
     "start_ms": 14682.0,
     "duration_ms": 1061.0,
-    "pitch_hz": 303.78947870416613,
+    "pitch_hz_candidates": [
+      220.0
+    ],
     "lyric": "And"
   },
   {
     "start_ms": 15883.0,
     "duration_ms": 700.0,
-    "pitch_hz": 221.1097493840341,
+    "pitch_hz_candidates": [
+      293.6647679174076
+    ],
     "lyric": "now"
   },
   {
     "start_ms": 16623.0,
     "duration_ms": 400.0,
-    "pitch_hz": 221.10606079484415,
+    "pitch_hz_candidates": [
+      220.0
+    ],
     "lyric": "he's"
   },
   {
     "start_ms": 17444.0,
     "duration_ms": 320.0,
-    "pitch_hz": 249.6208723242795,
+    "pitch_hz_candidates": [
+      261.6255653005986,
+      261.6255653005986
+    ],
     "lyric": "Thinkin'"
   },
   {
     "start_ms": 17784.0,
     "duration_ms": 240.0,
-    "pitch_hz": 261.42647251857596,
+    "pitch_hz_candidates": [
+      261.6255653005986
+    ],
     "lyric": "bout"
   },
   {
     "start_ms": 18084.0,
     "duration_ms": 581.0,
-    "pitch_hz": 311.79070553405626,
+    "pitch_hz_candidates": [
+      329.6275569128699
+    ],
     "lyric": "me"
   },
   {
     "start_ms": 18705.0,
     "duration_ms": 220.0,
-    "pitch_hz": 221.10606079484415,
+    "pitch_hz_candidates": [
+      220.0,
+      220.0
+    ],
     "lyric": "every"
   },
   {
     "start_ms": 18965.0,
     "duration_ms": 320.0,
-    "pitch_hz": 219.83258359329426,
+    "pitch_hz_candidates": [
+      246.94165062806206
+    ],
     "lyric": "night,"
   },
   {
     "start_ms": 19545.0,
     "duration_ms": 160.0,
-    "pitch_hz": 227.58496291156504,
+    "pitch_hz_candidates": [
+      246.94165062806206
+    ],
     "lyric": "oh"
   },
   {
     "start_ms": 19846.0,
     "duration_ms": 260.0,
-    "pitch_hz": 196.41583653196574,
-    "lyric": "So"
+    "pitch_hz_candidates": [
+      195.99771799087463
+    ],
+    "lyric": "Isn't"
   },
   {
     "start_ms": 20126.0,
     "duration_ms": 180.0,
-    "pitch_hz": 195.84856692874484,
-    "lyric": "that's"
+    "pitch_hz_candidates": [
+      195.99771799087463
+    ],
+    "lyric": "that"
   },
   {
     "start_ms": 20346.0,
     "duration_ms": 340.0,
-    "pitch_hz": 246.75373206527053,
+    "pitch_hz_candidates": [
+      246.94165062806206
+    ],
     "lyric": "sweet,"
   },
   {
     "start_ms": 20786.0,
     "duration_ms": 140.0,
-    "pitch_hz": 302.0397800581419,
+    "pitch_hz_candidates": [
+      293.6647679174076
+    ],
     "lyric": "I"
   },
   {
     "start_ms": 20986.0,
     "duration_ms": 160.0,
-    "pitch_hz": 264.46410180934777,
+    "pitch_hz_candidates": [
+      261.6255653005986
+    ],
     "lyric": "guess"
   },
   {
     "start_ms": 21227.0,
     "duration_ms": 260.0,
-    "pitch_hz": 246.75373206527053,
+    "pitch_hz_candidates": [
+      246.94165062806206
+    ],
     "lyric": "so"
   },
   {
     "start_ms": 22119.0,
     "duration_ms": 80.0,
-    "pitch_hz": 246.75373206527053,
-    "lyric": "So"
+    "pitch_hz_candidates": [
+      261.6255653005986
+    ],
+    "lyric": "Say"
   },
   {
     "start_ms": 22239.0,
     "duration_ms": 160.0,
-    "pitch_hz": 257.679527786147,
+    "pitch_hz_candidates": [
+      261.6255653005986
+    ],
     "lyric": "you"
   },
   {
     "start_ms": 22439.0,
     "duration_ms": 220.0,
-    "pitch_hz": 261.42647251857596,
+    "pitch_hz_candidates": [
+      261.6255653005986
+    ],
     "lyric": "can't"
   },
   {
     "start_ms": 22679.0,
     "duration_ms": 601.0,
-    "pitch_hz": 302.04481881946595,
+    "pitch_hz_candidates": [
+      329.6275569128699
+    ],
     "lyric": "sleep,"
   },
   {
     "start_ms": 23300.0,
     "duration_ms": 260.0,
-    "pitch_hz": 219.83258359329426,
+    "pitch_hz_candidates": [
+      220.0,
+      220.0
+    ],
     "lyric": "baby,"
   },
   {
     "start_ms": 23680.0,
     "duration_ms": 160.0,
-    "pitch_hz": 164.2413664386752,
+    "pitch_hz_candidates": [
+      220.0
+    ],
     "lyric": "I"
   },
   {
     "start_ms": 23860.0,
     "duration_ms": 560.0,
-    "pitch_hz": 245.3325351471361,
+    "pitch_hz_candidates": [
+      246.94165062806206
+    ],
     "lyric": "know,"
   },
   {
     "start_ms": 24440.0,
     "duration_ms": 180.0,
-    "pitch_hz": 198.12421766039049,
-    "lyric": "less"
+    "pitch_hz_candidates": [
+      195.99771799087463
+    ],
+    "lyric": "Thats"
   },
   {
     "start_ms": 24680.0,
     "duration_ms": 300.0,
-    "pitch_hz": 198.12421766039049,
-    "lyric": "than"
+    "pitch_hz_candidates": [
+      195.99771799087463
+    ],
+    "lyric": "that"
   },
   {
     "start_ms": 25020.0,
     "duration_ms": 220.0,
-    "pitch_hz": 246.75373206527053,
+    "pitch_hz_candidates": [
+      246.94165062806206
+    ],
     "lyric": "me"
   },
   {
     "start_ms": 25360.0,
-    "duration_ms": 121.0,
-    "pitch_hz": 302.0397800581419,
-    "lyric": "is"
-  },
-  {
-    "start_ms": 25581.0,
-    "duration_ms": 160.0,
-    "pitch_hz": 263.7025012384003,
-    "lyric": "for"
-  },
-  {
-    "start_ms": 25801.0,
-    "duration_ms": 440.0,
-    "pitch_hz": 246.75373206527053,
-    "lyric": "so"
+    "duration_ms": 881.0,
+    "pitch_hz_candidates": [
+      293.6647679174076,
+      261.6255653005986,
+      246.94165062806206
+    ],
+    "lyric": "espresso"
   },
   {
     "start_ms": 26261.0,
     "duration_ms": 680.0,
-    "pitch_hz": 231.5630779904605,
+    "pitch_hz_candidates": [
+      261.6255653005986
+    ],
     "lyric": "Move"
   },
   {
     "start_ms": 26981.0,
     "duration_ms": 60.0,
-    "pitch_hz": 129.96038341699767,
+    "pitch_hz_candidates": [
+      261.6255653005986
+    ],
     "lyric": "it"
   },
   {
     "start_ms": 27101.0,
     "duration_ms": 140.0,
-    "pitch_hz": 219.83258359329426,
+    "pitch_hz_candidates": [
+      261.6255653005986
+    ],
     "lyric": "up,"
   },
   {
     "start_ms": 27301.0,
     "duration_ms": 521.0,
-    "pitch_hz": 109.91629179664713,
+    "pitch_hz_candidates": [
+      329.6275569128699
+    ],
     "lyric": "down,"
   },
   {
     "start_ms": 27842.0,
     "duration_ms": 100.0,
-    "pitch_hz": 219.83258359329426,
-    "lyric": "up,"
+    "pitch_hz_candidates": [
+      220.0
+    ],
+    "lyric": "left,"
   },
   {
     "start_ms": 27962.0,
     "duration_ms": 520.0,
-    "pitch_hz": 217.3075910123714,
-    "lyric": "drive"
+    "pitch_hz_candidates": [
+      220.0
+    ],
+    "lyric": "right"
   },
   {
     "start_ms": 28542.0,
     "duration_ms": 480.0,
-    "pitch_hz": 239.72913230026901,
-    "lyric": "home,"
+    "pitch_hz_candidates": [
+      246.94165062806206
+    ],
+    "lyric": "oh,"
   },
   {
     "start_ms": 29042.0,
     "duration_ms": 440.0,
-    "pitch_hz": 194.72056218729455,
+    "pitch_hz_candidates": [
+      195.99771799087463
+    ],
     "lyric": "switch"
   },
   {
     "start_ms": 29502.0,
     "duration_ms": 40.0,
-    "pitch_hz": 197.55366189778854,
+    "pitch_hz_candidates": [
+      195.99771799087463
+    ],
     "lyric": "it"
   },
   {
     "start_ms": 29562.0,
     "duration_ms": 40.0,
-    "pitch_hz": 196.9831061351866,
+    "pitch_hz_candidates": [
+      195.99771799087463
+    ],
     "lyric": "up"
   },
   {
     "start_ms": 29622.0,
     "duration_ms": 240.0,
-    "pitch_hz": 246.75373206527053,
+    "pitch_hz_candidates": [
+      246.94165062806206
+    ],
     "lyric": "like"
   },
   {
     "start_ms": 29902.0,
     "duration_ms": 521.0,
-    "pitch_hz": 261.42647251857596,
+    "pitch_hz_candidates": [
+      261.6255653005986,
+      261.6255653005986,
+      246.94165062806206
+    ],
     "lyric": "Nintendo"
   },
   {
     "start_ms": 30483.0,
     "duration_ms": 360.0,
-    "pitch_hz": 246.75373206527053,
-    "lyric": "So"
+    "pitch_hz_candidates": [
+      261.6255653005986
+    ],
+    "lyric": "Say"
   },
   {
     "start_ms": 30863.0,
     "duration_ms": 80.0,
-    "pitch_hz": 219.83258359329426,
+    "pitch_hz_candidates": [
+      261.6255653005986
+    ],
     "lyric": "you"
   },
   {
     "start_ms": 31323.0,
     "duration_ms": 560.0,
-    "pitch_hz": 257.679527786147,
+    "pitch_hz_candidates": [
+      261.6255653005986
+    ],
     "lyric": "can't"
   },
   {
     "start_ms": 31923.0,
     "duration_ms": 581.0,
-    "pitch_hz": 296.8558696196394,
+    "pitch_hz_candidates": [
+      329.6275569128699
+    ],
     "lyric": "sleep,"
   },
   {
     "start_ms": 32524.0,
     "duration_ms": 280.0,
-    "pitch_hz": 218.56644108070327,
+    "pitch_hz_candidates": [
+      220.0,
+      220.0
+    ],
     "lyric": "baby,"
   },
   {
     "start_ms": 32924.0,
     "duration_ms": 100.0,
-    "pitch_hz": 219.83258359329426,
+    "pitch_hz_candidates": [
+      220.0
+    ],
     "lyric": "I"
   },
   {
     "start_ms": 33044.0,
     "duration_ms": 620.0,
-    "pitch_hz": 234.25761927541706,
+    "pitch_hz_candidates": [
+      246.94165062806206
+    ],
     "lyric": "know,"
   },
   {
     "start_ms": 33684.0,
     "duration_ms": 180.0,
-    "pitch_hz": 198.12421766039049,
-    "lyric": "less"
+    "pitch_hz_candidates": [
+      195.99771799087463
+    ],
+    "lyric": "Thats"
   },
   {
     "start_ms": 33924.0,
     "duration_ms": 300.0,
-    "pitch_hz": 196.9831061351866,
-    "lyric": "than"
+    "pitch_hz_candidates": [
+      195.99771799087463
+    ],
+    "lyric": "that"
   },
   {
     "start_ms": 34264.0,
     "duration_ms": 200.0,
-    "pitch_hz": 247.46844697933403,
+    "pitch_hz_candidates": [
+      246.94165062806206
+    ],
     "lyric": "me"
   },
   {
     "start_ms": 34584.0,
-    "duration_ms": 141.0,
-    "pitch_hz": 302.0397800581419,
-    "lyric": "is"
-  },
-  {
-    "start_ms": 34805.0,
-    "duration_ms": 180.0,
-    "pitch_hz": 265.9961267656921,
-    "lyric": "for"
-  },
-  {
-    "start_ms": 35045.0,
-    "duration_ms": 520.0,
-    "pitch_hz": 246.0431336062033,
-    "lyric": "so"
+    "duration_ms": 981.0,
+    "pitch_hz_candidates": [
+      293.6647679174076,
+      261.6255653005986,
+      246.94165062806206
+    ],
+    "lyric": "espresso"
   },
   {
     "start_ms": 36265.0,
     "duration_ms": 180.0,
-    "pitch_hz": 224.97092665957592,
+    "pitch_hz_candidates": [
+      261.6255653005986,
+      220.0,
+      261.6255653005986
+    ],
     "lyric": "Holy"
   },
   {
     "start_ms": 36505.0,
     "duration_ms": 400.0,
-    "pitch_hz": 220.4766781277386,
-    "lyric": "shit"
+    "pitch_hz_candidates": [
+      261.6255653005986,
+      220.0,
+      261.6255653005986
+    ],
+    "lyric": "shoot"
   },
   {
     "start_ms": 38326.0,
     "duration_ms": 80.0,
-    "pitch_hz": 190.27313840043536,
+    "pitch_hz_candidates": [
+      195.99771799087463
+    ],
     "lyric": "Is"
   },
   {
     "start_ms": 38466.0,
     "duration_ms": 80.0,
-    "pitch_hz": 189.1772457643437,
+    "pitch_hz_candidates": [
+      195.99771799087463
+    ],
     "lyric": "it"
   },
   {
     "start_ms": 38586.0,
     "duration_ms": 180.0,
-    "pitch_hz": 196.9831061351866,
+    "pitch_hz_candidates": [
+      195.99771799087463
+    ],
     "lyric": "that"
   },
   {
     "start_ms": 38806.0,
     "duration_ms": 320.0,
-    "pitch_hz": 251.06691132696022,
+    "pitch_hz_candidates": [
+      246.94165062806206
+    ],
     "lyric": "sweet?"
   },
   {
     "start_ms": 39247.0,
     "duration_ms": 100.0,
-    "pitch_hz": 278.5761802547597,
+    "pitch_hz_candidates": [
+      293.6647679174076
+    ],
     "lyric": "I"
   },
   {
     "start_ms": 39387.0,
     "duration_ms": 240.0,
-    "pitch_hz": 265.9961267656921,
+    "pitch_hz_candidates": [
+      261.6255653005986
+    ],
     "lyric": "guess"
   },
   {
     "start_ms": 39687.0,
     "duration_ms": 520.0,
-    "pitch_hz": 224.97092665957592,
+    "pitch_hz_candidates": [
+      246.94165062806206
+    ],
     "lyric": "so"
   },
   {
     "start_ms": 40947.0,
     "duration_ms": 160.0,
-    "pitch_hz": 342.9675080116138,
+    "pitch_hz_candidates": [
+      349.2282314330039
+    ],
     "lyric": "I'm"
   },
   {
     "start_ms": 41187.0,
     "duration_ms": 501.0,
-    "pitch_hz": 286.8586811011301,
+    "pitch_hz_candidates": [
+      329.6275569128699,
+      261.6255653005986
+    ],
     "lyric": "working"
   },
   {
     "start_ms": 41788.0,
     "duration_ms": 960.0,
-    "pitch_hz": 202.75515172592992,
+    "pitch_hz_candidates": [
+      195.99771799087463
+    ],
     "lyric": "late,"
   },
   {
     "start_ms": 43188.0,
     "duration_ms": 260.0,
-    "pitch_hz": 196.9831061351866,
+    "pitch_hz_candidates": [
+      195.99771799087463
+    ],
     "lyric": "cause"
   },
   {
     "start_ms": 43568.0,
     "duration_ms": 140.0,
-    "pitch_hz": 223.6751894686431,
+    "pitch_hz_candidates": [
+      220.0
+    ],
     "lyric": "I'm"
   },
   {
     "start_ms": 43788.0,
     "duration_ms": 121.0,
-    "pitch_hz": 265.2566626998823,
+    "pitch_hz_candidates": [
+      261.6255653005986
+    ],
     "lyric": "a"
   },
   {
     "start_ms": 43989.0,
     "duration_ms": 880.0,
-    "pitch_hz": 130.71323625928798,
+    "pitch_hz_candidates": [
+      293.6647679174076,
+      261.6255653005986
+    ],
     "lyric": "singer"
   }
 ]

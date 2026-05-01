@@ -2,319 +2,509 @@
   {
     "start_ms": 512.0,
     "duration_ms": 401.0,
-    "pitch_hz": 244.62602943402902,
+    "pitch_hz_candidates": [
+      246.94165062806206
+    ],
     "lyric": "With"
   },
   {
     "start_ms": 933.0,
     "duration_ms": 40.0,
-    "pitch_hz": 201.0135456516708,
+    "pitch_hz_candidates": [
+      246.94165062806206
+    ],
     "lyric": "a"
   },
   {
     "start_ms": 1013.0,
     "duration_ms": 300.0,
-    "pitch_hz": 241.11786903593213,
+    "pitch_hz_candidates": [
+      246.94165062806206
+    ],
     "lyric": "bit"
   },
   {
     "start_ms": 1353.0,
     "duration_ms": 61.0,
-    "pitch_hz": 234.25371135130007,
+    "pitch_hz_candidates": [
+      246.94165062806206
+    ],
     "lyric": "of"
   },
   {
     "start_ms": 1434.0,
     "duration_ms": 220.0,
-    "pitch_hz": 245.3325351471361,
+    "pitch_hz_candidates": [
+      246.94165062806206
+    ],
     "lyric": "rock"
   },
   {
     "start_ms": 1714.0,
     "duration_ms": 601.0,
-    "pitch_hz": 269.08685288118863,
+    "pitch_hz_candidates": [
+      277.1826309768721,
+      277.1826309768721
+    ],
     "lyric": "music,"
   },
   {
     "start_ms": 3157.0,
     "duration_ms": 601.0,
-    "pitch_hz": 245.3325351471361,
+    "pitch_hz_candidates": [
+      246.94165062806206,
+      246.94165062806206,
+      246.94165062806206
+    ],
     "lyric": "everything's"
   },
   {
     "start_ms": 3858.0,
     "duration_ms": 521.0,
-    "pitch_hz": 253.25274773163864,
+    "pitch_hz_candidates": [
+      277.1826309768721
+    ],
     "lyric": "fine,"
   },
   {
     "start_ms": 4399.0,
     "duration_ms": 761.0,
-    "pitch_hz": 217.3075910123714,
-    "lyric": "throwing"
+    "pitch_hz_candidates": [
+      246.94165062806206,
+      220.0
+    ],
+    "lyric": "your in"
   },
   {
     "start_ms": 5200.0,
     "duration_ms": 201.0,
-    "pitch_hz": 199.27193957741167,
+    "pitch_hz_candidates": [
+      207.65234878997256
+    ],
     "lyric": "the"
   },
   {
     "start_ms": 5441.0,
     "duration_ms": 280.0,
-    "pitch_hz": 160.0,
-    "lyric": "moon"
+    "pitch_hz_candidates": [
+      164.81377845643496
+    ],
+    "lyric": "mood"
   },
   {
     "start_ms": 5761.0,
     "duration_ms": 221.0,
-    "pitch_hz": 183.79173679952558,
+    "pitch_hz_candidates": [
+      184.9972113558172,
+      164.81377845643496
+    ],
     "lyric": "for"
   },
   {
     "start_ms": 6062.0,
     "duration_ms": 80.0,
-    "pitch_hz": 180.634304768981,
+    "pitch_hz_candidates": [
+      184.9972113558172
+    ],
     "lyric": "a"
   },
   {
     "start_ms": 6202.0,
     "duration_ms": 1523.0,
-    "pitch_hz": 177.53111553085517,
+    "pitch_hz_candidates": [
+      184.9972113558172
+    ],
     "lyric": "dance."
   },
   {
     "start_ms": 9030.0,
     "duration_ms": 200.0,
-    "pitch_hz": 214.81160044484216,
+    "pitch_hz_candidates": [
+      220.0
+    ],
     "lyric": "And"
   },
   {
     "start_ms": 9350.0,
     "duration_ms": 361.0,
-    "pitch_hz": 242.5146506416637,
+    "pitch_hz_candidates": [
+      246.94165062806206
+    ],
     "lyric": "when"
   },
   {
     "start_ms": 9771.0,
     "duration_ms": 220.0,
-    "pitch_hz": 274.5834340683092,
+    "pitch_hz_candidates": [
+      277.1826309768721
+    ],
     "lyric": "you"
   },
   {
     "start_ms": 10091.0,
     "duration_ms": 440.0,
-    "pitch_hz": 269.08685288118863,
+    "pitch_hz_candidates": [
+      277.1826309768721
+    ],
     "lyric": "get"
   },
   {
     "start_ms": 10611.0,
     "duration_ms": 280.0,
-    "pitch_hz": 288.4001480354657,
+    "pitch_hz_candidates": [
+      293.6647679174076
+    ],
     "lyric": "the"
   },
   {
     "start_ms": 10911.0,
     "duration_ms": 2002.0,
-    "pitch_hz": 275.3764599181857,
+    "pitch_hz_candidates": [
+      293.6647679174076
+    ],
     "lyric": "chance"
   },
   {
     "start_ms": 13673.0,
     "duration_ms": 360.0,
-    "pitch_hz": 325.5935014728596,
+    "pitch_hz_candidates": [
+      329.6275569128699
+    ],
     "lyric": "You"
+  },
+  {
+    "start_ms": 14394.0,
+    "duration_ms": 240.0,
+    "pitch_hz_candidates": [
+      369.9944227116344
+    ],
+    "lyric": "are"
+  },
+  {
+    "start_ms": 14654.0,
+    "duration_ms": 160.0,
+    "pitch_hz_candidates": [
+      415.3046975799451
+    ],
+    "lyric": "the"
   },
   {
     "start_ms": 14874.0,
     "duration_ms": 800.0,
-    "pitch_hz": 410.2221062146333,
+    "pitch_hz_candidates": [
+      415.3046975799451,
+      440.0
+    ],
     "lyric": "dancing"
   },
   {
     "start_ms": 15775.0,
     "duration_ms": 960.0,
-    "pitch_hz": 437.1328821614066,
+    "pitch_hz_candidates": [
+      440.0
+    ],
     "lyric": "queen"
   },
   {
     "start_ms": 16755.0,
     "duration_ms": 1001.0,
-    "pitch_hz": 429.62320088968426,
+    "pitch_hz_candidates": [
+      415.3046975799451
+    ],
     "lyric": "Young"
   },
   {
     "start_ms": 17896.0,
     "duration_ms": 140.0,
-    "pitch_hz": 427.1487533344109,
+    "pitch_hz_candidates": [
+      440.0
+    ],
     "lyric": "and"
   },
   {
     "start_ms": 18116.0,
     "duration_ms": 681.0,
-    "pitch_hz": 434.61518202474286,
+    "pitch_hz_candidates": [
+      440.0
+    ],
     "lyric": "sweet,"
   },
   {
     "start_ms": 19037.0,
     "duration_ms": 540.0,
-    "pitch_hz": 437.1328821614066,
+    "pitch_hz_candidates": [
+      493.8833012561241,
+      440.0
+    ],
     "lyric": "only"
   },
   {
     "start_ms": 19657.0,
     "duration_ms": 4183.0,
-    "pitch_hz": 432.1119827738207,
+    "pitch_hz_candidates": [
+      415.3046975799451,
+      440.0,
+      440.0
+    ],
     "lyric": "seventeen"
   },
   {
     "start_ms": 24460.0,
     "duration_ms": 761.0,
-    "pitch_hz": 407.8594007421639,
+    "pitch_hz_candidates": [
+      415.3046975799451,
+      440.0
+    ],
     "lyric": "Dancing"
   },
   {
     "start_ms": 25321.0,
     "duration_ms": 1001.0,
-    "pitch_hz": 437.1328821614066,
+    "pitch_hz_candidates": [
+      440.0
+    ],
     "lyric": "queen"
   },
   {
     "start_ms": 26842.0,
     "duration_ms": 540.0,
-    "pitch_hz": 412.59849870066535,
+    "pitch_hz_candidates": [
+      415.3046975799451
+    ],
     "lyric": "Feel"
   },
   {
     "start_ms": 27402.0,
     "duration_ms": 220.0,
-    "pitch_hz": 290.07083309699533,
+    "pitch_hz_candidates": [
+      440.0
+    ],
     "lyric": "the"
   },
   {
     "start_ms": 27702.0,
     "duration_ms": 481.0,
-    "pitch_hz": 438.3990246739976,
+    "pitch_hz_candidates": [
+      440.0
+    ],
     "lyric": "beat"
   },
   {
     "start_ms": 28303.0,
     "duration_ms": 580.0,
-    "pitch_hz": 463.12615598092094,
+    "pitch_hz_candidates": [
+      493.8833012561241
+    ],
     "lyric": "from"
+  },
+  {
+    "start_ms": 28943.0,
+    "duration_ms": 220.0,
+    "pitch_hz_candidates": [
+      440.0
+    ],
+    "lyric": "the"
+  },
+  {
+    "start_ms": 29223.0,
+    "duration_ms": 1802.0,
+    "pitch_hz_candidates": [
+      493.8833012561241,
+      554.3652619537442,
+      554.3652619537442
+    ],
+    "lyric": "tambourine"
   },
   {
     "start_ms": 34107.0,
     "duration_ms": 480.0,
-    "pitch_hz": 502.13382265392045,
+    "pitch_hz_candidates": [
+      554.3652619537442
+    ],
     "lyric": "You"
   },
   {
     "start_ms": 34627.0,
     "duration_ms": 261.0,
-    "pitch_hz": 452.54833995939043,
+    "pitch_hz_candidates": [
+      493.8833012561241
+    ],
     "lyric": "can"
   },
   {
     "start_ms": 34948.0,
     "duration_ms": 1081.0,
-    "pitch_hz": 981.3301405885444,
+    "pitch_hz_candidates": [
+      493.8833012561241
+    ],
     "lyric": "dance,"
   },
   {
     "start_ms": 36389.0,
     "duration_ms": 601.0,
-    "pitch_hz": 496.3663237867951,
+    "pitch_hz_candidates": [
+      554.3652619537442
+    ],
     "lyric": "you"
+  },
+  {
+    "start_ms": 37030.0,
+    "duration_ms": 220.0,
+    "pitch_hz_candidates": [
+      493.8833012561241
+    ],
+    "lyric": "can"
   },
   {
     "start_ms": 37330.0,
     "duration_ms": 1401.0,
-    "pitch_hz": 405.51030345185995,
+    "pitch_hz_candidates": [
+      493.8833012561241,
+      554.3652619537442
+    ],
     "lyric": "jive,"
   },
   {
     "start_ms": 38892.0,
     "duration_ms": 680.0,
-    "pitch_hz": 468.5074227026001,
+    "pitch_hz_candidates": [
+      440.0,
+      493.8833012561241
+    ],
     "lyric": "having"
   },
   {
     "start_ms": 39652.0,
     "duration_ms": 261.0,
-    "pitch_hz": 410.2221062146333,
+    "pitch_hz_candidates": [
+      415.3046975799451
+    ],
     "lyric": "the"
   },
   {
     "start_ms": 39993.0,
     "duration_ms": 760.0,
-    "pitch_hz": 442.2121215896884,
+    "pitch_hz_candidates": [
+      440.0
+    ],
     "lyric": "time"
   },
   {
     "start_ms": 42055.0,
     "duration_ms": 160.0,
-    "pitch_hz": 353.01722309239886,
+    "pitch_hz_candidates": [
+      493.8833012561241
+    ],
     "lyric": "of"
   },
   {
     "start_ms": 42415.0,
     "duration_ms": 180.0,
-    "pitch_hz": 499.241744648559,
+    "pitch_hz_candidates": [
+      415.3046975799451
+    ],
     "lyric": "your"
   },
   {
     "start_ms": 42615.0,
     "duration_ms": 421.0,
-    "pitch_hz": 541.291314324127,
+    "pitch_hz_candidates": [
+      440.0,
+      415.3046975799451,
+      369.9944227116344
+    ],
     "lyric": "life."
   },
   {
     "start_ms": 43236.0,
     "duration_ms": 300.0,
-    "pitch_hz": 439.6651671865885,
+    "pitch_hz_candidates": [
+      554.3652619537442,
+      493.8833012561241,
+      440.0
+    ],
     "lyric": "Ooh,"
   },
   {
     "start_ms": 43556.0,
     "duration_ms": 441.0,
-    "pitch_hz": 414.9886574883231,
+    "pitch_hz_candidates": [
+      415.3046975799451
+    ],
     "lyric": "see"
   },
   {
     "start_ms": 44057.0,
     "duration_ms": 220.0,
-    "pitch_hz": 323.7182208966152,
+    "pitch_hz_candidates": [
+      440.0
+    ],
     "lyric": "that"
   },
   {
     "start_ms": 44437.0,
     "duration_ms": 1061.0,
-    "pitch_hz": 219.83258359329426,
+    "pitch_hz_candidates": [
+      440.0
+    ],
     "lyric": "girl,"
+  },
+  {
+    "start_ms": 45938.0,
+    "duration_ms": 421.0,
+    "pitch_hz_candidates": [
+      415.3046975799451
+    ],
+    "lyric": "watch"
+  },
+  {
+    "start_ms": 46419.0,
+    "duration_ms": 300.0,
+    "pitch_hz_candidates": [
+      440.0
+    ],
+    "lyric": "that"
   },
   {
     "start_ms": 46819.0,
     "duration_ms": 641.0,
-    "pitch_hz": 425.91865544137636,
+    "pitch_hz_candidates": [
+      440.0
+    ],
     "lyric": "scene,"
   },
   {
     "start_ms": 47740.0,
     "duration_ms": 421.0,
-    "pitch_hz": 146.72064691274738,
+    "pitch_hz_candidates": [
+      493.8833012561241,
+      440.0
+    ],
     "lyric": "digging"
+  },
+  {
+    "start_ms": 48221.0,
+    "duration_ms": 100.0,
+    "pitch_hz_candidates": [
+      440.0
+    ],
+    "lyric": "the"
   },
   {
     "start_ms": 48361.0,
     "duration_ms": 781.0,
-    "pitch_hz": 206.29924935033267,
+    "pitch_hz_candidates": [
+      415.3046975799451,
+      440.0
+    ],
     "lyric": "dancing"
   },
   {
     "start_ms": 49202.0,
     "duration_ms": 300.0,
-    "pitch_hz": 419.8105934199836,
+    "pitch_hz_candidates": [
+      440.0
+    ],
     "lyric": "queen."
   }
 ]
