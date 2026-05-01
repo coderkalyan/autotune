@@ -6,37 +6,59 @@
       {
         "timestamp_ms": 2596,
         "end_ms": 2916,
-        "text": "West"
+        "text": "West",
+        "note": 66
       },
       {
         "timestamp_ms": 2956,
         "end_ms": 4279,
-        "text": "Virginia"
+        "text": "Virginia",
+        "note": [
+          64,
+          66,
+          69
+        ]
       },
       {
         "timestamp_ms": 5461,
         "end_ms": 5681,
-        "text": "Blue"
+        "text": "Blue",
+        "note": 71
       },
       {
         "timestamp_ms": 5721,
         "end_ms": 6122,
-        "text": "Ridge"
+        "text": "Ridge",
+        "note": 71
       },
       {
         "timestamp_ms": 6202,
         "end_ms": 7284,
-        "text": "Mountains"
+        "text": "Mountains",
+        "note": [
+          73,
+          71
+        ]
       },
       {
         "timestamp_ms": 7645,
         "end_ms": 9027,
-        "text": "Shenandoah"
+        "text": "Shenandoah",
+        "note": [
+          66,
+          66,
+          66,
+          64
+        ]
       },
       {
         "timestamp_ms": 9127,
         "end_ms": 10309,
-        "text": "River"
+        "text": "River",
+        "note": [
+          66,
+          69
+        ]
       }
     ]
   },
@@ -47,142 +69,196 @@
       {
         "timestamp_ms": 12747,
         "end_ms": 13127,
-        "text": "Life"
+        "text": "Life",
+        "note": 64
       },
       {
         "timestamp_ms": 13207,
         "end_ms": 13307,
-        "text": "is"
+        "text": "is",
+        "note": 64
       },
       {
         "timestamp_ms": 13648,
         "end_ms": 13968,
-        "text": "old"
+        "text": "old",
+        "note": 66
       },
       {
         "timestamp_ms": 14088,
         "end_ms": 14508,
-        "text": "there"
+        "text": "there",
+        "note": 64
       },
       {
         "timestamp_ms": 15129,
         "end_ms": 15469,
-        "text": "Older"
+        "text": "Older",
+        "note": [
+          66,
+          69
+        ]
       },
       {
         "timestamp_ms": 15509,
         "end_ms": 15949,
-        "text": "than"
+        "text": "than",
+        "note": 69
       },
       {
         "timestamp_ms": 16029,
         "end_ms": 16610,
-        "text": "the"
+        "text": "the",
+        "note": 73
       },
       {
         "timestamp_ms": 16710,
         "end_ms": 17530,
-        "text": "trees"
+        "text": "trees",
+        "note": 73
       },
       {
         "timestamp_ms": 17890,
         "end_ms": 18411,
-        "text": "Younger"
+        "text": "Younger",
+        "note": [
+          71,
+          71
+        ]
       },
       {
         "timestamp_ms": 18451,
         "end_ms": 18951,
-        "text": "than"
+        "text": "than",
+        "note": 71
       },
       {
         "timestamp_ms": 19011,
         "end_ms": 19131,
-        "text": "the"
+        "text": "the",
+        "note": 71
       },
       {
         "timestamp_ms": 19171,
         "end_ms": 20412,
-        "text": "mountains"
+        "text": "mountains",
+        "note": [
+          73,
+          71
+        ]
       },
       {
         "timestamp_ms": 20772,
         "end_ms": 21453,
-        "text": "Growing"
+        "text": "Growing",
+        "note": [
+          66,
+          69
+        ]
       },
       {
         "timestamp_ms": 21533,
         "end_ms": 21973,
-        "text": "like"
+        "text": "like",
+        "note": 69
       },
       {
         "timestamp_ms": 21993,
         "end_ms": 22013,
-        "text": "a"
+        "text": "a",
+        "note": 71
       },
       {
         "timestamp_ms": 22093,
         "end_ms": 22834,
-        "text": "breeze"
+        "text": "breeze",
+        "note": 69
       },
       {
         "timestamp_ms": 23034,
         "end_ms": 23514,
-        "text": "Country"
+        "text": "Country",
+        "note": [
+          69,
+          71
+        ]
       },
       {
         "timestamp_ms": 23574,
         "end_ms": 25475,
-        "text": "roads"
+        "text": "roads",
+        "note": 73
       },
       {
         "timestamp_ms": 25976,
         "end_ms": 26316,
-        "text": "Take"
+        "text": "Take",
+        "note": 71
       },
       {
         "timestamp_ms": 26356,
         "end_ms": 26496,
-        "text": "me"
+        "text": "me",
+        "note": 69
       },
       {
         "timestamp_ms": 26576,
         "end_ms": 28417,
-        "text": "home"
+        "text": "home",
+        "note": 71
       },
       {
         "timestamp_ms": 28877,
         "end_ms": 29238,
-        "text": "To"
+        "text": "To",
+        "note": 73
       },
       {
         "timestamp_ms": 29318,
         "end_ms": 29398,
-        "text": "the"
+        "text": "the",
+        "note": 71
       },
       {
         "timestamp_ms": 29458,
         "end_ms": 31399,
-        "text": "place"
+        "text": "place",
+        "note": 69
       },
       {
         "timestamp_ms": 32060,
         "end_ms": 32180,
-        "text": "I"
+        "text": "I",
+        "note": 73
       },
       {
         "timestamp_ms": 32220,
         "end_ms": 34381,
-        "text": "belong"
+        "text": "belong",
+        "note": [
+          76,
+          78
+        ]
       },
       {
         "timestamp_ms": 34761,
         "end_ms": 35101,
-        "text": "West"
+        "text": "West",
+        "note": 76
       },
       {
         "timestamp_ms": 35121,
         "end_ms": 39063,
-        "text": "Virginia mountain mama"
+        "text": "Virginia mountain mama",
+        "note": [
+          73,
+          76,
+          73,
+          71,
+          69,
+          71,
+          73
+        ]
       }
     ]
   },
@@ -193,27 +269,35 @@
       {
         "timestamp_ms": 40597,
         "end_ms": 40958,
-        "text": "Take"
+        "text": "Take",
+        "note": 71
       },
       {
         "timestamp_ms": 40998,
         "end_ms": 41118,
-        "text": "me"
+        "text": "me",
+        "note": 69
       },
       {
         "timestamp_ms": 41178,
         "end_ms": 42960,
-        "text": "home,"
+        "text": "home,",
+        "note": 69
       },
       {
         "timestamp_ms": 43501,
         "end_ms": 44022,
-        "text": "country"
+        "text": "country",
+        "note": [
+          69,
+          71
+        ]
       },
       {
         "timestamp_ms": 44082,
         "end_ms": 46485,
-        "text": "roads."
+        "text": "roads.",
+        "note": 69
       }
     ]
   },
@@ -224,32 +308,44 @@
       {
         "timestamp_ms": 47967,
         "end_ms": 48087,
-        "text": "All"
+        "text": "All",
+        "note": 64
       },
       {
         "timestamp_ms": 48127,
         "end_ms": 48528,
-        "text": "my"
+        "text": "my",
+        "note": 64
       },
       {
         "timestamp_ms": 48608,
         "end_ms": 49949,
-        "text": "memories"
+        "text": "memories",
+        "note": [
+          66,
+          64
+        ]
       },
       {
         "timestamp_ms": 50811,
         "end_ms": 51331,
-        "text": "gather"
+        "text": "gather",
+        "note": [
+          66,
+          64
+        ]
       },
       {
         "timestamp_ms": 51391,
         "end_ms": 51752,
-        "text": "round"
+        "text": "round",
+        "note": 66
       },
       {
         "timestamp_ms": 51772,
         "end_ms": 52673,
-        "text": "her."
+        "text": "her.",
+        "note": 69
       }
     ]
   },
@@ -260,32 +356,50 @@
       {
         "timestamp_ms": 53734,
         "end_ms": 54395,
-        "text": "Miner's"
+        "text": "Miner's",
+        "note": [
+          71,
+          71
+        ]
       },
       {
         "timestamp_ms": 54455,
         "end_ms": 55517,
-        "text": "lady,"
+        "text": "lady,",
+        "note": [
+          73,
+          71
+        ]
       },
       {
         "timestamp_ms": 55857,
         "end_ms": 56458,
-        "text": "stranger"
+        "text": "stranger",
+        "note": [
+          66,
+          66
+        ]
       },
       {
         "timestamp_ms": 56518,
         "end_ms": 56638,
-        "text": "to"
+        "text": "to",
+        "note": 66
       },
       {
         "timestamp_ms": 56658,
         "end_ms": 56798,
-        "text": "blue"
+        "text": "blue",
+        "note": 64
       },
       {
         "timestamp_ms": 56818,
         "end_ms": 56959,
-        "text": "water."
+        "text": "water.",
+        "note": [
+          66,
+          69
+        ]
       }
     ]
   }
