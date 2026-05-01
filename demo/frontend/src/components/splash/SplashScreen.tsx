@@ -1,4 +1,4 @@
-import { Music2, Piano, Radio } from "lucide-react"
+import { Music2, Piano, Radio, Layers3 } from "lucide-react"
 import type { AppScreen } from "@/types"
 import { ModeHalf } from "./ModeHalf"
 
@@ -76,7 +76,7 @@ interface Props {
 
 export function SplashScreen({ onNavigate }: Props) {
   return (
-    <div className="relative flex size-full bg-background">
+    <div className="relative grid size-full grid-cols-2 grid-rows-2 bg-background">
       <ModeHalf
         title="Autotune"
         description="Pitch correction and real-time sing-along with scrolling pitch visualization"
@@ -113,6 +113,15 @@ export function SplashScreen({ onNavigate }: Props) {
         accentColor="#f472b6"
         illustration={<PianoKeysIllustration />}
         onClick={() => onNavigate({ screen: "synth" })}
+      />
+
+      <ModeHalf
+        title="Harmony"
+        description="Markov-driven chord stacking with key, voicing, and pitch-class wheel"
+        Icon={Layers3}
+        accentColor="#facc15"
+        illustration={<PianoKeysIllustration />}
+        onClick={() => onNavigate({ screen: "harmony" })}
       />
     </div>
   )

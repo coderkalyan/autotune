@@ -16,16 +16,59 @@ export interface SongPlayback {
   getDuration: () => number
   isPaused: () => boolean
   setVocalsVolume: (v: number) => void
+  setVocalsBoost: (active: boolean) => void
   getPlayback: () => PlaybackSnapshot | null
   setOnEnded: (cb: (() => void) | null) => void
 }
+
+const VOCALS_BOOST_LEVEL = 1.0
+const VOCALS_RAMP_MS = 250
 
 export function useSongPlayback(): SongPlayback {
   const instrumentalRef = useRef<HTMLAudioElement | null>(null)
   const vocalsRef = useRef<HTMLAudioElement | null>(null)
   const songIdRef = useRef<string | null>(null)
   const vocalsVolumeRef = useRef<number>(0.3)
+  const vocalsBoostRef = useRef<boolean>(false)
+  const rampRafRef = useRef<number | null>(null)
   const onEndedRef = useRef<(() => void) | null>(null)
+
+  // Linear ramp on the actual <audio> volume so transitioning between user
+  // slider value and boost (1.0) doesn't pop. Recomputes the target each call
+  // so an in-flight ramp can be redirected mid-flight.
+  const applyVocalsVolume = useCallback((immediate = false) => {
+    const vocals = vocalsRef.current
+    if (!vocals) return
+    const target = vocalsBoostRef.current
+      ? VOCALS_BOOST_LEVEL
+      : vocalsVolumeRef.current
+    if (immediate || VOCALS_RAMP_MS <= 0) {
+      vocals.volume = Math.max(0, Math.min(1, target))
+      return
+    }
+    if (rampRafRef.current !== null) {
+      window.cancelAnimationFrame(rampRafRef.current)
+      rampRafRef.current = null
+    }
+    const start = vocals.volume
+    const t0 = performance.now()
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - t0) / VOCALS_RAMP_MS)
+      const liveTarget = vocalsBoostRef.current
+        ? VOCALS_BOOST_LEVEL
+        : vocalsVolumeRef.current
+      const v = start + (liveTarget - start) * t
+      const clamped = Math.max(0, Math.min(1, v))
+      const cur = vocalsRef.current
+      if (cur) cur.volume = clamped
+      if (t < 1) {
+        rampRafRef.current = window.requestAnimationFrame(tick)
+      } else {
+        rampRafRef.current = null
+      }
+    }
+    rampRafRef.current = window.requestAnimationFrame(tick)
+  }, [])
 
   useEffect(() => {
     const instrumental = new Audio()
@@ -68,6 +111,10 @@ export function useSongPlayback(): SongPlayback {
       vocals.src = ""
       instrumentalRef.current = null
       vocalsRef.current = null
+      if (rampRafRef.current !== null) {
+        window.cancelAnimationFrame(rampRafRef.current)
+        rampRafRef.current = null
+      }
     }
   }, [])
 
@@ -84,14 +131,17 @@ export function useSongPlayback(): SongPlayback {
     vocals.src = `${API_BASE}/audio/${songId}/vocals.mp3`
     instrumental.currentTime = 0
     vocals.currentTime = 0
-    vocals.volume = vocalsVolumeRef.current
+    // Reset to no-boost so the slider value is the starting point. Phase
+    // logic in SingAlongView will call setVocalsBoost(true) for preroll.
+    vocalsBoostRef.current = false
+    applyVocalsVolume(true)
 
     try {
       await instrumental.play()
     } catch (err) {
       console.warn("[useSongPlayback] instrumental.play() rejected", err)
     }
-  }, [])
+  }, [applyVocalsVolume])
 
   const pause = useCallback(() => {
     instrumentalRef.current?.pause()
@@ -128,6 +178,11 @@ export function useSongPlayback(): SongPlayback {
     const instrumental = instrumentalRef.current
     const vocals = vocalsRef.current
     songIdRef.current = null
+    if (rampRafRef.current !== null) {
+      window.cancelAnimationFrame(rampRafRef.current)
+      rampRafRef.current = null
+    }
+    vocalsBoostRef.current = false
     if (instrumental) {
       instrumental.pause()
       instrumental.removeAttribute("src")
@@ -140,11 +195,25 @@ export function useSongPlayback(): SongPlayback {
     }
   }, [])
 
-  const setVocalsVolume = useCallback((v: number) => {
-    const clamped = Math.max(0, Math.min(1, v))
-    vocalsVolumeRef.current = clamped
-    if (vocalsRef.current) vocalsRef.current.volume = clamped
-  }, [])
+  const setVocalsVolume = useCallback(
+    (v: number) => {
+      const clamped = Math.max(0, Math.min(1, v))
+      vocalsVolumeRef.current = clamped
+      // If boost is active, the user's slider doesn't drive output volume.
+      // Either way, applyVocalsVolume picks the right target from the refs.
+      applyVocalsVolume(true)
+    },
+    [applyVocalsVolume],
+  )
+
+  const setVocalsBoost = useCallback(
+    (active: boolean) => {
+      if (vocalsBoostRef.current === active) return
+      vocalsBoostRef.current = active
+      applyVocalsVolume(false)
+    },
+    [applyVocalsVolume],
+  )
 
   const getPlayback = useCallback((): PlaybackSnapshot | null => {
     const instrumental = instrumentalRef.current
@@ -171,6 +240,7 @@ export function useSongPlayback(): SongPlayback {
       getDuration,
       isPaused,
       setVocalsVolume,
+      setVocalsBoost,
       getPlayback,
       setOnEnded,
     }),
@@ -183,6 +253,7 @@ export function useSongPlayback(): SongPlayback {
       getDuration,
       isPaused,
       setVocalsVolume,
+      setVocalsBoost,
       getPlayback,
       setOnEnded,
     ],

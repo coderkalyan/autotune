@@ -15,13 +15,14 @@ export const MODE_TO_SCREEN: Record<number, AppScreen["screen"] | null> = {
   2: "autotune",
   3: "vocoder",
   4: "synth",
-  5: null,
+  5: "harmony",
 }
 
 export const SCREEN_TO_MODE: Partial<Record<AppScreen["screen"], UARTMode>> = {
   autotune: 2,
   vocoder: 3,
   synth: 4,
+  harmony: 5,
 }
 
 export function screenForMode(mode: UARTMode | null | undefined): AppScreen | null {
@@ -30,5 +31,6 @@ export function screenForMode(mode: UARTMode | null | undefined): AppScreen | nu
   if (screen === "autotune") return { screen: "autotune", subMode: "free", selectedSong: null }
   if (screen === "vocoder") return { screen: "vocoder" }
   if (screen === "synth") return { screen: "synth" }
+  if (screen === "harmony") return { screen: "harmony" }
   return null
 }

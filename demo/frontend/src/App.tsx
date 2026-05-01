@@ -19,6 +19,9 @@ const VocoderScreen = lazy(() =>
 const SynthScreen = lazy(() =>
   import("@/components/synth/SynthScreen").then((m) => ({ default: m.SynthScreen }))
 )
+const HarmonyScreen = lazy(() =>
+  import("@/components/harmony/HarmonyScreen").then((m) => ({ default: m.HarmonyScreen }))
+)
 
 export default function App() {
   const [appScreen, setAppScreen] = useState<AppScreen>({ screen: "splash" })
@@ -101,6 +104,18 @@ export default function App() {
               latest={latest}
               connected={connected}
               sendMessage={sendMessage}
+            />
+          </Suspense>
+        </div>
+      )}
+
+      {appScreen.screen === "harmony" && (
+        <div key="harmony" className="screen-enter size-full">
+          <Suspense fallback={null}>
+            <HarmonyScreen
+              onNavigate={navigate}
+              latest={latest}
+              connected={connected}
             />
           </Suspense>
         </div>

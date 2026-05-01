@@ -1,7 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Pause, Play, RotateCcw, Square } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
+import {
+  GradeBanner,
+  PREROLL_LEAD_MS,
+  type GradePhase,
+} from "@/components/autotune/GradeBanner"
 import { KaraokeLyrics } from "@/components/autotune/KaraokeLyrics"
 import { PulsingBorder } from "@/components/autotune/PulsingBorder"
 import { ResultsScreen } from "@/components/autotune/ResultsScreen"
@@ -22,6 +27,7 @@ interface ResultsSnapshot {
   score: number | null
   bestCombo: number | null
   songTitle?: string
+  songKey?: string | null
   notes: NoteCompleted[]
 }
 
@@ -47,6 +53,17 @@ export function SingAlongView({ latest, playback }: Props) {
   const [noteHistory, setNoteHistory] = useState<NoteCompleted[]>([])
   const lastAppendedNoteRef = useRef<NoteCompleted | null>(null)
   const preview = useSongPreview()
+
+  // Refs that track the latest reading + per-note history so the audio
+  // `ended` callback can snapshot the final score without stale closures.
+  const latestRef = useRef<PitchReading | null>(latest ?? null)
+  useEffect(() => {
+    latestRef.current = latest ?? null
+  }, [latest])
+  const noteHistoryRef = useRef<NoteCompleted[]>(noteHistory)
+  useEffect(() => {
+    noteHistoryRef.current = noteHistory
+  }, [noteHistory])
 
   const handleVolumeChange = useCallback(
     (value: number[]) => {
@@ -83,10 +100,25 @@ export function SingAlongView({ latest, playback }: Props) {
     setNoteHistory([])
     lastAppendedNoteRef.current = null
     playback.setVocalsVolume(vocalsVolume / 100)
+    // Results modal fires on the audio element's natural `ended` event so it
+    // shows up at song-end (after the postroll), not at grade-end.
+    playback.setOnEnded(() => {
+      const cur = latestRef.current
+      setResults({
+        stars: cur?.stars ?? 0,
+        score: cur?.score ?? 0,
+        bestCombo: cur?.best_combo ?? 0,
+        songTitle: song.title,
+        songKey: song.key ?? null,
+        notes: noteHistoryRef.current,
+      })
+    })
     await playback.play(song.id)
   }
 
   async function handleStop() {
+    playback.setOnEnded(null)
+    playback.setVocalsBoost(false)
     playback.stop()
     await fetch(`${API_BASE}/songs/stop`, { method: "POST" })
     setActiveSong(null)
@@ -110,20 +142,25 @@ export function SingAlongView({ latest, playback }: Props) {
     setNoteHistory((prev) => [...prev, nc])
   }, [latest?.note_completed])
 
-  // Snapshot results so the dialog stays open after the backend tears down
-  // the scoring session.
+  // Compute the grade phase from the latest playback position. Used to gate
+  // vocals boost and to drive the GradeBanner overlay.
+  const gradePhase: GradePhase = useMemo(() => {
+    if (!activeSong) return "preroll"
+    const gs = activeSong.grade_start_ms
+    const ge = activeSong.grade_end_ms
+    if (positionMs < gs - PREROLL_LEAD_MS) return "preroll"
+    if (positionMs < gs) return "get_ready"
+    if (positionMs <= ge) return "active"
+    return "postroll"
+  }, [positionMs, activeSong])
+
+  // Vocals: boosted to 1.0 outside the grade window so the user can hear the
+  // recording's lead vocals; ducked to the user-set guide level inside the
+  // window so they can sing the part.
   useEffect(() => {
-    if (!latest || !activeSong) return
-    if (latest.song_complete && results === null) {
-      setResults({
-        stars: latest.stars ?? 0,
-        score: latest.score ?? 0,
-        bestCombo: latest.best_combo ?? 0,
-        songTitle: activeSong.title,
-        notes: noteHistory,
-      })
-    }
-  }, [latest, activeSong, results, noteHistory])
+    if (!activeSong) return
+    playback.setVocalsBoost(gradePhase !== "active")
+  }, [gradePhase, activeSong, playback])
 
   // Stop audio when this view unmounts (mode switch or back navigation)
   useEffect(() => {
@@ -268,10 +305,18 @@ export function SingAlongView({ latest, playback }: Props) {
           </Button>
         </div>
 
-        <KaraokeLyrics
-          lines={lyrics}
-          positionMs={latest?.song_position_ms ?? null}
-        />
+        <div className="relative flex flex-1 flex-col">
+          <GradeBanner
+            phase={gradePhase}
+            positionMs={positionMs}
+            gradeStartMs={activeSong.grade_start_ms}
+            gradeEndMs={activeSong.grade_end_ms}
+          />
+          <KaraokeLyrics
+            lines={lyrics}
+            positionMs={latest?.song_position_ms ?? null}
+          />
+        </div>
 
         <StatusRow
           score={latest?.score ?? null}
@@ -285,6 +330,7 @@ export function SingAlongView({ latest, playback }: Props) {
           score={results?.score ?? null}
           bestCombo={results?.bestCombo ?? null}
           songTitle={results?.songTitle}
+          songKey={results?.songKey}
           notes={results?.notes ?? []}
           onDone={handleStop}
         />

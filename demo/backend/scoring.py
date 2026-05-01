@@ -147,6 +147,23 @@ def octave_shift_for(detected_hz: list[float], target_hz: list[float]) -> int:
     return best_k
 
 
+def trimmed_mean(values: list[float], trim_frac: float = 0.25) -> float:
+    """Mean of the middle (1 - 2*trim_frac) of values after sorting.
+
+    Drops outliers from both tails before averaging. With trim_frac=0.25 this
+    is the interquartile mean (mean of the middle 50%). Falls back to plain
+    mean when there aren't enough samples to trim.
+    """
+    n = len(values)
+    if n == 0:
+        return 0.0
+    k = int(n * trim_frac)
+    if n - 2 * k <= 0:
+        return statistics.mean(values)
+    s = sorted(values)
+    return statistics.mean(s[k : n - k])
+
+
 def bucket_for(cents: float) -> Bucket:
     a = abs(cents)
     if a <= PITCH_PERFECT_CENTS:
@@ -184,6 +201,7 @@ class ScoringSession:
         self._octave_shift = 0
 
         self._quality_ema: float | None = None
+        self._last_position_ms: float | None = None
 
     @property
     def notes(self) -> list[Note]:
@@ -191,9 +209,41 @@ class ScoringSession:
 
     @property
     def score(self) -> float:
-        if self._weight_sum <= 0:
+        """Running score normalized to elapsed song progress.
+
+        Includes a partial contribution from the active in-progress note so
+        the displayed score (and stars) reflect performance immediately
+        rather than starting at 0 until the first note finalizes.
+        """
+        num = self._weighted_score
+        den = self._weight_sum
+
+        if (
+            self._active_idx is not None
+            and 0 <= self._active_idx < len(self._notes)
+            and self._last_position_ms is not None
+        ):
+            note = self._notes[self._active_idx]
+            if note.duration_ms > 0:
+                elapsed = max(
+                    0.0, min(note.duration_ms, self._last_position_ms - note.start_ms)
+                )
+                frac = elapsed / note.duration_ms
+                if frac > 0:
+                    pitch_avg = trimmed_mean(self._active_pitch_scores)
+                    timing = (
+                        timing_score(self._onset_offset_ms)
+                        if self._onset_offset_ms is not None
+                        else 0.0
+                    )
+                    partial_score = W_PITCH * pitch_avg + W_TIMING * timing
+                    partial_w = note_weight(note.duration_ms) * frac
+                    num += partial_score * partial_w
+                    den += partial_w
+
+        if den <= 0:
             return 0.0
-        return self._weighted_score / self._weight_sum
+        return num / den
 
     def update(
         self,
@@ -201,6 +251,8 @@ class ScoringSession:
         detected_hz: float | None,
         vad_voiced: bool,
     ) -> ScoreState:
+        self._last_position_ms = position_ms
+
         # The "active note" for octave/quality/bucket is the one currently
         # playing under position_ms, regardless of whether the cursor has
         # advanced past it yet this tick. Pick it up front.
@@ -337,11 +389,7 @@ class ScoringSession:
         return self._build_state(None, None, None)
 
     def _finalize_active_note(self, note: Note) -> NoteResult:
-        avg = (
-            statistics.median(self._active_pitch_scores)
-            if self._active_pitch_scores
-            else 0.0
-        )
+        avg = trimmed_mean(self._active_pitch_scores)
         onset = (
             self._onset_offset_ms
             if self._onset_offset_ms is not None
