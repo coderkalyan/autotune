@@ -38,7 +38,7 @@ export function PitchClassWheel({
   if (melodyPc != null) sounding.set(melodyPc, primaryColor)
 
   return (
-    <svg viewBox={`0 0 ${size} ${size}`} className="w-full max-w-[300px]">
+    <svg viewBox={`0 0 ${size} ${size}`} className="w-full max-w-[300px] overflow-visible">
       {/* Background ring */}
       <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth={1} />
 
