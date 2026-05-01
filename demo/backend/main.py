@@ -19,7 +19,10 @@ from scoring import ScoringSession
 from song_manager import SongManager
 from uart_parser import UARTParser
 
-SERIAL_PORT = "/dev/cu.usbserial-FTA9OC5H"
+SERIAL_PORTS = (
+    "/dev/serial/by-id/usb-FTDI_TTL232R-3V3_FTA9OC5H-if00-port0",  # Linux
+    "/dev/cu.usbserial-FTA9OC5H",                                   # macOS
+)
 BAUD = 115200
 WS_INTERVAL = 0.033  # ~30 Hz
 PLAYBACK_STALE_S = 0.25
@@ -162,10 +165,17 @@ async def _pitch_loop() -> None:
             "note_completed": None,
             "frame_quality": None,
             "grade_complete": grade_complete,
-            "grade_start_ms": int(grade_window[0]) if grade_window is not None else None,
+            "grade_start_ms": int(grade_window[0])
+            if grade_window is not None
+            else None,
             "grade_end_ms": int(grade_window[1]) if grade_window is not None else None,
         }
-        if scoring_session is not None and position_ms is not None and playing and in_grade_window:
+        if (
+            scoring_session is not None
+            and position_ms is not None
+            and playing
+            and in_grade_window
+        ):
             state = scoring_session.update(
                 position_ms=position_ms,
                 detected_hz=filtered_detected,
@@ -201,9 +211,7 @@ async def _pitch_loop() -> None:
                         else None
                     ),
                     "cents_off": (
-                        round(nr.cents_off, 1)
-                        if nr.cents_off is not None
-                        else None
+                        round(nr.cents_off, 1) if nr.cents_off is not None else None
                     ),
                     "pitch_score": round(nr.pitch_score, 4),
                     "timing_score": round(nr.timing_score, 4),
@@ -309,16 +317,25 @@ async def _pitch_loop() -> None:
 async def lifespan(app: FastAPI):
     global uart_reader, midi_bridge
 
-    try:
-        ser = serial.Serial(SERIAL_PORT, BAUD, timeout=1)
+    ser = None
+    last_err: Exception | None = None
+    for port in SERIAL_PORTS:
+        try:
+            ser = serial.Serial(port, BAUD, timeout=1)
+            print(f"[main] serial port {port} opened at {BAUD} baud")
+            break
+        except serial.SerialException as e:
+            print(f"[main] could not open {port} ({e})")
+            last_err = e
+
+    if ser is not None:
         uart_reader = UARTParser(ser)
         uart_reader.start()
         midi_bridge = MIDIBridge(ser)
         midi_bridge.start()
-        print(f"[main] serial port {SERIAL_PORT} opened at {BAUD} baud")
-    except serial.SerialException as e:
+    else:
         print(
-            f"[main] WARNING: could not open serial port ({e}) — running without UART/MIDI"
+            f"[main] WARNING: no serial port available ({last_err}) — running without UART/MIDI"
         )
         uart_reader = None
         midi_bridge = None

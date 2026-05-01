@@ -52,7 +52,9 @@ export function ChordHud({
         key={pulseId}
         className="my-4 flex items-center justify-center rounded-xl bg-accent/10 py-6 chord-pulse"
       >
-        <span className="text-6xl font-black tracking-wide text-accent">{roman}</span>
+        <span className="block text-center text-6xl font-black leading-none text-accent">
+          {roman}
+        </span>
       </div>
 
       <div className="grid grid-cols-3 gap-2">

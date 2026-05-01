@@ -10,8 +10,8 @@ import type { AppScreen, PitchReading } from "@/types"
 import { PitchClassWheel } from "./PitchClassWheel"
 import { ChordHud } from "./ChordHud"
 
-const PRIMARY = "var(--chart-1)"
-const SECONDARY = "var(--chart-3)"
+const PRIMARY = "#ec4899" // pink-500: melody pops against the teal palette
+const SECONDARY = "var(--chart-1)" // teal: harmony lines
 const KEYBOARD_HEIGHT_PX = 180
 
 interface Props {
