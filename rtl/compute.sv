@@ -40,7 +40,8 @@ module compute #(
     output logic [2:0] o_chord_state,
     output logic       o_in_scale,
     output logic [6:0] o_harm1_midi,
-    output logic [6:0] o_harm2_midi
+    output logic [6:0] o_harm2_midi,
+    output fixed_t     o_pitch_factor_recip
 );
 
   // ----------------------------------------------------------------
@@ -67,6 +68,7 @@ module compute #(
   fixed_t pitch_factor_recip_w;
   fixed_t pitch_factor_recip;
   always_ff @(posedge clk) pitch_factor_recip <= pitch_factor_recip_w;
+  assign o_pitch_factor_recip = pitch_factor_recip;
 
   // PSOLA output 
   fixed_t psola_lf_real;

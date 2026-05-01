@@ -103,6 +103,7 @@ logic any_note_pressed;
 logic [3:0] harm_tonic;
 logic harm_mode_bit, harm_in_scale;
 logic [2:0] harm_chord_state;
+fixed_t pitch_factor_recip;
 compute #(
     .WINDOW_SIZE(WINDOW_SIZE),
     .TESTBENCH(0)   //if 1 bypasses and uses test_pitch_factor as the pf
@@ -141,7 +142,8 @@ compute #(
     .o_chord_state(harm_chord_state),
     .o_in_scale(harm_in_scale),
     .o_harm1_midi(harm1_midi),
-    .o_harm2_midi(harm2_midi)
+    .o_harm2_midi(harm2_midi),
+    .o_pitch_factor_recip(pitch_factor_recip)
 );
 
 // ----------------------------------------------------------------
@@ -171,6 +173,7 @@ uart_tx_wrapper iTX_WRAP (
     .i_in_scale(harm_in_scale),
     .i_harm1_midi(harm1_midi),
     .i_harm2_midi(harm2_midi),
+    .i_pitch_factor_recip(pitch_factor_recip),
     .o_transmission_done(transmission_done),
     .o_tx(o_txd)
 );

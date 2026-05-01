@@ -27,6 +27,7 @@ module uart_tx_wrapper (
     input  logic       i_in_scale,
     input  logic [6:0] i_harm1_midi,
     input  logic [6:0] i_harm2_midi,
+    input  fixed_t     i_pitch_factor_recip,
     output reg o_transmission_done,
     output o_tx
 );
@@ -56,7 +57,8 @@ localparam int PAYLOAD_BITS = NUM_BYTES * 7;  // 1008
 //   [80]       harm_mode (0=major,1=minor)
 //   [79:77]    3-bit chord_state
 //   [76]       in_scale
-//   [75:0]     padding
+//   [75:49]    27-bit fixed_t pitch_factor_recip (Q10.16)
+//   [48:0]     padding
 
 typedef enum reg [1:0] {IDLE, INIT, SENDING} state_t;
 state_t state, next_state;
@@ -93,6 +95,7 @@ always_comb begin
     payload[80]       = i_harm_mode;
     payload[79:77]    = i_chord_state;
     payload[76]       = i_in_scale;
+    payload[75:49]    = i_pitch_factor_recip;
 end
 
 UART_tx iTX (

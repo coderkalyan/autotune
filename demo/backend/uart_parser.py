@@ -4,7 +4,7 @@ from collections import deque
 
 import serial
 
-from pitch_utils import lag_to_hz, nearest_note_hz
+from pitch_utils import lag_to_hz, nearest_note_hz  # noqa: F401
 
 NUM_BYTES = 144
 PAYLOAD_BITS = NUM_BYTES * 7  # 1008
@@ -31,7 +31,8 @@ PAYLOAD_BYTES = PAYLOAD_BITS // 8  # 126
 #   [80]       harm_mode (0=major, 1=minor)
 #   [79:77]    3-bit chord_state (Markov FSM state)
 #   [76]       in_scale
-#   [75:0]     padding
+#   [75:49]    27-bit fixed_t pitch_factor_recip (Q10.16, signed)
+#   [48:0]     padding
 
 FIXED_MASK = (1 << 27) - 1
 FIXED_SIGN = 1 << 26
@@ -79,6 +80,11 @@ def unpack_payload(bits: int) -> dict:
     chord_state = (bits >> 77) & 0x7
     in_scale = (bits >> 76) & 1
 
+    pitch_factor_recip_raw = (bits >> 49) & FIXED_MASK
+    if pitch_factor_recip_raw & FIXED_SIGN:
+        pitch_factor_recip_raw -= 1 << 27
+    pitch_factor_recip = pitch_factor_recip_raw / (1 << 16)
+
     to_return = {
         "lag": lag,
         "valid": valid,
@@ -100,6 +106,8 @@ def unpack_payload(bits: int) -> dict:
         "harm_mode": harm_mode,
         "chord_state": chord_state,
         "in_scale": in_scale,
+        "pitch_factor_recip_raw": pitch_factor_recip_raw,
+        "pitch_factor_recip": pitch_factor_recip,
     }
 
     return to_return
@@ -155,7 +163,9 @@ class Parser:
         corrected = None
         if fields["valid"] and fields["lag"] != 0:
             detected = lag_to_hz(fields["lag"])
-            corrected = nearest_note_hz(fields["lag"])
+            pfr = fields["pitch_factor_recip"]
+            if pfr and detected is not None:
+                corrected = detected / pfr
 
         self._on_reading(detected, corrected, fields)
 
@@ -229,6 +239,7 @@ class UARTParser:
             self._latest = {
                 "detected_hz": detected_hz,
                 "corrected_hz": corrected_hz,
+                "pitch_factor_recip": fields["pitch_factor_recip"],
                 "mode": fields["mode"],
                 "vad_active": bool(fields["vad_active"]),
                 "vad_voiced": bool(fields["vad_voiced"]),
@@ -295,6 +306,7 @@ if __name__ == "__main__":
         harm_mode=0,
         chord_state=0,
         in_scale=0,
+        pitch_factor_recip=0,
     ) -> list[int]:
         """Build a framed packet from fields."""
         bits = 0
@@ -321,6 +333,7 @@ if __name__ == "__main__":
         bits |= (harm_mode & 1) << 80
         bits |= (chord_state & 0x7) << 77
         bits |= (in_scale & 1) << 76
+        bits |= (pitch_factor_recip & FIXED_MASK) << 49
         # Split into NUM_BYTES groups of 7 bits, MSB-first
         packet = []
         for i in range(NUM_BYTES):
@@ -333,12 +346,13 @@ if __name__ == "__main__":
 
     parser = Parser(on_reading=capture)
 
-    print("Test 1 — valid packet, lag=109 (A4 ~440 Hz)")
-    for b in make_packet(True, 109):
+    print("Test 1 — valid packet, lag=109 (A4 ~440 Hz), pfr=1.0")
+    for b in make_packet(True, 109, pitch_factor_recip=int(1.0 * (1 << 16)) & FIXED_MASK):
         parser.parse_byte(b)
     assert results, "No reading produced"
     d, c, _ = results[-1]
     assert abs(d - 440.37) < 1.0, f"detected_hz wrong: {d}"
+    assert c is not None and abs(c - d) < 1.0, f"corrected_hz wrong: {c}"
     print(f"  detected_hz={d:.2f}  corrected_hz={c:.2f}  OK")
 
     print("Test 2 — invalid packet (valid=0) emits None hz")
@@ -348,11 +362,12 @@ if __name__ == "__main__":
     assert d is None and c is None, "Invalid packet should null out hz"
     print("  None hz  OK")
 
-    print("Test 3 — packet with lag=183 (C4 ~262 Hz)")
-    for b in make_packet(True, 183):
+    print("Test 3 — packet with lag=183 (C4 ~262 Hz), pfr=0.5 -> corrected=2x")
+    for b in make_packet(True, 183, pitch_factor_recip=int(0.5 * (1 << 16)) & FIXED_MASK):
         parser.parse_byte(b)
     d, c, _ = results[-1]
     assert abs(d - 262.30) < 1.0, f"detected_hz wrong: {d}"
+    assert c is not None and abs(c - 2 * d) < 1.0, f"corrected_hz wrong: {c}"
     print(f"  detected_hz={d:.2f}  corrected_hz={c:.2f}  OK")
 
     print("Test 4 — round-trip all fields")
@@ -378,6 +393,7 @@ if __name__ == "__main__":
         harm_mode=1,
         chord_state=5,
         in_scale=1,
+        pitch_factor_recip=int(0.75 * (1 << 16)) & FIXED_MASK,
     )
     bits = decode_payload(pkt)
     f = unpack_payload(bits)
@@ -400,6 +416,7 @@ if __name__ == "__main__":
     assert f["harm_mode"] == 1
     assert f["chord_state"] == 5
     assert f["in_scale"] == 1
+    assert abs(f["pitch_factor_recip"] - 0.75) < 1e-4, f["pitch_factor_recip"]
     for i in range(32):
         assert f["vocode_bands"][i] == test_bands[i], f"band {i} mismatch"
     print(
