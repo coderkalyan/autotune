@@ -28,7 +28,6 @@ export function PitchClassWheel({
   const cx = size / 2
   const cy = size / 2
   const r = size * 0.42
-  const rLabel = size * 0.46
   const mask = minor ? MINOR_MASK : MAJOR_MASK
   const t = tonic % 12
 
@@ -48,8 +47,6 @@ export function PitchClassWheel({
         const angle = (pc / 12) * Math.PI * 2 - Math.PI / 2
         const x = cx + Math.cos(angle) * r
         const y = cy + Math.sin(angle) * r
-        const xL = cx + Math.cos(angle) * rLabel
-        const yL = cy + Math.sin(angle) * rLabel
 
         const semiFromTonic = (pc - t + 12) % 12
         const inKey = mask.has(semiFromTonic)
@@ -62,15 +59,19 @@ export function PitchClassWheel({
             ? "rgba(255,255,255,0.18)"
             : "rgba(255,255,255,0.05)"
 
-        const dotR = isTonic ? 14 : sColor ? 12 : 8
+        // Dot large enough to fit the label glyph centered on it.
+        const dotR = isTonic || sColor ? 16 : 13
+        const labelFill =
+          isTonic || sColor
+            ? "white"
+            : inKey
+              ? "var(--foreground)"
+              : "rgba(255,255,255,0.45)"
 
         return (
           <g key={pc}>
             {sColor && (
-              // glow halo
-              <circle cx={x} cy={y} r={dotR + 8} fill={sColor} opacity={0.35}>
-                <animate attributeName="opacity" values="0.25;0.55;0.25" dur="1.6s" repeatCount="indefinite" />
-              </circle>
+              <circle cx={x} cy={y} r={dotR + 8} fill={sColor} opacity={0.35} />
             )}
             <circle
               cx={x}
@@ -81,13 +82,14 @@ export function PitchClassWheel({
               strokeWidth={isTonic ? 1.5 : 0}
             />
             <text
-              x={xL}
-              y={yL}
+              x={x}
+              y={y}
               textAnchor="middle"
               dominantBaseline="central"
-              fontSize={isTonic ? 14 : 11}
+              fontSize={isTonic || sColor ? 12 : 10}
               fontWeight={isTonic ? 700 : 500}
-              fill={isTonic ? "var(--accent)" : inKey ? "var(--foreground)" : "rgba(255,255,255,0.4)"}
+              fill={labelFill}
+              style={{ pointerEvents: "none" }}
             >
               {NOTE_NAMES[pc]}
             </text>
